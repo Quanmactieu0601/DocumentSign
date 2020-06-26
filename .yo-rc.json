@@ -1,0 +1,43 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "vn.easyca.signserver.webapp",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "6.9.1",
+    "applicationType": "monolith",
+    "baseName": "webapp",
+    "packageName": "vn.easyca.signserver.webapp",
+    "packageFolder": "vn/easyca/signserver/webapp",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mariadb",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "MjQ1NjM1OTgxMzY2Y2E1ZTRhZmY1OGVhYjNjN2JhZWQ4OWVlM2Y1NzA5NTZmMThhY2VlM2QyOTViYmUxNmFjOTM5Mjk1NmRiOWM2ZTBiNTBmNTU5YWU0ZDZkNGEzZWQyN2NiNzc4ODgwZWYwYWI1NjIzMDVlMDc1Yjk0MWIxNDU=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1593139937862,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": ["en", "vi"],
+    "blueprints": []
+  }
+}
