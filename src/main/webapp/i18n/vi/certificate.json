@@ -1,0 +1,29 @@
+{
+  "webappApp": {
+    "certificate": {
+      "home": {
+        "title": "Certificates",
+        "createLabel": "Thêm mới một Certificate",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Certificate",
+        "notFound": "No Certificates found"
+      },
+      "created": "Một Certificate mới được tạo với định danh {{ param }}",
+      "updated": "Một Certificate cập nhật với định danh {{ param }}",
+      "deleted": "Một Certificate đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Certificate {{ id }}?"
+      },
+      "detail": {
+        "title": "Certificate"
+      },
+      "lastUpdate": "Last Update",
+      "tokenType": "Token Type",
+      "serial": "Serial",
+      "ownerTaxcode": "Owner Taxcode",
+      "subjectInfo": "Subject Info",
+      "alias": "Alias",
+      "tokenInfo": "Token Info",
+      "rawData": "Raw Data"
+    }
+  }
+}

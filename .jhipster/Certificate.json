@@ -1,0 +1,48 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "lastUpdate",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "tokenType",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "serial",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "ownerTaxcode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "subjectInfo",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "alias",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "tokenInfo",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "rawData",
+      "fieldType": "String"
+    }
+  ],
+  "changelogDate": "20200626040446",
+  "dto": "no",
+  "searchEngine": false,
+  "service": "serviceClass",
+  "entityTableName": "certificate",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": false,
+  "pagination": "pagination"
+}

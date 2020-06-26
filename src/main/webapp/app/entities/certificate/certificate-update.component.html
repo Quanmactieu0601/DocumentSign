@@ -1,0 +1,74 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-certificate-heading" jhiTranslate="webappApp.certificate.home.createOrEditLabel">Create or edit a Certificate</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.lastUpdate" for="field_lastUpdate">Last Update</label>
+                    <input type="text" class="form-control" name="lastUpdate" id="field_lastUpdate"
+                           formControlName="lastUpdate"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.tokenType" for="field_tokenType">Token Type</label>
+                    <input type="text" class="form-control" name="tokenType" id="field_tokenType"
+                           formControlName="tokenType"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.serial" for="field_serial">Serial</label>
+                    <input type="text" class="form-control" name="serial" id="field_serial"
+                           formControlName="serial"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.ownerTaxcode" for="field_ownerTaxcode">Owner Taxcode</label>
+                    <input type="text" class="form-control" name="ownerTaxcode" id="field_ownerTaxcode"
+                           formControlName="ownerTaxcode"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.subjectInfo" for="field_subjectInfo">Subject Info</label>
+                    <input type="text" class="form-control" name="subjectInfo" id="field_subjectInfo"
+                           formControlName="subjectInfo"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.alias" for="field_alias">Alias</label>
+                    <input type="text" class="form-control" name="alias" id="field_alias"
+                           formControlName="alias"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.tokenInfo" for="field_tokenInfo">Token Info</label>
+                    <input type="text" class="form-control" name="tokenInfo" id="field_tokenInfo"
+                           formControlName="tokenInfo"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certificate.rawData" for="field_rawData">Raw Data</label>
+                    <input type="text" class="form-control" name="rawData" id="field_rawData"
+                           formControlName="rawData"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,58 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="certificate">
+            <h2><span jhiTranslate="webappApp.certificate.detail.title">Certificate</span> {{ certificate.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="webappApp.certificate.lastUpdate">Last Update</span></dt>
+                <dd>
+                    <span>{{ certificate.lastUpdate }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.tokenType">Token Type</span></dt>
+                <dd>
+                    <span>{{ certificate.tokenType }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.serial">Serial</span></dt>
+                <dd>
+                    <span>{{ certificate.serial }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.ownerTaxcode">Owner Taxcode</span></dt>
+                <dd>
+                    <span>{{ certificate.ownerTaxcode }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.subjectInfo">Subject Info</span></dt>
+                <dd>
+                    <span>{{ certificate.subjectInfo }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.alias">Alias</span></dt>
+                <dd>
+                    <span>{{ certificate.alias }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.tokenInfo">Token Info</span></dt>
+                <dd>
+                    <span>{{ certificate.tokenInfo }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certificate.rawData">Raw Data</span></dt>
+                <dd>
+                    <span>{{ certificate.rawData }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/certificate', certificate.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

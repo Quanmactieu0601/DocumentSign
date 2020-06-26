@@ -1,0 +1,85 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="webappApp.certificate.home.title">Certificates</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-certificate" [routerLink]="['/certificate/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="webappApp.certificate.home.createLabel">
+            Create a new Certificate
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="certificates?.length === 0">
+        <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="certificates && certificates.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="lastUpdate"><span jhiTranslate="webappApp.certificate.lastUpdate">Last Update</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="tokenType"><span jhiTranslate="webappApp.certificate.tokenType">Token Type</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="serial"><span jhiTranslate="webappApp.certificate.serial">Serial</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="ownerTaxcode"><span jhiTranslate="webappApp.certificate.ownerTaxcode">Owner Taxcode</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="subjectInfo"><span jhiTranslate="webappApp.certificate.subjectInfo">Subject Info</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="alias"><span jhiTranslate="webappApp.certificate.alias">Alias</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="tokenInfo"><span jhiTranslate="webappApp.certificate.tokenInfo">Token Info</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="rawData"><span jhiTranslate="webappApp.certificate.rawData">Raw Data</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let certificate of certificates ;trackBy: trackId">
+                    <td><a [routerLink]="['/certificate', certificate.id, 'view']">{{ certificate.id }}</a></td>
+                    <td>{{ certificate.lastUpdate }}</td>
+                    <td>{{ certificate.tokenType }}</td>
+                    <td>{{ certificate.serial }}</td>
+                    <td>{{ certificate.ownerTaxcode }}</td>
+                    <td>{{ certificate.subjectInfo }}</td>
+                    <td>{{ certificate.alias }}</td>
+                    <td>{{ certificate.tokenInfo }}</td>
+                    <td>{{ certificate.rawData }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/certificate', certificate.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/certificate', certificate.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(certificate)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div *ngIf="certificates && certificates.length > 0">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
+
+        <div class="row justify-content-center">
+            <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        </div>
+    </div>
+</div>
