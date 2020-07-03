@@ -20,6 +20,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.webapp.service.ex.EmailAlreadyUsedException;
+import vn.easyca.signserver.webapp.service.ex.InvalidPasswordException;
+import vn.easyca.signserver.webapp.service.ex.UsernameAlreadyUsedException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;

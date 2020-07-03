@@ -2,8 +2,10 @@ package vn.easyca.signserver.core.cryptotoken;
 
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -76,5 +78,10 @@ public class P12CryptoToken implements CryptoToken {
         if (this.ks == null)
             throw new Exception("cryptoToken is not initialized");
         return this.config;
+    }
+
+    @Override
+    public Certificate getCertificate(String alias) throws KeyStoreException {
+        return ks.getCertificate(alias);
     }
 }

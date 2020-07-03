@@ -174,7 +174,7 @@ public class CertificateResourceIT {
             .andExpect(jsonPath("$.[*].tokenInfo").value(hasItem(DEFAULT_TOKEN_INFO)))
             .andExpect(jsonPath("$.[*].rawData").value(hasItem(DEFAULT_RAW_DATA)));
     }
-    
+
     @Test
     @Transactional
     public void getCertificate() throws Exception {

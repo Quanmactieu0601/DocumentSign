@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service;
+package vn.easyca.signserver.webapp.service.ex;
 
 public class UsernameAlreadyUsedException extends RuntimeException {
 

@@ -113,6 +113,11 @@ public class P11CryptoToken implements CryptoToken {
         return this.config;
     }
 
+    @Override
+    public Certificate getCertificate(String alias) throws KeyStoreException {
+        return ks.getCertificate(alias);
+    }
+
     private X509Certificate genSelfSignedCert(String alias, KeyPair keyPair, String providerName) throws Exception {
         long validity = (long) 30 * 24 * 60 * 60 * 365;
         String myName = "CN=THIS IS TEMPORARY CERT FOR " + alias;

@@ -1,7 +1,9 @@
 package vn.easyca.signserver.core.cryptotoken;
 
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -21,4 +23,6 @@ public interface CryptoToken {
     List<String> getAliases() throws Exception;
 
     Config getConfig() throws Exception;
+
+    Certificate getCertificate(String alias) throws KeyStoreException;
 }

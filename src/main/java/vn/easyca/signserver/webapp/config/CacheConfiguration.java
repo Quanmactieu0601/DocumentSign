@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.github.jhipster.config.cache.PrefixedKeyGenerator;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
+import vn.easyca.signserver.webapp.domain.Certificate;
 
 @Configuration
 @EnableCaching
@@ -48,7 +49,7 @@ public class CacheConfiguration {
             createCache(cm, vn.easyca.signserver.webapp.domain.User.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.Authority.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.User.class.getName() + ".authorities");
-            createCache(cm, vn.easyca.signserver.webapp.domain.Certificate.class.getName());
+            createCache(cm, Certificate.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

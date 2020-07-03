@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
+
 import vn.easyca.signserver.webapp.web.rest.TestUtil;
 
 public class CertificateTest {

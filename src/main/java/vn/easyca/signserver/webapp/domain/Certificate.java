@@ -2,10 +2,15 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import vn.easyca.signserver.webapp.service.model.CertificateInfo;
 
 import javax.persistence.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.util.Date;
 
 /**
  * A Certificate.
@@ -89,6 +94,7 @@ public class Certificate implements Serializable {
         return this;
     }
 
+
     public void setSerial(String serial) {
         this.serial = serial;
     }
@@ -159,6 +165,10 @@ public class Certificate implements Serializable {
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+//    public String p12PathFile(){return "/Users/truonglx/p12/HNI_MST_0105987432.p12";};
+//
+//    public String getTokenPin(){return "viettel-ca123";}
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -190,4 +200,5 @@ public class Certificate implements Serializable {
             ", rawData='" + getRawData() + "'" +
             "}";
     }
+
 }
