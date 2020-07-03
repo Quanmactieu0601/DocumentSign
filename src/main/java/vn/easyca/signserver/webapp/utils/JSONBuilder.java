@@ -4,7 +4,7 @@ import org.json.JSONObject;
 
 public class JSONBuilder {
 
-    JSONObject jsonObject;
+    private JSONObject jsonObject;
 
     public JSONBuilder() {
         jsonObject = new JSONObject();

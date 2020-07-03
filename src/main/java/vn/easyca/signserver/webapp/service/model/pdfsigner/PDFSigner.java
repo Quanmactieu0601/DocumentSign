@@ -57,13 +57,4 @@ public class PDFSigner {
         return visibility;
     }
 
-//    private JSONObject getSignInfo(PDFSignRequest request) {
-//
-//        PDFSignatureInfo signatureInfo = new PDFSignatureInfo();
-//        signatureInfo.setSignDate(request.getSignDate(), "dd/MM/yyyy")
-//                     .setSigner("truonglx");
-//        return signatureInfo.build();
-//    }
-
-
 }
