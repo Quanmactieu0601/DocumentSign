@@ -3,7 +3,7 @@ package vn.easyca.signserver.core.sign.integrated.pdf;
 /**
  * Created by chen on 7/26/17.
  */
-public class SignPDFRequest {
+public class HashDto {
     private String b64Hash;
     private String requestId;
 
@@ -23,7 +23,7 @@ public class SignPDFRequest {
         this.requestId = requestId;
     }
 
-    public SignPDFRequest(String b64Hash, String requestId) {
+    public HashDto(String b64Hash, String requestId) {
         this.b64Hash = b64Hash;
         this.requestId = requestId;
     }

@@ -17,7 +17,7 @@ public class SignService {
 
     private CertificateRepository certificateRepository;
 
-    private final String temDir = "/TemFile/";
+    private final String temDir = "./TemFile/";
 
     public PDFSignResponse signPDFFile(PDFSignRequest request) throws Exception {
 

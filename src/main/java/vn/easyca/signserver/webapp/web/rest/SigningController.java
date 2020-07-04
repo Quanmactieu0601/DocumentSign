@@ -1,7 +1,10 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import io.undertow.util.BadRequestException;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.service.dto.PDFSignRequest;
@@ -27,9 +30,10 @@ public class SigningController {
 
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public byte[] uploadFile(@RequestParam("file") MultipartFile file,
-                             @RequestParam("serial") String serial,
-                             @RequestParam("pin") String pin) throws BadRequestException {
+    public ResponseEntity<ByteArrayResource> signPDF(@RequestParam("file") MultipartFile file,
+                                                     @RequestParam("serial") String serial,
+                                                     @RequestParam("pin") String pin,
+                                                     @RequestParam("signer") String signer) throws BadRequestException {
 
         try {
             byte[] content = file.getBytes();
@@ -38,10 +42,15 @@ public class SigningController {
                 .content(content)
                 .serial(serial)
                 .signDate(new Date())
+                .signer(signer)
                 .pin(pin)
                 .build();
             PDFSignResponse signResponse = signService.signPDFFile(request);
-            return signResponse.getContent();
+            ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
+                .contentLength(resource.contentLength()) //
+                .body(resource);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -49,7 +58,7 @@ public class SigningController {
     }
 
     @PostMapping(value = "/hash")
-    public SignResponseVM signHash(@RequestBody SignHashRequestVM signHashVM){
+    public SignResponseVM signHash(@RequestBody SignHashRequestVM signHashVM) {
 
         SignHashRequest signHashRequest = SignHashRequest
             .builder()
@@ -59,9 +68,9 @@ public class SigningController {
             .pin(signHashVM.getPin()).build();
         try {
             SignHashResponse signHashResponse = signService.signHash(signHashRequest);
-            return new SignResponseVM(0,signHashResponse);
+            return new SignResponseVM(0, signHashResponse);
         } catch (Exception e) {
-            return new SignResponseVM(-1,e.getMessage());
+            return new SignResponseVM(-1, e.getMessage());
         }
     }
 }

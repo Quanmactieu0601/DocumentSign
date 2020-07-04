@@ -51,7 +51,7 @@ public class Signature {
     }
 
     public String getHashAlgorithm() {
-        return "sha1";
+        return "SHA1";
     }
 
     // business logic

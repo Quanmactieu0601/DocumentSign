@@ -4,18 +4,13 @@ package vn.easyca.signserver.webapp.service.model.pdfsigner;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
-import org.json.JSONObject;
-import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFLib;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
 import vn.easyca.signserver.webapp.service.dto.PDFSignRequest;
-import vn.easyca.signserver.webapp.service.dto.SignatureInfo;
 import vn.easyca.signserver.webapp.service.model.Signature;
 
-import javax.security.cert.Certificate;
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.Date;
 
 @RequiredArgsConstructor
 public class PDFSigner {
@@ -32,6 +27,7 @@ public class PDFSigner {
 
     public byte[] signPDF(PDFSignRequest request) throws Exception {
 
+        initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
         if (!file.exists())
@@ -41,12 +37,21 @@ public class PDFSigner {
             signature.getPrivateKey(),
             signature.getX509Certificates(),
             signatureInfo.build(),
-            new PDFSignatureVisibility().build(),
-            "",
+            visibility.build(),
+            request.getSigner(),
             signature.getHashAlgorithm(),
             request.getSignDate(),
             temFilePath);
-        return IOUtils.toByteArray(new FileInputStream(temFilePath));
+        byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
+        file.delete();
+        return res;
+    }
+
+    private void initTemDir(){
+
+        File file = new File(cacheDir);
+        if(!file.exists())
+            file.mkdir();
     }
 
     public PDFSignatureInfo getSignatureInfo() {

@@ -1,24 +1,18 @@
 package vn.easyca.signserver.core.sign.integrated.pdf;
+
 import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import vn.easyca.signserver.core.sign.rawsign.DigestCreator;
-import vn.easyca.signserver.core.sign.rawsign.RawSigner;
 import vn.easyca.signserver.core.sign.utils.Base64Utils;
 import vn.easyca.signserver.core.sign.utils.FileUtils;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
-
 
 import java.io.*;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.text.DateFormat;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -29,18 +23,11 @@ public class SignPDFPlugin {
     //    private final Logger LOGGER = LoggerFactory.getLogger(SignPDFPlugin.class);
     private DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public void sign(byte[] content,
-                     PrivateKey key,
-                     Certificate[] chain,
-                     JSONObject signatureInfo,
-                     JSONObject signatureVisible,
-                     String signField,
-                     String hashAlg,
-                     Date signDate,
-                     String outPath) throws Exception {
-        SignPDFRequest request = createHash(content, chain, signatureInfo, signatureVisible, signField, hashAlg, signDate);
-        String sessionKey = request.getRequestId();
-        String base64Hash = request.getB64Hash();
+    public void sign(byte[] content, PrivateKey key, Certificate[] chain, JSONObject signatureInfo, JSONObject signatureVisible,
+                     String signField, String hashAlg, Date signDate, String outPath) throws Exception {
+        HashDto hashDto = createHash(content, chain, signatureInfo, signatureVisible, signField, hashAlg, signDate);
+        String sessionKey = hashDto.getRequestId();
+        String base64Hash = hashDto.getB64Hash();
         byte[] hash = Base64Utils.base64Decode(base64Hash);
         //add info to hash
         hash = new DigestCreator().digestWithSHA1Info(hash);
@@ -49,15 +36,60 @@ public class SignPDFPlugin {
         insertSignature(sessionKey, sig, signField, outPath);
     }
 
-    public SignPDFRequest createHash(byte[] content, Certificate[] chain,
-                                     JSONObject signature_info, JSONObject visible_signature, String signField, String hashAlg) throws Exception {
+    public void sign(SignPDFDto dto) throws Exception {
+        HashDto hashDto = createHash(dto);
+        String sessionKey = hashDto.getRequestId();
+        String base64Hash = hashDto.getB64Hash();
+        byte[] hash = Base64Utils.base64Decode(base64Hash);
+        //add info to hash
+        hash = new DigestCreator().digestWithSHA1Info(hash);
+        RawSigner rawSigner = new RawSigner();
+        byte[] sig = rawSigner.signHash(hash, dto.getKey());
+        insertSignature(sessionKey, sig, dto.getSignField(), dto.getOutPath());
+    }
+
+    public HashDto createHash(byte[] content,
+                              Certificate[] chain,
+                              JSONObject signature_info,
+                              JSONObject visible_signature,
+                              String signField,
+                              String hashAlg) throws Exception {
         // Ngày ký
         Date signDate = new Date();
         return createHash(content, chain, signature_info, visible_signature, signField, hashAlg, signDate);
     }
 
-    public SignPDFRequest createHash(byte[] content, Certificate[] chain,
-                                     JSONObject signature_info, JSONObject visible_signature, String signField, String hashAlg, Date signDate) throws Exception {
+    public HashDto createHash(SignPDFDto signDto) throws Exception {
+        // Tạo thư mục tạm
+        Files.createTempDir();
+        SignPDFLib signPDFLib = new SignPDFLib();
+
+        // File pdf chứa chữ ký trống
+        String key = UniqueID.generate();
+        String tmpFilePath = getTempFolder() + key + ".pdf";
+
+        List<byte[]> hashList = signPDFLib.createHash(signDto, tmpFilePath);
+        byte[] hash = (byte[]) hashList.get(1);
+
+        // Chứng thư ký
+        byte[] certificate_chain = convertToBytes(signDto.getChain());
+        String base64Certificate = Base64.getEncoder().encodeToString(certificate_chain);
+
+        String tmpJSONPath = getTempFolder() + key + ".json";
+        String base64Hash = Base64.getEncoder().encodeToString(hash);
+        String signDateString = formatter.format(signDto.getSignDate());
+        String jsonString = new JSONObject()
+                .put("base64Hash", base64Hash)
+                .put("base64Certificate", base64Certificate)
+                .put("signDateString", signDateString).toString();
+        try (PrintWriter out = new PrintWriter(tmpJSONPath)) {
+            out.println(jsonString);
+        }
+        return new HashDto(Base64Utils.base64Encode(hashList.get(0)), key);
+    }
+
+    public HashDto createHash(byte[] content, Certificate[] chain,
+                                                                   JSONObject signature_info, JSONObject visible_signature, String signField, String hashAlg, Date signDate) throws Exception {
         // Tạo thư mục tạm
         Files.createTempDir();
 
@@ -69,7 +101,7 @@ public class SignPDFPlugin {
         String tmpFilePath = getTempFolder() + key + ".pdf";
 
         List<byte[]> hashList = signPDFLib.createHash(content, tmpFilePath, chain, signature_info, visible_signature, signDate, signField);
-        byte[] hash = (byte[])hashList.get(1);
+        byte[] hash = (byte[]) hashList.get(1);
 
         // Chứng thư ký
         byte[] certificate_chain = convertToBytes(chain);
@@ -85,7 +117,7 @@ public class SignPDFPlugin {
         try (PrintWriter out = new PrintWriter(tmpJSONPath)) {
             out.println(jsonString);
         }
-        return new SignPDFRequest(Base64Utils.base64Encode(hashList.get(0)), key);
+        return new HashDto(Base64Utils.base64Encode(hashList.get(0)), key);
     }
 
     public void insertSignature(String key, byte[] externalSig, String signField, String outFile) throws Exception {
@@ -117,7 +149,7 @@ public class SignPDFPlugin {
 
     private String getTempFolder() {
         String tempDir = System.getProperty("java.io.tmpdir");
-        return tempDir;
+        return tempDir + "/";
     }
 
     private void removeAllTemplateFile(String key) {

@@ -1,47 +1,13 @@
 package vn.easyca.signserver.core.sign.integrated.pdf;
 
-
-import com.itextpdf.text.BaseColor;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.*;
 import com.itextpdf.text.io.RASInputStream;
 import com.itextpdf.text.io.RandomAccessSource;
 import com.itextpdf.text.io.RandomAccessSourceFactory;
 import com.itextpdf.text.io.StreamUtil;
-import com.itextpdf.text.pdf.AcroFields;
-import com.itextpdf.text.pdf.BaseFont;
-import com.itextpdf.text.pdf.ByteBuffer;
-import com.itextpdf.text.pdf.PdfArray;
-import com.itextpdf.text.pdf.PdfDictionary;
-import com.itextpdf.text.pdf.PdfName;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.PdfSignatureAppearance;
-import com.itextpdf.text.pdf.PdfStamper;
-import com.itextpdf.text.pdf.RandomAccessFileOrArray;
-import com.itextpdf.text.pdf.security.BouncyCastleDigest;
-import com.itextpdf.text.pdf.security.DigestAlgorithms;
-import com.itextpdf.text.pdf.security.ExternalBlankSignatureContainer;
-import com.itextpdf.text.pdf.security.ExternalSignatureContainer;
-import com.itextpdf.text.pdf.security.MakeSignature;
+import com.itextpdf.text.pdf.*;
+import com.itextpdf.text.pdf.security.*;
 import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
-import com.itextpdf.text.pdf.security.PdfPKCS7;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.Principal;
-import java.security.Security;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.BCStyle;
@@ -52,19 +18,40 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vn.easyca.signserver.core.sign.utils.DatetimeUtils;
+import vn.easyca.signserver.core.sign.utils.StringUtils;
+
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.Security;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 public class SignPDFLib {
     private final Logger LOGGER = LoggerFactory.getLogger(SignPDFLib.class);
     private String hashAlg = "SHA1";
-    private final String CRYPT_ALG = "RSA";
-    private final int ESTIMATED_EXTERNAL_SIGNATURE_SIZE = 8192;
+    private PartyMode partyMode = PartyMode.CRM_CONTRACT;
 
     public void setHashAlg(String hashAlg) {
         this.hashAlg = hashAlg;
     }
 
-    public List<byte[]> createHash(byte[] content, String tempFile, Certificate[] chain, JSONObject signature_info, JSONObject visible_signature, Date signDate, String signField)
-            throws Exception {
+    public SignPDFLib() {
+    }
+
+    public SignPDFLib(String hashAlg, PartyMode partyMode) {
+        this.hashAlg = hashAlg;
+        this.partyMode = partyMode;
+    }
+
+    public List<byte[]> createHash(byte[] content, String tempFile, Certificate[] chain, JSONObject signature_info,
+                                   JSONObject visible_signature, Date signDate, String signField) throws Exception {
         String reason = "";
         if (signature_info.has("reason")) {
             reason = signature_info.getString("reason");
@@ -104,7 +91,34 @@ public class SignPDFLib {
         if ((pageNum < 1) || (visibleX < 0) || (visibleY < 0) || (visibleWidth < 0) || (visibleHeight < 0)) {
             throw new Exception("Dữ liệu định dạng khung ký sai.");
         }
+
         emptySignature(content, tempFile, signField, (X509Certificate) chain[0], reason, location, signerLabel, signDateLabel,
+                pageNum, visibleWidth, visibleHeight, visibleX, visibleY, signDate);
+
+        return preSign(tempFile, signField, chain, signDate);
+    }
+
+    public List<byte[]> createHash(SignPDFDto dto, String tempFile) throws Exception {
+        this.partyMode = dto.getPartyMode();
+        this.hashAlg = StringUtils.isNullOrEmpty(dto.getHashAlg()) ? this.hashAlg : dto.getHashAlg();
+        String reason = dto.getReason();
+        String location = dto.getLocation();
+        String signerLabel = dto.getSignerLabel();
+        String signDateLabel = dto.getSignDateLabel();
+        int pageNum = dto.getPageNumber();
+        int visibleX = dto.getVisibleX();
+        int visibleY = dto.getVisibleY();
+        int visibleWidth = dto.getVisibleWidth();
+        int visibleHeight = dto.getVisibleHeight();
+        String signField = dto.getSignField();
+        Date signDate = dto.getSignDate() == null ? new Date() : dto.getSignDate();
+        Certificate[] chain = dto.getChain();
+
+        if ((pageNum < 1) || (visibleX < 0) || (visibleY < 0) || (visibleWidth < 0) || (visibleHeight < 0)) {
+            throw new Exception("Dữ liệu định dạng khung ký sai.");
+        }
+
+        emptySignature(dto.getContent(), tempFile, signField, (X509Certificate) chain[0], reason, location, signerLabel, signDateLabel,
                 pageNum, visibleWidth, visibleHeight, visibleX, visibleY, signDate);
 
         return preSign(tempFile, signField, chain, signDate);
@@ -138,9 +152,7 @@ public class SignPDFLib {
         BouncyCastleDigest digest = new BouncyCastleDigest();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, hashAlgorithm, null, digest, false);
         sgn.setExternalDigest(extSignature, null, "RSA");
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(signDate);
-        byte[] signedContent = sgn.getEncodedPKCS7(hash, getSigningDate(signDate), null, null, null, MakeSignature.CryptoStandard.CMS);
+        byte[] signedContent = sgn.getEncodedPKCS7(hash, getSigningDate(signDate), null, null, null, CryptoStandard.CMS);
         int spaceAvailable = (int) (gaps[2] - gaps[1]) - 2;
         if ((spaceAvailable & 0x1) != 0) {
             this.LOGGER.error("InsertSig: Gap is not a multiple of 2");
@@ -185,14 +197,36 @@ public class SignPDFLib {
         appearance.setVisibleSignature(new Rectangle(visibleX, visibleY, visibleX + visibleWidth, visibleY + visibleHeight), pageNum, fieldName);
         BaseFont signatureBaseFont = BaseFont.createFont(getFontURLFromResource(), "Identity-H", false);
         float fontSize = 10.0F;
+
         Font regularFont = new Font(signatureBaseFont, fontSize);
         regularFont.setColor(new BaseColor(255, 0, 0));
         appearance.setLayer2Font(regularFont);
         String cnName = getCN(cert);
         String addtional = "";
+        String layer2Text = "";
+        if (this.partyMode == PartyMode.CRM_CONTRACT) {
+            layer2Text = signerLabel + ": " + cnName + "\n" + signDateLabel + ": " +
+                    DatetimeUtils.convertDateToString(signDate, "DD/MM/YYYY") + addtional;
+        }
 
-        appearance.setLayer2Text(signerLabel + ": " + cnName + "\n" + signDateLabel + ": " +
-                DatetimeUtils.convertDateToString(signDate, "DD/MM/YYYY") + addtional);
+        if (this.partyMode == PartyMode.CA_ATTACHMENT) {
+            layer2Text = reason + "\n\n" + signerLabel + "\n" + signDateLabel + ": " +
+                    DatetimeUtils.convertDateToString(signDate, "DD/MM/YYYY") + addtional;
+        }
+
+        float MARGIN = 5;
+        Rectangle dataRec = new Rectangle(MARGIN, MARGIN, appearance.getRect().getWidth(), appearance.getRect().getHeight());
+        ColumnText ct = new ColumnText(appearance.getLayer(2));
+        ct.setRunDirection(appearance.getRunDirection());
+        ct.setSimpleColumn(new Phrase(layer2Text, regularFont), dataRec.getLeft(), dataRec.getBottom(), dataRec.getRight(), dataRec.getTop(), fontSize, Element.ALIGN_LEFT);
+        ct.go();
+
+        PdfTemplate layer20 = appearance.getLayer(2);
+        Rectangle rectangle = appearance.getRect();
+        layer20.setLineWidth(1);
+        layer20.setRGBColorStroke(255, 0, 0);
+        layer20.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
+        layer20.stroke();
 
         ExternalSignatureContainer external = new ExternalBlankSignatureContainer(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
         MakeSignature.signExternalContainer(appearance, external, 8192);
@@ -203,15 +237,6 @@ public class SignPDFLib {
     }
 
     private String getCN(X509Certificate cert) throws Exception {
-//        String DN = cert.getSubjectDN().getName();
-//        String[] nameArr = DN.split(",");
-//        for (String name : nameArr) {
-//            name = name.trim();
-//            if (name.toLowerCase().indexOf("cn") == 0) {
-//                return name.substring(name.indexOf("=") + 1);
-//            }
-//        }
-//        return DN;
         X500Name x500name = new JcaX509CertificateHolder(cert).getSubject();
         RDN cn = x500name.getRDNs(BCStyle.CN)[0];
 
@@ -239,9 +264,7 @@ public class SignPDFLib {
         BouncyCastleDigest digest = new BouncyCastleDigest();
         PdfPKCS7 sgn = new PdfPKCS7(null, chain, this.hashAlg, null, digest, false);
         byte[] hash = DigestAlgorithms.digest(rg, digest.getMessageDigest(this.hashAlg));
-//        Calendar cal = Calendar.getInstance();
-//        cal.setTime(signDate);
-        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, getSigningDate(signDate), null, null, MakeSignature.CryptoStandard.CMS);
+        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, getSigningDate(signDate), null, null, CryptoStandard.CMS);
 
         byte[] toSign = MessageDigest.getInstance("SHA-1").digest(sh);
 
@@ -250,7 +273,7 @@ public class SignPDFLib {
         return result;
     }
 
-    private Calendar getSigningDate(Date date) throws Exception {
+    private Calendar getSigningDate(Date date) {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         String timezoneSinging = "Asia/Bangkok";
         String signTime = dateFormat.format(date);
