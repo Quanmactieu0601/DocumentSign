@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.dto;
+package vn.easyca.signserver.webapp.service.dto.response;
 
 import lombok.Getter;
 

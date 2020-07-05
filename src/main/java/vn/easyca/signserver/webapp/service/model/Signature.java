@@ -4,9 +4,11 @@ import lombok.Getter;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -29,6 +31,7 @@ public class Signature {
     private CryptoToken cryptoToken;
 
     public Signature(Certificate certificateDomain, String pin) throws Exception {
+
 
         this.certificateDomain = certificateDomain;
         this.pin = pin;
@@ -73,4 +76,7 @@ public class Signature {
         return Base64.getEncoder().encodeToString(getX509Certificates()[0].getEncoded());
     }
 
+    public PublicKey getPublicKey() throws Exception {
+        return cryptoToken.getPublicKey(certificateDomain.getAlias());
+    }
 }

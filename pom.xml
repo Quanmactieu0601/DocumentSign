@@ -155,7 +155,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.cache</groupId>
+            <groupId>javax.cache</groupId>m
             <artifactId>cache-api</artifactId>
         </dependency>
         <dependency>

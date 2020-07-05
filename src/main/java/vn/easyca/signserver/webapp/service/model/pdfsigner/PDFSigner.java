@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
-import vn.easyca.signserver.webapp.service.dto.PDFSignRequest;
+import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
 import vn.easyca.signserver.webapp.service.model.Signature;
 
 import java.io.File;
@@ -25,7 +25,7 @@ public class PDFSigner {
 
     private PDFSignatureVisibility visibility = new PDFSignatureVisibility();
 
-    public byte[] signPDF(PDFSignRequest request) throws Exception {
+    public byte[] signPDF(SignPDFRequest request) throws Exception {
 
         initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
