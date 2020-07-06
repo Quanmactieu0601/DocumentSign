@@ -1,10 +1,5 @@
 package vn.easyca.signserver.webapp.service.dto.response;
 
-import lombok.Getter;
-
-import java.util.Base64;
-
-@Getter
 public class SignHashResponse {
 
 
@@ -14,6 +9,22 @@ public class SignHashResponse {
 
     public SignHashResponse(String signatureValue, String certificate) {
         this.signatureValue = signatureValue;
+        this.certificate = certificate;
+    }
+
+    public String getSignatureValue() {
+        return signatureValue;
+    }
+
+    public void setSignatureValue(String signatureValue) {
+        this.signatureValue = signatureValue;
+    }
+
+    public String getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(String certificate) {
         this.certificate = certificate;
     }
 }

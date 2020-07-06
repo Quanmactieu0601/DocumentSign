@@ -1,10 +1,4 @@
 package vn.easyca.signserver.webapp.web.rest.vm.response;
-
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
 public class SignResponseVM {
 
     private int status;
@@ -16,7 +10,19 @@ public class SignResponseVM {
         this.data = data;
     }
 
+    public int getStatus() {
+        return status;
+    }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
+    public Object getData() {
+        return data;
+    }
 
+    public void setData(Object data) {
+        this.data = data;
+    }
 }

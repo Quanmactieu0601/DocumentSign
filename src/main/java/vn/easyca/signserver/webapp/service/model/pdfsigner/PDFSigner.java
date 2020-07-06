@@ -1,8 +1,4 @@
 package vn.easyca.signserver.webapp.service.model.pdfsigner;
-
-
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFDto;
@@ -14,18 +10,17 @@ import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
 import java.io.File;
 import java.io.FileInputStream;
 
-@RequiredArgsConstructor
+
 public class PDFSigner {
 
-    @NonNull
     private CryptoTokenProxy cryptoTokenProxy;
 
-    @NonNull
     private String cacheDir;
 
-    private PDFSignatureInfo signatureInfo = new PDFSignatureInfo();
-
-    private PDFSignatureVisibility visibility = new PDFSignatureVisibility();
+    public PDFSigner(CryptoTokenProxy cryptoTokenProxy, String cacheDir) {
+        this.cryptoTokenProxy = cryptoTokenProxy;
+        this.cacheDir = cacheDir;
+    }
 
     public byte[] signPDF(SignPDFRequest request) throws Exception {
 
@@ -62,13 +57,4 @@ public class PDFSigner {
         if (!file.exists())
             file.mkdir();
     }
-
-    public PDFSignatureInfo getSignatureInfo() {
-        return signatureInfo;
-    }
-
-    public PDFSignatureVisibility getVisibility() {
-        return visibility;
-    }
-
 }

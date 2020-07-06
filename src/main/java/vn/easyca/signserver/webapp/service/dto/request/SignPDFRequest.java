@@ -48,7 +48,7 @@ public class SignPDFRequest extends SignRequestDto {
 
         private int visibleWidth = 150;
 
-        private int visibleHeight = 100;
+        private int visibleHeight = 50;
 
         public int getVisibleX() {
             return visibleX;

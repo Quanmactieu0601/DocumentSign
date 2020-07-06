@@ -1,17 +1,11 @@
 package vn.easyca.signserver.webapp.service.model;
 
-import lombok.Getter;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
-
-import javax.xml.crypto.dsig.keyinfo.KeyInfo;
-import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
@@ -19,7 +13,6 @@ import java.util.Date;
 public class CryptoTokenProxy {
 
 
-    @Getter
     private final Certificate certificateDomain;
 
     private PrivateKey privateKey;
@@ -73,5 +66,9 @@ public class CryptoTokenProxy {
     public PublicKey getPublicKey() {
 
         return publicKey;
+    }
+
+    public Certificate getCertificateDomain() {
+        return certificateDomain;
     }
 }
