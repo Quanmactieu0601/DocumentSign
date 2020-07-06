@@ -16,26 +16,29 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 
-public class Signature {
+public class CryptoTokenProxy {
 
 
     @Getter
     private final Certificate certificateDomain;
 
-    private X509Certificate x509Certificate;
-
     private PrivateKey privateKey;
+
+    private PublicKey publicKey;
 
     private String pin;
 
     private CryptoToken cryptoToken;
 
-    public Signature(Certificate certificateDomain, String pin) throws Exception {
+    private X509Certificate certificate;
 
+    public CryptoTokenProxy(Certificate certificateDomain, String pin) throws Exception {
 
         this.certificateDomain = certificateDomain;
         this.pin = pin;
-        cryptoToken = CryptoTokenFactory.create(certificateDomain,pin);
+        cryptoToken = CryptoTokenFactory.create(certificateDomain, pin);
+        privateKey = cryptoToken.getPrivateKey(certificateDomain.getAlias());
+        publicKey = cryptoToken.getPublicKey(certificateDomain.getAlias());
     }
 
 
@@ -45,30 +48,21 @@ public class Signature {
         return certificates;
     }
 
-    public PrivateKey getPrivateKey() throws Exception {
+    public PrivateKey getPrivateKey() {
 
-        if (privateKey == null) {
-            privateKey = cryptoToken.getPrivateKey(certificateDomain.getAlias());
-        }
         return privateKey;
     }
 
-    public String getHashAlgorithm() {
-        return "SHA1";
-    }
+    public boolean hasEfficiency(Date usedDate) {
 
-    // business logic
-    public CertificateInfo getCertificateInfo(){
-
-        return null;
-    }
-
-    public boolean hasEfficiency(Date usedDate){
 
         usedDate = usedDate == null ? new Date() : usedDate;
-        CertificateInfo certificateInfo = getCertificateInfo();
-        return usedDate.getTime() >= certificateInfo.getValidFrom().getTime() &&
-               usedDate.getTime() <= certificateInfo.getValidTo().getTime();
+        try {
+            this.certificate.checkValidity(usedDate);
+            return true;
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
     public String getBase64Certificate() throws KeyStoreException, CertificateEncodingException {
@@ -76,7 +70,8 @@ public class Signature {
         return Base64.getEncoder().encodeToString(getX509Certificates()[0].getEncoded());
     }
 
-    public PublicKey getPublicKey() throws Exception {
-        return cryptoToken.getPublicKey(certificateDomain.getAlias());
+    public PublicKey getPublicKey() {
+
+        return publicKey;
     }
 }

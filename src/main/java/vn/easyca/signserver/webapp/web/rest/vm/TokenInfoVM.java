@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm;
 
-public class SignatureInfoVM {
+public class TokenInfoVM {
 
 
     private String serial;

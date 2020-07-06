@@ -1,4 +1,4 @@
 package vn.easyca.signserver.webapp.service.ex.sign;
 
-public class SignHashException {
+public class SignHashException extends Exception{
 }

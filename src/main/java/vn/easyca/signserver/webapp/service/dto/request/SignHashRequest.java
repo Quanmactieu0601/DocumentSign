@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto.request;
 import vn.easyca.signserver.webapp.service.dto.SignRequestDto;
+import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
+import vn.easyca.signserver.webapp.web.rest.vm.TokenInfoVM;
 
 import java.util.Base64;
 
@@ -10,7 +12,8 @@ public class SignHashRequest extends SignRequestDto {
 
     private String hashAlgorithm;
 
-    public SignHashRequest(String base64Hash, String hashAlgorithm) {
+    public SignHashRequest(TokenInfoDto tokenInfoDto,String signer, String base64Hash, String hashAlgorithm) {
+        super(tokenInfoDto,signer);
         this.base64Hash = base64Hash;
         this.hashAlgorithm = hashAlgorithm;
     }

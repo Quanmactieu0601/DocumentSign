@@ -3,22 +3,24 @@ package vn.easyca.signserver.core.sign.integrated.xml;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 public class SignXMLDto {
 
     private String xml;
 
-    private String nameTagContent;
-
     private PrivateKey privateKey;
 
     private PublicKey publicKey;
 
-    public SignXMLDto(String xml, String nameTagContent, PrivateKey privateKey, PublicKey publicKey) {
+    private X509Certificate x509Certificate;
+
+
+    public SignXMLDto(String xml, PrivateKey privateKey, PublicKey publicKey, X509Certificate certificate) {
         this.xml = xml;
-        this.nameTagContent = nameTagContent;
         this.privateKey = privateKey;
         this.publicKey = publicKey;
+        this.x509Certificate = certificate;
     }
 
     public String getXml() {
@@ -37,15 +39,11 @@ public class SignXMLDto {
         this.privateKey = privateKey;
     }
 
-    public String getNameTagContent() {
-        return nameTagContent;
-    }
-
-    public void setNameTagContent(String nameTagContent) {
-        this.nameTagContent = nameTagContent;
-    }
-
     public PublicKey getPublicKey() {
         return publicKey;
+    }
+
+    public X509Certificate getX509Certificate() {
+        return x509Certificate;
     }
 }

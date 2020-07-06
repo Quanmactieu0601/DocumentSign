@@ -49,83 +49,65 @@ public class SignPDFLib {
         this.hashAlg = hashAlg;
         this.partyMode = partyMode;
     }
-
-    public List<byte[]> createHash(byte[] content, String tempFile, Certificate[] chain, JSONObject signature_info,
-                                   JSONObject visible_signature, Date signDate, String signField) throws Exception {
-        String reason = "";
-        if (signature_info.has("reason")) {
-            reason = signature_info.getString("reason");
-        }
-        String location = "";
-        if (signature_info.has("location")) {
-            location = signature_info.getString("location");
-        }
-        String signerLabel = "Ký bởi";
-        if (signature_info.has("signerLabel")) {
-            signerLabel = signature_info.getString("signerLabel");
-        }
-        String signDateLabel = "Ký ngày";
-        if (signature_info.has("signDateLabel")) {
-            signDateLabel = signature_info.getString("signDateLabel");
-        }
-        int pageNum = 11;
-        if (visible_signature.has("pageNum")) {
-            pageNum = ((Integer) visible_signature.get("pageNum")).intValue();
-        }
-        int visibleX = 0;
-        if (visible_signature.has("visibleX")) {
-            visibleX = ((Integer) visible_signature.get("visibleX")).intValue();
-        }
-        int visibleY = 0;
-        if (visible_signature.has("visibleY")) {
-            visibleY = ((Integer) visible_signature.get("visibleY")).intValue();
-        }
-        int visibleWidth = 150;
-        if (visible_signature.has("visibleWidth")) {
-            visibleWidth = ((Integer) visible_signature.get("visibleWidth")).intValue();
-        }
-        int visibleHeight = 50;
-        if (visible_signature.has("visibleHeight")) {
-            visibleHeight = ((Integer) visible_signature.get("visibleHeight")).intValue();
-        }
-        if ((pageNum < 1) || (visibleX < 0) || (visibleY < 0) || (visibleWidth < 0) || (visibleHeight < 0)) {
-            throw new Exception("Dữ liệu định dạng khung ký sai.");
-        }
-
-        emptySignature(content, tempFile, signField, (X509Certificate) chain[0], reason, location, signerLabel, signDateLabel,
-                pageNum, visibleWidth, visibleHeight, visibleX, visibleY, signDate);
-
-        return preSign(tempFile, signField, chain, signDate);
-    }
-
+//    public List<byte[]> createHash(byte[] content, String tempFile, Certificate[] chain, JSONObject signature_info,
+//                                   JSONObject visible_signature, Date signDate, String signField) throws Exception {
+//
+//        SignPDFDto signPDFDto = SignPDFDto.build(partyMode,content,null,chain,tempFile);
+//        if (signature_info.has("reason")) {
+//            si signature_info.getString("reason");
+//        }
+//        String location = "";
+//        if (signature_info.has("location")) {
+//            location = signature_info.getString("location");
+//        }
+//        String signerLabel = "Ký bởi";
+//        if (signature_info.has("signerLabel")) {
+//            signerLabel = signature_info.getString("signerLabel");
+//        }
+//        String signDateLabel = "Ký ngày";
+//        if (signature_info.has("signDateLabel")) {
+//            signDateLabel = signature_info.getString("signDateLabel");
+//        }
+//        int pageNum = 11;
+//        if (visible_signature.has("pageNum")) {
+//            pageNum = ((Integer) visible_signature.get("pageNum")).intValue();
+//        }
+//        int visibleX = 0;
+//        if (visible_signature.has("visibleX")) {
+//            visibleX = ((Integer) visible_signature.get("visibleX")).intValue();
+//        }
+//        int visibleY = 0;
+//        if (visible_signature.has("visibleY")) {
+//            visibleY = ((Integer) visible_signature.get("visibleY")).intValue();
+//        }
+//        int visibleWidth = 150;
+//        if (visible_signature.has("visibleWidth")) {
+//            visibleWidth = ((Integer) visible_signature.get("visibleWidth")).intValue();
+//        }
+//        int visibleHeight = 50;
+//        if (visible_signature.has("visibleHeight")) {
+//            visibleHeight = ((Integer) visible_signature.get("visibleHeight")).intValue();
+//        }
+//        if ((pageNum < 1) || (visibleX < 0) || (visibleY < 0) || (visibleWidth < 0) || (visibleHeight < 0)) {
+//            throw new Exception("Dữ liệu định dạng khung ký sai.");
+//        }
+//        signPDFDto.setPageNumber(pageNum);
+//        signPDFDto.setLocation();
+//        emptySignature(signPDFDto);
+//
+//        return preSign(tempFile, signField, chain, signDate);
+//    }
+//
     public List<byte[]> createHash(SignPDFDto dto, String tempFile) throws Exception {
         this.partyMode = dto.getPartyMode();
         this.hashAlg = StringUtils.isNullOrEmpty(dto.getHashAlg()) ? this.hashAlg : dto.getHashAlg();
-        String reason = dto.getReason();
-        String location = dto.getLocation();
-        String signerLabel = dto.getSignerLabel();
-        String signDateLabel = dto.getSignDateLabel();
-        int pageNum = dto.getPageNumber();
-        int visibleX = dto.getVisibleX();
-        int visibleY = dto.getVisibleY();
-        int visibleWidth = dto.getVisibleWidth();
-        int visibleHeight = dto.getVisibleHeight();
-        String signField = dto.getSignField();
-        Date signDate = dto.getSignDate() == null ? new Date() : dto.getSignDate();
-        Certificate[] chain = dto.getChain();
-
-        if ((pageNum < 1) || (visibleX < 0) || (visibleY < 0) || (visibleWidth < 0) || (visibleHeight < 0)) {
-            throw new Exception("Dữ liệu định dạng khung ký sai.");
-        }
-
-        emptySignature(dto.getContent(), tempFile, signField, (X509Certificate) chain[0], reason, location, signerLabel, signDateLabel,
-                pageNum, visibleWidth, visibleHeight, visibleX, visibleY, signDate);
-
-        return preSign(tempFile, signField, chain, signDate);
+        validDTO(dto);
+        emptySignature(dto,tempFile);
+        return preSign(tempFile,dto.getSignField(),dto.getChain(),dto.getSignDate());
     }
 
     public void insertSignature(String src, String dest, byte[] hash, byte[] extSignature, Certificate[] chain, Date signDate, String signField)
-            throws Exception {
+        throws Exception {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
         PdfReader reader = new PdfReader(src);
@@ -183,35 +165,38 @@ public class SignPDFLib {
         return classLoader.getResource("times.ttf").toString();
     }
 
-    private void emptySignature(byte[] content, String dest, String fieldName, X509Certificate cert,
-                                String reason, String location, String signerLabel, String signDateLabel,
-                                int pageNum, int visibleWidth, int visibleHeight, int visibleX, int visibleY, Date signDate) throws Exception {
+    private void emptySignature(SignPDFDto signDTO,String tempFile) throws Exception {
         BouncyCastleProvider providerBC = new BouncyCastleProvider();
         Security.addProvider(providerBC);
         PdfReader.unethicalreading = true;
-        PdfReader reader = new PdfReader(content);
-        FileOutputStream os = new FileOutputStream(dest);
+        PdfReader reader = new PdfReader(signDTO.getContent());
+        FileOutputStream os = new FileOutputStream(tempFile);
         PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
         PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
-        appearance.setSignDate(getSigningDate(signDate));
-        appearance.setVisibleSignature(new Rectangle(visibleX, visibleY, visibleX + visibleWidth, visibleY + visibleHeight), pageNum, fieldName);
+        appearance.setSignDate(getSigningDate(signDTO.getSignDate()));
+        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleWidth());
+        appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
         BaseFont signatureBaseFont = BaseFont.createFont(getFontURLFromResource(), "Identity-H", false);
         float fontSize = 10.0F;
-
         Font regularFont = new Font(signatureBaseFont, fontSize);
         regularFont.setColor(new BaseColor(255, 0, 0));
         appearance.setLayer2Font(regularFont);
-        String cnName = getCN(cert);
+        String cnName = getCN((X509Certificate) signDTO.getFirstCert());
         String addtional = "";
         String layer2Text = "";
         if (this.partyMode == PartyMode.CRM_CONTRACT) {
-            layer2Text = signerLabel + ": " + cnName + "\n" + signDateLabel + ": " +
-                    DatetimeUtils.convertDateToString(signDate, "DD/MM/YYYY") + addtional;
+            layer2Text = signDTO.getSignerLabel() + ": " + cnName + "\n" + signDTO.getSignDateLabel() + ": " +
+                DatetimeUtils.convertDateToString(signDTO.getSignDate(), "DD/MM/YYYY") + addtional;
         }
 
         if (this.partyMode == PartyMode.CA_ATTACHMENT) {
-            layer2Text = reason + "\n\n" + signerLabel + "\n" + signDateLabel + ": " +
-                    DatetimeUtils.convertDateToString(signDate, "DD/MM/YYYY") + addtional;
+            layer2Text = signDTO.getReason() + "\n\n" + signDTO.getSignerLabel() + "\n" + signDTO.getSignDateLabel() + ": " +
+                DatetimeUtils.convertDateToString(signDTO.getSignDate(), "DD/MM/YYYY") + addtional;
+        }
+        if (this.partyMode == PartyMode.SIGN_SERVER) {
+            String signer =  StringUtils.isNullOrEmpty(signDTO.getSigner()) ? cnName : signDTO.getSigner();
+            layer2Text = signDTO.getReason() + "\n\n" + signDTO.getSignerLabel()+ ": " + signer + "\n" +  signDTO.getSignDateLabel() + ": " +
+                DatetimeUtils.convertDateToString(signDTO.getSignDate(), "DD/MM/YYYY") + addtional;
         }
 
         float MARGIN = 5;
@@ -222,7 +207,7 @@ public class SignPDFLib {
         ct.go();
 
         PdfTemplate layer20 = appearance.getLayer(2);
-        Rectangle rectangle = appearance.getRect();
+        rectangle = appearance.getRect();
         layer20.setLineWidth(1);
         layer20.setRGBColorStroke(255, 0, 0);
         layer20.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
@@ -244,7 +229,7 @@ public class SignPDFLib {
     }
 
     private List<byte[]> preSign(String src, String fieldName, Certificate[] chain, Date signDate)
-            throws Exception {
+        throws Exception {
         List<byte[]> result = new ArrayList();
         PdfReader reader = new PdfReader(src);
         AcroFields af = reader.getAcroFields();
@@ -278,5 +263,14 @@ public class SignPDFLib {
         String timezoneSinging = "Asia/Bangkok";
         String signTime = dateFormat.format(date);
         return DatetimeUtils.convertStringToDate(signTime, "DD/MM/YYYY HH:MI:SS", timezoneSinging);
+    }
+
+    private void validDTO(SignPDFDto dto) throws Exception {
+
+        if ((dto.getPageNumber() < 1) ||
+            (dto.getVisibleX() < 0) || (dto.getVisibleY() < 0) ||
+            (dto.getVisibleWidth() < 0) || (dto.getVisibleHeight() < 0))
+            throw new Exception("Dữ liệu định dạng khung ký sai.");
+
     }
 }

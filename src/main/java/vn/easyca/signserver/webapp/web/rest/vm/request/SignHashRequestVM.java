@@ -1,8 +1,4 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.webapp.web.rest.vm.SignatureInfoVM;
 
 public class SignHashRequestVM extends BaseSignRequestVM{
 

@@ -1,20 +1,16 @@
 package vn.easyca.signserver.webapp.service.dto.request;
 
-public class SignXMLRequest {
+import vn.easyca.signserver.webapp.service.dto.SignRequestDto;
+import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
+
+public class SignXMLRequest extends SignRequestDto {
 
     private final String xml;
 
-    private final String contentTag;
-
-    public SignXMLRequest(String xml, String contentId) {
+    public SignXMLRequest(TokenInfoDto tokenInfoDto, String signer, String xml) {
+        super(tokenInfoDto, signer);
         this.xml = xml;
-        this.contentTag = contentId;
     }
-
-    public String getContentTag() {
-        return contentTag;
-    }
-
     public String getXml() {
         return xml;
     }

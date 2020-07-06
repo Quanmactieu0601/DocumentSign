@@ -1,4 +1,5 @@
 package vn.easyca.signserver.core.sign.integrated.pdf;
+
 import vn.easyca.signserver.core.sign.utils.StringUtils;
 
 import java.security.PrivateKey;
@@ -6,16 +7,17 @@ import java.security.cert.Certificate;
 import java.util.Date;
 
 public class SignPDFDto {
+
     private PartyMode partyMode;
     private String hashAlg;
     private byte[] content;
     private PrivateKey key;
     private Certificate[] chain;
     private String location;
-    private String reason;
-    private String signerLabel;
-    private String signer;
-    private String signDateLabel;
+    private String reason = "";
+    private String signerLabel = "Ký bởi";
+    private String signer = "";
+    private String signDateLabel = "Ký ngày";
     private int pageNumber = 1;
     private int visibleX = 0;
     private int visibleY = 0;
@@ -119,6 +121,9 @@ public class SignPDFDto {
         return chain;
     }
 
+    public Certificate getFirstCert() {
+        return getChain()[0];
+    }
 
     public String getLocation() {
         return location;
@@ -165,7 +170,7 @@ public class SignPDFDto {
     }
 
     public Date getSignDate() {
-        return signDate;
+        return signDate == null ? new Date() : signDate;
     }
 
     public String getOutPath() {

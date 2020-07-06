@@ -1,21 +1,26 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 
-import vn.easyca.signserver.webapp.web.rest.vm.SignatureInfoVM;
+import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
+import vn.easyca.signserver.webapp.web.rest.vm.SigningOptionalVM;
+import vn.easyca.signserver.webapp.web.rest.vm.TokenInfoVM;
 
 public class BaseSignRequestVM {
 
-    private SignatureInfoVM signatureInfo;
+    private TokenInfoVM signatureInfo;
 
     private String signer;
 
     private String signDate;
 
-    public SignatureInfoVM getSignatureInfo() {
+    private SigningOptionalVM optionalVM;
+
+
+    public TokenInfoVM getSignatureInfo() {
         return signatureInfo;
     }
 
-    public void setSignatureInfo(SignatureInfoVM signatureInfo) {
+    public void setSignatureInfo(TokenInfoVM signatureInfo) {
         this.signatureInfo = signatureInfo;
     }
 
@@ -34,4 +39,14 @@ public class BaseSignRequestVM {
     public void setSignDate(String signDate) {
         this.signDate = signDate;
     }
+
+    public void setOptionalVM(SigningOptionalVM optionalVM) {
+        this.optionalVM = optionalVM;
+    }
+
+    public SigningOptionalVM getOptionalVM() {
+        return optionalVM;
+    }
+
+
 }
