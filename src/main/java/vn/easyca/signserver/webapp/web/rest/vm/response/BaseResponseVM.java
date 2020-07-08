@@ -1,12 +1,22 @@
 package vn.easyca.signserver.webapp.web.rest.vm.response;
-public class SignResponseVM<T> {
+
+public class BaseResponseVM<T> {
 
     private int status;
 
     private T data;
 
-    public SignResponseVM(int status, T data) {
+    public BaseResponseVM(int status, T data) {
         this.status = status;
+        this.data = data;
+    }
+
+    public BaseResponseVM(T data) {
+    }
+    public BaseResponseVM() {
+    }
+
+    public void setData(T data) {
         this.data = data;
     }
 
@@ -18,11 +28,8 @@ public class SignResponseVM<T> {
         this.status = status;
     }
 
-    public Object getData() {
+    public T getData() {
         return data;
     }
 
-    public void setData(T data) {
-        this.data = data;
-    }
 }

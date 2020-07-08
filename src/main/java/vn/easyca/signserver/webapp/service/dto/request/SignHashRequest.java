@@ -12,8 +12,8 @@ public class SignHashRequest extends SignRequestDto {
 
     private String hashAlgorithm;
 
-    public SignHashRequest(TokenInfoDto tokenInfoDto,String signer, String base64Hash, String hashAlgorithm) {
-        super(tokenInfoDto,signer);
+    public SignHashRequest(TokenInfoDto tokenInfoDto, String base64Hash, String hashAlgorithm) {
+        super(tokenInfoDto,null);
         this.base64Hash = base64Hash;
         this.hashAlgorithm = hashAlgorithm;
     }

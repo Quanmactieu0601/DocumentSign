@@ -1,32 +1,28 @@
-package vn.easyca.signserver.webapp.service;
+package vn.easyca.signserver.webapp.service.certificate;
 
-import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.service.dto.RegisterCertificateDto;
+import vn.easyca.signserver.webapp.service.ex.CreateCertificateException;
 
 import java.util.Optional;
 
-/**
- * Service Implementation for managing {@link Certificate}.
- */
-@Service
-@Transactional
 public class CertificateService {
 
-    private final Logger log = LoggerFactory.getLogger(CertificateService.class);
+    protected final Logger log = LoggerFactory.getLogger(Certificate.class);
 
-    private final CertificateRepository certificateRepository;
+    protected final CertificateRepository certificateRepository;
 
 
-    public CertificateService(CertificateRepository certificateRepository) {
+    CertificateService(CertificateRepository certificateRepository) {
         this.certificateRepository = certificateRepository;
     }
+
 
     /**
      * Save a certificate.
@@ -36,6 +32,11 @@ public class CertificateService {
      */
     public Certificate save(Certificate certificate) {
         log.debug("Request to save Certificate : {}", certificate);
+        Certificate existCert = certificateRepository.getCertificateBySerial(certificate.getSerial());
+        if (existCert != null) {
+            certificate.isExtensionCert(existCert);
+            certificateRepository.delete(existCert);
+        }
         return certificateRepository.save(certificate);
     }
 
@@ -64,6 +65,10 @@ public class CertificateService {
         return certificateRepository.findById(id);
     }
 
+    public Certificate findBySerial(String serial) {
+        return certificateRepository.getCertificateBySerial(serial);
+    }
+
     /**
      * Delete the certificate by id.
      *
@@ -72,5 +77,12 @@ public class CertificateService {
     public void delete(Long id) {
         log.debug("Request to delete Certificate : {}", id);
         certificateRepository.deleteById(id);
+    }
+
+    public Certificate createInstance(RegisterCertificateDto dto) throws NotImplementedException, CreateCertificateException {
+        throw new NotImplementedException();
+    }
+
+    public static class NotImplementedException extends Exception {
     }
 }

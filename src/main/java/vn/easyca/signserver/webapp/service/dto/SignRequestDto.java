@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import vn.easyca.signserver.webapp.service.model.SignConfig;
+
 import java.util.Date;
 
 public class SignRequestDto {
@@ -10,6 +12,8 @@ public class SignRequestDto {
 
     private Date signDate = new Date();
 
+    private SignConfig signConfig = new SignConfig();
+
     public SignRequestDto(TokenInfoDto tokenInfoDto, String signer) {
         this.tokenInfoDto = tokenInfoDto;
         this.signer = signer;
@@ -17,6 +21,14 @@ public class SignRequestDto {
 
     public TokenInfoDto getTokenInfoDto() {
         return tokenInfoDto;
+    }
+
+    public SignConfig getSignConfig() {
+        return signConfig;
+    }
+
+    public void setSignConfig(SignConfig signConfig) {
+        this.signConfig = signConfig;
     }
 
     public String getSigner() {

@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.service.model;
 
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
+
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -10,48 +11,49 @@ import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.Date;
 
+/**
+ * instead for token domain.
+ * help connecting to core. manage token's info.
+ */
+
 public class CryptoTokenProxy {
 
 
     private final Certificate certificateDomain;
 
-    private PrivateKey privateKey;
+    private final PrivateKey privateKey;
 
-    private PublicKey publicKey;
+    private final PublicKey publicKey;
 
-    private String pin;
+    private final CryptoToken cryptoToken;
 
-    private CryptoToken cryptoToken;
+    private X509Certificate x509Certificate;
 
-    private X509Certificate certificate;
 
-    public CryptoTokenProxy(Certificate certificateDomain, String pin) throws Exception {
+    public CryptoTokenProxy(CryptoToken cryptoToken, Certificate certificateDomain) throws Exception {
 
         this.certificateDomain = certificateDomain;
-        this.pin = pin;
-        cryptoToken = CryptoTokenFactory.create(certificateDomain, pin);
-        privateKey = cryptoToken.getPrivateKey(certificateDomain.getAlias());
-        publicKey = cryptoToken.getPublicKey(certificateDomain.getAlias());
+        this.cryptoToken = cryptoToken;
+        this.privateKey = cryptoToken.getPrivateKey(certificateDomain.getAlias());
+        this.publicKey = cryptoToken.getPublicKey(certificateDomain.getAlias());
     }
 
 
     public java.security.cert.Certificate[] getX509Certificates() throws KeyStoreException {
         java.security.cert.Certificate[] certificates = new java.security.cert.Certificate[1];
         certificates[0] = cryptoToken.getCertificate(certificateDomain.getAlias());
+        this.x509Certificate = (X509Certificate) certificates[0];
         return certificates;
     }
 
     public PrivateKey getPrivateKey() {
-
         return privateKey;
     }
 
     public boolean hasEfficiency(Date usedDate) {
-
-
         usedDate = usedDate == null ? new Date() : usedDate;
         try {
-            this.certificate.checkValidity(usedDate);
+            this.x509Certificate.checkValidity(usedDate);
             return true;
         } catch (Exception exception) {
             return false;

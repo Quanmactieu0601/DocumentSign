@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.service.dto.*;
 import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
 import vn.easyca.signserver.webapp.service.dto.request.SignHashRequest;
@@ -13,6 +14,7 @@ import vn.easyca.signserver.webapp.service.dto.response.SignHashResponse;
 import vn.easyca.signserver.webapp.service.ex.sign.InitTokenProxyException;
 import vn.easyca.signserver.webapp.service.ex.sign.PDFSignException;
 import vn.easyca.signserver.webapp.service.ex.sign.XmlSignException;
+import vn.easyca.signserver.webapp.service.model.CryptoTokenFactory;
 import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
 import vn.easyca.signserver.webapp.service.model.hashsigner.HashSignResult;
 import vn.easyca.signserver.webapp.service.model.hashsigner.HashSigner;
@@ -30,11 +32,15 @@ public class SignService {
     @Autowired
     private CertificateRepository certificateRepository;
 
+    @Autowired
+    private Encryption encryption;
+
+
     private final String temDir = "./TemFile/";
 
-    public PDFSignResponse signPDFFile(SignPDFRequest request, TokenInfoDto tokenInfoDto) throws InitTokenProxyException, PDFSignException {
+    public PDFSignResponse signPDFFile(SignPDFRequest request) throws InitTokenProxyException, PDFSignException {
 
-        CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(tokenInfoDto);
+        CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(request.getTokenInfoDto());
         PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, temDir);
         try {
             byte[] signedContent = pdfSigner.signPDF(request);
@@ -45,9 +51,9 @@ public class SignService {
         }
     }
 
-    public SignHashResponse signHash(SignHashRequest request, TokenInfoDto tokenInfoDto) throws XmlSignException, InitTokenProxyException {
+    public SignHashResponse signHash(SignHashRequest request) throws XmlSignException, InitTokenProxyException {
 
-        CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(tokenInfoDto);
+        CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(request.getTokenInfoDto());
         try {
             HashSignResult result = new HashSigner(cryptoTokenProxy).signHash(request.getBytes());
             return new SignHashResponse(result.getSignatureValue(), result.getCertificate());
@@ -76,7 +82,10 @@ public class SignService {
         if (certificate == null)
             throw new InitTokenProxyException(String.format("Chứng thư số có serial %s không tồn tại trong hệ ", tokenInfoDto.getSerial()));
         try {
-            return new CryptoTokenProxy(certificate, tokenInfoDto.getPin());
+            CryptoTokenFactory cryptoTokenFactory = new CryptoTokenFactory();
+            CryptoToken cryptoToken = cryptoTokenFactory.resolveToken(certificate,tokenInfoDto.getPin());
+            CryptoTokenProxy cryptoTokenProxy = new CryptoTokenProxy(cryptoToken,certificate);
+            return cryptoTokenProxy;
         } catch (Exception exception) {
             log.error(exception.getMessage());
             throw new InitTokenProxyException(String.format("Chứng thư số có serial %s không tạo được CryptoTokenProxy ", tokenInfoDto.getSerial()));

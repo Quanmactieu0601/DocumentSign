@@ -2,14 +2,16 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import vn.easyca.signserver.webapp.service.model.CertificateInfo;
 
 import javax.persistence.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.Serializable;
+import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -35,8 +37,8 @@ public class Certificate implements Serializable {
     @Column(name = "serial")
     private String serial;
 
-    @Column(name = "owner_taxcode")
-    private String ownerTaxcode;
+    @Column(name = "owner_Id")
+    private String ownerId;
 
     @Column(name = "subject_info")
     private String subjectInfo;
@@ -99,17 +101,13 @@ public class Certificate implements Serializable {
         this.serial = serial;
     }
 
-    public String getOwnerTaxcode() {
-        return ownerTaxcode;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public Certificate ownerTaxcode(String ownerTaxcode) {
-        this.ownerTaxcode = ownerTaxcode;
+    public Certificate setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
         return this;
-    }
-
-    public void setOwnerTaxcode(String ownerTaxcode) {
-        this.ownerTaxcode = ownerTaxcode;
     }
 
     public String getSubjectInfo() {
@@ -163,13 +161,7 @@ public class Certificate implements Serializable {
     public void setRawData(String rawData) {
         this.rawData = rawData;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
-//    public String p12PathFile(){return "/Users/truonglx/p12/HNI_MST_0105987432.p12";};
-//
-//    public String getTokenPin(){return "viettel-ca123";}
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -193,12 +185,55 @@ public class Certificate implements Serializable {
             ", lastUpdate='" + getLastUpdate() + "'" +
             ", tokenType='" + getTokenType() + "'" +
             ", serial='" + getSerial() + "'" +
-            ", ownerTaxcode='" + getOwnerTaxcode() + "'" +
+            ", ownerId='" + getOwnerId() + "'" +
             ", subjectInfo='" + getSubjectInfo() + "'" +
             ", alias='" + getAlias() + "'" +
             ", tokenInfo='" + getTokenInfo() + "'" +
             ", rawData='" + getRawData() + "'" +
             "}";
     }
+
+    @Transient private X509Certificate x509Certificate;
+
+    public X509Certificate getX509Certificate() throws CertificateException {
+        if (x509Certificate != null)
+            return x509Certificate;
+        byte encodedCert[] = Base64.getDecoder().decode(rawData);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(encodedCert);
+        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+        return (X509Certificate) certFactory.generateCertificate(inputStream);
+    }
+
+    public Date getValidFromDate() throws CertificateException, KeyStoreException {
+        return getX509Certificate().getNotBefore();
+    }
+
+    public Date getValidToDate() throws CertificateException, KeyStoreException {
+        return getX509Certificate().getNotAfter();
+    }
+
+    public TokenInfo getCertificateTokenInfo() {
+        return TokenInfo.createInstance(tokenInfo);
+    }
+
+    public void setCertificateTokenInfo(TokenInfo tokenInfo) {
+        this.tokenInfo = tokenInfo.toString();
+    }
+
+    public CertificateType getCertificateType() {
+        return CertificateType.getType(tokenType);
+    }
+
+    public boolean isExtensionCert(Certificate oldCert) {
+
+        try {
+            return serial != null && serial.contentEquals(oldCert.getSerial()) &&
+                   oldCert.getValidToDate().before(this.getValidFromDate());
+        } catch (KeyStoreException | CertificateException e) {
+            return false;
+        }
+
+    }
+
 
 }

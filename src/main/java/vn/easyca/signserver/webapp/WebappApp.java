@@ -62,6 +62,7 @@ public class WebappApp {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
+
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
