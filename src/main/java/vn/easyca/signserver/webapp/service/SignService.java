@@ -25,8 +25,6 @@ import vn.easyca.signserver.webapp.service.model.xmlsigner.XmlSigner;
 
 @Service
 public class SignService {
-
-
     private final Logger log = LoggerFactory.getLogger(SignService.class);
 
     @Autowired
@@ -35,11 +33,9 @@ public class SignService {
     @Autowired
     private Encryption encryption;
 
-
     private final String temDir = "./TemFile/";
 
     public PDFSignResponse signPDFFile(SignPDFRequest request) throws InitTokenProxyException, PDFSignException {
-
         CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(request.getTokenInfoDto());
         PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, temDir);
         try {
@@ -52,7 +48,6 @@ public class SignService {
     }
 
     public SignHashResponse signHash(SignHashRequest request) throws XmlSignException, InitTokenProxyException {
-
         CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(request.getTokenInfoDto());
         try {
             HashSignResult result = new HashSigner(cryptoTokenProxy).signHash(request.getBytes());
@@ -64,7 +59,6 @@ public class SignService {
     }
 
     public String signXML(SignXMLRequest request, TokenInfoDto tokenInfoDto) throws InitTokenProxyException, XmlSignException {
-
         CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(tokenInfoDto);
         XmlSigner xmlSigner = new XmlSigner(cryptoTokenProxy);
         try {
@@ -75,16 +69,14 @@ public class SignService {
         }
     }
 
-
     private CryptoTokenProxy getCryptoTokenProxy(TokenInfoDto tokenInfoDto) throws InitTokenProxyException {
-
         Certificate certificate = certificateRepository.getCertificateBySerial(tokenInfoDto.getSerial());
         if (certificate == null)
             throw new InitTokenProxyException(String.format("Chứng thư số có serial %s không tồn tại trong hệ ", tokenInfoDto.getSerial()));
         try {
             CryptoTokenFactory cryptoTokenFactory = new CryptoTokenFactory();
-            CryptoToken cryptoToken = cryptoTokenFactory.resolveToken(certificate,tokenInfoDto.getPin());
-            CryptoTokenProxy cryptoTokenProxy = new CryptoTokenProxy(cryptoToken,certificate);
+            CryptoToken cryptoToken = cryptoTokenFactory.resolveToken(certificate, tokenInfoDto.getPin());
+            CryptoTokenProxy cryptoTokenProxy = new CryptoTokenProxy(cryptoToken, certificate);
             return cryptoTokenProxy;
         } catch (Exception exception) {
             log.error(exception.getMessage());
