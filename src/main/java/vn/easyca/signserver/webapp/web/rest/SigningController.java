@@ -52,6 +52,7 @@ public class SigningController {
 
     }
 
+    // not correct. change signService.signData by signService.signHash in next day.
     @PostMapping(value = "/hash")
     public SignResponseVM signHash(@RequestBody SignHashRequestVM signHashVM) throws BadRequestException {
 
@@ -62,7 +63,24 @@ public class SigningController {
             signHashVM.getBase64Hash()
         );
         try {
-            SignHashResponse signHashResponse = signService.signHash(signHashRequest);
+            SignHashResponse signHashResponse = signService.signData(signHashRequest);
+            return new SignResponseVM<SignHashResponse>(0, signHashResponse);
+        } catch (Exception e) {
+            return new SignResponseVM<String>(-1, e.getMessage());
+        }
+    }
+
+    @PostMapping(value = "/data")
+    public SignResponseVM signData(@RequestBody SignHashRequestVM signHashVM) throws BadRequestException {
+
+        TokenInfoDto tokenInfoDto = mapSignatureInfo(signHashVM.getTokenInfo());
+        SignHashRequest signHashRequest = new SignHashRequest(
+            tokenInfoDto,
+            signHashVM.getBase64Hash(),
+            signHashVM.getBase64Hash()
+        );
+        try {
+            SignHashResponse signHashResponse = signService.signData(signHashRequest);
             return new SignResponseVM<SignHashResponse>(0, signHashResponse);
         } catch (Exception e) {
             return new SignResponseVM<String>(-1, e.getMessage());

@@ -1,6 +1,6 @@
-package vn.easyca.signserver.webapp.service.model.hashsigner;
+package vn.easyca.signserver.webapp.service.model.rawsigner;
 
-public class HashSignResult {
+public class RawSigningResult {
 
     private String hashAlgorithm;
 
@@ -10,7 +10,7 @@ public class HashSignResult {
 
     private String signatureValue;
 
-    public HashSignResult(String certificate, String signatureValue) {
+    public RawSigningResult(String certificate, String signatureValue) {
         this.certificate = certificate;
         this.signatureValue = signatureValue;
     }

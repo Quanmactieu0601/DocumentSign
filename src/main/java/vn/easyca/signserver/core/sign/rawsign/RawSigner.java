@@ -1,5 +1,7 @@
 package vn.easyca.signserver.core.sign.rawsign;
 
+import vn.easyca.signserver.core.sign.integrated.pdf.DigestCreator;
+
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
 import java.security.Signature;

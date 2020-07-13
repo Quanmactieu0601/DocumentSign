@@ -5,7 +5,7 @@
 
     <groupId>vn.easyca.signserver.webapp</groupId>
     <artifactId>webapp</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
     <name>Webapp</name>
 
@@ -155,7 +155,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.cache</groupId>m
+            <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency>
         <dependency>

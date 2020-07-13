@@ -16,8 +16,8 @@ import vn.easyca.signserver.webapp.service.ex.sign.PDFSignException;
 import vn.easyca.signserver.webapp.service.ex.sign.XmlSignException;
 import vn.easyca.signserver.webapp.service.model.CryptoTokenFactory;
 import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
-import vn.easyca.signserver.webapp.service.model.hashsigner.HashSignResult;
-import vn.easyca.signserver.webapp.service.model.hashsigner.HashSigner;
+import vn.easyca.signserver.webapp.service.model.rawsigner.RawSigningResult;
+import vn.easyca.signserver.webapp.service.model.rawsigner.RawSigner;
 import vn.easyca.signserver.webapp.service.model.pdfsigner.PDFSigner;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
@@ -47,10 +47,10 @@ public class SignService {
         }
     }
 
-    public SignHashResponse signHash(SignHashRequest request) throws XmlSignException, InitTokenProxyException {
+    public SignHashResponse signData(SignHashRequest request) throws XmlSignException, InitTokenProxyException {
         CryptoTokenProxy cryptoTokenProxy = getCryptoTokenProxy(request.getTokenInfoDto());
         try {
-            HashSignResult result = new HashSigner(cryptoTokenProxy).signHash(request.getBytes());
+            RawSigningResult result = new RawSigner(cryptoTokenProxy).signData(request.getBytes());
             return new SignHashResponse(result.getSignatureValue(), result.getCertificate());
         } catch (Exception exception) {
             log.error(exception.getMessage());
