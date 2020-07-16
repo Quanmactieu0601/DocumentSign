@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
-public class SignXmlRequestVM extends BaseSignRequestVM{
+public class SignXmlRequestVM extends SignRequestVM {
 
 
     private  String xml;

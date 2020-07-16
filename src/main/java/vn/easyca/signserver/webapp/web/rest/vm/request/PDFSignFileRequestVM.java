@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
-public class PDFSignFileRequestVM extends BaseSignRequestVM {
+public class PDFSignFileRequestVM extends SignRequestVM {
 
     private int width;
 

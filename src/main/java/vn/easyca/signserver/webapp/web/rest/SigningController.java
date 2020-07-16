@@ -17,6 +17,7 @@ import vn.easyca.signserver.webapp.service.dto.response.SignHashResponse;
 import vn.easyca.signserver.webapp.web.rest.vm.TokenInfoVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.PDFSignFileRequestVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignHashRequestVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.SignRequestVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignXmlRequestVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.SignResponseVM;
 
@@ -38,7 +39,7 @@ public class SigningController {
 
         try {
             byte[] content = file.getBytes();
-            TokenInfoDto tokenInfo = mapSignatureInfo(signRequestVM.getSignatureInfo());
+            TokenInfoDto tokenInfo = mapSignatureInfo(signRequestVM.getTokenInfo());
             SignPDFRequest request = new SignPDFRequest(tokenInfo, signRequestVM.getSigner(), content);
             PDFSignResponse signResponse = signService.signPDFFile(request);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
@@ -88,10 +89,10 @@ public class SigningController {
     }
 
     @PostMapping(value = "/xml")
-    public SignResponseVM signXML(@RequestBody SignXmlRequestVM request) throws BadRequestException {
+    public SignResponseVM signXML(@RequestBody SignRequestVM<String> request) throws BadRequestException {
 
-        TokenInfoDto tokenInfoDto = mapSignatureInfo(request.getSignatureInfo());
-        SignXMLRequest xmlRequest = new SignXMLRequest(tokenInfoDto, request.getSigner(), request.getXml());
+        TokenInfoDto tokenInfoDto = mapSignatureInfo(request.getTokenInfo());
+        SignXMLRequest xmlRequest = new SignXMLRequest(tokenInfoDto, request.getSigner(), request.getData());
         try {
             String xml = signService.signXML(xmlRequest, tokenInfoDto);
             return new SignResponseVM(0, xml);

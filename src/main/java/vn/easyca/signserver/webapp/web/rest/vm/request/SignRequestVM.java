@@ -1,13 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 
-import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
 import vn.easyca.signserver.webapp.web.rest.vm.SigningOptionalVM;
 import vn.easyca.signserver.webapp.web.rest.vm.TokenInfoVM;
 
-public class BaseSignRequestVM {
+public class SignRequestVM<T> {
 
-    private TokenInfoVM signatureInfo;
+    private TokenInfoVM tokenInfo;
 
     private String signer;
 
@@ -15,13 +14,14 @@ public class BaseSignRequestVM {
 
     private SigningOptionalVM optionalVM;
 
+    private T data;
 
-    public TokenInfoVM getSignatureInfo() {
-        return signatureInfo;
+    public TokenInfoVM getTokenInfo() {
+        return tokenInfo;
     }
 
-    public void setSignatureInfo(TokenInfoVM signatureInfo) {
-        this.signatureInfo = signatureInfo;
+    public void setTokenInfo(TokenInfoVM tokenInfo) {
+        this.tokenInfo = tokenInfo;
     }
 
     public String getSigner() {
@@ -48,5 +48,8 @@ public class BaseSignRequestVM {
         return optionalVM;
     }
 
+    public T getData() {
+        return data;
+    }
 
 }
