@@ -1,7 +1,4 @@
 package vn.easyca.signserver.webapp.domain;
-
-import netscape.javascript.JSObject;
-import org.json.JSONObject;
 import vn.easyca.signserver.webapp.utils.JSONBuilder;
 import vn.easyca.signserver.webapp.utils.JsonReader;
 

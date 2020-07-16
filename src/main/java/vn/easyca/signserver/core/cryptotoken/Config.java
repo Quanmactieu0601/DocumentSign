@@ -53,4 +53,13 @@ public class Config {
     public InputStream getP12InputStream() {
         return p12InputStream;
     }
+
+    public String getLibrary() {
+        return library;
+    }
+
+    public String getSlot() {
+        return slot;
+    }
+
 }

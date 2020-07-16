@@ -6,8 +6,8 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.service.dto.RegisterCertificateDto;
-import vn.easyca.signserver.webapp.service.ex.CreateCertificateException;
+import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
+import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
 import vn.easyca.signserver.webapp.service.Encryption;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +25,7 @@ public class P12CertificateService extends CertificateService {
     }
 
     @Override
-    public Certificate createInstance(RegisterCertificateDto dto) throws CreateCertificateException {
+    public Certificate importCertificate(ImportCertificateDto dto) throws CreateCertificateException {
 
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         Config config = new Config();
@@ -44,6 +44,7 @@ public class P12CertificateService extends CertificateService {
             certificate.setAlias(alias);
             certificate.tokenType(CertificateType.PKCS12.toString());
             certificate.setCertificateTokenInfo(getTokenInfo(dto.getP12Base64()));
+            certificateRepository.save(certificate);
             return certificate;
         } catch (Exception exception) {
             log.error(exception.getLocalizedMessage());

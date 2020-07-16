@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
-public class RegisterCertificateDto {
+public class ImportCertificateDto {
 
     private String p12Base64;
 
@@ -10,6 +10,7 @@ public class RegisterCertificateDto {
 
     private String pin;
 
+    private int keyLen;
 
     public String getP12Base64() {
         return p12Base64;
@@ -33,5 +34,13 @@ public class RegisterCertificateDto {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public int getKeyLen() {
+        return keyLen;
+    }
+
+    public void setKeyLen(int keyLen) {
+        this.keyLen = keyLen;
     }
 }

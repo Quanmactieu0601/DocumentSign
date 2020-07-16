@@ -12,7 +12,9 @@ public class BaseResponseVM<T> {
     }
 
     public BaseResponseVM(T data) {
+        this.data = data;
     }
+
     public BaseResponseVM() {
     }
 

@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.service.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import vn.easyca.signserver.core.cryptotoken.Config;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
@@ -9,7 +8,7 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.encryption.CBCEncryption;
-import vn.easyca.signserver.webapp.service.ex.sign.InitTokenProxyException;
+import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
 import vn.easyca.signserver.webapp.service.Encryption;
 
 import java.io.ByteArrayInputStream;

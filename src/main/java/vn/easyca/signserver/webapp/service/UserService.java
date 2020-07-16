@@ -20,9 +20,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.service.ex.EmailAlreadyUsedException;
-import vn.easyca.signserver.webapp.service.ex.InvalidPasswordException;
-import vn.easyca.signserver.webapp.service.ex.UsernameAlreadyUsedException;
+import vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException;
+import vn.easyca.signserver.webapp.service.error.InvalidPasswordException;
+import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -130,7 +130,7 @@ public class UserService {
 
     private boolean removeNonActivatedUser(User existingUser) {
         if (existingUser.getActivated()) {
-             return false;
+            return false;
         }
         userRepository.delete(existingUser);
         userRepository.flush();
@@ -138,7 +138,7 @@ public class UserService {
         return true;
     }
 
-    public User createUser(UserDTO userDTO) {
+    public User createUser(UserDTO userDTO, String password) {
         User user = new User();
         user.setLogin(userDTO.getLogin().toLowerCase());
         user.setFirstName(userDTO.getFirstName());
@@ -152,7 +152,8 @@ public class UserService {
         } else {
             user.setLangKey(userDTO.getLangKey());
         }
-        String encryptedPassword = passwordEncoder.encode(RandomUtil.generatePassword());
+        password = password != null ? password : RandomUtil.generatePassword();
+        String encryptedPassword = passwordEncoder.encode(password);
         user.setPassword(encryptedPassword);
         user.setResetKey(RandomUtil.generateResetKey());
         user.setResetDate(Instant.now());
@@ -290,6 +291,7 @@ public class UserService {
 
     /**
      * Gets a list of all the authorities.
+     *
      * @return a list of all the authorities.
      */
     @Transactional(readOnly = true)

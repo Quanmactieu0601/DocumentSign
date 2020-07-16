@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.ex;
+package vn.easyca.signserver.webapp.service.error;
 
 public class EmailAlreadyUsedException extends RuntimeException {
 

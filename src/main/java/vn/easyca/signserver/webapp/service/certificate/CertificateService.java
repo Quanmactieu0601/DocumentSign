@@ -7,8 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.service.dto.RegisterCertificateDto;
-import vn.easyca.signserver.webapp.service.ex.CreateCertificateException;
+import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
+import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
+import vn.easyca.signserver.webapp.service.dto.NewCertificateInfo;
+import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
+import vn.easyca.signserver.webapp.service.error.GenCertificateInputException;
 
 import java.util.Optional;
 
@@ -79,9 +82,16 @@ public class CertificateService {
         certificateRepository.deleteById(id);
     }
 
-    public Certificate createInstance(RegisterCertificateDto dto) throws NotImplementedException, CreateCertificateException {
+    public Certificate importCertificate(ImportCertificateDto dto) throws NotImplementedException, CreateCertificateException {
+
+
         throw new NotImplementedException();
     }
+
+    public NewCertificateInfo genCertificate(CertificateGeneratorDto dto) throws NotImplementedException, CreateCertificateException, GenCertificateInputException {
+        throw  new NotImplementedException();
+    }
+
 
     public static class NotImplementedException extends Exception {
     }

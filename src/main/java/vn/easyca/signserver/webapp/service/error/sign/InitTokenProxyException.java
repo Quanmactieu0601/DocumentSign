@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.ex.sign;
+package vn.easyca.signserver.webapp.service.error.sign;
 
 public class InitTokenProxyException extends Exception{
 
