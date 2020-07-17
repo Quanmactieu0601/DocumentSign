@@ -17,11 +17,9 @@ import java.util.List;
 
 public class P12CertificateService extends CertificateService {
 
-    private final Encryption encryption;
 
     P12CertificateService(CertificateRepository certificateRepository, Encryption encryption) {
-        super(certificateRepository);
-        this.encryption = encryption;
+        super(certificateRepository,encryption);
     }
 
     @Override

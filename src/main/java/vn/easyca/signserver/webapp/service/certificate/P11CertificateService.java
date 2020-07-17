@@ -7,6 +7,7 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.service.Encryption;
 import vn.easyca.signserver.webapp.service.config.DomainConfigRegistration;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
 import vn.easyca.signserver.webapp.service.dto.NewCertificateInfo;
@@ -18,10 +19,9 @@ import java.util.Base64;
 
 public class P11CertificateService extends CertificateService {
 
-    P11CertificateService(CertificateRepository certificateRepository) {
-        super(certificateRepository);
+    P11CertificateService(CertificateRepository certificateRepository, Encryption encryption) {
+        super(certificateRepository,encryption);
     }
-
 
     public NewCertificateInfo genCertificate(CertificateGeneratorDto dto) throws CreateCertificateException, GenCertificateInputException {
         validGenCertificateDto(dto);

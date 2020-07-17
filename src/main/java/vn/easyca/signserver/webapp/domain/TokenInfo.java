@@ -44,47 +44,53 @@ public class TokenInfo {
         return name;
     }
 
-    public void setName(String name) {
+    public TokenInfo setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getLibrary() {
         return library;
     }
 
-    public void setLibrary(String library) {
+    public TokenInfo setLibrary(String library) {
         this.library = library;
+        return this;
     }
 
     public int getSlot() {
         return slot;
     }
 
-    public void setSlot(int slot) {
+    public TokenInfo setSlot(int slot) {
         this.slot = slot;
+        return this;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public TokenInfo setPassword(String password) {
         this.password = password;
+        return this;
     }
 
     public String getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public TokenInfo setData(String data) {
         this.data = data;
+        return this;
     }
 
     public String getP11Attrs() {
         return p11Attrs;
     }
 
-    public void setP11Attrs(String p11Attrs) {
+    public TokenInfo setP11Attrs(String p11Attrs) {
         this.p11Attrs = p11Attrs;
+        return this;
     }
 }

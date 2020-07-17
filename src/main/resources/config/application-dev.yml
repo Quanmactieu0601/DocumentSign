@@ -37,9 +37,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:h2:file:./target/h2db/db/webapp;DB_CLOSE_DELAY=-1
-    username: webapp
-    password:
+    url: jdbc:mariadb://10.100.110.7:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: signserver
+    password: Hddt@202o
     hikari:
       poolName: Hikari
       auto-commit: false

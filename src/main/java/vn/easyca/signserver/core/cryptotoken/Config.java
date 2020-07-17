@@ -62,4 +62,7 @@ public class Config {
         return slot;
     }
 
+    public String getName() {
+        return name;
+    }
 }

@@ -1,7 +1,13 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import vn.easyca.signserver.core.cryptotoken.CryptoToken;
+import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
+import vn.easyca.signserver.webapp.config.Configs;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.CertificateType;
+import vn.easyca.signserver.webapp.service.CertificateGeneratorService;
+import vn.easyca.signserver.webapp.service.UserService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
@@ -47,14 +53,16 @@ public class CertificateResource {
     private String applicationName;
 
     private final CertificateServiceFactory certificateServiceFactory;
+    private final UserService userService;
 
-    public CertificateResource(CertificateServiceFactory certificateServiceFactory) {
+    public CertificateResource(CertificateServiceFactory certificateServiceFactory, UserService userService) {
         this.certificateServiceFactory = certificateServiceFactory;
+        this.userService = userService;
     }
 
     @PostMapping("/certificates/register/p12")
     public ResponseEntity<BaseResponseVM<String>> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
-        CertificateService certificateService = certificateServiceFactory.getService(CertificateType.PKCS12);
+        CertificateService certificateService = certificateServiceFactory.getService(Certificate.PKCS_12);
         ImportCertificateDto dto = new ImportCertificateDto();
         dto.setP12Base64(p12RegisterVM.getBase64Data());
         dto.setPin(p12RegisterVM.getPin());
@@ -67,10 +75,13 @@ public class CertificateResource {
         }
     }
 
-    @PostMapping("/certificates/gen")
+    @PostMapping("/certificates/gen/p11")
     public ResponseEntity<BaseResponseVM<String>> genCertificate(@RequestBody GenCertificateVM genCertificateVM) throws URISyntaxException {
         try {
-            CertificateService certificateService = certificateServiceFactory.getService(CertificateType.PKCS11);
+            CryptoToken cryptoToken = new P11CryptoToken();
+            cryptoToken.init(Configs.getCryptoConfigForGenCert());
+            CertificateService certificateService = resolveService(Certificate.PKCS_11);
+            CertificateGeneratorService generatorService = new CertificateGeneratorService(cryptoToken, certificateService, userService);
             CertificateGeneratorDto dto = new CertificateGeneratorDto();
             dto.setC(genCertificateVM.getC());
             dto.setCn(genCertificateVM.getCn());
@@ -81,10 +92,12 @@ public class CertificateResource {
             dto.setOu(genCertificateVM.getOu());
             dto.setOwnerId(genCertificateVM.getOwnerId());
             dto.setPassword(genCertificateVM.getPassword());
-            Certificate certificate = certificateService.genCertificate(dto);
-            certificateService.save(certificate);
+            generatorService.genCertificate(dto);
             return ResponseEntity.ok(new BaseResponseVM<String>());
         } catch (ParseException | CertificateService.NotImplementedException | CreateCertificateException | GenCertificateInputException e) {
+            e.printStackTrace();
+            return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));
+        } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));
         }
@@ -103,7 +116,7 @@ public class CertificateResource {
         if (certificate.getId() != null) {
             throw new BadRequestAlertException("A new certificate cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Certificate result = certificateServiceFactory.getService(certificate.getCertificateType()).save(certificate);
+        Certificate result = certificateServiceFactory.getService(certificate.getTokenType()).save(certificate);
         return ResponseEntity.created(new URI("/api/certificates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -182,8 +195,8 @@ public class CertificateResource {
     }
 
 
-    private CertificateService resolveService(CertificateType certificateType) {
-        return certificateServiceFactory.getService(certificateType);
+    private CertificateService resolveService(String typeName) {
+        return certificateServiceFactory.getService(typeName);
     }
 
     private CertificateService resolveService() {

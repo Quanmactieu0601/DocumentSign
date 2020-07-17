@@ -6,7 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.service.Encryption;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
 import vn.easyca.signserver.webapp.service.dto.NewCertificateInfo;
@@ -21,9 +23,11 @@ public class CertificateService {
 
     protected final CertificateRepository certificateRepository;
 
+    protected final Encryption encryption;
 
-    CertificateService(CertificateRepository certificateRepository) {
+    CertificateService(CertificateRepository certificateRepository, Encryption encryption) {
         this.certificateRepository = certificateRepository;
+        this.encryption = encryption;
     }
 
 
@@ -43,6 +47,16 @@ public class CertificateService {
         return certificateRepository.save(certificate);
     }
 
+    public Certificate saveWithEncryption(Certificate certificate) throws Encryption.EncryptionException {
+        if (encryption != null) {
+            certificate.setTokenInfo(encryption.encrypt(certificate.getTokenInfo()));
+        }
+        return save(certificate);
+    }
+
+    protected TokenInfo encryptionTokenInfo(TokenInfo tokenInfo) throws Encryption.EncryptionException {
+        return tokenInfo.setData(encryption.encrypt(tokenInfo.getData()));
+    }
     /**
      * Get all the certificates.
      *
@@ -89,7 +103,7 @@ public class CertificateService {
     }
 
     public NewCertificateInfo genCertificate(CertificateGeneratorDto dto) throws NotImplementedException, CreateCertificateException, GenCertificateInputException {
-        throw  new NotImplementedException();
+        throw new NotImplementedException();
     }
 
 

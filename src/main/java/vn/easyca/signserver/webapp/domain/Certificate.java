@@ -23,6 +23,8 @@ import java.util.Date;
 public class Certificate implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String PKCS_11 = "PKCS_11";
+    public static final String PKCS_12 = "PKCS_12";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

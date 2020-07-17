@@ -4,6 +4,7 @@ import java.util.Date;
 
 public class CertificateGeneratorDto {
 
+    public final int OWNER_TYPE_COM = 2, OWNER_TYPE_PERSON = 1;
     private String ou;
     private String l;
     private String s;
@@ -11,6 +12,8 @@ public class CertificateGeneratorDto {
     private String cn;
     private String password;
     private String ownerId;
+    private String ownerEmail;
+    private String ownerPhone;
     private Date fromDate;
     private Date toDate;
     private int keyLen;
@@ -94,5 +97,13 @@ public class CertificateGeneratorDto {
 
     public void setOu(String ou) {
         this.ou = ou;
+    }
+
+    public String getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
     }
 }

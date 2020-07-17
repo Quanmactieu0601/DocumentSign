@@ -1,35 +1,32 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.domain.User;
+
 public class CertificateGeneratedResult {
 
-    private boolean successFully;
-    private NewAccount newAccount;
-    private NewCertificateInfo newCertificateInfo;
+    private Certificate certificate;
+    private User user;
+    private String userPassword;
 
-    public CertificateGeneratedResult(boolean successFully) {
-        this.successFully = successFully;
+    public CertificateGeneratedResult(Certificate certificate, User user, String userPassword) {
+        this.certificate = certificate;
+        this.user = user;
+        this.userPassword = userPassword;
     }
 
-    public NewAccount getNewAccount() {
-        return newAccount;
+    public CertificateGeneratedResult() {
     }
 
-    public NewCertificateInfo getNewCertificateInfo() {
-        return newCertificateInfo;
+    public Certificate getCertificate() {
+        return certificate;
     }
 
-    public boolean isSuccessFully() {
-        return successFully;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public CertificateGeneratedResult setNewAccount(NewAccount newAccount) {
-        this.newAccount = newAccount;
-        return this;
+    public User getUser() {
+        return user;
     }
-
-    public CertificateGeneratedResult setNewCertificateInfo(NewCertificateInfo newCertificateInfo) {
-        this.newCertificateInfo = newCertificateInfo;
-        return this;
-    }
-
 }

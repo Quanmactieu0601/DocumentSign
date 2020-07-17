@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.certificate;
+
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.service.Encryption;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
@@ -16,19 +18,13 @@ public class CertificateServiceFactory {
         this.repository = repository;
     }
 
-    public CertificateService getService(CertificateType type) {
-
-        if (type == CertificateType.PKCS12)
-            return new P12CertificateService(repository, encryption);
-        else if (type == CertificateType.PKCS11)
-            return new P11CertificateService(repository);
-        return new CertificateService(repository);
-    }
-
     public CertificateService getService(String type) {
 
-        CertificateType eType = CertificateType.getType(type);
-        return getService(eType);
+        if (type == Certificate.PKCS_11)
+            return new P11CertificateService(repository,encryption);
+        else if (type == Certificate.PKCS_12)
+            return new P12CertificateService(repository, encryption);
+        return new CertificateService(repository,encryption);
     }
 
 }

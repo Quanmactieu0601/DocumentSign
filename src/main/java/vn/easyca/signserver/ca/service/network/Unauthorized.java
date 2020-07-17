@@ -1,4 +1,4 @@
-package vn.easyca.signserver.ca.service.api.error;
+package vn.easyca.signserver.ca.service.network;
 
 public class Unauthorized extends Exception{
 }
