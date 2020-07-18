@@ -38,7 +38,7 @@ public class PostRequester {
             request.addHeader("Authorization", idToken);
         Response response = request.execute();
         try {
-            return response.returnContent().asString();
+             return response.returnContent().asString();
         } catch (HttpResponseException ex) {
             if (ex.getStatusCode() == 401)
                 throw new Unauthorized();

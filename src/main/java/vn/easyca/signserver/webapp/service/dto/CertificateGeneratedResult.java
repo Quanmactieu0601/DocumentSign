@@ -6,6 +6,11 @@ import vn.easyca.signserver.webapp.domain.User;
 public class CertificateGeneratedResult {
 
     private Certificate certificate;
+
+    public CertificateGeneratedResult(Certificate certificate) {
+        this.certificate = certificate;
+    }
+
     private User user;
     private String userPassword;
 
@@ -13,6 +18,12 @@ public class CertificateGeneratedResult {
         this.certificate = certificate;
         this.user = user;
         this.userPassword = userPassword;
+    }
+
+    public CertificateGeneratedResult setUserInfo(User user,String userPass){
+        this.user = user;
+        this.userPassword = userPass;
+        return this;
     }
 
     public CertificateGeneratedResult() {

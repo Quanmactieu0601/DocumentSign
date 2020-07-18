@@ -49,14 +49,19 @@ public class CertificateService {
 
     public Certificate saveWithEncryption(Certificate certificate) throws Encryption.EncryptionException {
         if (encryption != null) {
-            certificate.setTokenInfo(encryption.encrypt(certificate.getTokenInfo()));
+            TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
+            String encryptedData = encryption.encrypt(certificate.getCertificateTokenInfo().getData());
+            tokenInfo.setData(encryptedData);
+            certificate.setCertificateTokenInfo(tokenInfo);
         }
         return save(certificate);
     }
 
+
     protected TokenInfo encryptionTokenInfo(TokenInfo tokenInfo) throws Encryption.EncryptionException {
         return tokenInfo.setData(encryption.encrypt(tokenInfo.getData()));
     }
+
     /**
      * Get all the certificates.
      *

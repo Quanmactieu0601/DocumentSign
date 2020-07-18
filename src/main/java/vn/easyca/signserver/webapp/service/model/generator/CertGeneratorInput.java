@@ -33,8 +33,7 @@ public class CertGeneratorInput {
             return this;
         }
 
-        public CertGeneratorInputBuilder setCertService(String certProfile, int certType) {
-            result.certType = certType;
+        public CertGeneratorInputBuilder setCertService(String certProfile) {
             result.certProfile = certProfile;
             return this;
         }
@@ -56,9 +55,7 @@ public class CertGeneratorInput {
     private String ownerId;
     private String ownerPhone;
     private String ownerEmail;
-    private int certType;
     private String certProfile;
-
 
     private CertGeneratorInput() {
     }
@@ -101,10 +98,6 @@ public class CertGeneratorInput {
 
     public String getCertProfile() {
         return certProfile;
-    }
-
-    public int getCertType() {
-        return certType;
     }
 
     public String getOwnerEmail() {

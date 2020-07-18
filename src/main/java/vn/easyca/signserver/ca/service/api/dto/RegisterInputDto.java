@@ -2,22 +2,22 @@ package vn.easyca.signserver.ca.service.api.dto; /* created by truonglx  on 7/16
 
 public class RegisterInputDto {
 
-    private float activationCodeEnabled;
-    private float approvedIssueCert;
-    private float backedUpKey;
+    private int activationCodeEnabled =1;
+    private int approvedIssueCert=1;
+    private int backedUpKey=1;
     private String certMethod;
     private String certProfile;
-    private float certProfileType;
-    private float checkSendP12;
+    private int certProfileType;
+    private int checkSendP12;
     private String cn;
     private String csr;
     private String customerEmail;
     private String customerPhone;
-    private String dnsName;
+    private String dnsName = "";
     private String id;
     private String o;
     private String ou;
-    private String p12RegisterPass;
+    private String p12RegisterPass="";
     private String st;
 
 
@@ -93,15 +93,15 @@ public class RegisterInputDto {
 
     // Setter Methods
 
-    public void setActivationCodeEnabled(float activationCodeEnabled) {
+    public void setActivationCodeEnabled(int activationCodeEnabled) {
         this.activationCodeEnabled = activationCodeEnabled;
     }
 
-    public void setApprovedIssueCert(float approvedIssueCert) {
+    public void setApprovedIssueCert(int approvedIssueCert) {
         this.approvedIssueCert = approvedIssueCert;
     }
 
-    public void setBackedUpKey(float backedUpKey) {
+    public void setBackedUpKey(int backedUpKey) {
         this.backedUpKey = backedUpKey;
     }
 
@@ -113,11 +113,11 @@ public class RegisterInputDto {
         this.certProfile = certProfile;
     }
 
-    public void setCertProfileType(float certProfileType) {
+    public void setCertProfileType(int certProfileType) {
         this.certProfileType = certProfileType;
     }
 
-    public void setCheckSendP12(float checkSendP12) {
+    public void setCheckSendP12(int checkSendP12) {
         this.checkSendP12 = checkSendP12;
     }
 

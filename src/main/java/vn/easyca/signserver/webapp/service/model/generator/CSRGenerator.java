@@ -14,7 +14,6 @@ import java.security.*;
 public class CSRGenerator {
 
 
-
     /**
      * @param CN Common Name, is X.509 speak for the name that distinguishes
      *           the Certificate best, and ties it to your Organization
@@ -26,8 +25,8 @@ public class CSRGenerator {
      * @return
      * @throws Exception
      */
-    public String generatePKCS10(PublicKey publicKey,PrivateKey privateKey, String CN, String OU, String O,
-                                  String L, String S, String C) throws Exception {
+    public String generatePKCS10(PublicKey publicKey, PrivateKey privateKey, String CN, String OU, String O,
+                                 String L, String S, String C) throws Exception {
         // generate PKCS10 certificate request
         String sigAlg = "MD5WithRSA";
         PKCS10 pkcs10 = new PKCS10(publicKey);
@@ -49,11 +48,14 @@ public class CSRGenerator {
                 bs.close();
         } catch (Throwable th) {
         }
-        return new String(c);
+        String res = new String(c);
+        res = res.replace("-----BEGIN NEW CERTIFICATE REQUEST-----\r\n", "");
+        res = res.replace("\r\n-----END NEW CERTIFICATE REQUEST-----\r\n", "");
+        return res;
     }
 
     private X500Principal generatePrincipal(String CN, String OU, String O,
-                                     String L, String S, String C) {
+                                            String L, String S, String C) {
         StringBuilder principalBuilder = new StringBuilder();
         if (CN != null)
             principalBuilder.append(String.format("CN=%s,", CN));
@@ -67,7 +69,7 @@ public class CSRGenerator {
             principalBuilder.append(String.format("S=%s,", S));
         if (C != null)
             principalBuilder.append(String.format("C=%s,", C));
-        String principal = principalBuilder.substring(0,principalBuilder.length()-1);
+        String principal = principalBuilder.substring(0, principalBuilder.length() - 1);
         return new X500Principal(principal);
 
     }

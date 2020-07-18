@@ -10,13 +10,9 @@ import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.domain.User;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.*;
-import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
-import vn.easyca.signserver.webapp.service.error.GenCertificateInputException;
 import vn.easyca.signserver.webapp.service.model.generator.CertGenerator;
 import vn.easyca.signserver.webapp.service.model.generator.CertGeneratorInput;
 import vn.easyca.signserver.webapp.service.model.generator.CertGeneratorOutput;
-
-import static sun.security.krb5.SCDynamicStoreConfig.getConfig;
 
 // complex service
 public class CertificateGeneratorService {
@@ -27,6 +23,8 @@ public class CertificateGeneratorService {
 
     private UserService userService;
 
+    private static int CERT_TYPE = 2; // For Company
+
     public CertificateGeneratorService(CryptoToken cryptoToken, CertificateService certificateService, UserService userService) {
         this.cryptoToken = cryptoToken;
         this.certificateService = certificateService;
@@ -36,8 +34,12 @@ public class CertificateGeneratorService {
     public CertificateGeneratedResult genCertificate(CertificateGeneratorDto dto) throws Exception {
 
         Certificate certificate = genCert(dto);
+        CertificateGeneratedResult result = new CertificateGeneratedResult(certificate);
         NewAccount newAccount = createNewAccount(dto);
-        return new CertificateGeneratedResult(certificate, newAccount.user, newAccount.getPassword());
+        if (newAccount != null) {
+            result.setUserInfo(newAccount.getUser(), newAccount.getPassword());
+        }
+        return result;
     }
 
     private Certificate genCert(CertificateGeneratorDto dto) throws Exception {
@@ -47,7 +49,8 @@ public class CertificateGeneratorService {
         inputBuilder.setAlias(alias);
         inputBuilder.setAttrs(dto.getCn(), dto.getOu(), dto.getOu(), dto.getL(), dto.getS(), dto.getC())
             .setKeyLength(dto.getKeyLen())
-            .setOwner(dto.getOwnerId(), dto.getOwnerEmail(), dto.getOwnerPhone());
+            .setOwner(dto.getOwnerId(), dto.getOwnerPhone(), dto.getOwnerEmail())
+            .setCertService(dto.getCertProfile());
         CertGeneratorInput certGeneratorInput = inputBuilder.build();
         CertGeneratorOutput certGeneratorOutput = certGenerator.genCert(certGeneratorInput);
         Certificate certificate = new Certificate();
@@ -68,14 +71,18 @@ public class CertificateGeneratorService {
     }
 
     private NewAccount createNewAccount(CertificateGeneratorDto dto) {
-        String password = RandomUtil.generatePassword();
-        UserDTO userDTO = new UserDTO();
-        userDTO.setLogin(dto.getOwnerId());
-        userDTO.setLangKey("vi");
-        userDTO.setActivated(true);
-        userDTO.setCreatedBy("system");
-        User user = userService.createUser(userDTO, password);
-        return new NewAccount(user, password);
+        try {
+            String password = RandomUtil.generatePassword();
+            UserDTO userDTO = new UserDTO();
+            userDTO.setLogin(dto.getOwnerId());
+            userDTO.setLangKey("vi");
+            userDTO.setActivated(true);
+            userDTO.setCreatedBy("system");
+            User user = userService.createUser(userDTO, password);
+            return new NewAccount(user, password);
+        } catch (Exception ex) {
+            return null;
+        }
     }
 
     public class NewAccount {

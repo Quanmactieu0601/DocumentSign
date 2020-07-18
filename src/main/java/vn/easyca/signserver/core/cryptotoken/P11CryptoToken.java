@@ -76,7 +76,7 @@ public class P11CryptoToken implements CryptoToken {
         return ks.containsAlias(alias);
     }
 
-    public void genKeyPair(String alias, int keyLen) throws Exception {
+    public KeyPair genKeyPair(String alias, int keyLen) throws Exception {
         if (this.ks == null)
             throw new Exception("cryptoToken is not initialized");
         if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
@@ -87,9 +87,9 @@ public class P11CryptoToken implements CryptoToken {
         KeyPair keyPair = kpg.generateKeyPair();
         //Gen self-signed cert, just is a temporary cert when we are waiting the right one from the CA
         X509Certificate cert = genSelfSignedCert(alias, keyPair, providerName);
-        ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+        //ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+        return keyPair;
     }
-
     public void installCert(String alias, X509Certificate cert) throws Exception {
         if (this.ks == null)
             throw new Exception("cryptoToken is not initialized");

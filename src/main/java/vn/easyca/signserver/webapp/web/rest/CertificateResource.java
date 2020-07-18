@@ -9,6 +9,7 @@ import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.service.CertificateGeneratorService;
 import vn.easyca.signserver.webapp.service.UserService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
+import vn.easyca.signserver.webapp.service.dto.CertificateGeneratedResult;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
 import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
@@ -29,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.GenCertificateVM;
+import vn.easyca.signserver.webapp.web.rest.vm.NewCertificateVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12RegisterVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -76,24 +78,30 @@ public class CertificateResource {
     }
 
     @PostMapping("/certificates/gen/p11")
-    public ResponseEntity<BaseResponseVM<String>> genCertificate(@RequestBody GenCertificateVM genCertificateVM) throws URISyntaxException {
+    public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody GenCertificateVM genCertificateVM) throws URISyntaxException {
         try {
             CryptoToken cryptoToken = new P11CryptoToken();
             cryptoToken.init(Configs.getCryptoConfigForGenCert());
             CertificateService certificateService = resolveService(Certificate.PKCS_11);
             CertificateGeneratorService generatorService = new CertificateGeneratorService(cryptoToken, certificateService, userService);
             CertificateGeneratorDto dto = new CertificateGeneratorDto();
+            dto.setKeyLen(genCertificateVM.getKeyLen());
             dto.setC(genCertificateVM.getC());
             dto.setCn(genCertificateVM.getCn());
-            dto.setFromDate(DateTimeUtils.parse(genCertificateVM.getFromDate()));
-            dto.setFromDate(DateTimeUtils.parse(genCertificateVM.getToDate()));
-            dto.setKeyLen(genCertificateVM.getKeyLen());
             dto.setL(genCertificateVM.getL());
             dto.setOu(genCertificateVM.getOu());
+            dto.setS(genCertificateVM.getS());
             dto.setOwnerId(genCertificateVM.getOwnerId());
             dto.setPassword(genCertificateVM.getPassword());
-            generatorService.genCertificate(dto);
-            return ResponseEntity.ok(new BaseResponseVM<String>());
+            dto.setCertProfile(genCertificateVM.getCertProfile());
+            dto.setOwnerEmail(genCertificateVM.getOwnerEmail());
+            dto.setOwnerPhone(genCertificateVM.getOwnerPhone());
+            CertificateGeneratedResult result = generatorService.genCertificate(dto);
+            NewCertificateVM newCertificateVM = new NewCertificateVM();
+            newCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());
+            if (result.getUser() != null)
+                newCertificateVM.setUser(result.getUser().getLogin(), result.getUserPassword());
+            return ResponseEntity.ok(new BaseResponseVM<NewCertificateVM>(newCertificateVM));
         } catch (ParseException | CertificateService.NotImplementedException | CreateCertificateException | GenCertificateInputException e) {
             e.printStackTrace();
             return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));

@@ -4,11 +4,11 @@ public class RegisterResultDto {
     private String activeCode;
     private String cert = null;
     private String certState;
-    private float certId;
+    private int certId;
     private String certSerial = null;
     private String p12Data = null;
     private String p12Pass = null;
-    private float status;
+    private int status;
     private String message;
 
     public String getActiveCode() {
@@ -59,7 +59,7 @@ public class RegisterResultDto {
         this.certState = certState;
     }
 
-    public void setCertId(float certId) {
+    public void setCertId(int certId) {
         this.certId = certId;
     }
 
@@ -75,7 +75,7 @@ public class RegisterResultDto {
         this.p12Pass = p12Pass;
     }
 
-    public void setStatus(float status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 

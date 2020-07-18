@@ -1,10 +1,7 @@
 package vn.easyca.signserver.core.cryptotoken;
 
 import java.io.InputStream;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -54,7 +51,7 @@ public class P12CryptoToken implements CryptoToken {
     }
 
     @Override
-    public void genKeyPair(String alias, int keyLen) throws Exception {
+    public KeyPair genKeyPair(String alias, int keyLen) throws Exception {
         throw new Exception("Method is not supported with PKCS12");
     }
 

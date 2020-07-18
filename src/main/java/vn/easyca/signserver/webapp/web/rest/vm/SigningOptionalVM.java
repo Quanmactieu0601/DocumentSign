@@ -15,9 +15,9 @@ public class SigningOptionalVM {
         return signAlgorithm;
     }
 
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
-    }
+        public void setHashAlgorithm(String hashAlgorithm) {
+            this.hashAlgorithm = hashAlgorithm;
+        }
 
     public void setSignAlgorithm(String signAlgorithm) {
         this.signAlgorithm = signAlgorithm;

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.cryptotoken;
 
+import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -16,7 +17,7 @@ public interface CryptoToken {
 
     Boolean containAlias(String alias) throws Exception;
 
-    void genKeyPair(String alias, int keyLen) throws Exception;
+    KeyPair genKeyPair(String alias, int keyLen) throws Exception;
 
     void installCert(String alias, X509Certificate cert) throws Exception;
 

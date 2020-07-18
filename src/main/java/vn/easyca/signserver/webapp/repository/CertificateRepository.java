@@ -11,6 +11,6 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 
-    @Query(nativeQuery = true,value = "select top(1) c from Certificate c where lower(c.serial) = lower(:serial)")
+    @Query(nativeQuery = true,value = "select  * from certificate c where lower(c.serial) = lower(:serial)")
     Certificate getCertificateBySerial(@Param("serial") String serial);
 }

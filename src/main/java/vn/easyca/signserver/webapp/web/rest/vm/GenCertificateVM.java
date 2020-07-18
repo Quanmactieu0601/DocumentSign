@@ -9,9 +9,11 @@ public class GenCertificateVM {
     private String cn;
     private String password;
     private String ownerId;
-    private String fromDate;
-    private String toDate;
     private int keyLen;
+    private String certProfile;
+    private String ownerEmail;
+    private String ownerPhone;
+
 
     public String getOu() {
         return ou;
@@ -69,27 +71,35 @@ public class GenCertificateVM {
         this.ownerId = ownerId;
     }
 
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(String toDate) {
-        this.toDate = toDate;
-    }
-
     public int getKeyLen() {
         return keyLen;
     }
 
     public void setKeyLen(int keyLen) {
         this.keyLen = keyLen;
+    }
+
+    public String getCertProfile() {
+        return certProfile;
+    }
+
+    public void setCertProfile(String certProfile) {
+        this.certProfile = certProfile;
+    }
+
+    public String getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
     }
 }

@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class CertificateGeneratorDto {
 
-    public final int OWNER_TYPE_COM = 2, OWNER_TYPE_PERSON = 1;
     private String ou;
     private String l;
     private String s;
@@ -14,10 +13,8 @@ public class CertificateGeneratorDto {
     private String ownerId;
     private String ownerEmail;
     private String ownerPhone;
-    private Date fromDate;
-    private Date toDate;
     private int keyLen;
-
+    private String certProfile;
 
     public String getL() {
         return l;
@@ -67,22 +64,6 @@ public class CertificateGeneratorDto {
         this.ownerId = ownerId;
     }
 
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
-    }
-
     public int getKeyLen() {
         return keyLen;
     }
@@ -105,5 +86,21 @@ public class CertificateGeneratorDto {
 
     public String getOwnerEmail() {
         return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
+    }
+
+    public String getCertProfile() {
+        return certProfile;
+    }
+
+    public void setCertProfile(String certProfile) {
+        this.certProfile = certProfile;
     }
 }

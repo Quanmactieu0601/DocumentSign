@@ -30,7 +30,7 @@ import java.util.Collection;
 
 public class WebappApp {
 
-    private static final String CA_URL = "http://172.16.10.66:8787/api/";
+    private static final String CA_URL = "http://172.16.11.84:8787/api/";
     private static final String CA_USER = "admin";
     private static final String CA_PASS = "admin";
 

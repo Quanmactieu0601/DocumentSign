@@ -22,14 +22,15 @@ public class Authenticate {
 
     public String getToken() throws Unauthorized, IOException {
         if (currentToken == null)
-             currentToken = getNewToken();
+            currentToken = getNewToken();
         return currentToken;
     }
+
     public String getNewToken() throws IOException, Unauthorized {
         String body = getBody();
-        PostRequester postRequester =new PostRequester(url);
+        PostRequester postRequester = new PostRequester(url);
         String res = postRequester.post(body);
-        return parse(res);
+        return "Bearer " + parse(res);
     }
 
     private String getBody() {
@@ -41,12 +42,13 @@ public class Authenticate {
 
     private String parse(String response) throws Unauthorized {
         JSONObject jsonObject = new JSONObject(response);
-        if(jsonObject.has("id_token"))
+        if (jsonObject.has("id_token"))
             return jsonObject.getString("id_token");
         throw new Unauthorized();
     }
+
     public static void main(String[] args) throws IOException, Unauthorized {
-        String token = new Authenticate("http://172.16.10.66:8787/api/authenticate","admin1","admin").getToken();
+        String token = new Authenticate("http://172.16.10.66:8787/api/authenticate", "admin1", "admin").getToken();
         System.out.println(token);
     }
 }
