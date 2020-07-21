@@ -22,13 +22,13 @@ public class PostRequester {
         this.url = url;
     }
 
-    public <Res> Res post(Object data, Class<Res> responseType) throws IOException, Unauthorized {
+    public <Res> Res post(Object data, Class<Res> responseType) throws IOException, RAUnauthorized {
         String content = post(data);
         Gson gson = new Gson();
         return gson.fromJson(content, responseType);
     }
 
-    public String post(Object data) throws IOException, Unauthorized {
+    public String post(Object data) throws IOException, RAUnauthorized {
         Gson gson = new Gson();
         String body = (data instanceof String) ? (String) data : gson.toJson(data);
         Request request = Request.Post(url)
@@ -41,7 +41,7 @@ public class PostRequester {
              return response.returnContent().asString();
         } catch (HttpResponseException ex) {
             if (ex.getStatusCode() == 401)
-                throw new Unauthorized();
+                throw new RAUnauthorized();
             else throw ex;
         }
     }

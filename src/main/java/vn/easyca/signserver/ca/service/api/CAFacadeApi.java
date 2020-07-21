@@ -1,10 +1,6 @@
 package vn.easyca.signserver.ca.service.api;
 
 import vn.easyca.signserver.ca.service.Authenticate;
-import vn.easyca.signserver.ca.service.api.dto.RegisterInputDto;
-import vn.easyca.signserver.ca.service.network.Unauthorized;
-
-import java.io.IOException;
 
 public class CAFacadeApi {
 

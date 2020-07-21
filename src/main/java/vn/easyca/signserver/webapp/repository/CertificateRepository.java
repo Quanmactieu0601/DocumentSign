@@ -14,6 +14,6 @@ import java.util.Optional;
 @Repository
 public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 
-    @Query(nativeQuery = true,value = "select  * from certificate c where lower(c.serial) = lower(:serial)")
-    Optional<Certificate> getCertificateBySerial(@Param("serial") String serial);
+    @Query(nativeQuery = true, value = "SELECT * FROM certificate WHERE serial = ?1")
+    Optional<Certificate> getCertificateBySerial(String serial);
 }

@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model;
+package vn.easyca.signserver.webapp.service.signer;
 
 public class SignConfig {
 

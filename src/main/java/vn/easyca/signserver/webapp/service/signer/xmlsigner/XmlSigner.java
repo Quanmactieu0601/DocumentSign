@@ -1,9 +1,9 @@
-package vn.easyca.signserver.webapp.service.model.xmlsigner;
+package vn.easyca.signserver.webapp.service.signer.xmlsigner;
 
 import vn.easyca.signserver.core.sign.integrated.xml.SignXMLDto;
 import vn.easyca.signserver.core.sign.integrated.xml.SignXMLLib;
 import vn.easyca.signserver.webapp.service.dto.request.SignXMLRequest;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
+import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.security.cert.X509Certificate;
 

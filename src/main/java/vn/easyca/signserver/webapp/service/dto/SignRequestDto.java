@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
-import vn.easyca.signserver.webapp.service.model.SignConfig;
+import vn.easyca.signserver.webapp.service.signer.SignConfig;
 
 import java.util.Date;
 

@@ -90,6 +90,7 @@ public class P11CryptoToken implements CryptoToken {
         //ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
         return keyPair;
     }
+
     public void installCert(String alias, X509Certificate cert) throws Exception {
         if (this.ks == null)
             throw new Exception("cryptoToken is not initialized");
@@ -101,7 +102,7 @@ public class P11CryptoToken implements CryptoToken {
             throw new Exception("cryptoToken is not initialized");
         List<String> aliases = new ArrayList<>();
         Enumeration<String> aliasEnum = ks.aliases();
-        while(aliasEnum.hasMoreElements()) {
+        while (aliasEnum.hasMoreElements()) {
             aliases.add(aliasEnum.nextElement());
         }
         return aliases;
@@ -118,7 +119,7 @@ public class P11CryptoToken implements CryptoToken {
         return ks.getCertificate(alias);
     }
 
-    private X509Certificate genSelfSignedCert(String  alias, KeyPair keyPair, String providerName) throws Exception {
+    private X509Certificate genSelfSignedCert(String alias, KeyPair keyPair, String providerName) throws Exception {
         long validity = (long) 30 * 24 * 60 * 60 * 365;
         String myName = "CN=THIS IS TEMPORARY CERT FOR " + alias;
 

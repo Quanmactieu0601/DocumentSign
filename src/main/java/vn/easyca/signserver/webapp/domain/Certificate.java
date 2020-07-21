@@ -195,9 +195,10 @@ public class Certificate implements Serializable {
             "}";
     }
 
-    @Transient private X509Certificate x509Certificate;
+    @Transient
+    private X509Certificate x509Certificate;
 
-    public X509Certificate getX509Certificate() throws CertificateException {
+    private X509Certificate getX509Certificate() throws CertificateException {
         if (x509Certificate != null)
             return x509Certificate;
         byte encodedCert[] = Base64.getDecoder().decode(rawData);
@@ -206,12 +207,12 @@ public class Certificate implements Serializable {
         return (X509Certificate) certFactory.generateCertificate(inputStream);
     }
 
-    public Date getValidFromDate() throws CertificateException, KeyStoreException {
-        return getX509Certificate().getNotBefore();
-    }
-
-    public Date getValidToDate() throws CertificateException, KeyStoreException {
-        return getX509Certificate().getNotAfter();
+    public boolean isExpired() throws Exception {
+        X509Certificate cert = getX509Certificate();
+        Date notAfter = cert.getNotAfter();
+        Date notBefore = cert.getNotBefore();
+        Date currentDate = new Date();
+        return notAfter.before(currentDate) || notBefore.after(currentDate);
     }
 
     public TokenInfo getCertificateTokenInfo() {
@@ -221,23 +222,5 @@ public class Certificate implements Serializable {
     public void setCertificateTokenInfo(TokenInfo tokenInfo) {
         this.tokenInfo = tokenInfo.toString();
     }
-
-    public boolean isExtensionCert(Certificate oldCert) {
-
-        try {
-            return serial != null && serial.contentEquals(oldCert.getSerial()) &&
-                   oldCert.getValidToDate().before(this.getValidFromDate());
-        } catch (KeyStoreException | CertificateException e) {
-            return false;
-        }
-    }
-
-    public boolean isEncrypted(){
-        TokenInfo tokenInfo = getCertificateTokenInfo();
-        if (tokenInfo != null)
-            tokenInfo.isEncrypted();
-        return false;
-    }
-
 
 }

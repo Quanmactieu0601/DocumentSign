@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import vn.easyca.signserver.webapp.web.rest.vm.GenCertificateVM;
+
 import java.util.Date;
 
 public class CertificateGeneratorDto {
@@ -16,6 +18,24 @@ public class CertificateGeneratorDto {
     private String ownerPhone;
     private int keyLen;
     private String certProfile;
+
+    public CertificateGeneratorDto() {
+
+    }
+
+    public CertificateGeneratorDto(GenCertificateVM genCertificateVM) {
+        this.setKeyLen(genCertificateVM.getKeyLen());
+        this.setC(genCertificateVM.getC());
+        this.setCn(genCertificateVM.getCn());
+        this.setL(genCertificateVM.getL());
+        this.setOu(genCertificateVM.getOu());
+        this.setS(genCertificateVM.getS());
+        this.setOwnerId(genCertificateVM.getOwnerId());
+        this.setPassword(genCertificateVM.getPassword());
+        this.setCertProfile(genCertificateVM.getCertProfile());
+        this.setOwnerEmail(genCertificateVM.getOwnerEmail());
+        this.setOwnerPhone(genCertificateVM.getOwnerPhone());
+    }
 
     public String getL() {
         return l;

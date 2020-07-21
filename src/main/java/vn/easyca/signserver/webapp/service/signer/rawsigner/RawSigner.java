@@ -1,7 +1,7 @@
-package vn.easyca.signserver.webapp.service.model.rawsigner;
+package vn.easyca.signserver.webapp.service.signer.rawsigner;
 
 import vn.easyca.signserver.core.sign.integrated.pdf.DigestCreator;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
+import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.util.Base64;
 

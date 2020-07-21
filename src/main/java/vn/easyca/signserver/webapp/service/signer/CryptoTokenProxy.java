@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model;
+package vn.easyca.signserver.webapp.service.signer;
 
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;

@@ -2,10 +2,6 @@ package vn.easyca.signserver.test;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
-import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.service.dto.request.SignXMLRequest;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
-import vn.easyca.signserver.webapp.service.model.xmlsigner.XmlSigner;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;

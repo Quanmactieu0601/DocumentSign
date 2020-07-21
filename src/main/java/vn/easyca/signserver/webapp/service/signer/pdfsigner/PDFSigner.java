@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model.pdfsigner;
+package vn.easyca.signserver.webapp.service.signer.pdfsigner;
 
 import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.sign.integrated.pdf.PartyMode;
@@ -6,7 +6,7 @@ import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFDto;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
 import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
+import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.io.File;
 import java.io.FileInputStream;

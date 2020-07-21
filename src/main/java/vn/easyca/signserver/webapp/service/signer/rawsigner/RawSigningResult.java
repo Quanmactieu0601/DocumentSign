@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model.rawsigner;
+package vn.easyca.signserver.webapp.service.signer.rawsigner;
 
 public class RawSigningResult {
 

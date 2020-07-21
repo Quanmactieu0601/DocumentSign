@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model;
+package vn.easyca.signserver.webapp.service.signer;
 
 import vn.easyca.signserver.core.cryptotoken.Config;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
@@ -6,7 +6,6 @@ import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
-import vn.easyca.signserver.webapp.commond.encryption.CBCEncryption;
 import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
 import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 

@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.vm.response;
 
 public class BaseResponseVM<T> {
 
-    private int status;
+    private int status = 0;
 
     private T data;
 

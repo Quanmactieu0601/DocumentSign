@@ -4,7 +4,7 @@ import vn.easyca.signserver.ca.service.Authenticate;
 import vn.easyca.signserver.ca.service.api.dto.RegisterInputDto;
 import vn.easyca.signserver.ca.service.api.dto.RegisterResultDto;
 import vn.easyca.signserver.ca.service.network.PostRequester;
-import vn.easyca.signserver.ca.service.network.Unauthorized;
+import vn.easyca.signserver.ca.service.network.RAUnauthorized;
 
 import java.io.IOException;
 
@@ -18,25 +18,19 @@ public class RegisterCertificateApi {
         this.authenticate = authenticate;
     }
 
-    public RegisterResultDto register(RegisterInputDto registerInputDto) throws IOException, Unauthorized {
-
-        valid(registerInputDto);
+    public RegisterResultDto register(RegisterInputDto registerInputDto) throws IOException, RAUnauthorized {
         return post(0, registerInputDto);
     }
 
-    private void valid(RegisterInputDto dto) {
-
-    }
-
-    private RegisterResultDto post(int tryCounter, RegisterInputDto dto) throws Unauthorized, IOException {
+    private RegisterResultDto post(int tryCounter, RegisterInputDto dto) throws RAUnauthorized, IOException {
         if (tryCounter >= 2)
-            throw new Unauthorized();
+            throw new RAUnauthorized();
         String token = null;
         try {
             token = authenticate.getToken();
             PostRequester postRequester = new PostRequester(url,token);
             return postRequester.post(dto,RegisterResultDto.class);
-        } catch (Unauthorized authenticateErr) {
+        } catch (RAUnauthorized authenticateErr) {
             return post(tryCounter+1,dto);
         }
     }

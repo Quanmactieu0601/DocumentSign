@@ -20,7 +20,6 @@ public class TokenInfo {
     private boolean encrypted;
 
     public static TokenInfo createInstance(String data){
-
         Gson gson = new Gson();
         return  gson.fromJson(data,TokenInfo.class);
     }

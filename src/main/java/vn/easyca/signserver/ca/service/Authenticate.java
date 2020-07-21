@@ -3,7 +3,7 @@ package vn.easyca.signserver.ca.service;
 
 import org.json.JSONObject;
 import vn.easyca.signserver.ca.service.network.PostRequester;
-import vn.easyca.signserver.ca.service.network.Unauthorized;
+import vn.easyca.signserver.ca.service.network.RAUnauthorized;
 
 import java.io.IOException;
 
@@ -20,13 +20,13 @@ public class Authenticate {
     private String password;
     private String currentToken;
 
-    public String getToken() throws Unauthorized, IOException {
+    public String getToken() throws RAUnauthorized, IOException {
         if (currentToken == null)
             currentToken = getNewToken();
         return currentToken;
     }
 
-    public String getNewToken() throws IOException, Unauthorized {
+    public String getNewToken() throws IOException, RAUnauthorized {
         String body = getBody();
         PostRequester postRequester = new PostRequester(url);
         String res = postRequester.post(body);
@@ -40,14 +40,14 @@ public class Authenticate {
         return jsonObject.toString();
     }
 
-    private String parse(String response) throws Unauthorized {
+    private String parse(String response) throws RAUnauthorized {
         JSONObject jsonObject = new JSONObject(response);
         if (jsonObject.has("id_token"))
             return jsonObject.getString("id_token");
-        throw new Unauthorized();
+        throw new RAUnauthorized();
     }
 
-    public static void main(String[] args) throws IOException, Unauthorized {
+    public static void main(String[] args) throws IOException, RAUnauthorized {
         String token = new Authenticate("http://172.16.10.66:8787/api/authenticate", "admin1", "admin").getToken();
         System.out.println(token);
     }

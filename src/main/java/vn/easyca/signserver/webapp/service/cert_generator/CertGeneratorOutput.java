@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.model.cert.data;
+package vn.easyca.signserver.webapp.service.cert_generator;
 
 public class CertGeneratorOutput {
 

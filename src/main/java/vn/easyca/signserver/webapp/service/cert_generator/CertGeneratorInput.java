@@ -1,12 +1,12 @@
-package vn.easyca.signserver.webapp.service.model.cert.data;
+package vn.easyca.signserver.webapp.service.cert_generator;
 
 public class CertGeneratorInput {
 
     private String alias;
     private int keyLength;
-    private CertProfile certProfile;
+    private SubjectDN subjectDN;
     private OwnerInfo ownerInfo;
-    private ServiceInfo serviceInfo;
+    private CertPackage certPackage;
 
     private CertGeneratorInput() {
     }
@@ -23,12 +23,12 @@ public class CertGeneratorInput {
         return keyLength;
     }
 
-    public CertProfile getCertProfile() {
-        return certProfile;
+    public SubjectDN getSubjectDN() {
+        return subjectDN;
     }
 
-    public ServiceInfo getServiceInfo() {
-        return serviceInfo;
+    public CertPackage getCertPackage() {
+        return certPackage;
     }
 
     public static class CertGeneratorInputBuilder {
@@ -46,8 +46,8 @@ public class CertGeneratorInput {
         }
 
         public CertGeneratorInputBuilder setAttrs(String cn, String ou, String o, String l, String s, String c) {
-            CertProfile certProfile = new CertProfile(cn, ou, o, l, s, c);
-            result.certProfile = certProfile;
+            SubjectDN subjectDN = new SubjectDN(cn, ou, o, l, s, c);
+            result.subjectDN = subjectDN;
             return this;
         }
 
@@ -58,8 +58,8 @@ public class CertGeneratorInput {
         }
 
         public CertGeneratorInputBuilder setCertService(String certProfile, int certProfileType, String certMethod) {
-            ServiceInfo serviceInfo = new ServiceInfo(certMethod, certProfile, certProfileType);
-            result.serviceInfo = serviceInfo;
+            CertPackage certPackage = new CertPackage(certMethod, certProfile, certProfileType);
+            result.certPackage = certPackage;
             return this;
         }
 

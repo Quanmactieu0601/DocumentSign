@@ -5,9 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
-import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
-import vn.easyca.signserver.webapp.service.certificate.CertificateServiceFactory;
 import vn.easyca.signserver.webapp.service.dto.*;
 import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
 import vn.easyca.signserver.webapp.service.dto.request.SignHashRequest;
@@ -17,14 +15,13 @@ import vn.easyca.signserver.webapp.service.dto.response.SignHashResponse;
 import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
 import vn.easyca.signserver.webapp.service.error.sign.PDFSignException;
 import vn.easyca.signserver.webapp.service.error.sign.XmlSignException;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenFactory;
-import vn.easyca.signserver.webapp.service.model.CryptoTokenProxy;
-import vn.easyca.signserver.webapp.service.model.rawsigner.RawSigningResult;
-import vn.easyca.signserver.webapp.service.model.rawsigner.RawSigner;
-import vn.easyca.signserver.webapp.service.model.pdfsigner.PDFSigner;
+import vn.easyca.signserver.webapp.service.signer.CryptoTokenFactory;
+import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
+import vn.easyca.signserver.webapp.service.signer.rawsigner.RawSigningResult;
+import vn.easyca.signserver.webapp.service.signer.rawsigner.RawSigner;
+import vn.easyca.signserver.webapp.service.signer.pdfsigner.PDFSigner;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.service.model.xmlsigner.XmlSigner;
+import vn.easyca.signserver.webapp.service.signer.xmlsigner.XmlSigner;
 
 import java.util.Optional;
 
@@ -32,8 +29,9 @@ import java.util.Optional;
 public class SignService {
 
     private final Logger log = LoggerFactory.getLogger(SignService.class);
+
     @Autowired
-    CertificateServiceFactory certificateServiceFactory;
+    private CertificateService certificateService;
 
     private final String temDir = "./TemFile/";
 
@@ -72,7 +70,6 @@ public class SignService {
     }
 
     private CryptoTokenProxy getCryptoTokenProxy(TokenInfoDto tokenInfoDto) throws InitTokenProxyException {
-        CertificateService certificateService = certificateServiceFactory.getService();
         Optional<Certificate> optionalCertificate = certificateService.findBySerial(tokenInfoDto.getSerial());
         if (!optionalCertificate.isPresent())
             throw new InitTokenProxyException(String.format("Chứng thư số có serial %s không tồn tại trong hệ ", tokenInfoDto.getSerial()));

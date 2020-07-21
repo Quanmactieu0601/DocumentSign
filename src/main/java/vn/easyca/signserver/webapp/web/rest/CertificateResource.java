@@ -1,18 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest;
 
-import vn.easyca.signserver.core.cryptotoken.CryptoToken;
-import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
-import vn.easyca.signserver.webapp.config.Configs;
+import org.springframework.beans.factory.annotation.Autowired;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.service.CertificateGeneratorService;
-import vn.easyca.signserver.webapp.service.UserService;
+import vn.easyca.signserver.webapp.service.P11CertificateGeneratorService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratedResult;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
-import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
-import vn.easyca.signserver.webapp.service.certificate.CertificateServiceFactory;
-import vn.easyca.signserver.webapp.service.error.GenCertificateInputException;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -27,13 +21,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.GenCertificateVM;
-import vn.easyca.signserver.webapp.web.rest.vm.NewCertificateVM;
+import vn.easyca.signserver.webapp.web.rest.vm.RegisterCertificateVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12RegisterVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,60 +44,39 @@ public class CertificateResource {
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final CertificateServiceFactory certificateServiceFactory;
-    private final UserService userService;
+    @Autowired
+    private P11CertificateGeneratorService p11GeneratorService;
 
-    public CertificateResource(CertificateServiceFactory certificateServiceFactory, UserService userService) {
-        this.certificateServiceFactory = certificateServiceFactory;
-        this.userService = userService;
-    }
+    @Autowired
+    private CertificateService certificateService;
 
     @PostMapping("/certificates/register/p12")
     public ResponseEntity<BaseResponseVM<String>> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
-        CertificateService certificateService = certificateServiceFactory.getService(Certificate.PKCS_12);
         ImportCertificateDto dto = new ImportCertificateDto();
         dto.setP12Base64(p12RegisterVM.getBase64Data());
         dto.setPin(p12RegisterVM.getPin());
         dto.setOwnerId(p12RegisterVM.getOwnerId());
         try {
-            Certificate certificate = certificateService.importCertificate(dto);
-            return ResponseEntity.ok(new BaseResponseVM<String>());
-        } catch (CertificateService.NotImplementedException | CreateCertificateException e) {
-            return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));
+            certificateService.importP12Certificate(dto);
+            return ResponseEntity.ok(new BaseResponseVM<>("OK"));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new BaseResponseVM<>(-1, e.getMessage()));
         }
     }
 
-    @PostMapping("/certificates/gen/p11")
-    public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody GenCertificateVM genCertificateVM) throws URISyntaxException {
+    @PostMapping("/certificates/register/p11")
+    public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody GenCertificateVM genCertificateVM) {
         try {
-            CryptoToken cryptoToken = new P11CryptoToken();
-            cryptoToken.init(Configs.getCryptoConfigForGenCert());
-            CertificateService certificateService = resolveService(Certificate.PKCS_11);
-            CertificateGeneratorService generatorService = new CertificateGeneratorService(cryptoToken, certificateService, userService);
-            CertificateGeneratorDto dto = new CertificateGeneratorDto();
-            dto.setKeyLen(genCertificateVM.getKeyLen());
-            dto.setC(genCertificateVM.getC());
-            dto.setCn(genCertificateVM.getCn());
-            dto.setL(genCertificateVM.getL());
-            dto.setOu(genCertificateVM.getOu());
-            dto.setS(genCertificateVM.getS());
-            dto.setOwnerId(genCertificateVM.getOwnerId());
-            dto.setPassword(genCertificateVM.getPassword());
-            dto.setCertProfile(genCertificateVM.getCertProfile());
-            dto.setOwnerEmail(genCertificateVM.getOwnerEmail());
-            dto.setOwnerPhone(genCertificateVM.getOwnerPhone());
-            CertificateGeneratedResult result = generatorService.genCertificate(dto);
-            NewCertificateVM newCertificateVM = new NewCertificateVM();
-            newCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());
+            CertificateGeneratorDto dto = new CertificateGeneratorDto(genCertificateVM);
+            CertificateGeneratedResult result = p11GeneratorService.genCertificate(dto);
+            RegisterCertificateVM registerCertificateVM = new RegisterCertificateVM();
+            registerCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());
             if (result.getUser() != null)
-                newCertificateVM.setUser(result.getUser().getLogin(), result.getUserPassword());
-            return ResponseEntity.ok(new BaseResponseVM<NewCertificateVM>(newCertificateVM));
-        } catch (ParseException | CertificateService.NotImplementedException | CreateCertificateException | GenCertificateInputException e) {
-            e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));
+                registerCertificateVM.setUser(result.getUser(), result.getUserPassword());
+            return ResponseEntity.ok(new BaseResponseVM<>(registerCertificateVM));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponseVM<String>(-1, e.getMessage()));
+            return ResponseEntity.ok(new BaseResponseVM<>(-1, e.getMessage()));
         }
     }
 
@@ -121,7 +93,7 @@ public class CertificateResource {
         if (certificate.getId() != null) {
             throw new BadRequestAlertException("A new certificate cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Certificate result = certificateServiceFactory.getService(certificate.getTokenType()).save(certificate);
+        Certificate result = certificateService.save(certificate);
         return ResponseEntity.created(new URI("/api/certificates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -142,7 +114,7 @@ public class CertificateResource {
         if (certificate.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Certificate result = resolveService().save(certificate);
+        Certificate result = certificateService.save(certificate);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, certificate.getId().toString()))
             .body(result);
@@ -157,7 +129,7 @@ public class CertificateResource {
     @GetMapping("/certificates")
     public ResponseEntity<List<Certificate>> getAllCertificates(Pageable pageable) {
         log.debug("REST request to get a page of Certificates");
-        Page<Certificate> page = resolveService().findAll(pageable);
+        Page<Certificate> page = certificateService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -171,7 +143,7 @@ public class CertificateResource {
     @GetMapping("/certificates/{id}")
     public ResponseEntity<Certificate> getCertificate(@PathVariable Long id) {
         log.debug("REST request to get Certificate : {}", id);
-        Optional<Certificate> certificate = resolveService().findOne(id);
+        Optional<Certificate> certificate = certificateService.findOne(id);
         return ResponseUtil.wrapOrNotFound(certificate);
     }
 
@@ -184,27 +156,17 @@ public class CertificateResource {
     @DeleteMapping("/certificates/{id}")
     public ResponseEntity<Void> deleteCertificate(@PathVariable Long id) {
         log.debug("REST request to delete Certificate : {}", id);
-        resolveService().delete(id);
+        certificateService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    @PostMapping("/certificate/getbyserial")
-    public ResponseEntity<BaseResponseVM<String>> getBase64Cert(@RequestBody String serial) {
-
+    @GetMapping("/certificate/get-by-serial")
+    public ResponseEntity<BaseResponseVM<String>> getBase64Cert(@RequestParam String serial) {
 //        Certificate certificate = resolveService().findBySerial(serial);
 //        if (certificate == null)
 //            return ResponseEntity.ok(new BaseResponseVM<String>(-1, "Không tìm thấy chứng thư"));
 //        return ResponseEntity.ok(new BaseResponseVM<String>(0,certificate.getRawData()));
         return ResponseEntity.ok(new BaseResponseVM<String>(0, "MIIEGzCCAwOgAwIBAgIQVAT//rcDP7MW1nIgG4DTmDANBgkqhkiG9w0BAQUFADBO\r\nMQswCQYDVQQGEwJWTjESMBAGA1UEBwwJSMOgIE7hu5lpMRYwFAYDVQQKEw1WaWV0\r\ndGVsIEdyb3VwMRMwEQYDVQQDEwpWaWV0dGVsLUNBMB4XDTIwMDMwNTA4MzI1OVoX\r\nDTIxMDMwNTA4MzI1OVowgZYxHjAcBgoJkiaJk/IsZAEBDA5NU1Q6MDEwNTk4NzQz\r\nMjFTMFEGA1UEAwxKQ8OUTkcgVFkgQ+G7lCBQSOG6pk4gxJDhuqZVIFTGryBDw5RO\r\nRyBOR0jhu4YgVsOAIFRIxq/GoE5HIE3huqBJIFNPRlREUkVBTVMxEjAQBgNVBAcM\r\nCUjDgCBO4buYSTELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJ\r\nAoGBAN45MIHLnjVj1vpa4WJ2tYtyxDrIwkREjDqTaKgGPryrxxcipfQpZdqCSWIk\r\nPUf6K44I5jcK8s1YeoC6hADjVKrpsz8baQz/dBSYy5oJxdiMweTJQq9QlbNw+kx1\r\n5W9aEi2k2DOb+i3yBTQDkc+u/ylLGF5F7njajQhoKR8PxuvXAgMBAAGjggEuMIIB\r\nKjA1BggrBgEFBQcBAQQpMCcwJQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLnZpZXR0\r\nZWwtY2Eudm4wHQYDVR0OBBYEFAz4ANgRsBDOZXFKGBWg0tOa8nHSMAwGA1UdEwEB\r\n/wQCMAAwHwYDVR0jBBgwFoAU/stBFOldp9kyDeSyCFzxXOy2srUwgZIGA1UdHwSB\r\nijCBhzCBhKAuoCyGKmh0dHA6Ly9jcmwudmlldHRlbC1jYS52bi9WaWV0dGVsLUNB\r\nLXYzLmNybKJSpFAwTjETMBEGA1UEAwwKVmlldHRlbC1DQTEWMBQGA1UECgwNVmll\r\ndHRlbCBHcm91cDESMBAGA1UEBwwJSMOgIE7hu5lpMQswCQYDVQQGEwJWTjAOBgNV\r\nHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQEFBQADggEBAJGwolmW8aFUp7cViSErVDxh\r\nMfgB6mOd5bW+jBphpULpezPJ7vNteuKjKhtGVOkGuwOyuCKR2IK2uRNlMGi6kE9j\r\nUV5W4R5/DVM5oFRmTgs9Q7W1Sy/RytUyJXVtvehDY2hwS3YhtfWJ57Cw0zmPj28a\r\n7vgOy7Pzbx7YAoR2UTrP5gmVuyIAFJ1r+r0BNDcyK8uHeq29h6hKXuRc5K8kUZ3c\r\nnIl7WeNuLCWULB+k5DpxpajDSvSJR7rZlgvg4i64p3lsvSucndM9iD1vEE03VEMY\r\nIMZEWh6LYvQ7f/Ah9V98MTdkRN2CpmtptrMsBDzb6+UDzrE0rqFyZFfICsaGrZ4="));
 
-    }
-
-
-    private CertificateService resolveService(String typeName) {
-        return certificateServiceFactory.getService(typeName);
-    }
-
-    private CertificateService resolveService() {
-        return certificateServiceFactory.getService((String) null);
     }
 }
