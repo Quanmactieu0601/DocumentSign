@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service.model.cert.data;
 
-public class CertProfile {
+public class SubjectInfo {
 
     private String cn;
     private String ou;
@@ -9,7 +9,7 @@ public class CertProfile {
     private String s;
     private String c;
 
-    public CertProfile(String cn, String ou, String o, String l, String s, String c) {
+    public SubjectInfo(String cn, String ou, String o, String l, String s, String c) {
         this.cn = cn;
         this.ou = ou;
         this.o = o;

@@ -50,11 +50,12 @@ public class CryptoTokenFactory {
     }
 
     private CryptoToken resolveP11Token(Certificate certificate, String pin) {
-
         TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
         Config config = new Config();
         config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), pin);
+        if (certificate.getCertificateTokenInfo().getSlot() > 0)
+            config = config.withSlot(String.valueOf(certificate.getCertificateTokenInfo().getSlot()));
         try {
             p11CryptoToken.init(config);
             return p11CryptoToken;

@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.service.model.cert.generator;
 
 import sun.security.pkcs10.PKCS10;
 import sun.security.x509.X500Name;
-import vn.easyca.signserver.webapp.service.model.cert.data.CertProfile;
+import vn.easyca.signserver.webapp.service.model.cert.data.SubjectInfo;
 
 import javax.security.auth.x500.X500Principal;
 import java.io.ByteArrayOutputStream;
@@ -20,7 +20,7 @@ class CSRGenerator {
      * @return CSR
      * @throws Exception
      */
-    public String generatePKCS10(PublicKey publicKey, PrivateKey privateKey, CertProfile certProfile) throws Exception {
+    public String generatePKCS10(PublicKey publicKey, PrivateKey privateKey, SubjectInfo certProfile) throws Exception {
         // generate PKCS10 certificate request
         String sigAlg = "MD5WithRSA";
         PKCS10 pkcs10 = new PKCS10(publicKey);
@@ -48,7 +48,7 @@ class CSRGenerator {
         return res;
     }
 
-    private X500Principal generatePrincipal(CertProfile certProfile) {
+    private X500Principal generatePrincipal(SubjectInfo certProfile) {
         StringBuilder principalBuilder = new StringBuilder();
         if (certProfile.getCn() != null)
             principalBuilder.append(String.format("CN=%s,", certProfile.getCn()));

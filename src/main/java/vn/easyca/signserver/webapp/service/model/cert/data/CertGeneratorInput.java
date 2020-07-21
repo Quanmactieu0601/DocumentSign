@@ -4,7 +4,7 @@ public class CertGeneratorInput {
 
     private String alias;
     private int keyLength;
-    private CertProfile certProfile;
+    private SubjectInfo certProfile;
     private OwnerInfo ownerInfo;
     private ServiceInfo serviceInfo;
 
@@ -23,7 +23,7 @@ public class CertGeneratorInput {
         return keyLength;
     }
 
-    public CertProfile getCertProfile() {
+    public SubjectInfo getCertProfile() {
         return certProfile;
     }
 
@@ -46,7 +46,7 @@ public class CertGeneratorInput {
         }
 
         public CertGeneratorInputBuilder setAttrs(String cn, String ou, String o, String l, String s, String c) {
-            CertProfile certProfile = new CertProfile(cn, ou, o, l, s, c);
+            SubjectInfo certProfile = new SubjectInfo(cn, ou, o, l, s, c);
             result.certProfile = certProfile;
             return this;
         }

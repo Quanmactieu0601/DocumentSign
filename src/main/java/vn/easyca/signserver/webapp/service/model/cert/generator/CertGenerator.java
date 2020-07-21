@@ -33,12 +33,12 @@ public class CertGenerator {
         return cryptoToken.genKeyPair(alias, keyLength);
     }
 
-    private String genCsr(PublicKey publicKey, PrivateKey privateKey, CertProfile certProfile) throws Exception {
+    private String genCsr(PublicKey publicKey, PrivateKey privateKey, SubjectInfo certProfile) throws Exception {
         CSRGenerator csrGenerator = new CSRGenerator();
         return csrGenerator.generatePKCS10(publicKey,privateKey, certProfile);
     }
 
-    private CertGeneratorOutput requestCertToCA(String csr, ServiceInfo serviceInfo, CertProfile certProfile, OwnerInfo ownerInfo) throws IOException, Unauthorized {
+    private CertGeneratorOutput requestCertToCA(String csr, ServiceInfo serviceInfo, SubjectInfo certProfile, OwnerInfo ownerInfo) throws IOException, Unauthorized {
 
         RegisterInputDto registerInputDto = new RegisterInputDto();
         registerInputDto.setCsr(csr);
