@@ -7,7 +7,6 @@ import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
-import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
@@ -17,10 +16,7 @@ import java.util.Base64;
  * create CryptoToken
  */
 public class CryptoTokenFactory {
-
-
     public CryptoToken resolveToken(Certificate certificate, String pin) throws Exception {
-
         String tokenType = certificate.getTokenType();
         switch (tokenType) {
             case Certificate.PKCS_11:
@@ -32,7 +28,7 @@ public class CryptoTokenFactory {
         }
     }
 
-    private CryptoToken resolveP12Token(Certificate certificate, String pin) throws Encryption.EncryptionException {
+    private CryptoToken resolveP12Token(Certificate certificate, String pin) {
 
         TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
         byte[] fileContent = Base64.getDecoder().decode(tokenInfo.getData());

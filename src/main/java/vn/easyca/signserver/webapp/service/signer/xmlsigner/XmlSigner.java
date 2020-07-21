@@ -5,8 +5,6 @@ import vn.easyca.signserver.core.sign.integrated.xml.SignXMLLib;
 import vn.easyca.signserver.webapp.service.dto.request.SignXMLRequest;
 import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
-import java.security.cert.X509Certificate;
-
 public class XmlSigner {
 
     private CryptoTokenProxy cryptoTokenProxy;
@@ -21,7 +19,7 @@ public class XmlSigner {
         SignXMLDto signXMLDto = new SignXMLDto(request.getXml(),
             cryptoTokenProxy.getPrivateKey(),
             cryptoTokenProxy.getPublicKey(),
-            (X509Certificate) cryptoTokenProxy.getX509Certificates()[0]);
+            cryptoTokenProxy.getX509Certificate());
         return lib.generateXMLDigitalSignature(signXMLDto);
     }
 

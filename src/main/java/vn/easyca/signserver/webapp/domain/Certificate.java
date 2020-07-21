@@ -198,21 +198,13 @@ public class Certificate implements Serializable {
     @Transient
     private X509Certificate x509Certificate;
 
-    private X509Certificate getX509Certificate() throws CertificateException {
+    public X509Certificate getX509Certificate() throws CertificateException {
         if (x509Certificate != null)
             return x509Certificate;
         byte encodedCert[] = Base64.getDecoder().decode(rawData);
         ByteArrayInputStream inputStream = new ByteArrayInputStream(encodedCert);
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) certFactory.generateCertificate(inputStream);
-    }
-
-    public boolean isExpired() throws Exception {
-        X509Certificate cert = getX509Certificate();
-        Date notAfter = cert.getNotAfter();
-        Date notBefore = cert.getNotBefore();
-        Date currentDate = new Date();
-        return notAfter.before(currentDate) || notBefore.after(currentDate);
     }
 
     public TokenInfo getCertificateTokenInfo() {

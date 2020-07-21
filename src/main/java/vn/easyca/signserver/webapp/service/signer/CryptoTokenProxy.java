@@ -3,12 +3,9 @@ package vn.easyca.signserver.webapp.service.signer;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 
-import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.Date;
 
 /**
@@ -17,9 +14,7 @@ import java.util.Date;
  */
 
 public class CryptoTokenProxy {
-
-
-    private final Certificate certificateDomain;
+    private final Certificate certificate;
 
     private final PrivateKey privateKey;
 
@@ -27,50 +22,38 @@ public class CryptoTokenProxy {
 
     private final CryptoToken cryptoToken;
 
-    private X509Certificate x509Certificate;
-
-
-    public CryptoTokenProxy(CryptoToken cryptoToken, Certificate certificateDomain) throws Exception {
-
-        this.certificateDomain = certificateDomain;
+    public CryptoTokenProxy(CryptoToken cryptoToken, Certificate certificate) throws Exception {
+        this.certificate = certificate;
         this.cryptoToken = cryptoToken;
-        this.privateKey = cryptoToken.getPrivateKey(certificateDomain.getAlias());
-        this.publicKey = cryptoToken.getPublicKey(certificateDomain.getAlias());
-    }
-
-
-    public java.security.cert.Certificate[] getX509Certificates() throws KeyStoreException {
-        java.security.cert.Certificate[] certificates = new java.security.cert.Certificate[1];
-        certificates[0] = cryptoToken.getCertificate(certificateDomain.getAlias());
-        this.x509Certificate = (X509Certificate) certificates[0];
-        return certificates;
+        this.privateKey = cryptoToken.getPrivateKey(certificate.getAlias());
+        this.publicKey = cryptoToken.getPublicKey(certificate.getAlias());
     }
 
     public PrivateKey getPrivateKey() {
         return privateKey;
     }
 
-    public boolean hasEfficiency(Date usedDate) {
-        usedDate = usedDate == null ? new Date() : usedDate;
-        try {
-            this.x509Certificate.checkValidity(usedDate);
-            return true;
-        } catch (Exception exception) {
-            return false;
-        }
+    public boolean isExpired(Date date) throws Exception {
+        X509Certificate cert = certificate.getX509Certificate();
+        Date notAfter = cert.getNotAfter();
+        Date notBefore = cert.getNotBefore();
+        if (date == null) date = new Date();
+        return notAfter.before(date) || notBefore.after(date);
     }
 
-    public String getBase64Certificate() throws KeyStoreException, CertificateEncodingException {
+    public String getBase64Certificate() {
+        return certificate.getRawData();
+    }
 
-        return Base64.getEncoder().encodeToString(getX509Certificates()[0].getEncoded());
+    public X509Certificate getX509Certificate() throws Exception {
+        return certificate.getX509Certificate();
     }
 
     public PublicKey getPublicKey() {
-
         return publicKey;
     }
 
-    public Certificate getCertificateDomain() {
-        return certificateDomain;
+    public Certificate getCertificate() {
+        return certificate;
     }
 }

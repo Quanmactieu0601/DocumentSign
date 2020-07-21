@@ -10,6 +10,7 @@ import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.cert.Certificate;
 
 
 public class PDFSigner {
@@ -24,7 +25,6 @@ public class PDFSigner {
     }
 
     public byte[] signPDF(SignPDFRequest request) throws Exception {
-
         initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
@@ -36,7 +36,7 @@ public class PDFSigner {
                 PartyMode.SIGN_SERVER,
                 request.getContent(),
                 cryptoTokenProxy.getPrivateKey(),
-                cryptoTokenProxy.getX509Certificates(),
+                new Certificate[]{cryptoTokenProxy.getX509Certificate()},
                 temFilePath
             );
             signPDFDto.setSignField(request.getSigner());
