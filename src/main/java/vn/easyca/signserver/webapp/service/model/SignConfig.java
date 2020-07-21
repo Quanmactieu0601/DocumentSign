@@ -3,7 +3,7 @@ package vn.easyca.signserver.webapp.service.model;
 public class SignConfig {
 
 
-    public static enum HashAlgorithm {
+    public  enum HashAlgorithm {
 
         SHA1("SHA1"),
         SHA256("SHA256"),
@@ -31,7 +31,7 @@ public class SignConfig {
         }
     }
 
-    public static enum SignatureAlgorithm {
+    public  enum SignatureAlgorithm {
 
         SHA1WITHRSA("SHA1withRSA"),
         SHA256WITHRSA("SHA256withRSA");

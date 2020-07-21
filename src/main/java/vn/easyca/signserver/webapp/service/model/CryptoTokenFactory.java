@@ -5,11 +5,10 @@ import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
-import vn.easyca.signserver.webapp.encryption.CBCEncryption;
+import vn.easyca.signserver.webapp.commond.encryption.CBCEncryption;
 import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
-import vn.easyca.signserver.webapp.service.Encryption;
+import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
@@ -21,16 +20,13 @@ import java.util.Base64;
 public class CryptoTokenFactory {
 
 
-    private Encryption encryption = new CBCEncryption();
-
-
     public CryptoToken resolveToken(Certificate certificate, String pin) throws Exception {
 
         String tokenType = certificate.getTokenType();
         switch (tokenType) {
-            case CertificateType.PKCS_11:
+            case Certificate.PKCS_11:
                 return resolveP11Token(certificate, pin);
-            case CertificateType.PKCS_12:
+            case Certificate.PKCS_12:
                 return resolveP12Token(certificate, pin);
             default:
                 throw new InitTokenProxyException("Not found token type" + tokenType);
@@ -40,8 +36,7 @@ public class CryptoTokenFactory {
     private CryptoToken resolveP12Token(Certificate certificate, String pin) throws Encryption.EncryptionException {
 
         TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
-        String decryResult = encryption.decrypt(tokenInfo.getData());
-        byte[] fileContent = Base64.getDecoder().decode(decryResult);
+        byte[] fileContent = Base64.getDecoder().decode(tokenInfo.getData());
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         Config config = new Config();
         config.initPkcs12(new ByteArrayInputStream(fileContent), pin);

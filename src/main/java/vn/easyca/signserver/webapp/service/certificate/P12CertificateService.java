@@ -3,12 +3,11 @@ package vn.easyca.signserver.webapp.service.certificate;
 import vn.easyca.signserver.core.cryptotoken.Config;
 import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
 import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
-import vn.easyca.signserver.webapp.service.Encryption;
+import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 
 import java.io.ByteArrayInputStream;
 import java.security.cert.X509Certificate;
@@ -19,7 +18,7 @@ public class P12CertificateService extends CertificateService {
 
 
     P12CertificateService(CertificateRepository certificateRepository, Encryption encryption) {
-        super(certificateRepository,encryption);
+        super(certificateRepository, encryption);
     }
 
     @Override
@@ -40,9 +39,9 @@ public class P12CertificateService extends CertificateService {
             certificate.setOwnerId(dto.getOwnerId());
             certificate.setSerial(serial);
             certificate.setAlias(alias);
-            certificate.tokenType(CertificateType.PKCS12.toString());
+            certificate.tokenType(Certificate.PKCS_12);
             certificate.setCertificateTokenInfo(getTokenInfo(dto.getP12Base64()));
-            certificateRepository.save(certificate);
+            save(certificate);
             return certificate;
         } catch (Exception exception) {
             log.error(exception.getLocalizedMessage());
@@ -51,8 +50,6 @@ public class P12CertificateService extends CertificateService {
     }
 
     private TokenInfo getTokenInfo(String data) throws Encryption.EncryptionException {
-
-        data = encryption.encrypt(data);
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(data);
         return tokenInfo;

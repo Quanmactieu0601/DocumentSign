@@ -11,6 +11,7 @@ public class CertificateGeneratorDto {
     private String cn;
     private String password;
     private String ownerId;
+    private String ownerName;
     private String ownerEmail;
     private String ownerPhone;
     private int keyLen;
@@ -102,5 +103,9 @@ public class CertificateGeneratorDto {
 
     public void setCertProfile(String certProfile) {
         this.certProfile = certProfile;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
     }
 }

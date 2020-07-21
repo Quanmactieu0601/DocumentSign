@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.utils;
+package vn.easyca.signserver.webapp.commond.utils;
 
 public class DataValidator {
 

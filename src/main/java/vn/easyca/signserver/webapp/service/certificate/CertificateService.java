@@ -6,14 +6,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.service.Encryption;
-import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
+import vn.easyca.signserver.webapp.commond.encryption.Encryption;
 import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
-import vn.easyca.signserver.webapp.service.dto.NewCertificateInfo;
 import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
-import vn.easyca.signserver.webapp.service.error.GenCertificateInputException;
 
 import java.util.Optional;
 
@@ -23,11 +19,11 @@ public class CertificateService {
 
     protected final CertificateRepository certificateRepository;
 
-    protected final Encryption encryption;
+    protected final EncryptionHelper encryptionHelper;
 
     CertificateService(CertificateRepository certificateRepository, Encryption encryption) {
         this.certificateRepository = certificateRepository;
-        this.encryption = encryption;
+        this.encryptionHelper = new EncryptionHelper(encryption);
     }
 
 
@@ -38,29 +34,17 @@ public class CertificateService {
      * @return the persisted entity.
      */
     public Certificate save(Certificate certificate) {
-        log.debug("Request to save Certificate : {}", certificate);
-        Certificate existCert = certificateRepository.getCertificateBySerial(certificate.getSerial());
-        if (existCert != null) {
-            certificate.isExtensionCert(existCert);
-            certificateRepository.delete(existCert);
+        Optional<Certificate> existCert = certificateRepository.getCertificateBySerial(certificate.getSerial());
+        if (existCert.isPresent()) {
+            this.delete(existCert.get().getId());
         }
-        return certificateRepository.save(certificate);
-    }
-
-    public Certificate saveWithEncryption(Certificate certificate) throws Encryption.EncryptionException {
-        if (encryption != null) {
-            TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
-            String encryptedData = encryption.encrypt(certificate.getCertificateTokenInfo().getData());
-            tokenInfo.setData(encryptedData);
-            certificate.setCertificateTokenInfo(tokenInfo);
+        if (!certificate.isEncrypted()) {
+            certificate = encryptionHelper.encryptCert(certificate);
         }
-        return save(certificate);
+        certificateRepository.save(certificate);
+        return certificate;
     }
 
-
-    protected TokenInfo encryptionTokenInfo(TokenInfo tokenInfo) throws Encryption.EncryptionException {
-        return tokenInfo.setData(encryption.encrypt(tokenInfo.getData()));
-    }
 
     /**
      * Get all the certificates.
@@ -84,11 +68,13 @@ public class CertificateService {
     @Transactional(readOnly = true)
     public Optional<Certificate> findOne(Long id) {
         log.debug("Request to get Certificate : {}", id);
-        return certificateRepository.findById(id);
+        Optional<Certificate> optionalCertificate = certificateRepository.findById(id);
+        return optionalCertificate.isPresent() ? encryptionHelper.decryptCert(optionalCertificate) : optionalCertificate;
     }
 
-    public Certificate findBySerial(String serial) {
-        return certificateRepository.getCertificateBySerial(serial);
+    public Optional<Certificate> findBySerial(String serial) {
+        Optional<Certificate> optionalCertificate = certificateRepository.getCertificateBySerial(serial);
+        return optionalCertificate.isPresent() ? encryptionHelper.decryptCert(optionalCertificate) : optionalCertificate;
     }
 
     /**
@@ -103,15 +89,11 @@ public class CertificateService {
 
     public Certificate importCertificate(ImportCertificateDto dto) throws NotImplementedException, CreateCertificateException {
 
-
-        throw new NotImplementedException();
-    }
-
-    public NewCertificateInfo genCertificate(CertificateGeneratorDto dto) throws NotImplementedException, CreateCertificateException, GenCertificateInputException {
         throw new NotImplementedException();
     }
 
 
     public static class NotImplementedException extends Exception {
     }
+
 }

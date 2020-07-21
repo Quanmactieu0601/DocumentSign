@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service;
+package vn.easyca.signserver.webapp.commond.encryption;
 
 import java.security.NoSuchAlgorithmException;
 

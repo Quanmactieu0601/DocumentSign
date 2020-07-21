@@ -222,10 +222,6 @@ public class Certificate implements Serializable {
         this.tokenInfo = tokenInfo.toString();
     }
 
-    public CertificateType getCertificateType() {
-        return CertificateType.getType(tokenType);
-    }
-
     public boolean isExtensionCert(Certificate oldCert) {
 
         try {
@@ -234,7 +230,13 @@ public class Certificate implements Serializable {
         } catch (KeyStoreException | CertificateException e) {
             return false;
         }
+    }
 
+    public boolean isEncrypted(){
+        TokenInfo tokenInfo = getCertificateTokenInfo();
+        if (tokenInfo != null)
+            tokenInfo.isEncrypted();
+        return false;
     }
 
 

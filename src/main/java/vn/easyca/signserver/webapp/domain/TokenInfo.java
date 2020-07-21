@@ -1,4 +1,5 @@
 package vn.easyca.signserver.webapp.domain;
+import com.google.gson.Gson;
 import vn.easyca.signserver.webapp.utils.JSONBuilder;
 import vn.easyca.signserver.webapp.utils.JsonReader;
 
@@ -16,34 +17,17 @@ public class TokenInfo {
 
     private String p11Attrs;
 
+    private boolean encrypted;
+
     public static TokenInfo createInstance(String data){
 
-        JsonReader jsonReader = new JsonReader(data);
-        TokenInfo tokenInfo = new TokenInfo();
-        tokenInfo.setName(jsonReader.tryGetString("name",""));
-        tokenInfo.setLibrary(jsonReader.tryGetString("library",""));
-        tokenInfo.setSlot(jsonReader.tryGetInt("slot",0));
-        tokenInfo.setData(jsonReader.tryGetString("data",""));
-        tokenInfo.setPassword(jsonReader.tryGetString("password",""));
-        tokenInfo.setP11Attrs(jsonReader.tryGetString("p11Attrs",""));
-        return tokenInfo;
+        Gson gson = new Gson();
+        return  gson.fromJson(data,TokenInfo.class);
     }
 
-    public String toString(){
-
-        JSONBuilder jsonBuilder= new JSONBuilder();
-        jsonBuilder.put("name",name);
-        jsonBuilder.put("library",library);
-        jsonBuilder.put("slot",slot);
-        jsonBuilder.put("data",data);
-        jsonBuilder.put("password",password);
-        jsonBuilder.put("p11Attrs",p11Attrs);
-        return jsonBuilder.build().toString();
-    }
     public String getName() {
         return name;
     }
-
     public TokenInfo setName(String name) {
         this.name = name;
         return this;
@@ -92,5 +76,19 @@ public class TokenInfo {
     public TokenInfo setP11Attrs(String p11Attrs) {
         this.p11Attrs = p11Attrs;
         return this;
+    }
+
+    public boolean isEncrypted() {
+        return encrypted;
+    }
+
+    public void setEncrypted(boolean encrypted) {
+        this.encrypted = encrypted;
+    }
+
+    public String toString() {
+
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 }

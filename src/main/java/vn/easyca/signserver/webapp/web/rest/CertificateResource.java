@@ -2,10 +2,8 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
-import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.config.Configs;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.domain.CertificateType;
 import vn.easyca.signserver.webapp.service.CertificateGeneratorService;
 import vn.easyca.signserver.webapp.service.UserService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
@@ -15,7 +13,6 @@ import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
 import vn.easyca.signserver.webapp.service.error.CreateCertificateException;
 import vn.easyca.signserver.webapp.service.certificate.CertificateServiceFactory;
 import vn.easyca.signserver.webapp.service.error.GenCertificateInputException;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;

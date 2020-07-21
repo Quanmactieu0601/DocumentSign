@@ -1,7 +1,6 @@
-package vn.easyca.signserver.webapp.encryption;
+package vn.easyca.signserver.webapp.commond.encryption;
 
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.webapp.service.Encryption;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;

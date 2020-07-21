@@ -10,20 +10,21 @@ import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.domain.User;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.*;
-import vn.easyca.signserver.webapp.service.model.generator.CertGenerator;
-import vn.easyca.signserver.webapp.service.model.generator.CertGeneratorInput;
-import vn.easyca.signserver.webapp.service.model.generator.CertGeneratorOutput;
+import vn.easyca.signserver.webapp.service.model.cert.generator.CertGenerator;
+import vn.easyca.signserver.webapp.service.model.cert.data.CertGeneratorInput;
+import vn.easyca.signserver.webapp.service.model.cert.data.CertGeneratorOutput;
 
 // complex service
 public class CertificateGeneratorService {
 
-    private CryptoToken cryptoToken;
+    public static final int CERT_TYPE = 2;
+    public static final String CERT_METHOD = "SOFT_TOKEN";
 
-    private CertificateService certificateService;
+    private final CryptoToken cryptoToken;
 
-    private UserService userService;
+    private final CertificateService certificateService;
 
-    private static int CERT_TYPE = 2; // For Company
+    private final UserService userService;
 
     public CertificateGeneratorService(CryptoToken cryptoToken, CertificateService certificateService, UserService userService) {
         this.cryptoToken = cryptoToken;
@@ -46,11 +47,11 @@ public class CertificateGeneratorService {
         String alias = dto.getOwnerId();
         CertGenerator certGenerator = new CertGenerator(cryptoToken, CAFacadeApi.getInstance().createRegisterCertificateApi());
         CertGeneratorInput.CertGeneratorInputBuilder inputBuilder = new CertGeneratorInput.CertGeneratorInputBuilder();
-        inputBuilder.setAlias(alias);
-        inputBuilder.setAttrs(dto.getCn(), dto.getOu(), dto.getOu(), dto.getL(), dto.getS(), dto.getC())
+        inputBuilder.setAlias(alias)
+            .setOwner(dto.getOwnerId(),dto.getOwnerPhone(),dto.getOwnerEmail())
+            .setAttrs(dto.getCn(), dto.getOu(), dto.getOu(), dto.getL(), dto.getS(), dto.getC())
             .setKeyLength(dto.getKeyLen())
-            .setOwner(dto.getOwnerId(), dto.getOwnerPhone(), dto.getOwnerEmail())
-            .setCertService(dto.getCertProfile());
+            .setCertService(dto.getCertProfile(),CERT_TYPE,CERT_METHOD);
         CertGeneratorInput certGeneratorInput = inputBuilder.build();
         CertGeneratorOutput certGeneratorOutput = certGenerator.genCert(certGeneratorInput);
         Certificate certificate = new Certificate();
@@ -66,7 +67,7 @@ public class CertificateGeneratorService {
             .setLibrary(cfg.getLibrary())
             .setP11Attrs(cfg.getPkcs11Config());
         certificate.setCertificateTokenInfo(tokenInfo);
-        certificateService.saveWithEncryption(certificate);
+        certificateService.save(certificate);
         return certificate;
     }
 

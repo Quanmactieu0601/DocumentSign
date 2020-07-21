@@ -1,4 +1,5 @@
 package vn.easyca.signserver.webapp.service.model.pdfsigner;
+
 import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFDto;
@@ -13,9 +14,9 @@ import java.io.FileInputStream;
 
 public class PDFSigner {
 
-    private CryptoTokenProxy cryptoTokenProxy;
+    private final CryptoTokenProxy cryptoTokenProxy;
 
-    private String cacheDir;
+    private final String cacheDir;
 
     public PDFSigner(CryptoTokenProxy cryptoTokenProxy, String cacheDir) {
         this.cryptoTokenProxy = cryptoTokenProxy;
@@ -29,30 +30,35 @@ public class PDFSigner {
         File file = new File(temFilePath);
         if (!file.exists())
             file.createNewFile();
-        SignPDFPlugin signPDFPlugin = new SignPDFPlugin();
-        SignPDFDto signPDFDto = SignPDFDto.build(
-            PartyMode.SIGN_SERVER,
-            request.getContent(),
-            cryptoTokenProxy.getPrivateKey(),
-            cryptoTokenProxy.getX509Certificates(),
-            temFilePath
-        );
-        signPDFDto.setSignField(request.getSigner());
-        signPDFDto.setSigner(request.getSigner());
-        signPDFDto.setSignDate(request.getSignDate());
-        signPDFDto.setLocation(request.getInfo().getLocation());
-        signPDFDto.setVisibleWidth(request.getVisible().getVisibleWidth());
-        signPDFDto.setVisibleHeight(request.getVisible().getVisibleHeight());
-        signPDFDto.setVisibleX(request.getVisible().getVisibleX());
-        signPDFDto.setVisibleY(request.getVisible().getVisibleY());
-        signPDFPlugin.sign(signPDFDto);
-        byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
-        file.delete();
-        return res;
+        try {
+            SignPDFPlugin signPDFPlugin = new SignPDFPlugin();
+            SignPDFDto signPDFDto = SignPDFDto.build(
+                PartyMode.SIGN_SERVER,
+                request.getContent(),
+                cryptoTokenProxy.getPrivateKey(),
+                cryptoTokenProxy.getX509Certificates(),
+                temFilePath
+            );
+            signPDFDto.setSignField(request.getSigner());
+            signPDFDto.setSigner(request.getSigner());
+            signPDFDto.setSignDate(request.getSignDate());
+            signPDFDto.setLocation(request.getInfo().getLocation());
+            signPDFDto.setVisibleWidth(request.getVisible().getVisibleWidth());
+            signPDFDto.setVisibleHeight(request.getVisible().getVisibleHeight());
+            signPDFDto.setVisibleX(request.getVisible().getVisibleX());
+            signPDFDto.setVisibleY(request.getVisible().getVisibleY());
+            signPDFPlugin.sign(signPDFDto);
+            byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
+            file.delete();
+            return res;
+        } catch (Exception ex) {
+            if (file != null && file.exists())
+                file.delete();
+            throw ex;
+        }
     }
 
     private void initTemDir() {
-
         File file = new File(cacheDir);
         if (!file.exists())
             file.mkdir();
