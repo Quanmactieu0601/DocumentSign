@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScans;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -70,6 +71,9 @@ public class WebappApp {
     public static void main(String[] args) {
 
         SpringApplication app = new SpringApplication(WebappApp.class);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
+        context.scan("vn.easyca.signserver.webapp.service.signer");
+        context.refresh();
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         CAFacadeApi.getInstance().init(CA_URL,CA_USER,CA_PASS);
@@ -99,7 +103,7 @@ public class WebappApp {
                 "Profile(s): \t{}\n----------------------------------------------------------",
             env.getProperty("spring.application.name"),
             protocol,
-            serverPort,
+             serverPort,
             contextPath,
             protocol,
             hostAddress,

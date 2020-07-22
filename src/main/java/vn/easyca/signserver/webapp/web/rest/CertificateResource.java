@@ -51,16 +51,16 @@ public class CertificateResource {
     private CertificateService certificateService;
 
     @PostMapping("/certificates/register/p12")
-    public ResponseEntity<BaseResponseVM<String>> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
+    public ResponseEntity<BaseResponseVM> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
         ImportCertificateDto dto = new ImportCertificateDto();
         dto.setP12Base64(p12RegisterVM.getBase64Data());
         dto.setPin(p12RegisterVM.getPin());
         dto.setOwnerId(p12RegisterVM.getOwnerId());
         try {
             certificateService.importP12Certificate(dto);
-            return ResponseEntity.ok(new BaseResponseVM<>("OK"));
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (Exception e) {
-            return ResponseEntity.ok(new BaseResponseVM<>(-1, e.getMessage()));
+            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
         }
     }
 
@@ -73,10 +73,10 @@ public class CertificateResource {
             registerCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());
             if (result.getUser() != null)
                 registerCertificateVM.setUser(result.getUser(), result.getUserPassword());
-            return ResponseEntity.ok(new BaseResponseVM<>(registerCertificateVM));
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(registerCertificateVM));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new BaseResponseVM<>(-1, e.getMessage()));
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(e.getMessage()));
         }
     }
 
@@ -161,12 +161,11 @@ public class CertificateResource {
     }
 
     @GetMapping("/certificate/get-by-serial")
-    public ResponseEntity<BaseResponseVM<String>> getBase64Cert(@RequestParam String serial) {
-//        Certificate certificate = resolveService().findBySerial(serial);
-//        if (certificate == null)
-//            return ResponseEntity.ok(new BaseResponseVM<String>(-1, "Không tìm thấy chứng thư"));
-//        return ResponseEntity.ok(new BaseResponseVM<String>(0,certificate.getRawData()));
-        return ResponseEntity.ok(new BaseResponseVM<String>(0, "MIIEGzCCAwOgAwIBAgIQVAT//rcDP7MW1nIgG4DTmDANBgkqhkiG9w0BAQUFADBO\r\nMQswCQYDVQQGEwJWTjESMBAGA1UEBwwJSMOgIE7hu5lpMRYwFAYDVQQKEw1WaWV0\r\ndGVsIEdyb3VwMRMwEQYDVQQDEwpWaWV0dGVsLUNBMB4XDTIwMDMwNTA4MzI1OVoX\r\nDTIxMDMwNTA4MzI1OVowgZYxHjAcBgoJkiaJk/IsZAEBDA5NU1Q6MDEwNTk4NzQz\r\nMjFTMFEGA1UEAwxKQ8OUTkcgVFkgQ+G7lCBQSOG6pk4gxJDhuqZVIFTGryBDw5RO\r\nRyBOR0jhu4YgVsOAIFRIxq/GoE5HIE3huqBJIFNPRlREUkVBTVMxEjAQBgNVBAcM\r\nCUjDgCBO4buYSTELMAkGA1UEBhMCVk4wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJ\r\nAoGBAN45MIHLnjVj1vpa4WJ2tYtyxDrIwkREjDqTaKgGPryrxxcipfQpZdqCSWIk\r\nPUf6K44I5jcK8s1YeoC6hADjVKrpsz8baQz/dBSYy5oJxdiMweTJQq9QlbNw+kx1\r\n5W9aEi2k2DOb+i3yBTQDkc+u/ylLGF5F7njajQhoKR8PxuvXAgMBAAGjggEuMIIB\r\nKjA1BggrBgEFBQcBAQQpMCcwJQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLnZpZXR0\r\nZWwtY2Eudm4wHQYDVR0OBBYEFAz4ANgRsBDOZXFKGBWg0tOa8nHSMAwGA1UdEwEB\r\n/wQCMAAwHwYDVR0jBBgwFoAU/stBFOldp9kyDeSyCFzxXOy2srUwgZIGA1UdHwSB\r\nijCBhzCBhKAuoCyGKmh0dHA6Ly9jcmwudmlldHRlbC1jYS52bi9WaWV0dGVsLUNB\r\nLXYzLmNybKJSpFAwTjETMBEGA1UEAwwKVmlldHRlbC1DQTEWMBQGA1UECgwNVmll\r\ndHRlbCBHcm91cDESMBAGA1UEBwwJSMOgIE7hu5lpMQswCQYDVQQGEwJWTjAOBgNV\r\nHQ8BAf8EBAMCBeAwDQYJKoZIhvcNAQEFBQADggEBAJGwolmW8aFUp7cViSErVDxh\r\nMfgB6mOd5bW+jBphpULpezPJ7vNteuKjKhtGVOkGuwOyuCKR2IK2uRNlMGi6kE9j\r\nUV5W4R5/DVM5oFRmTgs9Q7W1Sy/RytUyJXVtvehDY2hwS3YhtfWJ57Cw0zmPj28a\r\n7vgOy7Pzbx7YAoR2UTrP5gmVuyIAFJ1r+r0BNDcyK8uHeq29h6hKXuRc5K8kUZ3c\r\nnIl7WeNuLCWULB+k5DpxpajDSvSJR7rZlgvg4i64p3lsvSucndM9iD1vEE03VEMY\r\nIMZEWh6LYvQ7f/Ah9V98MTdkRN2CpmtptrMsBDzb6+UDzrE0rqFyZFfICsaGrZ4="));
-
+    public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
+        Optional<Certificate> certificate = certificateService.findBySerial(serial);
+        if (certificate.isPresent())
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.get().getRawData()));
+        else
+            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse("Cert is not found"));
     }
 }

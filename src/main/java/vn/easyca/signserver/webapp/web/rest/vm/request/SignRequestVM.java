@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 
+import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
 import vn.easyca.signserver.webapp.web.rest.vm.SigningOptionalVM;
 import vn.easyca.signserver.webapp.web.rest.vm.TokenInfoVM;
 
@@ -50,6 +51,10 @@ public class SignRequestVM<T> {
 
     public T getData() {
         return data;
+    }
+
+    public TokenInfoDto getTokenDTO(){
+        return new TokenInfoDto(tokenInfo.getSerial(),tokenInfo.getPin());
     }
 
 }

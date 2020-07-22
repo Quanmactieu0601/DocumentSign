@@ -31,7 +31,7 @@ public class P11CertificateGeneratorService {
 
     private final String TOKEN_NAME = "EasyCA Token";
     private final String TOKEN_LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-    private final String TOKEN_PIN = "";
+    private final String TOKEN_PIN = "12345678";
 
     @Autowired
     private CertificateService certificateService;

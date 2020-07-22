@@ -1,22 +1,41 @@
 package vn.easyca.signserver.webapp.service.signer;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.cryptotoken.Config;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
+import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.error.sign.InitTokenProxyException;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
+import java.util.Optional;
 
 
-/**
- * create CryptoToken
- */
-public class CryptoTokenFactory {
-    public CryptoToken resolveToken(Certificate certificate, String pin) throws Exception {
+public class CryptoTokenProxyFactory {
+
+    private CertificateService certificateService;
+
+    public CryptoTokenProxyFactory(CertificateService certificateService) {
+        this.certificateService = certificateService;
+    }
+
+    public CryptoTokenProxy resolveCryptoTokenProxy(String serial, String pin) throws Exception {
+        Optional<Certificate> optionalCertificate = certificateService.findBySerial(serial);
+        if (!optionalCertificate.isPresent())
+            throw new Exception("Certificate that has serial" + serial + "not found");
+        Certificate certificate = optionalCertificate.get();
+        CryptoToken cryptoToken = resolveToken(certificate, pin);
+        return new CryptoTokenProxy(cryptoToken, certificate);
+    }
+
+    private CryptoToken resolveToken(Certificate certificate, String pin) throws Exception {
         String tokenType = certificate.getTokenType();
         switch (tokenType) {
             case Certificate.PKCS_11:
