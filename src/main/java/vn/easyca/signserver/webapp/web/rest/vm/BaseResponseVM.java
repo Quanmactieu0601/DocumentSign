@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.vm.response;
+package vn.easyca.signserver.webapp.web.rest.vm;
 
 public class BaseResponseVM {
 

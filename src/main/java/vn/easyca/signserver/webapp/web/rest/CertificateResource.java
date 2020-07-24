@@ -6,7 +6,7 @@ import vn.easyca.signserver.webapp.service.P11CertificateGeneratorService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratedResult;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
-import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
+import vn.easyca.signserver.webapp.service.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
@@ -22,8 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.GenCertificateVM;
 import vn.easyca.signserver.webapp.web.rest.vm.RegisterCertificateVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.P12RegisterVM;
-import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+import vn.easyca.signserver.webapp.web.rest.vm.BaseResponseVM;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,13 +50,9 @@ public class CertificateResource {
     private CertificateService certificateService;
 
     @PostMapping("/register/p12")
-    public ResponseEntity<BaseResponseVM> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
-        ImportCertificateDto dto = new ImportCertificateDto();
-        dto.setP12Base64(p12RegisterVM.getBase64Data());
-        dto.setPin(p12RegisterVM.getPin());
-        dto.setOwnerId(p12RegisterVM.getOwnerId());
+    public ResponseEntity<BaseResponseVM> registerP12PKCS(@RequestBody ImportP12FileDTO importP12FileDTO)  {
         try {
-            certificateService.importP12Certificate(dto);
+            certificateService.importP12Certificate(importP12FileDTO);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));

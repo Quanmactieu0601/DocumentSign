@@ -1,8 +1,8 @@
 package vn.easyca.signserver.webapp.service.dto.request;
 
 import vn.easyca.signserver.webapp.service.dto.SignRequestDto;
-import vn.easyca.signserver.webapp.service.dto.TokenInfoDto;
-public class SignPDFRequest extends SignRequestDto {
+import vn.easyca.signserver.webapp.service.dto.TokenInfo;
+public class SignPDFRequestDto extends SignRequestDto {
 
     private byte[] content;
 
@@ -10,8 +10,8 @@ public class SignPDFRequest extends SignRequestDto {
 
     private SignPDFSignatureInfo info = new SignPDFSignatureInfo();
 
-    public SignPDFRequest(TokenInfoDto tokenInfoDto,String signer, byte[] content) {
-        super(tokenInfoDto,signer);
+    public SignPDFRequestDto(TokenInfo tokenInfo, String signer, byte[] content) {
+        super(tokenInfo,signer);
         this.content = content;
     }
 

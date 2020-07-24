@@ -17,16 +17,17 @@ import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.Optional;
 
-
+@Component
 public class CryptoTokenProxyFactory {
 
+    private static final String TOKEN_NAME = "token";
+    private static final String TOKEN_LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
+    private static final String TOKEN_PASS = "12345678";
+
+    @Autowired
     private CertificateService certificateService;
 
-    public CryptoTokenProxyFactory(CertificateService certificateService) {
-        this.certificateService = certificateService;
-    }
-
-    public CryptoTokenProxy resolveCryptoTokenProxy(String serial, String pin) throws Exception {
+    public CryptoTokenProxy resolveCryptoTokenProxy(String serial, String ownerId,String pin) throws Exception {
         Optional<Certificate> optionalCertificate = certificateService.findBySerial(serial);
         if (!optionalCertificate.isPresent())
             throw new Exception("Certificate that has serial" + serial + "not found");
@@ -39,7 +40,7 @@ public class CryptoTokenProxyFactory {
         String tokenType = certificate.getTokenType();
         switch (tokenType) {
             case Certificate.PKCS_11:
-                return resolveP11Token(certificate, pin);
+                return resolveP11Token();
             case Certificate.PKCS_12:
                 return resolveP12Token(certificate, pin);
             default:
@@ -63,12 +64,10 @@ public class CryptoTokenProxyFactory {
         return p12CryptoToken;
     }
 
-    private CryptoToken resolveP11Token(Certificate certificate, String pin) {
-
-        TokenInfo tokenInfo = certificate.getCertificateTokenInfo();
+    private CryptoToken resolveP11Token() {
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
         Config config = new Config();
-        config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), pin);
+        config = config.initPkcs11(TOKEN_NAME,TOKEN_LIB,TOKEN_PASS);
         try {
             p11CryptoToken.init(config);
             return p11CryptoToken;

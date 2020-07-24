@@ -16,4 +16,5 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long> 
 
     @Query(nativeQuery = true, value = "SELECT * FROM certificate WHERE serial = ?1")
     Optional<Certificate> getCertificateBySerial(String serial);
+
 }

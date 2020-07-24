@@ -5,7 +5,7 @@ import vn.easyca.signserver.core.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFDto;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
-import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
+import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequestDto;
 import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.io.File;
@@ -24,7 +24,7 @@ public class PDFSigner {
         this.cacheDir = cacheDir;
     }
 
-    public byte[] signPDF(SignPDFRequest request) throws Exception {
+    public byte[] signPDF(SignPDFRequestDto request) throws Exception {
         initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);

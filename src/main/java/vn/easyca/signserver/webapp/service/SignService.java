@@ -1,9 +1,9 @@
 package vn.easyca.signserver.webapp.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.*;
-import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequest;
+import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequestDto;
 import vn.easyca.signserver.webapp.service.dto.request.SignDataRequest;
 import vn.easyca.signserver.webapp.service.dto.request.SignXMLRequest;
 import vn.easyca.signserver.webapp.service.dto.response.PDFSignResponse;
@@ -19,14 +19,12 @@ import vn.easyca.signserver.webapp.service.signer.xmlsigner.XmlSigner;
 public class SignService {
 
     private final String temDir = "./TemFile/";
-    private CryptoTokenProxyFactory cryptoTokenProxyFactory = null;
+    @Autowired
+    private CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
-    SignService(CertificateService certificateService) {
-        cryptoTokenProxyFactory = new CryptoTokenProxyFactory(certificateService);
-    }
-    public PDFSignResponse signPDFFile(SignPDFRequest request) throws Exception {
+    public PDFSignResponse signPDFFile(SignPDFRequestDto request) throws Exception {
         try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfoDto().getSerial(), request.getTokenInfoDto().getPin());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
             PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, temDir);
             byte[] signedContent = pdfSigner.signPDF(request);
             return new PDFSignResponse(signedContent);
@@ -38,7 +36,7 @@ public class SignService {
 
     public SignDataResponse signHash(SignDataRequest request) throws Exception {
         try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfoDto().getSerial(), request.getTokenInfoDto().getPin());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
             RawSigningResult result = new RawSigner(cryptoTokenProxy).signHash(request.getBase64Data());
             return new SignDataResponse(result.getSignatureValue(), result.getCertificate());
         } catch (Exception exception) {
@@ -50,8 +48,9 @@ public class SignService {
 
     public SignDataResponse signData(SignDataRequest request) throws Exception {
         try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfoDto().getSerial(), request.getTokenInfoDto().getPin());
-            RawSigningResult result = new RawSigner(cryptoTokenProxy).signData(request.getBase64Data(),request.getHashAlgorithm());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
+            RawSigner rawSigner = new RawSigner(cryptoTokenProxy);
+            RawSigningResult result = rawSigner.signData(request.getBase64Data(),request.getOptional().getHashAlgorithm());
             return new SignDataResponse(result.getSignatureValue(), result.getCertificate());
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -59,9 +58,9 @@ public class SignService {
         }
     }
 
-    public String signXML(SignXMLRequest request, TokenInfoDto tokenInfoDto) throws Exception {
+    public String signXML(SignXMLRequest request) throws Exception {
         try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfoDto().getSerial(), request.getTokenInfoDto().getPin());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
             XmlSigner xmlSigner = new XmlSigner(cryptoTokenProxy);
             return xmlSigner.sign(request);
         } catch (Exception exception) {

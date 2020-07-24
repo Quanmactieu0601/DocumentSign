@@ -12,7 +12,7 @@ import vn.easyca.signserver.core.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.service.dto.ImportCertificateDto;
+import vn.easyca.signserver.webapp.service.dto.ImportP12FileDTO;
 import java.io.ByteArrayInputStream;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
@@ -76,7 +76,7 @@ public class CertificateService {
         certificateRepository.deleteById(id);
     }
 
-    public Certificate importP12Certificate(ImportCertificateDto dto) throws Exception {
+    public void importP12Certificate(ImportP12FileDTO dto) throws Exception {
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         Config config = new Config();
         byte[] fileContent = Base64.getDecoder().decode(dto.getP12Base64());
@@ -97,7 +97,6 @@ public class CertificateService {
             tokenInfo.setData(dto.getP12Base64());
             certificate.setCertificateTokenInfo(tokenInfo);
             this.save(certificate);
-            return certificate;
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Could not import p12 certificate");

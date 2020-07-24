@@ -1,34 +1,34 @@
 package vn.easyca.signserver.webapp.service.dto;
 
-import vn.easyca.signserver.webapp.service.signer.SignConfig;
+import vn.easyca.signserver.webapp.service.signer.SigningOptional;
 
 import java.util.Date;
 
 public class SignRequestDto {
 
-    private TokenInfoDto tokenInfoDto;
+    private TokenInfo tokenInfo;
 
     private String signer;
 
     private Date signDate = new Date();
 
-    private SignConfig signConfig = new SignConfig();
+    private SigningOptional optional = new SigningOptional();
 
-    public SignRequestDto(TokenInfoDto tokenInfoDto, String signer) {
-        this.tokenInfoDto = tokenInfoDto;
+    public SignRequestDto(TokenInfo tokenInfo, String signer) {
+        this.tokenInfo = tokenInfo;
         this.signer = signer;
     }
 
-    public TokenInfoDto getTokenInfoDto() {
-        return tokenInfoDto;
+    public TokenInfo getTokenInfo() {
+        return tokenInfo;
     }
 
-    public SignConfig getSignConfig() {
-        return signConfig;
+    public SigningOptional getOptional() {
+        return optional;
     }
 
-    public void setSignConfig(SignConfig signConfig) {
-        this.signConfig = signConfig;
+    public void setOptional(SigningOptional signingOptional) {
+        this.optional = signingOptional;
     }
 
     public String getSigner() {
@@ -47,7 +47,7 @@ public class SignRequestDto {
         this.signer = signer;
     }
 
-    public void setTokenInfoDto(TokenInfoDto tokenInfoDto) {
-        this.tokenInfoDto = tokenInfoDto;
+    public void setTokenInfo(TokenInfo tokenInfo) {
+        this.tokenInfo = tokenInfo;
     }
 }
