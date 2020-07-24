@@ -34,7 +34,7 @@ import java.util.Optional;
  * REST controller for managing {@link Certificate}.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/certificate")
 public class CertificateResource {
 
     private final Logger log = LoggerFactory.getLogger(CertificateResource.class);
@@ -50,7 +50,7 @@ public class CertificateResource {
     @Autowired
     private CertificateService certificateService;
 
-    @PostMapping("/certificates/register/p12")
+    @PostMapping("/register/p12")
     public ResponseEntity<BaseResponseVM> registerP12PKCS(@RequestBody P12RegisterVM p12RegisterVM) throws URISyntaxException {
         ImportCertificateDto dto = new ImportCertificateDto();
         dto.setP12Base64(p12RegisterVM.getBase64Data());
@@ -64,7 +64,7 @@ public class CertificateResource {
         }
     }
 
-    @PostMapping("/certificates/register/p11")
+    @PostMapping("/register/p11")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody GenCertificateVM genCertificateVM) {
         try {
             CertificateGeneratorDto dto = new CertificateGeneratorDto(genCertificateVM);
@@ -87,7 +87,7 @@ public class CertificateResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new certificate, or with status {@code 400 (Bad Request)} if the certificate has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/certificates")
+    @PostMapping("/create")
     public ResponseEntity<Certificate> createCertificate(@RequestBody Certificate certificate) throws URISyntaxException {
         log.debug("REST request to save Certificate : {}", certificate);
         if (certificate.getId() != null) {
@@ -108,7 +108,7 @@ public class CertificateResource {
      * or with status {@code 500 (Internal Server Error)} if the certificate couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/certificates")
+    @PutMapping("/update")
     public ResponseEntity<Certificate> updateCertificate(@RequestBody Certificate certificate) throws URISyntaxException {
         log.debug("REST request to update Certificate : {}", certificate);
         if (certificate.getId() == null) {
@@ -126,7 +126,7 @@ public class CertificateResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of certificates in body.
      */
-    @GetMapping("/certificates")
+    @GetMapping("/get-all")
     public ResponseEntity<List<Certificate>> getAllCertificates(Pageable pageable) {
         log.debug("REST request to get a page of Certificates");
         Page<Certificate> page = certificateService.findAll(pageable);
@@ -140,7 +140,7 @@ public class CertificateResource {
      * @param id the id of the certificate to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the certificate, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/certificates/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Certificate> getCertificate(@PathVariable Long id) {
         log.debug("REST request to get Certificate : {}", id);
         Optional<Certificate> certificate = certificateService.findOne(id);
@@ -153,14 +153,14 @@ public class CertificateResource {
      * @param id the id of the certificate to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/certificates/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCertificate(@PathVariable Long id) {
         log.debug("REST request to delete Certificate : {}", id);
         certificateService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    @GetMapping("/certificate/get-by-serial")
+    @GetMapping("/get-by-serial")
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
         Optional<Certificate> certificate = certificateService.findBySerial(serial);
         if (certificate.isPresent())
