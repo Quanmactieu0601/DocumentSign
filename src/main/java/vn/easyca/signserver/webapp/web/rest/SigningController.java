@@ -1,35 +1,55 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.webapp.service.SignService;
-import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequestDto;
-import vn.easyca.signserver.webapp.service.dto.request.SignDataRequest;
-import vn.easyca.signserver.webapp.service.dto.request.SignXMLRequest;
-import vn.easyca.signserver.webapp.service.dto.response.PDFSignResponse;
-import vn.easyca.signserver.webapp.service.dto.response.SignDataResponse;
+import vn.easyca.signserver.webapp.service.SigningService;
+import vn.easyca.signserver.webapp.service.dto.signing.request.PDFSigningData;
+import vn.easyca.signserver.webapp.service.dto.signing.request.RawSigningData;
+import vn.easyca.signserver.webapp.service.dto.signing.request.SigningRequest;
+import vn.easyca.signserver.webapp.service.dto.signing.request.XMLSigningData;
+import vn.easyca.signserver.webapp.service.dto.signing.response.PDFSigningDataRes;
+import vn.easyca.signserver.webapp.service.dto.signing.response.SigningDataResponse;
+import vn.easyca.signserver.webapp.web.rest.mapper.PDFSigningDataVMMapper;
+import vn.easyca.signserver.webapp.web.rest.mapper.RawSigningDataVMMapper;
+import vn.easyca.signserver.webapp.web.rest.mapper.SigningVMMapper;
+import vn.easyca.signserver.webapp.web.rest.mapper.XMLSigningDataVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.BaseResponseVM;
+import vn.easyca.signserver.webapp.web.rest.vm.sign.PDFSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.sign.RawSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.sign.SigningVM;
+import vn.easyca.signserver.webapp.web.rest.vm.sign.XMLSigningDataVM;
 
 @RestController
 @RequestMapping("/api/signing")
 public class SigningController {
 
-    private SignService signService;
+    @Autowired
+    private SigningService signingService;
 
-    public SigningController(SignService signService) {
-        this.signService = signService;
-    }
+    @Autowired
+    private RawSigningDataVMMapper rawSigningDataVMMapper;
+
+    @Autowired
+    private XMLSigningDataVMMapper xmlSigningDataVMMapper;
+
+    @Autowired
+    private PDFSigningDataVMMapper pdfSigningDataVMMapper;
+
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity signPDF(@RequestParam MultipartFile file, SignPDFRequestDto signPDFRequestDto) {
+    public ResponseEntity signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningDataVM> signingVM) {
 
         try {
             byte[] content = file.getBytes();
-            PDFSignResponse signResponse = signService.signPDFFile(signPDFRequestDto);
+            SigningVMMapper signingVMMapper = new SigningVMMapper(pdfSigningDataVMMapper);
+            SigningRequest<PDFSigningData> signingRequest = signingVMMapper.map(signingVM);
+            signingRequest.getData().setContent(content);
+            PDFSigningDataRes signResponse = signingService.signPDFFile(signingRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
@@ -41,32 +61,36 @@ public class SigningController {
 
     }
 
-    // not correct. change signService.signData by signService.signHash in next day.
     @PostMapping(value = "/hash")
-    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SignDataRequest signDataRequest) {
+    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<RawSigningDataVM> signingVM) {
         try {
-            SignDataResponse signDataResponse = signService.signHash(signDataRequest);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signDataResponse));
+            SigningVMMapper mapper = new SigningVMMapper(rawSigningDataVMMapper);
+            SigningRequest<RawSigningData> dto = mapper.map(signingVM);
+            SigningDataResponse signingDataResponse = signingService.signHash(dto);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
         }
     }
 
     @PostMapping(value = "/data")
-    public ResponseEntity<BaseResponseVM> signData(@RequestBody SignDataRequest signDataRequest) {
-
+    public ResponseEntity<BaseResponseVM> signData(@RequestBody SigningVM<RawSigningDataVM> signingVM) {
         try {
-            SignDataResponse signDataResponse = signService.signData(signDataRequest);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signDataResponse));
+            SigningVMMapper mapper = new SigningVMMapper(rawSigningDataVMMapper);
+            SigningRequest<RawSigningData> dto = mapper.map(signingVM);
+            SigningDataResponse signingDataResponse = signingService.signData(dto);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
         }
     }
 
     @PostMapping(value = "/xml")
-    public ResponseEntity<BaseResponseVM> signXML(SignXMLRequest request) {
+    public ResponseEntity<BaseResponseVM> signXML(SigningVM<XMLSigningDataVM> request) {
         try {
-            String xml = signService.signXML(request);
+            SigningVMMapper mapper = new SigningVMMapper(xmlSigningDataVMMapper);
+            SigningRequest<XMLSigningData> dto = mapper.map(request);
+            String xml = signingService.signXML(dto);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(xml));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(e.getMessage()));

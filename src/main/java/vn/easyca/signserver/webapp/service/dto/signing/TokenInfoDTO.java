@@ -1,17 +1,17 @@
-package vn.easyca.signserver.webapp.service.dto;
+package vn.easyca.signserver.webapp.service.dto.signing;
 
-public class TokenInfo {
+public class TokenInfoDTO {
 
     private String serial;
 
     private String pin;
 
-    public TokenInfo(String serial, String pin) {
+    public TokenInfoDTO(String serial, String pin) {
         this.serial = serial;
         this.pin = pin;
     }
 
-    public TokenInfo(){
+    public TokenInfoDTO(){
 
     }
 

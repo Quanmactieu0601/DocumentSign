@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm;
 
-public class GenCertificateVM {
+public class CertificateGeneratorVM {
 
     private String ou;
     private String l;

@@ -1,8 +1,7 @@
-package vn.easyca.signserver.webapp.service.dto.request;
+package vn.easyca.signserver.webapp.web.rest.vm.sign;
 
-import vn.easyca.signserver.webapp.service.dto.SignRequestDto;
-import vn.easyca.signserver.webapp.service.dto.TokenInfo;
-public class SignPDFRequestDto extends SignRequestDto {
+public class PDFSigningDataVM {
+
 
     private byte[] content;
 
@@ -10,10 +9,6 @@ public class SignPDFRequestDto extends SignRequestDto {
 
     private SignPDFSignatureInfo info = new SignPDFSignatureInfo();
 
-    public SignPDFRequestDto(TokenInfo tokenInfo, String signer, byte[] content) {
-        super(tokenInfo,signer);
-        this.content = content;
-    }
 
     public byte[] getContent() {
         return content;
@@ -38,7 +33,6 @@ public class SignPDFRequestDto extends SignRequestDto {
     public void setInfo(SignPDFSignatureInfo info) {
         this.info = info;
     }
-
 
     public static class SignPDFVisible {
 
@@ -138,3 +132,4 @@ public class SignPDFRequestDto extends SignRequestDto {
 
 
 }
+

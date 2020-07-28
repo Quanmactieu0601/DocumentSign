@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service.signer;
 
-public class SigningOptional {
+public class OptionalDTO {
 
 
     private String hashAlgorithm = "SHA1";
@@ -21,6 +21,5 @@ public class SigningOptional {
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
     }
-
 
 }

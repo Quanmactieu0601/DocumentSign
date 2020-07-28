@@ -52,12 +52,6 @@ public class CertificateGeneratedResult {
         this.userPassword = userPassword;
     }
 
-//    public CertificateGeneratedResult setUserInfo(String user, String userPass) {
-//        this.user = user;
-//        this.userPassword = userPass;
-//        return this;
-//    }
-
     public Certificate getCertificate() {
         return certificate;
     }

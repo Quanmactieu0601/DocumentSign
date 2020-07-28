@@ -20,7 +20,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.easyca.signserver.webapp.web.rest.vm.GenCertificateVM;
+import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
+import vn.easyca.signserver.webapp.web.rest.vm.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.RegisterCertificateVM;
 import vn.easyca.signserver.webapp.web.rest.vm.BaseResponseVM;
 
@@ -47,6 +48,10 @@ public class CertificateResource {
     private P11CertificateGeneratorService p11GeneratorService;
 
     @Autowired
+    private CertificateGeneratorVMMapper certificateGeneratorVMMapper;
+
+
+    @Autowired
     private CertificateService certificateService;
 
     @PostMapping("/register/p12")
@@ -59,10 +64,10 @@ public class CertificateResource {
         }
     }
 
-    @PostMapping("/register/p11")
-    public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody GenCertificateVM genCertificateVM) {
+    @PostMapping("/gen/p11")
+    public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
-            CertificateGeneratorDto dto = new CertificateGeneratorDto(genCertificateVM);
+            CertificateGeneratorDto dto = certificateGeneratorVMMapper.map(certificateGeneratorVM);
             CertificateGeneratedResult result = p11GeneratorService.genCertificate(dto);
             RegisterCertificateVM registerCertificateVM = new RegisterCertificateVM();
             registerCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());

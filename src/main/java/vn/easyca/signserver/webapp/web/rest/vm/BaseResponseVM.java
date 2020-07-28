@@ -13,8 +13,6 @@ public class BaseResponseVM {
         return baseResponseVM;
     }
 
-
-
     private int status = 0;
 
     private String msg;

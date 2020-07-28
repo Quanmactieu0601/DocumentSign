@@ -5,7 +5,8 @@ import vn.easyca.signserver.core.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFDto;
 import vn.easyca.signserver.core.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.core.sign.utils.UniqueID;
-import vn.easyca.signserver.webapp.service.dto.request.SignPDFRequestDto;
+import vn.easyca.signserver.webapp.service.dto.signing.request.SigningRequest;
+import vn.easyca.signserver.webapp.service.dto.signing.request.PDFSigningData;
 import vn.easyca.signserver.webapp.service.signer.CryptoTokenProxy;
 
 import java.io.File;
@@ -24,17 +25,18 @@ public class PDFSigner {
         this.cacheDir = cacheDir;
     }
 
-    public byte[] signPDF(SignPDFRequestDto request) throws Exception {
+    public byte[] signPDF(SigningRequest<PDFSigningData> request) throws Exception {
         initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
+        PDFSigningData content = request.getData();
         if (!file.exists())
             file.createNewFile();
         try {
             SignPDFPlugin signPDFPlugin = new SignPDFPlugin();
             SignPDFDto signPDFDto = SignPDFDto.build(
                 PartyMode.SIGN_SERVER,
-                request.getContent(),
+                content.getContent(),
                 cryptoTokenProxy.getPrivateKey(),
                 new Certificate[]{cryptoTokenProxy.getX509Certificate()},
                 temFilePath
@@ -42,11 +44,11 @@ public class PDFSigner {
             signPDFDto.setSignField(request.getSigner());
             signPDFDto.setSigner(request.getSigner());
             signPDFDto.setSignDate(request.getSignDate());
-            signPDFDto.setLocation(request.getInfo().getLocation());
-            signPDFDto.setVisibleWidth(request.getVisible().getVisibleWidth());
-            signPDFDto.setVisibleHeight(request.getVisible().getVisibleHeight());
-            signPDFDto.setVisibleX(request.getVisible().getVisibleX());
-            signPDFDto.setVisibleY(request.getVisible().getVisibleY());
+            signPDFDto.setLocation(content.getInfo().getLocation());
+            signPDFDto.setVisibleWidth(content.getVisible().getVisibleWidth());
+            signPDFDto.setVisibleHeight(content.getVisible().getVisibleHeight());
+            signPDFDto.setVisibleX(content.getVisible().getVisibleX());
+            signPDFDto.setVisibleY(content.getVisible().getVisibleY());
             signPDFPlugin.sign(signPDFDto);
             byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
             file.delete();

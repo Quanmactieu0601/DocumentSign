@@ -27,7 +27,7 @@ public class CryptoTokenProxyFactory {
     @Autowired
     private CertificateService certificateService;
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(String serial, String ownerId,String pin) throws Exception {
+    public CryptoTokenProxy resolveCryptoTokenProxy(String serial,String pin) throws Exception {
         Optional<Certificate> optionalCertificate = certificateService.findBySerial(serial);
         if (!optionalCertificate.isPresent())
             throw new Exception("Certificate that has serial" + serial + "not found");

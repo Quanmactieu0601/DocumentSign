@@ -1,13 +1,13 @@
-package vn.easyca.signserver.webapp.service.dto.response;
+package vn.easyca.signserver.webapp.service.dto.signing.response;
 
-public class SignDataResponse {
+public class SigningDataResponse {
 
 
     private String signatureValue;
 
     private String certificate;
 
-    public SignDataResponse(String signatureValue, String certificate) {
+    public SigningDataResponse(String signatureValue, String certificate) {
         this.signatureValue = signatureValue;
         this.certificate = certificate;
     }
