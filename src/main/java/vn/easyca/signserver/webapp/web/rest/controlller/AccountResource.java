@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest;
+package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import vn.easyca.signserver.webapp.domain.User;
 import vn.easyca.signserver.webapp.repository.UserRepository;

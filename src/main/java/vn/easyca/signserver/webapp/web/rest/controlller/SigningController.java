@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest;
+package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,11 +18,11 @@ import vn.easyca.signserver.webapp.web.rest.mapper.PDFSigningDataVMMapper;
 import vn.easyca.signserver.webapp.web.rest.mapper.RawSigningDataVMMapper;
 import vn.easyca.signserver.webapp.web.rest.mapper.SigningVMMapper;
 import vn.easyca.signserver.webapp.web.rest.mapper.XMLSigningDataVMMapper;
-import vn.easyca.signserver.webapp.web.rest.vm.BaseResponseVM;
-import vn.easyca.signserver.webapp.web.rest.vm.sign.PDFSigningDataVM;
-import vn.easyca.signserver.webapp.web.rest.vm.sign.RawSigningDataVM;
-import vn.easyca.signserver.webapp.web.rest.vm.sign.SigningVM;
-import vn.easyca.signserver.webapp.web.rest.vm.sign.XMLSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.PDFSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.RawSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.XMLSigningDataVM;
 
 @RestController
 @RequestMapping("/api/signing")

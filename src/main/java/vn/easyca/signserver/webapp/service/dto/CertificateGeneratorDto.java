@@ -1,10 +1,11 @@
 package vn.easyca.signserver.webapp.service.dto;
+
 public class CertificateGeneratorDto {
 
-    private String ou;
+    private String ou = "IT";
     private String l;
     private String s;
-    private String c;
+    private String c = "VN";
     private String cn;
     private String password;
     private String ownerId;

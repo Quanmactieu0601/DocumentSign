@@ -48,7 +48,7 @@ public class SubjectDN {
         principalBuilder.append(String.format("OU=%s,", ou));
         principalBuilder.append(String.format("O=%s,", o));
         principalBuilder.append(String.format("L=%s,", l));
-        principalBuilder.append(String.format("S=%s,", s));
+//        principalBuilder.append(String.format("S=%s,", s));
         principalBuilder.append(String.format("C=%s", c));
         return principalBuilder.toString();
     }

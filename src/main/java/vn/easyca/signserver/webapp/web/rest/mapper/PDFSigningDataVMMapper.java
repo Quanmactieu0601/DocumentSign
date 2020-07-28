@@ -3,7 +3,7 @@ package vn.easyca.signserver.webapp.web.rest.mapper;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.webapp.service.dto.signing.request.PDFSigningData;
-import vn.easyca.signserver.webapp.web.rest.vm.sign.PDFSigningDataVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.PDFSigningDataVM;
 
 @Component
 public class PDFSigningDataVMMapper implements SigningVMMapper.SigningDataVMMapper<PDFSigningData, PDFSigningDataVM> {

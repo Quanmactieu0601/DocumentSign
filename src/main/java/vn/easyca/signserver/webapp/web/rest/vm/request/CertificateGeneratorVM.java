@@ -1,27 +1,16 @@
-package vn.easyca.signserver.webapp.web.rest.vm;
+package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 public class CertificateGeneratorVM {
 
-    private String ou;
+    private String cn;
     private String l;
     private String s;
-    private String c;
-    private String cn;
-    private String password;
     private String ownerId;
     private int keyLen;
     private String certProfile;
     private String ownerEmail;
     private String ownerPhone;
 
-
-    public String getOu() {
-        return ou;
-    }
-
-    public void setOu(String ou) {
-        this.ou = ou;
-    }
 
     public String getL() {
         return l;
@@ -37,30 +26,6 @@ public class CertificateGeneratorVM {
 
     public void setS(String s) {
         this.s = s;
-    }
-
-    public String getC() {
-        return c;
-    }
-
-    public void setC(String c) {
-        this.c = c;
-    }
-
-    public String getCn() {
-        return cn;
-    }
-
-    public void setCn(String cn) {
-        this.cn = cn;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getOwnerId() {
@@ -101,5 +66,13 @@ public class CertificateGeneratorVM {
 
     public void setOwnerEmail(String ownerEmail) {
         this.ownerEmail = ownerEmail;
+    }
+
+    public String getCn() {
+        return cn;
+    }
+
+    public void setCn(String cn) {
+        this.cn = cn;
     }
 }

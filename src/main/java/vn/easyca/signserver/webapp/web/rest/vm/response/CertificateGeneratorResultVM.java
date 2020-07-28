@@ -1,14 +1,11 @@
-package vn.easyca.signserver.webapp.service.dto;
+package vn.easyca.signserver.webapp.web.rest.vm.response;
 
-public class CertificateGeneratedResult {
+public class CertificateGeneratorResultVM {
 
     private String certSerial;
     private String certData;
     private String userName;
     private String userPassword;
-
-    public CertificateGeneratedResult() {
-    }
 
     public String getCertSerial() {
         return certSerial;
@@ -26,19 +23,19 @@ public class CertificateGeneratedResult {
         this.certData = certData;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getUserPassword() {
         return userPassword;
     }
 
-    public String getUserName() {
-        return userName;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 }

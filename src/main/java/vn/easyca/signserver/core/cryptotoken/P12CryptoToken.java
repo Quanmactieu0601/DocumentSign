@@ -81,4 +81,9 @@ public class P12CryptoToken implements CryptoToken {
     public Certificate getCertificate(String alias) throws KeyStoreException {
         return ks.getCertificate(alias);
     }
+
+    @Override
+    public String getProviderName() throws Exception {
+        throw new Exception("Method is not supported with PKCS12");
+    }
 }

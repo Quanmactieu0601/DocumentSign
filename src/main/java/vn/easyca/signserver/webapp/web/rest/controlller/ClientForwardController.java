@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest;
+package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

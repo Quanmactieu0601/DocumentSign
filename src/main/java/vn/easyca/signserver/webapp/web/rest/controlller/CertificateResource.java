@@ -1,8 +1,8 @@
-package vn.easyca.signserver.webapp.web.rest;
+package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import vn.easyca.signserver.webapp.domain.Certificate;
-import vn.easyca.signserver.webapp.service.P11CertificateGeneratorService;
+import vn.easyca.signserver.webapp.service.CertificateGeneratorService;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratedResult;
 import vn.easyca.signserver.webapp.service.dto.CertificateGeneratorDto;
@@ -21,18 +21,16 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
-import vn.easyca.signserver.webapp.web.rest.vm.CertificateGeneratorVM;
-import vn.easyca.signserver.webapp.web.rest.vm.RegisterCertificateVM;
-import vn.easyca.signserver.webapp.web.rest.vm.BaseResponseVM;
-
+import vn.easyca.signserver.webapp.utils.MappingHelper;
+import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * REST controller for managing {@link Certificate}.
- */
+
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateResource {
@@ -45,7 +43,7 @@ public class CertificateResource {
     private String applicationName;
 
     @Autowired
-    private P11CertificateGeneratorService p11GeneratorService;
+    private CertificateGeneratorService p11GeneratorService;
 
     @Autowired
     private CertificateGeneratorVMMapper certificateGeneratorVMMapper;
@@ -69,24 +67,15 @@ public class CertificateResource {
         try {
             CertificateGeneratorDto dto = certificateGeneratorVMMapper.map(certificateGeneratorVM);
             CertificateGeneratedResult result = p11GeneratorService.genCertificate(dto);
-            RegisterCertificateVM registerCertificateVM = new RegisterCertificateVM();
-            registerCertificateVM.setCert(result.getCertificate().getSerial(), result.getCertificate().getRawData());
-            if (result.getUser() != null)
-                registerCertificateVM.setUser(result.getUser(), result.getUserPassword());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(registerCertificateVM));
+            CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
+            Object viewModel =  MappingHelper.map(result,certificateGeneratorResultVM.getClass());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(e.getMessage()));
         }
     }
 
-    /**
-     * {@code POST  /certificates} : Create a new certificate.
-     *
-     * @param certificate the certificate to create.
-     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new certificate, or with status {@code 400 (Bad Request)} if the certificate has already an ID.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PostMapping("/create")
     public ResponseEntity<Certificate> createCertificate(@RequestBody Certificate certificate) throws URISyntaxException {
         log.debug("REST request to save Certificate : {}", certificate);
@@ -99,15 +88,6 @@ public class CertificateResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /certificates} : Updates an existing certificate.
-     *
-     * @param certificate the certificate to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated certificate,
-     * or with status {@code 400 (Bad Request)} if the certificate is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the certificate couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
     @PutMapping("/update")
     public ResponseEntity<Certificate> updateCertificate(@RequestBody Certificate certificate) throws URISyntaxException {
         log.debug("REST request to update Certificate : {}", certificate);
@@ -120,12 +100,6 @@ public class CertificateResource {
             .body(result);
     }
 
-    /**
-     * {@code GET  /certificates} : get all the certificates.
-     *
-     * @param pageable the pagination information.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of certificates in body.
-     */
     @GetMapping("/get-all")
     public ResponseEntity<List<Certificate>> getAllCertificates(Pageable pageable) {
         log.debug("REST request to get a page of Certificates");
@@ -134,12 +108,6 @@ public class CertificateResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /certificates/:id} : get the "id" certificate.
-     *
-     * @param id the id of the certificate to retrieve.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the certificate, or with status {@code 404 (Not Found)}.
-     */
     @GetMapping("/{id}")
     public ResponseEntity<Certificate> getCertificate(@PathVariable Long id) {
         log.debug("REST request to get Certificate : {}", id);
@@ -147,12 +115,6 @@ public class CertificateResource {
         return ResponseUtil.wrapOrNotFound(certificate);
     }
 
-    /**
-     * {@code DELETE  /certificates/:id} : delete the "id" certificate.
-     *
-     * @param id the id of the certificate to delete.
-     * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCertificate(@PathVariable Long id) {
         log.debug("REST request to delete Certificate : {}", id);

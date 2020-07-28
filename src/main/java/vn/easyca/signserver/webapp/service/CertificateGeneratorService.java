@@ -4,34 +4,29 @@ package vn.easyca.signserver.webapp.service;
 import io.github.jhipster.security.RandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.ca.service.api.CAFacadeApi;
 import vn.easyca.signserver.core.cryptotoken.Config;
 import vn.easyca.signserver.core.cryptotoken.CryptoToken;
-import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
-import vn.easyca.signserver.webapp.config.Configs;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.TokenInfo;
 import vn.easyca.signserver.webapp.domain.User;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
+import vn.easyca.signserver.webapp.service.cert_generator.*;
 import vn.easyca.signserver.webapp.service.certificate.CertificateService;
+import vn.easyca.signserver.webapp.service.domain.RawCertificate;
 import vn.easyca.signserver.webapp.service.dto.*;
-import vn.easyca.signserver.webapp.service.cert_generator.CertGenerator;
-import vn.easyca.signserver.webapp.service.cert_generator.CertGeneratorInput;
-import vn.easyca.signserver.webapp.service.cert_generator.CertGeneratorOutput;
+import vn.easyca.signserver.webapp.service.port.CertificateRequester;
+import vn.easyca.signserver.webapp.service.port.CryptoTokenGetter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class P11CertificateGeneratorService {
-    //Chi dang ho tro cert doanh nghiep
-    private final int CERT_TYPE = 2;
-    private final String CERT_METHOD = "SOFT_TOKEN";
+public class CertificateGeneratorService {
 
-    private final String TOKEN_NAME = "EasyCA Token";
-    private final String TOKEN_LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-    private final String TOKEN_PIN = "12345678";
+
+    private final int CERT_TYPE = 2;
+
+    private final String CERT_METHOD = "SOFT_TOKEN";
 
     @Autowired
     private CertificateService certificateService;
@@ -39,37 +34,35 @@ public class P11CertificateGeneratorService {
     @Autowired
     private UserService userService;
 
-    @Transactional
-    public CertificateGeneratedResult genCertificate(CertificateGeneratorDto dto) throws Exception {
-        //Xu ly dau vao
-        String alias = dto.getOwnerId();
-        CertGeneratorInput.CertGeneratorInputBuilder inputBuilder = new CertGeneratorInput.CertGeneratorInputBuilder();
-        inputBuilder.setAlias(alias)
-            .setOwner(dto.getOwnerId(), dto.getOwnerPhone(), dto.getOwnerEmail())
-            .setAttrs(dto.getCn(), dto.getOu(), dto.getOu(), dto.getL(), dto.getS(), dto.getC())
-            .setKeyLength(dto.getKeyLen())
-            .setCertService(dto.getCertProfile(), CERT_TYPE, CERT_METHOD);
-        CertGeneratorInput certGeneratorInput = inputBuilder.build();
+    @Autowired
+    CryptoTokenGetter cryptoTokenGetter;
 
-        //Gen key trong token/hsm va tao cert request
-        CertGeneratorOutput certGeneratorOutput;
-        P11CryptoToken cryptoToken = new P11CryptoToken();
+    @Autowired
+    CertificateRequester certificateRequester;
+
+
+    public CertificateGeneratedResult genCertificate(CertificateGeneratorDto dto) throws Exception {
+        String alias = dto.getOwnerId();
+        CryptoToken cryptoToken = cryptoTokenGetter.getToken();
+        RawCertificate rawCertificate = null;
         try {
-            cryptoToken.init(initP11Config());
-            CertGenerator certGenerator = new CertGenerator(cryptoToken, CAFacadeApi.getInstance().createRegisterCertificateApi());
-            certGeneratorOutput = certGenerator.genCert(certGeneratorInput);
+            CertGenerator certGenerator = new CertGenerator(cryptoToken, certificateRequester)
+                .setAlias(alias)
+                .setKeyLength(dto.getKeyLen())
+                .setOwnerInfo(new OwnerInfo(dto.getOwnerId(), dto.getOwnerEmail(), dto.getOwnerPhone()))
+                .setCertPackage(new CertPackage(CERT_METHOD, dto.getCertProfile(), CERT_TYPE));
+            rawCertificate = certGenerator.genCert();
         } catch (Exception e) {
             e.printStackTrace();
             throw new Exception("Cannot generate key & request");
         }
 
-        //Luu them ban ghi certificate trong DB
         Certificate certificate = new Certificate();
         try {
-            certificate.rawData(certGeneratorOutput.getCertificate());
+            certificate.rawData(rawCertificate.getCert());
             certificate.setAlias(alias);
             certificate.setOwnerId(dto.getOwnerId());
-            certificate.setSerial(certGeneratorOutput.getSerial());
+            certificate.setSerial(rawCertificate.getSerial());
             certificate.setTokenType(Certificate.PKCS_11);
             Config cfg = cryptoToken.getConfig();
             TokenInfo tokenInfo = new TokenInfo().setName(cfg.getName())
@@ -83,28 +76,21 @@ public class P11CertificateGeneratorService {
             e.printStackTrace();
             throw new Exception("Cannot write certificate to database");
         }
-
+        CertificateGeneratedResult result = new CertificateGeneratedResult();
+        result.setCertSerial(certificate.getSerial());
+        result.setCertData(certificate.getRawData());
         //Tao moi nguoi dung tuong ung voi chung thu so, password sinh ngau nhien
         String password = RandomUtil.generatePassword();
         User newUser;
         try {
             newUser = createNewAccount(dto.getOwnerId(), password);
+            result.setUserPassword(password);
+            result.setUserName(newUser.getLogin());
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Cannot create new account");
         }
-
         //Tra ve ket qua
-        CertificateGeneratedResult result = new CertificateGeneratedResult();
-        result.setCertSerial(certificate.getSerial());
-        result.setCertData(certificate.getRawData());
-        result.setUser(newUser.getLogin());
-        result.setUserPassword(password);
         return result;
-    }
-
-    private Config initP11Config() {
-        return Config.build().initPkcs11(TOKEN_NAME, TOKEN_LIB, TOKEN_PIN);
     }
 
     private User createNewAccount(String login, String password) {

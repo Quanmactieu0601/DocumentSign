@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.vm.sign;
+package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
 public class RawSigningDataVM {
     private String base64Data;

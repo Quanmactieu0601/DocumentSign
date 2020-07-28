@@ -26,4 +26,6 @@ public interface CryptoToken {
     Config getConfig() throws Exception;
 
     Certificate getCertificate(String alias) throws KeyStoreException;
+
+    String getProviderName() throws Exception;
 }

@@ -19,7 +19,7 @@ import vn.easyca.signserver.webapp.service.signer.xmlsigner.XmlSigner;
 @Service
 public class SigningService {
 
-    private final String temDir = "./TemFile/";
+    private final static String TEM_DIR = "./TemFile/";
 
     @Autowired
     private CryptoTokenProxyFactory cryptoTokenProxyFactory;
@@ -28,7 +28,7 @@ public class SigningService {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
-            PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, temDir);
+            PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, TEM_DIR);
             byte[] signedContent = pdfSigner.signPDF(request);
             return new PDFSigningDataRes(signedContent);
         } catch (Exception exception) {

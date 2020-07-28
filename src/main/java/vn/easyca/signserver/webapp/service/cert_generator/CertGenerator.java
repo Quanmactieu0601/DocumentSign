@@ -1,31 +1,67 @@
 package vn.easyca.signserver.webapp.service.cert_generator;
 
-import vn.easyca.signserver.ca.service.api.RegisterCertificateApi;
-import vn.easyca.signserver.ca.service.api.dto.RegisterInputDto;
-import vn.easyca.signserver.ca.service.api.dto.RegisterResultDto;
-import vn.easyca.signserver.ca.service.network.RAUnauthorized;
-import vn.easyca.signserver.core.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.core.cryptotoken.CryptoToken;
 import vn.easyca.signserver.core.cryptotoken.utils.CertRequestUtils;
-
-import java.io.IOException;
+import vn.easyca.signserver.webapp.service.domain.RawCertificate;
+import vn.easyca.signserver.webapp.service.port.CertificateRequester;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public class CertGenerator {
 
-    private P11CryptoToken cryptoToken;
-    private RegisterCertificateApi registerCertificateApi;
+    private final CryptoToken cryptoToken;
 
-    public CertGenerator(P11CryptoToken cryptoToken, RegisterCertificateApi registerCertificateApi) {
+    private final CertificateRequester requester;
+
+    private String alias;
+
+    private int keyLength;
+
+    private SubjectDN subjectDN;
+
+    private OwnerInfo ownerInfo;
+
+    private CertPackage certPackage;
+
+    public CertGenerator(CryptoToken cryptoToken, CertificateRequester requester) {
         this.cryptoToken = cryptoToken;
-        this.registerCertificateApi = registerCertificateApi;
+        this.requester = requester;
     }
 
-    public CertGeneratorOutput genCert(CertGeneratorInput input) throws Exception {
-        KeyPair keyPair = genKeyPair(input.getAlias(), input.getKeyLength());
-        String csr = genCsr(keyPair.getPublic(), keyPair.getPrivate(), input.getSubjectDN());
-        return requestCertToCA(csr, input.getCertPackage(), input.getSubjectDN(), input.getOwnerInfo());
+    public CertGenerator setAlias(String alias) {
+        this.alias = alias;
+        return this;
+    }
+
+
+    public CertGenerator setKeyLength(int keyLength) {
+        this.keyLength = keyLength;
+        return this;
+
+    }
+
+    public CertGenerator setSubjectDN(SubjectDN subjectDN) {
+        this.subjectDN = subjectDN;
+        return this;
+
+    }
+
+    public CertGenerator setOwnerInfo(OwnerInfo ownerInfo) {
+        this.ownerInfo = ownerInfo;
+        return this;
+
+    }
+
+    public CertGenerator setCertPackage(CertPackage certPackage) {
+        this.certPackage = certPackage;
+        return this;
+    }
+
+    public RawCertificate genCert() throws Exception {
+        KeyPair keyPair = genKeyPair(alias, keyLength);
+        String csr = genCsr(keyPair.getPublic(), keyPair.getPrivate(), subjectDN);
+        return requester.request(csr, certPackage, subjectDN, ownerInfo);
     }
 
     private KeyPair genKeyPair(String alias, int keyLength) throws Exception {
@@ -34,25 +70,12 @@ public class CertGenerator {
 
     private String genCsr(PublicKey publicKey, PrivateKey privateKey, SubjectDN subjectDN) throws Exception {
         CertRequestUtils certRequestUtils = new CertRequestUtils();
-        return certRequestUtils.genCsr(subjectDN.toString(), cryptoToken.getProviderName(),
-            privateKey, publicKey, null, false, false);
-    }
-
-    private CertGeneratorOutput requestCertToCA(String csr, CertPackage certPackage,
-                                                SubjectDN subjectDN, OwnerInfo ownerInfo) throws IOException, RAUnauthorized {
-        RegisterInputDto registerInputDto = new RegisterInputDto();
-        registerInputDto.setCsr(csr);
-        registerInputDto.setCertMethod(certPackage.getCertMethod());
-        registerInputDto.setCertProfile(certPackage.getCertProfile());
-        registerInputDto.setCertProfileType(certPackage.getCertProfileType());
-        registerInputDto.setCn(subjectDN.getCn());
-        registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
-        registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
-        registerInputDto.setId(ownerInfo.getOwnerId());
-        registerInputDto.setO(subjectDN.getO());
-        registerInputDto.setOu(subjectDN.getOu());
-        registerInputDto.setSt(subjectDN.getS());
-        RegisterResultDto registerResultDto = registerCertificateApi.register(registerInputDto);
-        return new CertGeneratorOutput(registerResultDto.getCert(), registerResultDto.getCertSerial());
+        return certRequestUtils.genCsr(subjectDN.toString(),
+            cryptoToken.getProviderName(),
+            privateKey,
+            publicKey,
+            null,
+            false,
+            false);
     }
 }
