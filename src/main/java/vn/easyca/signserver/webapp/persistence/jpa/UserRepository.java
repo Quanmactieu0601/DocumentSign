@@ -1,6 +1,6 @@
-package vn.easyca.signserver.webapp.jparepository;
+package vn.easyca.signserver.webapp.persistence.jpa;
 
-import vn.easyca.signserver.webapp.domain.User;
+import vn.easyca.signserver.webapp.persistence.entity.User;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;

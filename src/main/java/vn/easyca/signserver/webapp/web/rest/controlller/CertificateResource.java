@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertGenService;
@@ -22,6 +23,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 @RestController
 @RequestMapping("/api/certificate")
+@ComponentScan("vn.easyca.signserver.core.services")
 public class CertificateResource {
 
     private final Logger log = LoggerFactory.getLogger(CertificateResource.class);

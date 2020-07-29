@@ -1,9 +1,9 @@
-package vn.easyca.signserver.webapp.jparepository;
+package vn.easyca.signserver.webapp.persistence.jpa;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import vn.easyca.signserver.webapp.domain.CertificateEntity;
+import vn.easyca.signserver.webapp.persistence.entity.CertificateEntity;
 
 import java.util.Optional;
 

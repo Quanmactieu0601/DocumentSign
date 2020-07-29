@@ -1,17 +1,11 @@
-package vn.easyca.signserver.webapp.domain;
+package vn.easyca.signserver.webapp.persistence.entity;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import vn.easyca.signserver.core.domain.TokenInfo;
 
 import javax.persistence.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.Serializable;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
-import java.util.Base64;
 
 /**
  * A Certificate.
@@ -194,24 +188,6 @@ public class CertificateEntity implements Serializable {
             "}";
     }
 
-    @Transient
-    private X509Certificate x509Certificate;
 
-    public X509Certificate getX509Certificate() throws CertificateException {
-        if (x509Certificate != null)
-            return x509Certificate;
-        byte encodedCert[] = Base64.getDecoder().decode(rawData);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(encodedCert);
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) certFactory.generateCertificate(inputStream);
-    }
-
-    public TokenInfo getCertificateTokenInfo() {
-        return TokenInfo.createInstance(tokenInfo);
-    }
-
-    public void setCertificateTokenInfo(TokenInfo tokenInfo) {
-        this.tokenInfo = tokenInfo.toString();
-    }
 
 }

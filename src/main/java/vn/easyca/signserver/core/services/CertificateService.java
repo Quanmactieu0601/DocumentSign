@@ -7,7 +7,6 @@ import vn.easyca.signserver.core.repository.CertificateRepository;
 @Service
 public class CertificateService {
 
-
     @Autowired
     private CertificateRepository certificateRepository;
 

@@ -4,7 +4,7 @@
 //
 //import vn.easyca.signserver.webapp.config.Constants;
 //import vn.easyca.signserver.webapp.config.audit.AuditEventConverter;
-//import vn.easyca.signserver.webapp.domain.PersistentAuditEvent;
+//import vn.easyca.signserver.webapp.persistence.entity.PersistentAuditEvent;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@
 //import org.springframework.mock.web.MockHttpSession;
 //import org.springframework.security.web.authentication.WebAuthenticationDetails;
 //import org.springframework.transaction.annotation.Transactional;
-//import vn.easyca.signserver.webapp.jparepository.PersistenceAuditEventRepository;
+//import vn.easyca.signserver.webapp.persistence.jpa.PersistenceAuditEventRepository;
 //
 //import javax.servlet.http.HttpSession;
 //import java.time.Instant;
@@ -24,7 +24,7 @@
 //import java.util.Map;
 //
 //import static org.assertj.core.api.Assertions.assertThat;
-//import static vn.easyca.signserver.webapp.jparepository.CustomAuditEventRepository.EVENT_DATA_COLUMN_MAX_LENGTH;
+//import static vn.easyca.signserver.webapp.persistence.jpa.CustomAuditEventRepository.EVENT_DATA_COLUMN_MAX_LENGTH;
 //
 ///**
 // * Integration tests for {@link CustomAuditEventRepository}.

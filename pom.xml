@@ -21,6 +21,7 @@
 
     <properties>
         <!-- Build properties -->
+        <spring.profiles.active>local,no-liquibase</spring.profiles.active>
         <maven.version>3.3.9</maven.version>
         <java.version>1.8</java.version>
         <node.version>v12.16.1</node.version>

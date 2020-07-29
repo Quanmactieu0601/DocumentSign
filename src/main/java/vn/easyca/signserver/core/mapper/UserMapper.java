@@ -1,7 +1,7 @@
 package vn.easyca.signserver.core.mapper;
 
-import vn.easyca.signserver.webapp.domain.Authority;
-import vn.easyca.signserver.webapp.domain.User;
+import vn.easyca.signserver.webapp.persistence.entity.Authority;
+import vn.easyca.signserver.webapp.persistence.entity.User;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import org.springframework.stereotype.Service;

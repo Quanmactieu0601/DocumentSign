@@ -1,10 +1,10 @@
 package vn.easyca.signserver.webapp.service;
 
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.webapp.domain.Authority;
-import vn.easyca.signserver.webapp.domain.User;
-import vn.easyca.signserver.webapp.jparepository.AuthorityRepository;
-import vn.easyca.signserver.webapp.jparepository.UserRepository;
+import vn.easyca.signserver.webapp.persistence.entity.Authority;
+import vn.easyca.signserver.webapp.persistence.entity.User;
+import vn.easyca.signserver.webapp.persistence.jpa.AuthorityRepository;
+import vn.easyca.signserver.webapp.persistence.jpa.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;

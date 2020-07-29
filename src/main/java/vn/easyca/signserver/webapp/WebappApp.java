@@ -21,7 +21,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 
-@SpringBootApplication
+@SpringBootApplication()
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 
 public class WebappApp {
@@ -68,7 +68,7 @@ public class WebappApp {
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
-        CAFacadeApi.getInstance().init(CA_URL,CA_USER,CA_PASS);
+        CAFacadeApi.getInstance().init(CA_URL, CA_USER, CA_PASS);
         logApplicationStartup(env);
     }
 
@@ -95,7 +95,7 @@ public class WebappApp {
                 "Profile(s): \t{}\n----------------------------------------------------------",
             env.getProperty("spring.application.name"),
             protocol,
-             serverPort,
+            serverPort,
             contextPath,
             protocol,
             hostAddress,

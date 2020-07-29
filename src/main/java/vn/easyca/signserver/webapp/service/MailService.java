@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
-import vn.easyca.signserver.webapp.domain.User;
+import vn.easyca.signserver.webapp.persistence.entity.User;
 
 import io.github.jhipster.config.JHipsterProperties;
 

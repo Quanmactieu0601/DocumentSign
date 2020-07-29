@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.service;
 
 import io.github.jhipster.config.JHipsterProperties;
 import vn.easyca.signserver.webapp.config.audit.AuditEventConverter;
-import vn.easyca.signserver.webapp.jparepository.PersistenceAuditEventRepository;
+import vn.easyca.signserver.webapp.persistence.jpa.PersistenceAuditEventRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.audit.AuditEvent;

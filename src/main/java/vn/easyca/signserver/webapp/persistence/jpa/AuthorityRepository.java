@@ -1,6 +1,6 @@
-package vn.easyca.signserver.webapp.jparepository;
+package vn.easyca.signserver.webapp.persistence.jpa;
 
-import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.persistence.entity.Authority;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.domain;
+package vn.easyca.signserver.webapp.persistence.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.CreatedBy;

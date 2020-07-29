@@ -10,7 +10,7 @@ import vn.easyca.signserver.sign.core.cryptotoken.utils.CertRequestUtils;
 import vn.easyca.signserver.webapp.service.UserService;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.webapp.domain.User;
+import vn.easyca.signserver.webapp.persistence.entity.User;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
