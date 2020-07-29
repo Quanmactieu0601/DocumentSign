@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp;
 
-import vn.easyca.signserver.ca.service.api.CAFacadeApi;
+import vn.easyca.signserver.ca.api.api.CAFacadeApi;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;

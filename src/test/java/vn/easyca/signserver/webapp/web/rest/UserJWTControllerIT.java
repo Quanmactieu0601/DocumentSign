@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.domain.User;
-import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.jparepository.UserRepository;
 import vn.easyca.signserver.webapp.web.rest.controlller.UserJWTController;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 import org.junit.jupiter.api.Test;

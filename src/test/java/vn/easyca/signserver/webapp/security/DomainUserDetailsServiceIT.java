@@ -2,8 +2,6 @@ package vn.easyca.signserver.webapp.security;
 
 import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.domain.User;
-import vn.easyca.signserver.webapp.repository.UserRepository;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.webapp.jparepository.UserRepository;
 
 import java.util.Locale;
 

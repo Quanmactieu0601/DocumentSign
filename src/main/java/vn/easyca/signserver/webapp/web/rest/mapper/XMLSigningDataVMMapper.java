@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.webapp.service.dto.signing.request.XMLSigningData;
+import vn.easyca.signserver.core.dto.signing.request.XMLSigningData;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.XMLSigningDataVM;
 
 @Component

@@ -1,18 +1,18 @@
 package vn.easyca.signserver.webapp.adapter;
 
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.ca.service.api.CAFacadeApi;
-import vn.easyca.signserver.ca.service.api.RegisterCertificateApi;
-import vn.easyca.signserver.ca.service.api.dto.RegisterInputDto;
-import vn.easyca.signserver.ca.service.api.dto.RegisterResultDto;
-import vn.easyca.signserver.webapp.service.cert_generator.CertPackage;
-import vn.easyca.signserver.webapp.service.cert_generator.OwnerInfo;
-import vn.easyca.signserver.webapp.service.cert_generator.SubjectDN;
-import vn.easyca.signserver.webapp.service.domain.RawCertificate;
-import vn.easyca.signserver.webapp.service.port.CertificateRequester;
+import vn.easyca.signserver.ca.api.api.CAFacadeApi;
+import vn.easyca.signserver.ca.api.api.RegisterCertificateApi;
+import vn.easyca.signserver.ca.api.api.dto.RegisterInputDto;
+import vn.easyca.signserver.ca.api.api.dto.RegisterResultDto;
+import vn.easyca.signserver.core.domain.CertPackage;
+import vn.easyca.signserver.core.domain.OwnerInfo;
+import vn.easyca.signserver.core.domain.SubjectDN;
+import vn.easyca.signserver.core.domain.RawCertificate;
+import vn.easyca.signserver.core.services.CertGenService;
 
 @Component
-public class CertificateRequesterAdapter implements CertificateRequester {
+public class CertificateRequesterAdapter implements CertGenService.CertificateRequester {
 
 
 

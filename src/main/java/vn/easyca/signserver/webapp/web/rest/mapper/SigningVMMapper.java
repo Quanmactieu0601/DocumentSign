@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.mapper;
 
-import vn.easyca.signserver.webapp.service.dto.signing.request.SigningRequest;
+import vn.easyca.signserver.core.dto.signing.request.SigningRequest;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
 

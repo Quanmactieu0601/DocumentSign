@@ -1,9 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest.controlller;
 
 import vn.easyca.signserver.webapp.domain.User;
-import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.jparepository.*;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
-import vn.easyca.signserver.webapp.service.MailService;
+import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.UserService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
