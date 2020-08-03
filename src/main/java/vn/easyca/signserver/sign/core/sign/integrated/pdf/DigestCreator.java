@@ -13,6 +13,17 @@ import java.security.Security;
  * Created by chen on 7/24/17.
  */
 public class DigestCreator {
+
+    public byte[] hash(byte[] data,String hashAlgo) throws Exception {
+      if (hashAlgo == null || hashAlgo.isEmpty() || hashAlgo.equalsIgnoreCase("sha1"))
+          return sha1(data);
+      else if (hashAlgo.equalsIgnoreCase("sha256"))
+          return sha256(data);
+      else if (hashAlgo.equalsIgnoreCase("sha512"))
+          return sha512(data);
+      throw new Exception("Hash Algorithm not support");
+    }
+
     public byte[] sha1(byte[] data) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         MessageDigest messageDigest = MessageDigest.getInstance(DigestAlgorithm.SHA1.getName(), "BC");

@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
-import vn.easyca.signserver.webapp.persistence.entity.User;
+import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
 
 import io.github.jhipster.config.JHipsterProperties;
 
@@ -72,35 +72,35 @@ public class MailService {
     }
 
     @Async
-    public void sendEmailFromTemplate(User user, String templateName, String titleKey) {
-        if (user.getEmail() == null) {
-            log.debug("Email doesn't exist for user '{}'", user.getLogin());
+    public void sendEmailFromTemplate(UserEntity userEntity, String templateName, String titleKey) {
+        if (userEntity.getEmail() == null) {
+            log.debug("Email doesn't exist for user '{}'", userEntity.getLogin());
             return;
         }
-        Locale locale = Locale.forLanguageTag(user.getLangKey());
+        Locale locale = Locale.forLanguageTag(userEntity.getLangKey());
         Context context = new Context(locale);
-        context.setVariable(USER, user);
+        context.setVariable(USER, userEntity);
         context.setVariable(BASE_URL, jHipsterProperties.getMail().getBaseUrl());
         String content = templateEngine.process(templateName, context);
         String subject = messageSource.getMessage(titleKey, null, locale);
-        sendEmail(user.getEmail(), subject, content, false, true);
+        sendEmail(userEntity.getEmail(), subject, content, false, true);
     }
 
     @Async
-    public void sendActivationEmail(User user) {
-        log.debug("Sending activation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/activationEmail", "email.activation.title");
+    public void sendActivationEmail(UserEntity userEntity) {
+        log.debug("Sending activation email to '{}'", userEntity.getEmail());
+        sendEmailFromTemplate(userEntity, "mail/activationEmail", "email.activation.title");
     }
 
     @Async
-    public void sendCreationEmail(User user) {
-        log.debug("Sending creation email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/creationEmail", "email.activation.title");
+    public void sendCreationEmail(UserEntity userEntity) {
+        log.debug("Sending creation email to '{}'", userEntity.getEmail());
+        sendEmailFromTemplate(userEntity, "mail/creationEmail", "email.activation.title");
     }
 
     @Async
-    public void sendPasswordResetMail(User user) {
-        log.debug("Sending password reset email to '{}'", user.getEmail());
-        sendEmailFromTemplate(user, "mail/passwordResetEmail", "email.reset.title");
+    public void sendPasswordResetMail(UserEntity userEntity) {
+        log.debug("Sending password reset email to '{}'", userEntity.getEmail());
+        sendEmailFromTemplate(userEntity, "mail/passwordResetEmail", "email.reset.title");
     }
 }

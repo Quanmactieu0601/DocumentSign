@@ -6,13 +6,14 @@ import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertGenService;
 import vn.easyca.signserver.core.services.CertificateService;
-import vn.easyca.signserver.core.dto.CertificateGeneratedResult;
-import vn.easyca.signserver.core.dto.CertificateGeneratorDto;
+import vn.easyca.signserver.core.services.dto.CertificateGeneratedResult;
+import vn.easyca.signserver.core.services.dto.CertificateGeneratorDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.easyca.signserver.core.services.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
@@ -47,7 +48,7 @@ public class CertificateResource {
     @PostMapping("/import/p12")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM)  {
         try {
-            P12ImportService.P12ImportFileInput serviceInput = MappingHelper.map(p12ImportVM, P12ImportService.P12ImportFileInput.class);
+            ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.Import(serviceInput);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (Exception e) {

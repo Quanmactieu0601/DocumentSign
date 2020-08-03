@@ -1,12 +1,16 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
+
+import vn.easyca.signserver.core.services.signing.dto.request.SigningRequest;
+import vn.easyca.signserver.webapp.web.rest.mapper.SigningVMMapper;
+
 public class SigningVM<T> {
 
     private String signer;
     private String signDate;
     private TokenVM tokenInfo;
     private OptionalVM optional;
-    private T data;
+    private T content;
 
     public String getSigner() {
         return signer;
@@ -40,11 +44,18 @@ public class SigningVM<T> {
         this.optional = optional;
     }
 
-    public T getData() {
-        return data;
+    public T getContent() {
+        return content;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setContent(T content) {
+        this.content = content;
     }
+
+    public <D> SigningRequest<D> getSigningRequest(Class<D> contentClass){
+        SigningVMMapper<D,T> mapper = new SigningVMMapper<>();
+        return mapper.map(this,contentClass);
+    }
+
+
 }

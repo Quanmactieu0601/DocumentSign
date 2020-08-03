@@ -12,7 +12,6 @@ public class OwnerInfo {
         this.ownerPhone = ownerPhone;
     }
 
-
     public String getOwnerEmail() {
         return ownerEmail;
     }

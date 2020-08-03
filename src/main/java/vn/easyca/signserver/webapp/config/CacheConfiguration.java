@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.github.jhipster.config.cache.PrefixedKeyGenerator;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
-import vn.easyca.signserver.webapp.persistence.entity.Authority;
-import vn.easyca.signserver.webapp.persistence.entity.CertificateEntity;
-import vn.easyca.signserver.webapp.persistence.entity.User;
-import vn.easyca.signserver.webapp.persistence.jpa.UserRepository;
+import vn.easyca.signserver.webapp.jpa.entity.Authority;
+import vn.easyca.signserver.webapp.jpa.entity.CertificateEntity;
+import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
 
 @Configuration
 @EnableCaching
@@ -49,9 +49,9 @@ public class CacheConfiguration {
         return cm -> {
             createCache(cm, UserRepository.USERS_BY_LOGIN_CACHE);
             createCache(cm, UserRepository.USERS_BY_EMAIL_CACHE);
-            createCache(cm, User.class.getName());
+            createCache(cm, UserEntity.class.getName());
             createCache(cm, Authority.class.getName());
-            createCache(cm, User.class.getName() + ".authorities");
+            createCache(cm, UserEntity.class.getName() + ".authorities");
             createCache(cm, CertificateEntity.class.getName());
             // jhipster-needle-ehcache-add-entry
         };

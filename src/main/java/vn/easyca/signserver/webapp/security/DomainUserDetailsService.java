@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.security;
 
-import vn.easyca.signserver.webapp.persistence.entity.User;
+import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.persistence.jpa.UserRepository;
+import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,15 +48,15 @@ public class DomainUserDetailsService implements UserDetailsService {
 
     }
 
-    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, User user) {
-        if (!user.getActivated()) {
+    private org.springframework.security.core.userdetails.User createSpringSecurityUser(String lowercaseLogin, UserEntity userEntity) {
+        if (!userEntity.getActivated()) {
             throw new UserNotActivatedException("User " + lowercaseLogin + " was not activated");
         }
-        List<GrantedAuthority> grantedAuthorities = user.getAuthorities().stream()
+        List<GrantedAuthority> grantedAuthorities = userEntity.getAuthorities().stream()
             .map(authority -> new SimpleGrantedAuthority(authority.getName()))
             .collect(Collectors.toList());
-        return new org.springframework.security.core.userdetails.User(user.getLogin(),
-            user.getPassword(),
+        return new org.springframework.security.core.userdetails.User(userEntity.getLogin(),
+            userEntity.getPassword(),
             grantedAuthorities);
     }
 }

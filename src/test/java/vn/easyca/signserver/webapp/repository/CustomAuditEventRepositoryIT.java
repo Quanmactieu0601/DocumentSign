@@ -14,7 +14,7 @@
 //import org.springframework.mock.web.MockHttpSession;
 //import org.springframework.security.web.authentication.WebAuthenticationDetails;
 //import org.springframework.transaction.annotation.Transactional;
-//import vn.easyca.signserver.webapp.persistence.jpa.PersistenceAuditEventRepository;
+//import vn.easyca.signserver.webapp.persistence.PersistenceAuditEventRepository;
 //
 //import javax.servlet.http.HttpSession;
 //import java.time.Instant;

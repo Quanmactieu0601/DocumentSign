@@ -18,4 +18,8 @@ public class CommonUtils {
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) certFactory.generateCertificate(inputStream);
     }
+
+    public static byte[] decodeBase64(String source){
+        return Base64.getDecoder().decode(source);
+    }
 }

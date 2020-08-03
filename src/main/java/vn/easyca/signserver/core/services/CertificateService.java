@@ -14,7 +14,6 @@ public class CertificateService {
         certificateRepository.save(certificate);
         return certificate;
     }
-
     public Certificate getById(long id){
         return certificateRepository.getById(id);
     }

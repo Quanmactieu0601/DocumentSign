@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.config.audit;
 
-import vn.easyca.signserver.webapp.persistence.entity.PersistentAuditEvent;
+import vn.easyca.signserver.webapp.jpa.entity.PersistentAuditEvent;
 
 import org.springframework.boot.actuate.audit.AuditEvent;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;

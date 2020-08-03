@@ -2,9 +2,9 @@ package vn.easyca.signserver.core.domain;
 
 public class CertPackage {
 
-    private String certMethod;
-    private String certProfile;
-    private int certProfileType;
+    private final String certMethod;
+    private final String certProfile;
+    private final int certProfileType;
 
     public CertPackage(String certMethod, String certProfile, int certProfileType) {
         this.certMethod = certMethod;

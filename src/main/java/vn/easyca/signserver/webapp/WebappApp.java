@@ -1,5 +1,8 @@
 package vn.easyca.signserver.webapp;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import vn.easyca.signserver.ca.api.api.CAFacadeApi;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
@@ -21,9 +24,10 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 
-@SpringBootApplication()
+@ComponentScan(basePackages = "vn.easyca.signserver")
+@SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-
+@EnableJpaRepositories(basePackages = "vn.easyca.signserver.webapp.jpa.repository")
 public class WebappApp {
 
     private static final String CA_URL = "http://172.16.11.84:8787/api/";
@@ -49,11 +53,11 @@ public class WebappApp {
     public void initApplication() {
         Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_PRODUCTION)) {
-            log.error("You have misconfigured your application! It should not run " +
+            log.error("You have miss configured your application! It should not run " +
                 "with both the 'dev' and 'prod' profiles at the same time.");
         }
         if (activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT) && activeProfiles.contains(JHipsterConstants.SPRING_PROFILE_CLOUD)) {
-            log.error("You have misconfigured your application! It should not " +
+            log.error("You have miss configured your application! It should not " +
                 "run with both the 'dev' and 'cloud' profiles at the same time.");
         }
     }
@@ -64,7 +68,6 @@ public class WebappApp {
      * @param args the command line arguments.
      */
     public static void main(String[] args) {
-
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();

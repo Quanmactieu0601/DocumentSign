@@ -1,40 +1,61 @@
 package vn.easyca.signserver.webapp.web.rest.mapper;
 
-import vn.easyca.signserver.core.dto.signing.request.SigningRequest;
+import org.modelmapper.ModelMapper;
+import org.springframework.ui.ModelMap;
+import vn.easyca.signserver.core.services.dto.OptionalDTO;
+import vn.easyca.signserver.core.services.signing.dto.TokenInfoDTO;
+import vn.easyca.signserver.core.services.signing.dto.request.SigningRequest;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.OptionalVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.TokenVM;
 
 import java.text.ParseException;
 import java.util.Date;
 
-public class SigningVMMapper<D,V> {
+class OptionalVMMapper {
 
+    public OptionalDTO map(OptionalVM optionalVM) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(optionalVM, OptionalDTO.class);
+    }
+}
 
-    private OptionalVMMapper optionalVMMapper = new OptionalVMMapper();
+class TokenVMMapper {
 
-    private TokenVMMapper tokenVMMapper = new TokenVMMapper();
-
-    private SigningDataVMMapper<D,V> dataVMMapper;
-
-    public SigningVMMapper(SigningDataVMMapper<D, V> dataVMMapper) {
-        this.dataVMMapper = dataVMMapper;
+    public TokenInfoDTO map(TokenVM tokenVM) {
+        ModelMapper modelMapper = new ModelMapper();
+        return modelMapper.map(tokenVM, TokenInfoDTO.class);
     }
 
-    public SigningRequest<D> map(SigningVM<V> signingVM){
-        SigningRequest<D> res= new SigningRequest<D>();
-        res.setOptional(optionalVMMapper.map(signingVM.getOptional()));
-        res.setTokenInfoDTO(tokenVMMapper.map(signingVM.getTokenInfo()));
+}
+
+public class SigningVMMapper<D, V> {
+
+    private final OptionalVMMapper optionalVMMapper = new OptionalVMMapper();
+
+    private final TokenVMMapper tokenVMMapper = new TokenVMMapper();
+
+    public SigningRequest<D> map(SigningVM<V> signingVM, Class<D> contentClass) {
+
+        SigningRequest<D> res = new SigningRequest<D>();
+        if (signingVM.getOptional() != null)
+            res.setOptional(optionalVMMapper.map(signingVM.getOptional()));
+        if (signingVM.getTokenInfo() != null)
+            res.setTokenInfoDTO(tokenVMMapper.map(signingVM.getTokenInfo()));
         res.setSigner(signingVM.getSigner());
         try {
-            res.setSignDate(DateTimeUtils.parse(signingVM.getSignDate()));
+            if (signingVM.getSignDate() == null || signingVM.getSignDate().isEmpty())
+                res.setSignDate(new Date());
+            else
+                res.setSignDate(DateTimeUtils.parse(signingVM.getSignDate()));
         } catch (ParseException e) {
             res.setSignDate(new Date());
         }
-        res.setData(dataVMMapper.map(signingVM.getData()));
+        if(signingVM.getContent() != null) {
+            ModelMapper contentMapper = new ModelMapper();
+            contentMapper.map(signingVM.getContent(), contentClass);
+        }
         return res;
-    }
-
-    public interface SigningDataVMMapper<D,V>{
-        D map(V viewModel);
     }
 }

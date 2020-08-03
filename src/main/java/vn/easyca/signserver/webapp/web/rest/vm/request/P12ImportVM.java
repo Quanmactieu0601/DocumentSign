@@ -1,16 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 public class P12ImportVM {
-    
+
     private String p12Base64;
 
     private String ownerId;
 
-    private String serial;
-
     private String pin;
-
-    private int keyLen;
 
     public String getP12Base64() {
         return p12Base64;
@@ -34,13 +30,5 @@ public class P12ImportVM {
 
     public void setPin(String pin) {
         this.pin = pin;
-    }
-
-    public String getSerial() {
-        return serial;
-    }
-
-    public void setSerial(String serial) {
-        this.serial = serial;
     }
 }
