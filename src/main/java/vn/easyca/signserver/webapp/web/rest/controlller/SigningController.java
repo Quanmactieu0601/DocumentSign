@@ -7,20 +7,18 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.core.services.signing.SigningService;
-import vn.easyca.signserver.core.services.signing.dto.request.content.PDFSigningContent;
-import vn.easyca.signserver.core.services.signing.dto.request.content.RawSigningContent;
-import vn.easyca.signserver.core.services.signing.dto.request.SigningRequest;
-import vn.easyca.signserver.core.services.signing.dto.request.content.XMLSigningContent;
-import vn.easyca.signserver.core.services.signing.dto.response.PDFSigningDataRes;
-import vn.easyca.signserver.core.services.signing.dto.response.SigningDataResponse;
+import vn.easyca.signserver.business.services.signing.SigningService;
+import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSigningContent;
+import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
+import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
+import vn.easyca.signserver.business.services.signing.dto.request.content.XMLSigningContent;
+import vn.easyca.signserver.business.services.signing.dto.response.PDFSigningDataRes;
+import vn.easyca.signserver.business.services.signing.dto.response.SigningDataResponse;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.PDFSigningContentVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.RawSigningContentVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.XMLSigningContentVM;
-
-import java.awt.print.PageFormat;
 
 @RestController
 @RequestMapping("/api/signing")

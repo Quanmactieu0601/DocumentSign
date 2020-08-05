@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.adapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.core.services.CertGenService;
+import vn.easyca.signserver.business.services.CertGenService;
 import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;

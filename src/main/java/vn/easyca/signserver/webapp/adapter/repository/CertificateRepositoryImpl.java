@@ -2,9 +2,8 @@ package vn.easyca.signserver.webapp.adapter.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.core.domain.Certificate;
-import vn.easyca.signserver.core.repository.CertificateRepository;
-import vn.easyca.signserver.core.services.dto.CertificateGeneratedResult;
+import vn.easyca.signserver.business.domain.Certificate;
+import vn.easyca.signserver.business.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.adapter.repository.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.jpa.repository.CertificateJpaRepository;
 import vn.easyca.signserver.webapp.jpa.entity.CertificateEntity;

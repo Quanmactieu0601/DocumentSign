@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
 
-import vn.easyca.signserver.core.services.signing.dto.request.SigningRequest;
+import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
 import vn.easyca.signserver.webapp.web.rest.mapper.SigningVMMapper;
 
 public class SigningVM<T> {

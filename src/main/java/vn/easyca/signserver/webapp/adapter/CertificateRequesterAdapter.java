@@ -6,11 +6,11 @@ import vn.easyca.signserver.ca.api.api.CAFacadeApi;
 import vn.easyca.signserver.ca.api.api.RegisterCertificateApi;
 import vn.easyca.signserver.ca.api.api.dto.RegisterInputDto;
 import vn.easyca.signserver.ca.api.api.dto.RegisterResultDto;
-import vn.easyca.signserver.core.domain.CertPackage;
-import vn.easyca.signserver.core.domain.OwnerInfo;
-import vn.easyca.signserver.core.domain.SubjectDN;
-import vn.easyca.signserver.core.domain.RawCertificate;
-import vn.easyca.signserver.core.services.CertGenService;
+import vn.easyca.signserver.business.domain.CertPackage;
+import vn.easyca.signserver.business.domain.OwnerInfo;
+import vn.easyca.signserver.business.domain.SubjectDN;
+import vn.easyca.signserver.business.domain.RawCertificate;
+import vn.easyca.signserver.business.services.CertGenService;
 
 @Component
 public class CertificateRequesterAdapter implements CertGenService.CertificateRequester {

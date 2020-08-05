@@ -1,11 +1,11 @@
 package vn.easyca.signserver.webapp.test;
 
 import org.bouncycastle.util.encoders.Base64;
-import vn.easyca.signserver.sign.core.cryptotoken.Config;
-import vn.easyca.signserver.sign.core.cryptotoken.P11CryptoToken;
-import vn.easyca.signserver.sign.core.cryptotoken.P12CryptoToken;
-import vn.easyca.signserver.sign.core.cryptotoken.utils.CertRequestUtils;
-import vn.easyca.signserver.sign.core.cryptotoken.utils.SignUtils;
+import vn.easyca.signserver.pki.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.utils.CertRequestUtils;
+import vn.easyca.signserver.pki.cryptotoken.utils.SignUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

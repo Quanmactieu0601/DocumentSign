@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.config;
 
-import vn.easyca.signserver.sign.core.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.Config;
 
 public class Configs {
 

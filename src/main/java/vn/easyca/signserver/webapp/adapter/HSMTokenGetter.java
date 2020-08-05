@@ -1,15 +1,14 @@
 package vn.easyca.signserver.webapp.adapter;
 
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.core.services.CertGenService;
-import vn.easyca.signserver.sign.core.cryptotoken.Config;
-import vn.easyca.signserver.sign.core.cryptotoken.CryptoToken;
-import vn.easyca.signserver.sign.core.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.business.services.CertGenService;
+import vn.easyca.signserver.pki.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.webapp.config.Constants;
 
 @Component
 public class HSMTokenGetter implements CertGenService.CryptoTokenGetter {
-
 
     @Override
     public CryptoToken getToken() throws Exception {

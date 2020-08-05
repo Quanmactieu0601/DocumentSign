@@ -1,10 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest.mapper;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.ui.ModelMap;
-import vn.easyca.signserver.core.services.dto.OptionalDTO;
-import vn.easyca.signserver.core.services.signing.dto.TokenInfoDTO;
-import vn.easyca.signserver.core.services.signing.dto.request.SigningRequest;
+import vn.easyca.signserver.business.services.dto.OptionalDTO;
+import vn.easyca.signserver.business.services.signing.dto.TokenInfoDTO;
+import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.OptionalVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;

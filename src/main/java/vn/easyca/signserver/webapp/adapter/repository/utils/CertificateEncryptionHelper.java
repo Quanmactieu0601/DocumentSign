@@ -1,11 +1,9 @@
 package vn.easyca.signserver.webapp.adapter.repository.utils;
 
-import vn.easyca.signserver.core.domain.Certificate;
-import vn.easyca.signserver.webapp.jpa.entity.CertificateEntity;
+import vn.easyca.signserver.business.domain.Certificate;
 import vn.easyca.signserver.webapp.utils.AESCBCEncryptor;
 
 public class CertificateEncryptionHelper {
-
 
     public Certificate decryptCert(Certificate certificate) {
         try {
