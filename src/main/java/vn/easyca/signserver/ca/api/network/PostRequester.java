@@ -22,7 +22,7 @@ public class PostRequester {
         this.url = url;
     }
 
-    public <Res> Res post(Object data, Class<Res> responseType) throws IOException, RAUnauthorized {
+    public <T> T post(Object data, Class<T> responseType) throws IOException, RAUnauthorized {
         String content = post(data);
         Gson gson = new Gson();
         return gson.fromJson(content, responseType);
@@ -38,7 +38,7 @@ public class PostRequester {
             request.addHeader("Authorization", idToken);
         Response response = request.execute();
         try {
-             return response.returnContent().asString();
+            return response.returnContent().asString();
         } catch (HttpResponseException ex) {
             if (ex.getStatusCode() == 401)
                 throw new RAUnauthorized();

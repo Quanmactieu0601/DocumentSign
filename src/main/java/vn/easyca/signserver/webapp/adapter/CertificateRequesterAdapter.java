@@ -15,8 +15,6 @@ import vn.easyca.signserver.business.services.CertGenService;
 @Component
 public class CertificateRequesterAdapter implements CertGenService.CertificateRequester {
 
-
-
     @Override
     public RawCertificate request(String csr, CertPackage certPackage, SubjectDN subjectDN, OwnerInfo ownerInfo) throws Exception {
         RegisterCertificateApi registerCertificateApi = CAFacadeApi.getInstance().createRegisterCertificateApi();

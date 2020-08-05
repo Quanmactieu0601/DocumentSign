@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import vn.easyca.signserver.ca.api.api.CAFacadeApi;
@@ -70,7 +69,7 @@ public class WebappApp {
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
-        CAFacadeApi.getInstance().init(Constants.RACONFIG.URL, Constants.RACONFIG.USER, Constants.RACONFIG.PASS);
+        CAFacadeApi.getInstance().init(Constants.RaConfig.URL, Constants.RaConfig.USER, Constants.RaConfig.PASS);
         logApplicationStartup(env);
     }
 

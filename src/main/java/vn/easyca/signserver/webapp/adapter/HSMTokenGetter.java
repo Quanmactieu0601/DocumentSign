@@ -13,9 +13,9 @@ public class HSMTokenGetter implements CertGenService.CryptoTokenGetter {
     @Override
     public CryptoToken getToken() throws Exception {
         Config config = new Config();
-        config.initPkcs11(Constants.HSMCONFIG.NAME,Constants.HSMCONFIG.LIB,Constants.HSMCONFIG.PIN);
+        config.initPkcs11(Constants.HSMConfig.NAME, Constants.HSMConfig.LIB, Constants.HSMConfig.PIN);
         config = config.withSlot("1");
-        P11CryptoToken p11CryptoToken  =new P11CryptoToken();
+        P11CryptoToken p11CryptoToken = new P11CryptoToken();
         p11CryptoToken.init(config);
         return p11CryptoToken;
     }

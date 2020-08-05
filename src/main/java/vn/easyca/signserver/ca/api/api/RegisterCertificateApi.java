@@ -8,7 +8,7 @@ import vn.easyca.signserver.ca.api.network.RAUnauthorized;
 
 public class RegisterCertificateApi {
 
-    private final String url ;
+    private final String url;
     private final Authenticate authenticate;
 
     public RegisterCertificateApi(String url, Authenticate authenticate) {
@@ -19,9 +19,9 @@ public class RegisterCertificateApi {
     public RegisterResultDto register(RegisterInputDto registerInputDto) throws Exception {
         try {
             return post(0, registerInputDto);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
-            throw  new Exception("Has err to connect ra service");
+            throw new Exception("Has err to connect ra service");
         }
     }
 

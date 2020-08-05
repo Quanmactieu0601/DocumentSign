@@ -2,12 +2,12 @@ package vn.easyca.signserver.ca.api.api.dto;
 
 public class RegisterResultDto {
     private String activeCode;
-    private String cert = null;
+    private String cert;
     private String certState;
     private int certId;
-    private String certSerial = null;
-    private String p12Data = null;
-    private String p12Pass = null;
+    private String certSerial;
+    private String p12Data;
+    private String p12Pass;
     private int status;
     private String message;
 
