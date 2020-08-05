@@ -1,8 +1,8 @@
 //package vn.easyca.signserver.webapp.web.rest;
 //
 //import vn.easyca.signserver.webapp.WebappApp;
-//import vn.easyca.signserver.webapp.domain.Certificate;
-//import vn.easyca.signserver.webapp.repository.CertificateRepository;
+//import vn.easyca.signserver.webapp.persistence.repo.entity.Certificate;
+//import vn.easyca.signserver.webapp.persistence.CertificateRepository;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

@@ -77,7 +77,7 @@
                                 columnDataType="varchar(60)"
                                 tableName="jhi_user"/>
         <loadData
-                  file="config/liquibase/data/user.csv"
+                  file="config/liquibase/data/userEntity.csv"
                   separator=";"
                   tableName="jhi_user">
             <column name="activated" type="boolean"/>

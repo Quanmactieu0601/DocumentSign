@@ -2,8 +2,8 @@ package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.config.Constants;
 
-import vn.easyca.signserver.webapp.domain.Authority;
-import vn.easyca.signserver.webapp.domain.User;
+import vn.easyca.signserver.webapp.jpa.entity.Authority;
+import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
@@ -54,20 +54,20 @@ public class UserDTO {
         // Empty constructor needed for Jackson.
     }
 
-    public UserDTO(User user) {
-        this.id = user.getId();
-        this.login = user.getLogin();
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.activated = user.getActivated();
-        this.imageUrl = user.getImageUrl();
-        this.langKey = user.getLangKey();
-        this.createdBy = user.getCreatedBy();
-        this.createdDate = user.getCreatedDate();
-        this.lastModifiedBy = user.getLastModifiedBy();
-        this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream()
+    public UserDTO(UserEntity userEntity) {
+        this.id = userEntity.getId();
+        this.login = userEntity.getLogin();
+        this.firstName = userEntity.getFirstName();
+        this.lastName = userEntity.getLastName();
+        this.email = userEntity.getEmail();
+        this.activated = userEntity.getActivated();
+        this.imageUrl = userEntity.getImageUrl();
+        this.langKey = userEntity.getLangKey();
+        this.createdBy = userEntity.getCreatedBy();
+        this.createdDate = userEntity.getCreatedDate();
+        this.lastModifiedBy = userEntity.getLastModifiedBy();
+        this.lastModifiedDate = userEntity.getLastModifiedDate();
+        this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
     }
