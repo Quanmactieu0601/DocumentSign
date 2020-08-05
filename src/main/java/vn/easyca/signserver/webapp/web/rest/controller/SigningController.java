@@ -8,17 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.business.services.signing.SigningService;
+import vn.easyca.signserver.business.services.signing.dto.request.content.BatchRawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
 import vn.easyca.signserver.business.services.signing.dto.request.content.XMLSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.response.PDFSigningDataRes;
 import vn.easyca.signserver.business.services.signing.dto.response.SigningDataResponse;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.sign.PDFSigningContentVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.sign.RawSigningContentVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.sign.XMLSigningContentVM;
 
 import java.util.HashMap;
 
@@ -49,7 +47,7 @@ public class SigningController {
     }
 
     @PostMapping(value = "/hash")
-    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<HashMap<String, String>> signingVM) {
+    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<RawSigningContentVM> signingVM) {
         try {
             SigningRequest<RawSigningContent> request = signingVM.getSigningRequest(RawSigningContent.class);
             SigningDataResponse<String> signingDataResponse = signingService.signHash(request);
@@ -60,10 +58,10 @@ public class SigningController {
     }
 
     @PostMapping(value = "/hashbatch")
-    public ResponseEntity<BaseResponseVM> signBatchHash(@RequestBody SigningVM<HashMap<String,String>> signingVM) {
+    public ResponseEntity<BaseResponseVM> signBatchHash(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
         try {
-            SigningRequest<RawSigningContent> request = signingVM.getSigningRequest(RawSigningContent.class);
-            SigningDataResponse<String> signingDataResponse = signingService.signHash(request);
+            SigningRequest<BatchRawSigningContent> request = signingVM.getSigningRequest(BatchRawSigningContent.class);
+            SigningDataResponse<HashMap<String,String>> signingDataResponse = signingService.signHashBatch(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));

@@ -1,6 +1,7 @@
 package vn.easyca.signserver.business.services.signing.signer;
 
 import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
+import vn.easyca.signserver.business.services.signing.dto.request.content.BatchRawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.response.SigningDataResponse;
 import vn.easyca.signserver.business.utils.CommonUtils;
@@ -27,9 +28,9 @@ public class RawSigner {
         return new SigningDataResponse<>(Base64.getEncoder().encodeToString(raw), cryptoTokenProxy.getBase64Certificate());
     }
 
-    public SigningDataResponse<HashMap<String, String>> signBatchHash(SigningRequest<HashMap<String, String>> request) throws Exception {
+    public SigningDataResponse<HashMap<String, String>> signBatchHash(SigningRequest<BatchRawSigningContent> request) throws Exception {
         HashMap<String, String> keyAndSignature = new HashMap<>();
-        HashMap<String, String> keyAndHash = request.getContent();
+        HashMap<String, String> keyAndHash = request.getContent().getBatch();
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
         String hashAlgorithm = request.getHashAlgorithm();
         for (Map.Entry me : keyAndHash.entrySet()) {
