@@ -38,6 +38,6 @@ public class CertificateRequesterAdapter implements CertGenService.CertificateRe
         if (registerResultDto.getStatus() == 1) {
             throw new Exception(registerResultDto.getMessage());
         }
-        return new RawCertificate(registerResultDto.getCert(), registerResultDto.getCertSerial());
+        return new RawCertificate(registerResultDto.getCertSerial(), registerResultDto.getCert());
     }
 }

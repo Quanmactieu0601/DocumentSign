@@ -42,12 +42,12 @@ public class CertificateGeneratedResult {
 
     public static class User {
         private final String username;
-        private final String password;
+        private final String userPassword;
         private final int state;
 
-        public User(String username, String password, int state) {
+        public User(String username, String userPassword, int state) {
             this.username = username;
-            this.password = password;
+            this.userPassword = userPassword;
             this.state = state;
         }
 
@@ -55,8 +55,8 @@ public class CertificateGeneratedResult {
             return username;
         }
 
-        public String getPassword() {
-            return password;
+        public String getUserPassword() {
+            return userPassword;
         }
 
         public int getState() {

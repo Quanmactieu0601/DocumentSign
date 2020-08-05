@@ -31,23 +31,5 @@ public class CAFacadeApi {
         RegisterCertificateApi registerCertificateApi = new RegisterCertificateApi(baseUrl + ACTION_REGISTER, authenticate);
         return registerCertificateApi;
     }
-//
-//    public static void main(String[] args) throws IOException, Unauthorized {
-//        RegisterCertificateApi registerCertificateApi = CAFacadeApi.getInstance().init("http://172.16.10.66:8787/api/", "admin", "admin").createRegisterCertificateApi();
-//        RegisterInputDto inputDto = new RegisterInputDto();
-//        inputDto.setActivationCodeEnabled(1);
-//        inputDto.setApprovedIssueCert(1);
-//        inputDto.setCertMethod("SOFT_TOKEN");
-//        inputDto.setCertProfile("T2OSB21Y");
-//        inputDto.setCertProfile("T2OSB21Y");
-//        inputDto.setCertProfileType(1);
-//        inputDto.setCn("truonglx");
-//        inputDto.setCustomerEmail("emailrac89@gmail.com");
-//        inputDto.setId("173846902");
-//        inputDto.setOu("IT");
-//        inputDto.setSt("1");
-//        registerCertificateApi.register(inputDto);
-//
-//
-//    }
+    
 }

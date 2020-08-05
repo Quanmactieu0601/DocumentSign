@@ -17,6 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -30,9 +31,7 @@ import java.util.Collection;
 @EnableJpaRepositories(basePackages = "vn.easyca.signserver.webapp.jpa.repository")
 public class WebappApp {
 
-    private static final String CA_URL = "http://172.16.11.84:8787/api/";
-    private static final String CA_USER = "admin";
-    private static final String CA_PASS = "admin";
+
 
     private static final Logger log = LoggerFactory.getLogger(WebappApp.class);
 
@@ -71,7 +70,7 @@ public class WebappApp {
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
-        CAFacadeApi.getInstance().init(CA_URL, CA_USER, CA_PASS);
+        CAFacadeApi.getInstance().init(Constants.RACONFIG.URL, Constants.RACONFIG.USER, Constants.RACONFIG.PASS);
         logApplicationStartup(env);
     }
 
