@@ -57,4 +57,11 @@ public class SigningRequest<T> {
     public void setContent(T content) {
         this.content = content;
     }
+
+    public String getHashAlgorithm() {
+        String result = getOptional().getHashAlgorithm();
+        if (result == null || result.isEmpty())
+            result = "SHA1";
+        return result;
+    }
 }

@@ -3,7 +3,6 @@ package vn.easyca.signserver.business.services.signing.dto.request.content;
 
 public class RawSigningContent {
 
-    private String hashAlgorithm;
 
     private String base64Data;
 
@@ -13,13 +12,5 @@ public class RawSigningContent {
 
     public void setBase64Data(String base64Data) {
         this.base64Data = base64Data;
-    }
-
-    public String getHashAlgorithm() {
-        return hashAlgorithm;
-    }
-
-    public void setHashAlgorithm(String hashAlgorithm) {
-        this.hashAlgorithm = hashAlgorithm;
     }
 }

@@ -15,6 +15,8 @@ import vn.easyca.signserver.business.services.signing.signer.RawSigner;
 import vn.easyca.signserver.business.services.signing.signer.PDFSigner;
 import vn.easyca.signserver.business.services.signing.signer.XmlSigner;
 
+import java.util.HashMap;
+
 @Service
 public class SigningService {
 
@@ -44,6 +46,18 @@ public class SigningService {
         } catch (Exception exception) {
             exception.printStackTrace();
             throw new Exception("Can not sign hash");
+        }
+    }
+
+    public SigningDataResponse<HashMap<String, String>> signHashBatch(SigningRequest<HashMap<String, String>> request) throws Exception {
+        try {
+            TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
+            RawSigner rawSigner = new RawSigner(cryptoTokenProxy);
+            return rawSigner.signBatchHash(request);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw new Exception("Can not sign batch hash");
         }
     }
 

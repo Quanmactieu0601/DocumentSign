@@ -7,6 +7,8 @@ import vn.easyca.signserver.business.utils.CommonUtils;
 import vn.easyca.signserver.pki.sign.integrated.pdf.DigestCreator;
 
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RawSigner {
 
@@ -19,15 +21,32 @@ public class RawSigner {
     public SigningDataResponse<String> signHash(SigningRequest<RawSigningContent> request) throws Exception {
         byte[] data = CommonUtils.decodeBase64(request.getContent().getBase64Data());
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
-        data = new DigestCreator().hash(data, request.getContent().getHashAlgorithm());
+        String hashAlgo = request.getHashAlgorithm();
+        data = new DigestCreator().hash(data, hashAlgo);
         byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
         return new SigningDataResponse<>(Base64.getEncoder().encodeToString(raw), cryptoTokenProxy.getBase64Certificate());
     }
 
+    public SigningDataResponse<HashMap<String, String>> signBatchHash(SigningRequest<HashMap<String, String>> request) throws Exception {
+        HashMap<String, String> keyAndSignature = new HashMap<>();
+        HashMap<String, String> keyAndHash = request.getContent();
+        vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
+        String hashAlgorithm = request.getHashAlgorithm();
+        for (Map.Entry me : keyAndHash.entrySet()) {
+            byte[] data = CommonUtils.decodeBase64((String) me.getValue());
+            data = new DigestCreator().hash(data, hashAlgorithm);
+            byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
+            keyAndSignature.put((String) me.getKey(), Base64.getEncoder().encodeToString(raw));
+        }
+        return new SigningDataResponse<HashMap<String, String>>(keyAndSignature, cryptoTokenProxy.getBase64Certificate());
+    }
+
+
     public SigningDataResponse<String> signData(SigningRequest<RawSigningContent> request) throws Exception {
         byte[] data = CommonUtils.decodeBase64(request.getContent().getBase64Data());
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
-        data = new DigestCreator().hash(data, request.getContent().getHashAlgorithm());
+        String hashAlgo = request.getHashAlgorithm();
+        data = new DigestCreator().hash(data, hashAlgo);
         byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
         return new SigningDataResponse<>(Base64.getEncoder().encodeToString(raw), cryptoTokenProxy.getBase64Certificate());
     }

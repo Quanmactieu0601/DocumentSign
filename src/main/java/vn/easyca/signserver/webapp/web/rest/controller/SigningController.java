@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controlller;
+package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -19,6 +19,8 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.sign.PDFSigningContentVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.RawSigningContentVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.XMLSigningContentVM;
+
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/signing")
@@ -47,7 +49,7 @@ public class SigningController {
     }
 
     @PostMapping(value = "/hash")
-    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<RawSigningContentVM> signingVM) {
+    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<HashMap<String, String>> signingVM) {
         try {
             SigningRequest<RawSigningContent> request = signingVM.getSigningRequest(RawSigningContent.class);
             SigningDataResponse<String> signingDataResponse = signingService.signHash(request);
@@ -56,6 +58,18 @@ public class SigningController {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
         }
     }
+
+    @PostMapping(value = "/hashbatch")
+    public ResponseEntity<BaseResponseVM> signBatchHash(@RequestBody SigningVM<HashMap<String,String>> signingVM) {
+        try {
+            SigningRequest<RawSigningContent> request = signingVM.getSigningRequest(RawSigningContent.class);
+            SigningDataResponse<String> signingDataResponse = signingService.signHash(request);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (Exception e) {
+            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
+        }
+    }
+
 
     @PostMapping(value = "/data")
     public ResponseEntity<BaseResponseVM> signData(@RequestBody SigningVM<RawSigningContentVM> signingVM) {

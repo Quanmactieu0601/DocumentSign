@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controlller;
+package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;

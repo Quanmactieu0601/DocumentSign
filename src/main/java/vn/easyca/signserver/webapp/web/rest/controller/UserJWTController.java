@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controlller;
+package vn.easyca.signserver.webapp.web.rest.controller;
 
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
