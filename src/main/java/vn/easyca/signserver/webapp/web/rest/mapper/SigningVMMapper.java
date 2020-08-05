@@ -54,7 +54,8 @@ public class SigningVMMapper<D, V> {
         }
         if(signingVM.getContent() != null) {
             ModelMapper contentMapper = new ModelMapper();
-            contentMapper.map(signingVM.getContent(), contentClass);
+            D content =  contentMapper.map(signingVM.getContent(), contentClass);
+            res.setContent(content);
         }
         return res;
     }

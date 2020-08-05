@@ -5,12 +5,21 @@ public class CertificateGeneratorVM {
     private String cn;
     private String l;
     private String s;
+    private String o;
     private String ownerId;
     private int keyLen;
     private String certProfile;
     private String ownerEmail;
     private String ownerPhone;
 
+
+    public String getO() {
+        return o;
+    }
+
+    public void setO(String o) {
+        this.o = o;
+    }
 
     public String getL() {
         return l;

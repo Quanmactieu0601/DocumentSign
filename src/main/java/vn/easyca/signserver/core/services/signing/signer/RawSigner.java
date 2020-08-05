@@ -20,7 +20,7 @@ public class RawSigner {
         vn.easyca.signserver.sign.core.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.sign.core.sign.rawsign.RawSigner();
         data = new DigestCreator().hash(data,request.getContent().getHashAlgorithm());
         byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
-        return new SigningDataResponse<>(cryptoTokenProxy.getBase64Certificate(), Base64.getEncoder().encodeToString(raw));
+        return new SigningDataResponse<>(Base64.getEncoder().encodeToString(raw),cryptoTokenProxy.getBase64Certificate());
     }
 
     public SigningDataResponse<String> signData(SigningRequest<RawSigningContent> request) throws Exception {
@@ -28,7 +28,7 @@ public class RawSigner {
         vn.easyca.signserver.sign.core.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.sign.core.sign.rawsign.RawSigner();
         data = new DigestCreator().hash(data,request.getContent().getHashAlgorithm());
         byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
-        return new SigningDataResponse<>(cryptoTokenProxy.getBase64Certificate(), Base64.getEncoder().encodeToString(raw));
+        return new SigningDataResponse<>(Base64.getEncoder().encodeToString(raw),cryptoTokenProxy.getBase64Certificate());
     }
 }
 

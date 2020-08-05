@@ -8,6 +8,7 @@ public class CertificateGeneratorDto {
 
     private String ou = "IT";
     private String l;
+    private String o;
     private String s;
     private String c = "VN";
     private String cn;
@@ -112,7 +113,7 @@ public class CertificateGeneratorDto {
     }
 
     public SubjectDN getSubjectDN() {
-        return new SubjectDN(cn, ou, "", l, s, c);
+        return new SubjectDN(cn, ou, o, l, s, c);
     }
 
     public OwnerInfo getOwnerInfo() {
@@ -123,4 +124,11 @@ public class CertificateGeneratorDto {
         return new CertPackage(certMethod, certProfile, certType);
     }
 
+    public String getO() {
+        return o;
+    }
+
+    public void setO(String o) {
+        this.o = o;
+    }
 }

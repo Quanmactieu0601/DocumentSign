@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.adapter;
 
+import com.google.gson.Gson;
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.ca.api.api.CAFacadeApi;
 import vn.easyca.signserver.ca.api.api.RegisterCertificateApi;
@@ -31,6 +32,8 @@ public class CertificateRequesterAdapter implements CertGenService.CertificateRe
         registerInputDto.setO(subjectDN.getO());
         registerInputDto.setOu(subjectDN.getOu());
         registerInputDto.setSt(subjectDN.getS());
+        registerInputDto.genHash();
+        System.out.println(new Gson().toJson(registerInputDto));
         RegisterResultDto registerResultDto = registerCertificateApi.register(registerInputDto);
         if (registerResultDto.getStatus() == 1) {
             throw new Exception(registerResultDto.getMessage());

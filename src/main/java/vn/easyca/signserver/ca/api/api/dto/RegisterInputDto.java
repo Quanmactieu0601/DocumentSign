@@ -1,10 +1,16 @@
 package vn.easyca.signserver.ca.api.api.dto; /* created by truonglx  on 7/16/20 */
 
+import javax.xml.bind.DatatypeConverter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class RegisterInputDto {
 
-    private int activationCodeEnabled =1;
-    private int approvedIssueCert=1;
-    private int backedUpKey=1;
+    private int activationCodeEnabled = 1;
+    private int approvedIssueCert = 1;
+    private int backedUpKey = 1;
     private String certMethod;
     private String certProfile;
     private int certProfileType;
@@ -17,8 +23,9 @@ public class RegisterInputDto {
     private String id;
     private String o;
     private String ou;
-    private String p12RegisterPass="";
+    private String p12RegisterPass = "";
     private String st;
+    private String hashData;
 
 
     // Getter Methods
@@ -91,7 +98,23 @@ public class RegisterInputDto {
         return st;
     }
 
-    // Setter Methods
+    public String genHash() throws NoSuchAlgorithmException {
+
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        String content = certProfileType +
+            certMethod +
+            certProfile +
+            customerEmail +
+            customerPhone +
+            cn +
+            o +
+            id +
+            st +
+            "373aa6451179fe58e5d205474044e379";
+        md.update(content.getBytes());
+        byte[] digest = md.digest();
+        return hashData = DatatypeConverter.printHexBinary(digest);
+    }
 
     public void setActivationCodeEnabled(int activationCodeEnabled) {
         this.activationCodeEnabled = activationCodeEnabled;
