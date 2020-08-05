@@ -25,7 +25,6 @@ public class SigningService {
 
     public PDFSigningDataRes signPDFFile(SigningRequest<PDFSigningContent> request) throws Exception {
         try {
-
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
             PDFSigner pdfSigner = new PDFSigner(cryptoTokenProxy, TEM_DIR);

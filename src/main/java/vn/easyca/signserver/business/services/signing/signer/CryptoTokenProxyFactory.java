@@ -21,7 +21,7 @@ public class CryptoTokenProxyFactory {
     @Autowired
     private CertificateService certificateService;
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(String serial,String pin) throws Exception {
+    public CryptoTokenProxy resolveCryptoTokenProxy(String serial, String pin) throws Exception {
         Certificate certificate = certificateService.getBySerial(serial);
         if (certificate == null)
             throw new Exception("Certificate that has serial" + serial + "not found");
@@ -42,7 +42,6 @@ public class CryptoTokenProxyFactory {
     }
 
     private CryptoToken resolveP12Token(Certificate certificate, String pin) {
-
         TokenInfo tokenInfo = certificate.getTokenInfo();
         byte[] fileContent = Base64.getDecoder().decode(tokenInfo.getData());
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
@@ -59,9 +58,9 @@ public class CryptoTokenProxyFactory {
 
     private CryptoToken resolveP11Token(Certificate certificate) {
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
-        TokenInfo tokenInfo =certificate.getTokenInfo();
+        TokenInfo tokenInfo = certificate.getTokenInfo();
         Config config = new Config();
-        config = config.initPkcs11(tokenInfo.getName(),tokenInfo.getLibrary(),tokenInfo.getPassword());
+        config = config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), tokenInfo.getPassword());
         try {
             p11CryptoToken.init(config);
             return p11CryptoToken;

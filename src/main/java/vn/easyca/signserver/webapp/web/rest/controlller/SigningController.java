@@ -28,8 +28,7 @@ public class SigningController {
     private SigningService signingService;
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
-
+    public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
         try {
             byte[] fileData = file.getBytes();
             SigningRequest<PDFSigningContent> signingRequest = signingVM.getSigningRequest(PDFSigningContent.class);
@@ -45,7 +44,6 @@ public class SigningController {
         } catch (Exception e) {
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
-
     }
 
     @PostMapping(value = "/hash")

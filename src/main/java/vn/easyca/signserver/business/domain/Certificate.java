@@ -6,7 +6,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
-
 public class Certificate {
 
     public static final String PKCS_11 = "PKCS_11";
@@ -31,7 +30,6 @@ public class Certificate {
     private TokenInfo tokenInfo;
 
     private X509Certificate x509Certificate;
-
 
     public Long getId() {
         return id;

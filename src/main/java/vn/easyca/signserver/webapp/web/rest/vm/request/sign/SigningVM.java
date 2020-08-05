@@ -52,9 +52,9 @@ public class SigningVM<T> {
         this.content = content;
     }
 
-    public <D> SigningRequest<D> getSigningRequest(Class<D> contentClass){
-        SigningVMMapper<D,T> mapper = new SigningVMMapper<>();
-        return mapper.map(this,contentClass);
+    public <D> SigningRequest<D> getSigningRequest(Class<D> contentClass) {
+        SigningVMMapper<D, T> mapper = new SigningVMMapper<>();
+        return mapper.map(this, contentClass);
     }
 
 
