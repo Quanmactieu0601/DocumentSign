@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
 import java.util.HashMap;
 
-public class BatchRawSigningVM {
+public class RawBatchSigningVM {
 
     private HashMap<String,String> batch;
 
