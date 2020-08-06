@@ -64,4 +64,9 @@ public class SigningRequest<T> {
             result = "SHA1";
         return result;
     }
+
+    public boolean isReturnInputData(){
+        return optional != null && optional.isReturnInputData();
+    }
+
 }

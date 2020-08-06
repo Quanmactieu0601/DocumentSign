@@ -9,6 +9,7 @@ import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSig
 import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.XMLSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.response.PDFSigningDataRes;
+import vn.easyca.signserver.business.services.signing.dto.response.SignResultElement;
 import vn.easyca.signserver.business.services.signing.dto.response.SigningDataResponse;
 import vn.easyca.signserver.business.services.signing.signer.CryptoTokenProxyFactory;
 import vn.easyca.signserver.business.services.signing.signer.CryptoTokenProxy;
@@ -39,7 +40,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<String> signHash(SigningRequest<RawSigningContent> request) throws Exception {
+    public SigningDataResponse<SignResultElement> signHash(SigningRequest<RawSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -50,7 +51,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<HashMap<String, String>> signHashBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
+    public SigningDataResponse<HashMap<String, SignResultElement>> signHashBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -62,7 +63,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<HashMap<String, String>> signRawBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
+    public SigningDataResponse<HashMap<String, SignResultElement>> signRawBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -74,7 +75,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<String> signData(SigningRequest<RawSigningContent> request) throws Exception {
+    public SigningDataResponse<SignResultElement> signData(SigningRequest<RawSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());

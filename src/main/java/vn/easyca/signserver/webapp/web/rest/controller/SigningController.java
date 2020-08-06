@@ -50,7 +50,7 @@ public class SigningController {
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<RawSigningContentVM> signingVM) {
         try {
             SigningRequest<RawSigningContent> request = signingVM.getSigningRequest(RawSigningContent.class);
-            SigningDataResponse<String> signingDataResponse = signingService.signHash(request);
+            Object signingDataResponse = signingService.signHash(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
@@ -61,7 +61,7 @@ public class SigningController {
     public ResponseEntity<BaseResponseVM> signHashBatch(@RequestBody SigningVM<RawBatchSigningVM> signingVM) {
         try {
             SigningRequest<RawBatchSigningContent> request = signingVM.getSigningRequest(RawBatchSigningContent.class);
-            SigningDataResponse<HashMap<String, String>> signingDataResponse = signingService.signHashBatch(request);
+            Object signingDataResponse = signingService.signHashBatch(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
@@ -72,7 +72,7 @@ public class SigningController {
     public ResponseEntity<BaseResponseVM> signRawBatch(@RequestBody SigningVM<RawBatchSigningVM> signingVM) {
         try {
             SigningRequest<RawBatchSigningContent> request = signingVM.getSigningRequest(RawBatchSigningContent.class);
-            SigningDataResponse<HashMap<String, String>> signingDataResponse = signingService.signRawBatch(request);
+            Object signingDataResponse = signingService.signRawBatch(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
@@ -83,7 +83,7 @@ public class SigningController {
     public ResponseEntity<BaseResponseVM> signData(@RequestBody SigningVM<RawSigningContentVM> signingVM) {
         try {
             SigningRequest<RawSigningContent> signingRequest = signingVM.getSigningRequest(RawSigningContent.class);
-            SigningDataResponse<String> signingDataResponse = signingService.signData(signingRequest);
+            Object signingDataResponse = signingService.signData(signingRequest);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));

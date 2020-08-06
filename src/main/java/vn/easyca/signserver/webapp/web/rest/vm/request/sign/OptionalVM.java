@@ -3,7 +3,10 @@ package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 public class OptionalVM {
 
     private String hashAlgorithm;
+
     private String signAlgorithm;
+
+    private boolean returnInputData;
 
     public String getHashAlgorithm() {
         return hashAlgorithm;
@@ -19,5 +22,13 @@ public class OptionalVM {
 
     public void setSignAlgorithm(String signAlgorithm) {
         this.signAlgorithm = signAlgorithm;
+    }
+
+    public boolean isReturnInputData() {
+        return returnInputData;
+    }
+
+    public void setReturnInputData(boolean returnInputData) {
+        this.returnInputData = returnInputData;
     }
 }
