@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.business.services.signing.dto.TokenInfoDTO;
 import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
-import vn.easyca.signserver.business.services.signing.dto.request.content.BatchRawSigningContent;
+import vn.easyca.signserver.business.services.signing.dto.request.content.RawBatchSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.XMLSigningContent;
@@ -50,7 +50,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<HashMap<String, String>> signHashBatch(SigningRequest<BatchRawSigningContent> request) throws Exception {
+    public SigningDataResponse<HashMap<String, String>> signHashBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -62,7 +62,7 @@ public class SigningService {
         }
     }
 
-    public SigningDataResponse<HashMap<String, String>> signRawBatch(SigningRequest<BatchRawSigningContent> request) throws Exception {
+    public SigningDataResponse<HashMap<String, String>> signRawBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());

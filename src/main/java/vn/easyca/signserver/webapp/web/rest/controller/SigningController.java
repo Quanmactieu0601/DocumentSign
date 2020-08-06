@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.business.services.signing.SigningService;
-import vn.easyca.signserver.business.services.signing.dto.request.content.BatchRawSigningContent;
+import vn.easyca.signserver.business.services.signing.dto.request.content.RawBatchSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.content.RawSigningContent;
 import vn.easyca.signserver.business.services.signing.dto.request.SigningRequest;
@@ -60,8 +60,8 @@ public class SigningController {
     @PostMapping(value = "/hashbatch")
     public ResponseEntity<BaseResponseVM> signHashBatch(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
         try {
-            SigningRequest<BatchRawSigningContent> request = signingVM.getSigningRequest(BatchRawSigningContent.class);
-            SigningDataResponse<HashMap<String,String>> signingDataResponse = signingService.signHashBatch(request);
+            SigningRequest<RawBatchSigningContent> request = signingVM.getSigningRequest(RawBatchSigningContent.class);
+            SigningDataResponse<HashMap<String, String>> signingDataResponse = signingService.signHashBatch(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
@@ -71,8 +71,8 @@ public class SigningController {
     @PostMapping(value = "/rawbatch")
     public ResponseEntity<BaseResponseVM> signRawBatch(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
         try {
-            SigningRequest<BatchRawSigningContent> request = signingVM.getSigningRequest(BatchRawSigningContent.class);
-            SigningDataResponse<HashMap<String,String>> signingDataResponse = signingService.signRawBatch(request);
+            SigningRequest<RawBatchSigningContent> request = signingVM.getSigningRequest(RawBatchSigningContent.class);
+            SigningDataResponse<HashMap<String, String>> signingDataResponse = signingService.signRawBatch(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (Exception e) {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));

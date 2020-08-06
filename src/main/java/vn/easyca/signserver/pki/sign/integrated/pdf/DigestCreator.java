@@ -14,14 +14,14 @@ import java.security.Security;
  */
 public class DigestCreator {
 
-    public byte[] hash(byte[] data,String hashAlgo) throws Exception {
-      if (hashAlgo == null || hashAlgo.isEmpty() || hashAlgo.equalsIgnoreCase("sha1"))
-          return sha1(data);
-      else if (hashAlgo.equalsIgnoreCase("sha256"))
-          return sha256(data);
-      else if (hashAlgo.equalsIgnoreCase("sha512"))
-          return sha512(data);
-      throw new Exception("Hash Algorithm not support");
+    public byte[] hash(byte[] data, String hashAlgo) throws Exception {
+        if (hashAlgo == null || hashAlgo.isEmpty() || hashAlgo.equalsIgnoreCase("sha1"))
+            return sha1(data);
+        else if (hashAlgo.equalsIgnoreCase("sha256"))
+            return sha256(data);
+        else if (hashAlgo.equalsIgnoreCase("sha512"))
+            return sha512(data);
+        throw new Exception("Hash Algorithm not support");
     }
 
     public byte[] sha1(byte[] data) throws Exception {
@@ -36,18 +36,18 @@ public class DigestCreator {
         return di.getEncoded();
     }
 
-    public byte[] digestWithSHAInfo(String hashAlgo,byte[] digest) throws Exception {
+    public byte[] digestWithSHAInfo(String hashAlgo, byte[] digest) throws Exception {
         ASN1ObjectIdentifier sha1oid_ = null;
         if (hashAlgo == null || hashAlgo.isEmpty())
             hashAlgo = "sha1";
-        if ( hashAlgo.equalsIgnoreCase("sha1"))
-            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());
+        if (hashAlgo.equalsIgnoreCase("sha1"))
+            sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());
         else if (hashAlgo.equalsIgnoreCase("sha256"))
-            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA256.getOid());
-        else if ( hashAlgo.equalsIgnoreCase("sha512"))
-            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA512.getOid());
+            sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA256.getOid());
+        else if (hashAlgo.equalsIgnoreCase("sha512"))
+            sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA512.getOid());
         if (sha1oid_ == null)
-            throw  new Exception("Not support Algorithm");
+            throw new Exception("Not support hash Algorithm");
         AlgorithmIdentifier sha1aid_ = new AlgorithmIdentifier(sha1oid_, null);
         DigestInfo di = new DigestInfo(sha1aid_, digest);
         return di.getEncoded();
