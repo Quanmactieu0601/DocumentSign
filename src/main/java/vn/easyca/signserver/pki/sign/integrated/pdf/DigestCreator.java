@@ -36,6 +36,23 @@ public class DigestCreator {
         return di.getEncoded();
     }
 
+    public byte[] digestWithSHAInfo(String hashAlgo,byte[] digest) throws Exception {
+        ASN1ObjectIdentifier sha1oid_ = null;
+        if (hashAlgo == null || hashAlgo.isEmpty())
+            hashAlgo = "sha1";
+        if ( hashAlgo.equalsIgnoreCase("sha1"))
+            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());
+        else if (hashAlgo.equalsIgnoreCase("sha256"))
+            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA256.getOid());
+        else if ( hashAlgo.equalsIgnoreCase("sha512"))
+            sha1oid_ =  new ASN1ObjectIdentifier(DigestAlgorithm.SHA512.getOid());
+        if (sha1oid_ == null)
+            throw  new Exception("Not support Algorithm");
+        AlgorithmIdentifier sha1aid_ = new AlgorithmIdentifier(sha1oid_, null);
+        DigestInfo di = new DigestInfo(sha1aid_, digest);
+        return di.getEncoded();
+    }
+
     public byte[] digestWithSHA1Info(byte[] digest) throws Exception {
         Security.addProvider(new BouncyCastleProvider());
         ASN1ObjectIdentifier sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());

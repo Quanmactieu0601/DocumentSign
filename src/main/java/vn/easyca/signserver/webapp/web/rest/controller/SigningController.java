@@ -58,7 +58,7 @@ public class SigningController {
     }
 
     @PostMapping(value = "/hashbatch")
-    public ResponseEntity<BaseResponseVM> signBatchHash(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
+    public ResponseEntity<BaseResponseVM> signHashBatch(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
         try {
             SigningRequest<BatchRawSigningContent> request = signingVM.getSigningRequest(BatchRawSigningContent.class);
             SigningDataResponse<HashMap<String,String>> signingDataResponse = signingService.signHashBatch(request);
@@ -68,8 +68,18 @@ public class SigningController {
         }
     }
 
+    @PostMapping(value = "/rawbatch")
+    public ResponseEntity<BaseResponseVM> signRawBatch(@RequestBody SigningVM<BatchRawSigningVM> signingVM) {
+        try {
+            SigningRequest<BatchRawSigningContent> request = signingVM.getSigningRequest(BatchRawSigningContent.class);
+            SigningDataResponse<HashMap<String,String>> signingDataResponse = signingService.signRawBatch(request);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (Exception e) {
+            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
+        }
+    }
 
-    @PostMapping(value = "/data")
+    @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signData(@RequestBody SigningVM<RawSigningContentVM> signingVM) {
         try {
             SigningRequest<RawSigningContent> signingRequest = signingVM.getSigningRequest(RawSigningContent.class);

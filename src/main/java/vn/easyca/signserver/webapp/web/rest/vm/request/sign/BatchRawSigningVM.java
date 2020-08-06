@@ -9,4 +9,8 @@ public class BatchRawSigningVM {
     public HashMap<String, String> getBatch() {
         return batch;
     }
+
+    public void setBatch(HashMap<String, String> batch) {
+        this.batch = batch;
+    }
 }

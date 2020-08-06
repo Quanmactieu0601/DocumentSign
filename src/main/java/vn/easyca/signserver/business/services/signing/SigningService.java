@@ -15,7 +15,6 @@ import vn.easyca.signserver.business.services.signing.signer.CryptoTokenProxy;
 import vn.easyca.signserver.business.services.signing.signer.RawSigner;
 import vn.easyca.signserver.business.services.signing.signer.PDFSigner;
 import vn.easyca.signserver.business.services.signing.signer.XmlSigner;
-import vn.easyca.signserver.webapp.web.rest.vm.request.sign.BatchRawSigningVM;
 
 import java.util.HashMap;
 
@@ -56,7 +55,19 @@ public class SigningService {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
             RawSigner rawSigner = new RawSigner(cryptoTokenProxy);
-            return rawSigner.signBatchHash(request);
+            return rawSigner.signHashBatch(request);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            throw new Exception("Can not sign batch hash");
+        }
+    }
+
+    public SigningDataResponse<HashMap<String, String>> signRawBatch(SigningRequest<BatchRawSigningContent> request) throws Exception {
+        try {
+            TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
+            RawSigner rawSigner = new RawSigner(cryptoTokenProxy);
+            return rawSigner.signRawBatch(request);
         } catch (Exception exception) {
             exception.printStackTrace();
             throw new Exception("Can not sign batch hash");
