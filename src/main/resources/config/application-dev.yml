@@ -37,9 +37,9 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mariadb://10.100.110.7:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: signserver
-    password: Hddt@202o
+    url: jdbc:mariadb://10.100.100.14:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign
+    password: EasySign@202o
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -62,7 +62,14 @@ spring:
     cache: false
 
 server:
-  port: 8080
+  port: 443
+  ssl:
+    key-store: classpath:config/tls/easyca.p12
+    key-store-password: SdsCa8@202o
+    key-store-type: PKCS12
+    key-alias: '*.easyca.vn'
+    ciphers: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256, TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+    enabled-protocols: TLSv1.2
 
 # ===================================================================
 # JHipster specific properties

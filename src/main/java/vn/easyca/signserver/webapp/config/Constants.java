@@ -17,15 +17,16 @@ public final class Constants {
     }
 
     public static class RaConfig {
-        public static final String URL = "http://172.16.11.84:8787/api/";
+        public static final String URL = "http://14.225.17.177:8787/api/";
         public static final String USER = "admin";
-        public static final String PASS = "admin";
+        public static final String PASS = "Sds@202o";
     }
 
     public static class HSMConfig {
-        public static final String NAME = "EasyCAToken";
-        public static final String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-        public static final String PIN = "12345678";
-
+        public static final String NAME = "nCipher";
+        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
+        public static final String PIN = "05111989";
+        public static final String SLOT = "761406615";
+        public static final String ATTRIBUTES = "compatibility";
     }
 }
