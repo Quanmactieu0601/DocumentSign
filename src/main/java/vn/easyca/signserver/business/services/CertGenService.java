@@ -1,6 +1,8 @@
 package vn.easyca.signserver.business.services;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.pki.cryptotoken.Config;
@@ -15,6 +17,7 @@ import java.security.PublicKey;
 
 @Service
 public class CertGenService {
+    private final Logger log = LoggerFactory.getLogger(CertGenService.class);
 
     private final int CERT_TYPE = 2;
 
@@ -39,6 +42,8 @@ public class CertGenService {
             result.setCert(createCert(dto));
         } catch (Exception ex) {
             ex.printStackTrace();
+            log.error(ex.getMessage());
+            throw ex;
         }
         result.setUser(createUser(dto));
         return result;
@@ -93,7 +98,7 @@ public class CertGenService {
         Config cfg = cryptoToken.getConfig();
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName())
-            .setSlot(Integer.parseInt(cfg.getSlot()))
+            .setSlot(Long.parseLong(cfg.getSlot()))
             .setPassword(cfg.getModulePin())
             .setLibrary(cfg.getLibrary())
             .setP11Attrs(cfg.getPkcs11Config());

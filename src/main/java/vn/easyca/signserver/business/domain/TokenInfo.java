@@ -1,28 +1,30 @@
 package vn.easyca.signserver.business.domain;
+
 import com.google.gson.Gson;
 
 public class TokenInfo {
 
-    private  String name;
+    private String name;
 
     private String library;
 
-    private  int slot;
+    private Long slot;
 
-    private  String password;
+    private String password;
 
-    private  String data;
+    private String data;
 
     private String p11Attrs;
 
-    public static TokenInfo createInstance(String data){
+    public static TokenInfo createInstance(String data) {
         Gson gson = new Gson();
-        return  gson.fromJson(data,TokenInfo.class);
+        return gson.fromJson(data, TokenInfo.class);
     }
 
     public String getName() {
         return name;
     }
+
     public TokenInfo setName(String name) {
         this.name = name;
         return this;
@@ -37,11 +39,11 @@ public class TokenInfo {
         return this;
     }
 
-    public int getSlot() {
+    public Long getSlot() {
         return slot;
     }
 
-    public TokenInfo setSlot(int slot) {
+    public TokenInfo setSlot(Long slot) {
         this.slot = slot;
         return this;
     }

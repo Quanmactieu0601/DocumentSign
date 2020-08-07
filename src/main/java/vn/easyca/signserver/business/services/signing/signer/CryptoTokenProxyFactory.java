@@ -7,6 +7,7 @@ import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.business.domain.Certificate;
+import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.business.domain.TokenInfo;
 import vn.easyca.signserver.business.services.CertificateService;
@@ -61,6 +62,8 @@ public class CryptoTokenProxyFactory {
         TokenInfo tokenInfo = certificate.getTokenInfo();
         Config config = new Config();
         config = config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), tokenInfo.getPassword());
+        config = config.withSlot(tokenInfo.getSlot().toString());
+        config = config.withAttributes(tokenInfo.getP11Attrs());
         try {
             p11CryptoToken.init(config);
             return p11CryptoToken;

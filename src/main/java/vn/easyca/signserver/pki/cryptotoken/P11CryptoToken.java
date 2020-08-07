@@ -40,10 +40,6 @@ public class P11CryptoToken implements CryptoToken {
         Security.addProvider(prov);
         this.providerName = prov.getName();
 
-        // set env variable for nCipher_ HSM (Thales)
-        if (config.getLibrary().contains("libcknfast.so"))
-            setEnvForNFastHSM();
-
         // load keystore
         char[] passphrase = modulePin.toCharArray();
         KeyStore ks = KeyStore.getInstance("PKCS11", prov);
@@ -89,7 +85,7 @@ public class P11CryptoToken implements CryptoToken {
         KeyPair keyPair = kpg.generateKeyPair();
         //Gen self-signed cert, just is a temporary cert when we are waiting the right one from the CA
         X509Certificate cert = genSelfSignedCert(alias, keyPair, providerName);
-        //ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+        ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
         return keyPair;
     }
 
@@ -137,35 +133,5 @@ public class P11CryptoToken implements CryptoToken {
         X509CertificateHolder cert = cb.build(signer);
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(cert.getEncoded()));
-    }
-
-    @SuppressWarnings({ "unchecked" })
-    private void setEnvForNFastHSM() throws Exception {
-        Map<String, String> newenv = new HashMap<>();
-        newenv.put("CKNFAST_OVERRIDE_SECURITY_ASSURANCES", "tokenkeys");
-        try {
-            Class<?> processEnvironmentClass = Class.forName("java.lang.ProcessEnvironment");
-            Field theEnvironmentField = processEnvironmentClass.getDeclaredField("theEnvironment");
-            theEnvironmentField.setAccessible(true);
-            Map<String, String> env = (Map<String, String>) theEnvironmentField.get(null);
-            env.putAll(newenv);
-            Field theCaseInsensitiveEnvironmentField = processEnvironmentClass.getDeclaredField("theCaseInsensitiveEnvironment");
-            theCaseInsensitiveEnvironmentField.setAccessible(true);
-            Map<String, String> cienv = (Map<String, String>) theCaseInsensitiveEnvironmentField.get(null);
-            cienv.putAll(newenv);
-        } catch (NoSuchFieldException e) {
-            Class[] classes = Collections.class.getDeclaredClasses();
-            Map<String, String> env = System.getenv();
-            for (Class cl : classes) {
-                if ("java.util.Collections$UnmodifiableMap".equals(cl.getName())) {
-                    Field field = cl.getDeclaredField("m");
-                    field.setAccessible(true);
-                    Object obj = field.get(env);
-                    Map<String, String> map = (Map<String, String>) obj;
-                    map.clear();
-                    map.putAll(newenv);
-                }
-            }
-        }
     }
 }

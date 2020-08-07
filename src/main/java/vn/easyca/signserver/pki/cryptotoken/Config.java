@@ -28,13 +28,13 @@ public class Config {
 
     public Config withSlot(String slot) {
         this.slot = slot;
-        this.pkcs11Config = this.pkcs11Config + "\n slot = " + this.slot;
+        this.pkcs11Config = this.pkcs11Config + "\nslot = " + this.slot;
         return this;
     }
 
     public Config withAttributes(String attributes) {
         this.attributes = attributes;
-        this.pkcs11Config = this.pkcs11Config + "\n attributes = " + this.attributes;
+        this.pkcs11Config = this.pkcs11Config + "\nattributes = " + this.attributes;
         return this;
     }
 
