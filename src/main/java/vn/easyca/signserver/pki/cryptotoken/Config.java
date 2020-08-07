@@ -46,6 +46,10 @@ public class Config {
         return pkcs11Config;
     }
 
+    public String getAttributes() {
+        return attributes;
+    }
+
     public String getModulePin() {
         return modulePin;
     }

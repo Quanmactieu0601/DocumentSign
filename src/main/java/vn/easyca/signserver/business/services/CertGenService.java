@@ -101,7 +101,7 @@ public class CertGenService {
             .setSlot(Long.parseLong(cfg.getSlot()))
             .setPassword(cfg.getModulePin())
             .setLibrary(cfg.getLibrary())
-            .setP11Attrs(cfg.getPkcs11Config());
+            .setP11Attrs(cfg.getAttributes());
         certificate.setTokenInfo(tokenInfo);
         certificateService.save(certificate);
         return certificate;
