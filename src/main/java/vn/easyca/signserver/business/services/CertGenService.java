@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.business.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.CertRequestUtils;
@@ -14,6 +15,7 @@ import vn.easyca.signserver.business.services.dto.*;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Date;
 
 @Service
 public class CertGenService {
@@ -70,7 +72,7 @@ public class CertGenService {
         KeyPair keyPair = genKeyPair(cryptoToken, alias, dto.getKeyLen());
         String csr = genCsr(cryptoToken.getProviderName(), keyPair.getPrivate(), keyPair.getPublic(), dto.getSubjectDN());
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
-//        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
+        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
         Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
         return new CertificateGeneratedResult.Cert(certificate.getSerial(), certificate.getRawData());
     }
@@ -101,7 +103,7 @@ public class CertGenService {
         certificate.setTokenType(Certificate.PKCS_11);
         certificate.setAlias(alias);
         certificate.setOwnerId(alias);
-
+        certificate.setModifiedDate(new Date());
         Config cfg = cryptoToken.getConfig();
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName())
