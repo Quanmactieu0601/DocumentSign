@@ -71,7 +71,7 @@ public class CertGenService {
         String csr = genCsr(cryptoToken.getProviderName(), keyPair.getPrivate(), keyPair.getPublic(), dto.getSubjectDN());
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
 //        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
-        Certificate certificate = saveNewCertificate(rawCertificate, cryptoToken);
+        Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
         return new CertificateGeneratedResult.Cert(certificate.getSerial(), certificate.getRawData());
     }
 
@@ -90,11 +90,18 @@ public class CertGenService {
             false);
     }
 
-    private Certificate saveNewCertificate(RawCertificate rawCertificate, CryptoToken cryptoToken) throws Exception {
+    private Certificate saveNewCertificate(RawCertificate rawCertificate,
+                                           String alias,
+                                           String subjectInfo,
+                                           CryptoToken cryptoToken) throws Exception {
         Certificate certificate = new Certificate();
         certificate.setRawData(rawCertificate.getCert());
         certificate.setSerial(rawCertificate.getSerial());
+        certificate.setSubjectInfo(subjectInfo);
         certificate.setTokenType(Certificate.PKCS_11);
+        certificate.setAlias(alias);
+        certificate.setOwnerId(alias);
+
         Config cfg = cryptoToken.getConfig();
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName())
