@@ -7,7 +7,7 @@ public class RawCertificate {
 
     public RawCertificate(String serial, String cert) {
         this.serial = serial;
-        this.cert = cert;
+       setCert(cert);
     }
 
     public String getSerial() {
@@ -23,6 +23,8 @@ public class RawCertificate {
     }
 
     public void setCert(String cert) {
+        if (cert != null)
+            cert = cert.replace("\n","");
         this.cert = cert;
     }
 }
