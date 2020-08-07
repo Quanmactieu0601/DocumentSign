@@ -44,22 +44,20 @@ public class RawSigner {
         return new SigningDataResponse<>(signResult, cryptoTokenProxy.getBase64Certificate());
     }
 
-
     public SigningDataResponse<HashMap<String, SignResultElement>> signHashBatch(SigningRequest<RawBatchSigningContent> request) throws Exception {
         HashMap<String, SignResultElement> keyAndSignature = new HashMap<>();
         HashMap<String, String> keyAndHash = request.getContent().getBatch();
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
-        String hashAlgo = request.getHashAlgorithm();
         String hashAlgorithm = request.getHashAlgorithm();
         for (Map.Entry me : keyAndHash.entrySet()) {
             byte[] data = CommonUtils.decodeBase64((String) me.getValue());
-            data = new DigestCreator().digestWithSHAInfo(hashAlgo, data);
+            data = new DigestCreator().digestWithSHAInfo(hashAlgorithm, data);
             byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
             SignResultElement signResultElement = new SignResultElement();
             signResultElement.setSignature(Base64.getEncoder().encodeToString(raw));
             if (request.getOptional() != null && request.getOptional().isReturnInputData())
                 signResultElement.setInputData((String) me.getValue());
-            keyAndSignature.put((String) me.getKey(),signResultElement);
+            keyAndSignature.put((String) me.getKey(), signResultElement);
         }
         return new SigningDataResponse<>(keyAndSignature, cryptoTokenProxy.getBase64Certificate());
     }
@@ -75,11 +73,10 @@ public class RawSigner {
             signResultElement.setSignature(Base64.getEncoder().encodeToString(raw));
             if (request.getOptional() != null && request.getOptional().isReturnInputData())
                 signResultElement.setInputData((String) me.getValue());
-            keyAndSignature.put((String) me.getKey(),signResultElement);
+            keyAndSignature.put((String) me.getKey(), signResultElement);
         }
         return new SigningDataResponse<>(keyAndSignature, cryptoTokenProxy.getBase64Certificate());
     }
-
 
 
 }
