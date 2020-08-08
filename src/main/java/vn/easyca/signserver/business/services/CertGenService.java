@@ -72,7 +72,7 @@ public class CertGenService {
         KeyPair keyPair = genKeyPair(cryptoToken, alias, dto.getKeyLen());
         String csr = genCsr(cryptoToken.getProviderName(), keyPair.getPrivate(), keyPair.getPublic(), dto.getSubjectDN());
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
-        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
+//        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
         Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
         return new CertificateGeneratedResult.Cert(certificate.getSerial(), certificate.getRawData());
     }
