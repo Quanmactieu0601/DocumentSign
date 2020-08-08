@@ -7,7 +7,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/opt/easysign/signserver.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>signserver.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/signserver.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -54,7 +54,9 @@
     <logger name="LiquibaseSchemaResolver" level="INFO"/>
     <logger name="springfox.documentation.schema.property" level="ERROR"/>
     <logger name="sun.rmi.transport" level="WARN"/>
-    <logger name="vn.easyca.signserver" level="INFO"/>
+    <logger name="vn.easyca.signserver" level="INFO">
+        <appender-ref ref="FILE"/>
+    </logger>
     <!-- jhipster-needle-logback-add-log - JHipster will add a new log with level -->
 
     <!-- https://logback.qos.ch/manual/configuration.html#shutdownHook and https://jira.qos.ch/browse/LOGBACK-1090 -->
