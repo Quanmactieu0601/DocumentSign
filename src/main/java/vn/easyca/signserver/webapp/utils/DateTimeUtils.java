@@ -1,4 +1,5 @@
 package vn.easyca.signserver.webapp.utils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -14,7 +15,18 @@ public class DateTimeUtils {
         return formatter.parse(strDate);
     }
 
-    public static String serialize(Date date){
+    public static Date tryParse(String strDate, Date defaultVal) {
+
+        SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
+        try {
+            return formatter.parse(strDate);
+        } catch (ParseException e) {
+            return defaultVal;
+        }
+    }
+
+
+    public static String serialize(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
         return formatter.format(date);
     }

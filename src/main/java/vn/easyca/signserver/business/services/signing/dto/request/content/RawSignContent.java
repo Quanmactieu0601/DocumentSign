@@ -1,9 +1,7 @@
 package vn.easyca.signserver.business.services.signing.dto.request.content;
 
 
-public class RawSigningContent {
-
-
+public class RawSignContent {
     private String base64Data;
 
     public String getBase64Data() {

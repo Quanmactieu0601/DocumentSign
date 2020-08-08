@@ -45,25 +45,27 @@ public class CertGenService {
         } catch (Exception ex) {
             ex.printStackTrace();
             log.error(ex.getMessage());
-            throw ex;
+            throw new Exception("can not gen new certificate");
         }
         result.setUser(createUser(dto));
         return result;
     }
 
     private CertificateGeneratedResult.User createUser(CertificateGeneratorDto dto) {
+
         String username = dto.getOwnerId();
         String password = dto.getPassword() == null || dto.getPassword().isEmpty() ? dto.getOwnerId() : dto.getPassword();
-        int createdUserResult = 0;
         try {
-            createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
+            int createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
+            return createdUserResult == UserCreator.RESULT_CREATED ?
+                new CertificateGeneratedResult.User(username, password, createdUserResult) :
+                new CertificateGeneratedResult.User(username, null, createdUserResult);
         } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
             return null;
         }
-        return createdUserResult == UserCreator.RESULT_CREATED ?
-            new CertificateGeneratedResult.User(username, password, createdUserResult) :
-            new CertificateGeneratedResult.User(username, null, createdUserResult);
+
     }
 
     private CertificateGeneratedResult.Cert createCert(CertificateGeneratorDto dto) throws Exception {

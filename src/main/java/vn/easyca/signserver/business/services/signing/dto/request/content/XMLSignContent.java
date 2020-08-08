@@ -1,6 +1,6 @@
 package vn.easyca.signserver.business.services.signing.dto.request.content;
 
-public class XMLSigningContent {
+public class XMLSignContent {
 
     private  String xml;
 

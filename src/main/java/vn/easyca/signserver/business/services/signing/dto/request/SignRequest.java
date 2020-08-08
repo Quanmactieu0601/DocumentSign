@@ -4,19 +4,16 @@ import vn.easyca.signserver.business.services.signing.dto.TokenInfoDTO;
 import vn.easyca.signserver.business.services.dto.OptionalDTO;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SigningRequest<T> {
+public class SignRequest<T> {
 
-    private T content;
+    private Map<String,SignElement<T>> signElements = new HashMap<>();
 
     private TokenInfoDTO tokenInfoDTO;
 
-    private String signer;
-
-    private Date signDate = new Date();
-
     private OptionalDTO optional = new OptionalDTO();
-
 
     public TokenInfoDTO getTokenInfoDTO() {
         return tokenInfoDTO;
@@ -30,32 +27,26 @@ public class SigningRequest<T> {
         this.optional = optionalDTO;
     }
 
-    public String getSigner() {
-        return signer;
-    }
-
-    public Date getSignDate() {
-        return signDate;
-    }
-
-    public void setSignDate(Date signDate) {
-        this.signDate = signDate;
-    }
-
-    public void setSigner(String signer) {
-        this.signer = signer;
-    }
-
     public void setTokenInfoDTO(TokenInfoDTO tokenInfoDTO) {
         this.tokenInfoDTO = tokenInfoDTO;
     }
 
-    public T getContent() {
-        return content;
+    public Map<String, SignElement<T>> getSignElements() throws Exception {
+        if (signElements == null || signElements.size() == 0)
+            throw  new Exception("have not element to sign");
+        return signElements;
     }
 
-    public void setContent(T content) {
-        this.content = content;
+
+    public void Add(String key, T content , Date signDate, String signer){
+        SignElement<T>  element = new SignElement<>();
+        element.setContent(content);
+        element.setSignDate(signDate);
+        element.setSigner(signer);
+        signElements.put(key,element);
+    }
+    public void setSignElements(Map<String, SignElement<T>> signElements) {
+        this.signElements = signElements;
     }
 
     public String getHashAlgorithm() {
