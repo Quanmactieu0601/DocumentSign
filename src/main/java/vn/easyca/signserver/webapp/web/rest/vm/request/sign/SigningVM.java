@@ -3,12 +3,13 @@ package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 import vn.easyca.signserver.business.services.signing.dto.request.SignRequest;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignVMMapper;
 
+import java.util.List;
 import java.util.Map;
 
 public class SigningVM<T> {
     private TokenVM tokenInfo;
     private OptionalVM optional;
-    private Map<String, SignElementVM<T>> elements;
+    private List<SignElementVM<T>> elements;
 
     public TokenVM getTokenInfo() {
         return tokenInfo;
@@ -26,11 +27,11 @@ public class SigningVM<T> {
         this.optional = optional;
     }
 
-    public Map<String, SignElementVM<T>> getElements() {
+    public List<SignElementVM<T>> getElements() {
         return elements;
     }
 
-    public void setElements(Map<String, SignElementVM<T>> elements) {
+    public void setElements(List<SignElementVM<T>> elements) {
         this.elements = elements;
     }
 

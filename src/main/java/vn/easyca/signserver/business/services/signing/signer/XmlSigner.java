@@ -19,12 +19,12 @@ public class XmlSigner {
 
     public SigningDataResponse<String> sign(SignRequest<XMLSignContent> request) throws Exception {
         SignXMLLib lib = new SignXMLLib();
-        Map.Entry<String, SignElement<XMLSignContent>> entry = request.getSignElements().entrySet().iterator().next();
-        SignXMLDto signXMLDto = new SignXMLDto(entry.getValue().getContent().getXml(),
+        SignElement<XMLSignContent> signElement = request.getSignElements().get(0);
+        SignXMLDto signXMLDto = new SignXMLDto(signElement.getContent().getXml(),
             cryptoTokenProxy.getPrivateKey(),
             cryptoTokenProxy.getPublicKey(),
             cryptoTokenProxy.getX509Certificate());
         String xml = lib.generateXMLDigitalSignature(signXMLDto);
-        return new SigningDataResponse<String>(xml, cryptoTokenProxy.getBase64Certificate());
+        return new SigningDataResponse<>(xml, cryptoTokenProxy.getBase64Certificate());
     }
 }

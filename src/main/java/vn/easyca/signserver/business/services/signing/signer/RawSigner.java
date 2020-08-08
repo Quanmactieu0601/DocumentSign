@@ -8,9 +8,7 @@ import vn.easyca.signserver.business.services.signing.dto.response.SigningDataRe
 import vn.easyca.signserver.business.utils.CommonUtils;
 import vn.easyca.signserver.pki.sign.integrated.pdf.DigestCreator;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RawSigner {
 
@@ -20,38 +18,41 @@ public class RawSigner {
         this.cryptoTokenProxy = cryptoTokenProxy;
     }
 
-    public SigningDataResponse<Map<String, SignResultElement>> signHash(SignRequest<String> request) throws Exception {
-        Map<String, SignResultElement> keyAndSignature = new HashMap<>();
-        Map<String, SignElement<String>> keyAndHash = request.getSignElements();
+    public SigningDataResponse<List<SignResultElement>> signHash(SignRequest<String> request) throws Exception {
+
+        List<SignResultElement> resultElements = new ArrayList<>();
+        List<SignElement<String>> signElements = request.getSignElements();
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
         String hashAlgorithm = request.getHashAlgorithm();
-        for (Map.Entry<String, SignElement<String>> me : keyAndHash.entrySet()) {
-            byte[] data = CommonUtils.decodeBase64(me.getValue().getContent());
+        for (SignElement<String> signElement : signElements) {
+            byte[] data = CommonUtils.decodeBase64(signElement.getContent());
             data = new DigestCreator().digestWithSHAInfo(hashAlgorithm, data);
             byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
             SignResultElement signResultElement = new SignResultElement();
             signResultElement.setSignature(Base64.getEncoder().encodeToString(raw));
             if (request.getOptional() != null && request.getOptional().isReturnInputData())
-                signResultElement.setInputData(me.getValue().getContent());
-            keyAndSignature.put((String) me.getKey(), signResultElement);
+                signResultElement.setInputData(signElement.getContent());
+            signResultElement.setKey(signElement.getKey());
+            resultElements.add(signResultElement);
         }
-        return new SigningDataResponse<>(keyAndSignature, cryptoTokenProxy.getBase64Certificate());
+        return new SigningDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 
-    public SigningDataResponse<Map<String, SignResultElement>> signRaw(SignRequest<String> request) throws Exception {
-        Map<String, SignResultElement> keyAndSignature = new HashMap<>();
-        Map<String, SignElement<String>> keyAndHash = request.getSignElements();
+    public SigningDataResponse<List<SignResultElement>> signRaw(SignRequest<String> request) throws Exception {
+        List<SignResultElement> resultElements = new ArrayList<>();
+        List<SignElement<String>> signElements = request.getSignElements();
         vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
-        for (Map.Entry<String, SignElement<String>> me : keyAndHash.entrySet()) {
-            byte[] data = CommonUtils.decodeBase64(me.getValue().getContent());
+        for (SignElement<String> signElement : signElements) {
+            byte[] data = CommonUtils.decodeBase64(signElement.getContent());
             byte[] raw = rawSigner.signHash(data, cryptoTokenProxy.getPrivateKey());
             SignResultElement signResultElement = new SignResultElement();
             signResultElement.setSignature(Base64.getEncoder().encodeToString(raw));
             if (request.getOptional() != null && request.getOptional().isReturnInputData())
-                signResultElement.setInputData(me.getValue().getContent());
-            keyAndSignature.put(me.getKey(), signResultElement);
+                signResultElement.setInputData(signElement.getContent());
+            signResultElement.setKey(signElement.getKey());
+            resultElements.add(signResultElement);
         }
-        return new SigningDataResponse<>(keyAndSignature, cryptoTokenProxy.getBase64Certificate());
+        return new SigningDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 }
 

@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.business.services.signing.SignService;
 import vn.easyca.signserver.business.services.signing.dto.request.SignElement;
 import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSignContent;
-import vn.easyca.signserver.business.services.signing.dto.request.content.RawSignContent;
 import vn.easyca.signserver.business.services.signing.dto.request.SignRequest;
 import vn.easyca.signserver.business.services.signing.dto.response.PDFSigningDataRes;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
@@ -31,8 +30,7 @@ public class SigningController {
         try {
             byte[] fileData = file.getBytes();
             SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
-            Map.Entry<String, SignElement<PDFSignContent>> entry = signRequest.getSignElements().entrySet().iterator().next();
-            entry.getValue().getContent().setFileData(fileData);
+            signRequest.getSignElements().get(0).getContent().setFileData(fileData);
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
             return ResponseEntity.ok()

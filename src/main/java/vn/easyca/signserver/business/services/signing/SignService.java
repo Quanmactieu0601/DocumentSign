@@ -41,7 +41,7 @@ public class SignService {
     }
 
 
-    public SigningDataResponse<Map<String, SignResultElement>> signHash(SignRequest<String> request) throws Exception {
+    public Object signHash(SignRequest<String> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -53,7 +53,7 @@ public class SignService {
         }
     }
 
-    public SigningDataResponse<Map<String, SignResultElement>> signRaw(SignRequest<String> request) throws Exception {
+    public Object signRaw(SignRequest<String> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());

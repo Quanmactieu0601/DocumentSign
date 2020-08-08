@@ -30,11 +30,7 @@ public class PDFSigner {
         initTemDir();
         String temFilePath = cacheDir + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
-        SignElement<PDFSignContent> element = null;
-        for (Map.Entry<String, SignElement<PDFSignContent>> me : request.getSignElements().entrySet()) {
-            element = me.getValue();
-            break;
-        }
+        SignElement<PDFSignContent> element = request.getSignElements().get(0);
         if (element == null)
             throw  new Exception("have not element to sign");
         PDFSignContent content = element.getContent();

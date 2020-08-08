@@ -4,6 +4,7 @@ public class SignElementVM<T> {
     private String signer;
     private String signDate;
     private T content;
+    private String key;
 
     public String getSigner() {
         return signer;
@@ -27,5 +28,13 @@ public class SignElementVM<T> {
 
     public T getContent() {
         return content;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
     }
 }

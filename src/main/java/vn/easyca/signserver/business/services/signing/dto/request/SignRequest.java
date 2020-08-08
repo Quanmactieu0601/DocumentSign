@@ -3,13 +3,13 @@ package vn.easyca.signserver.business.services.signing.dto.request;
 import vn.easyca.signserver.business.services.signing.dto.TokenInfoDTO;
 import vn.easyca.signserver.business.services.dto.OptionalDTO;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 public class SignRequest<T> {
 
-    private Map<String,SignElement<T>> signElements = new HashMap<>();
+    private final List<SignElement<T>> elements = new ArrayList<>();
 
     private TokenInfoDTO tokenInfoDTO;
 
@@ -31,22 +31,19 @@ public class SignRequest<T> {
         this.tokenInfoDTO = tokenInfoDTO;
     }
 
-    public Map<String, SignElement<T>> getSignElements() throws Exception {
-        if (signElements == null || signElements.size() == 0)
+    public List<SignElement<T>> getSignElements() throws Exception {
+        if (elements == null || elements.size() == 0)
             throw  new Exception("have not element to sign");
-        return signElements;
+        return elements;
     }
-
 
     public void Add(String key, T content , Date signDate, String signer){
         SignElement<T>  element = new SignElement<>();
         element.setContent(content);
         element.setSignDate(signDate);
         element.setSigner(signer);
-        signElements.put(key,element);
-    }
-    public void setSignElements(Map<String, SignElement<T>> signElements) {
-        this.signElements = signElements;
+        element.setKey(key);
+        elements.add(element);
     }
 
     public String getHashAlgorithm() {
