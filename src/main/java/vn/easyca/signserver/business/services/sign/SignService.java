@@ -2,25 +2,21 @@ package vn.easyca.signserver.business.services.sign;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.business.domain.Certificate;
-import vn.easyca.signserver.business.error.sign.BusinessError;
 import vn.easyca.signserver.business.services.CertificateService;
-import vn.easyca.signserver.business.services.sign.dto.request.SignatureVerificationRequest;
-import vn.easyca.signserver.business.services.sign.dto.response.SignatureVerificationResponse;
 import vn.easyca.signserver.business.services.sign.dto.TokenInfoDTO;
 import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
 import vn.easyca.signserver.business.services.sign.dto.request.content.PDFSignContent;
 import vn.easyca.signserver.business.services.sign.dto.request.content.XMLSignContent;
 import vn.easyca.signserver.business.services.sign.dto.response.PDFSigningDataRes;
 import vn.easyca.signserver.business.services.sign.dto.response.SignDataResponse;
+import vn.easyca.signserver.business.services.sign.dto.response.SignResultElement;
 import vn.easyca.signserver.business.services.sign.signer.CryptoTokenProxyFactory;
 import vn.easyca.signserver.business.services.sign.signer.CryptoTokenProxy;
 import vn.easyca.signserver.business.services.sign.signer.RawSigner;
 import vn.easyca.signserver.business.services.sign.signer.PDFSigner;
 import vn.easyca.signserver.business.services.sign.signer.XmlSigner;
-import vn.easyca.signserver.pki.sign.rawsign.SignatureValidator;
 
-import java.security.cert.X509Certificate;
+import java.util.List;
 
 @Service
 public class SignService {
@@ -46,7 +42,7 @@ public class SignService {
     }
 
 
-    public Object signHash(SignRequest<String> request) throws Exception {
+    public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -58,7 +54,7 @@ public class SignService {
         }
     }
 
-    public Object signRaw(SignRequest<String> request) throws Exception {
+    public SignDataResponse<List<SignResultElement>> signRaw(SignRequest<String> request) throws Exception {
         try {
             TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(tokenInfoDTO.getSerial(), tokenInfoDTO.getPin());
@@ -80,7 +76,6 @@ public class SignService {
             throw new Exception("Can not sign Xml");
         }
     }
-
 
 
 }

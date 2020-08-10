@@ -14,7 +14,7 @@ public class SignatureValidator {
     private final String DEFAULT_SIG_ALGO = "SHA1withRSA";
 
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey) throws Exception {
-        Signature signature = Signature.getInstance(DEFAULT_SIG_ALGO);
+        Signature signature = Signature.getInstance("NONEwithRSA");
         signature.initVerify(publicKey);
         signature.update(origData);
         return signature.verify(sig);

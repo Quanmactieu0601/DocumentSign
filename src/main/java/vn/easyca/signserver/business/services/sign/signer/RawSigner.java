@@ -5,6 +5,7 @@ import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
 import vn.easyca.signserver.business.services.sign.dto.response.SignResultElement;
 import vn.easyca.signserver.business.services.sign.dto.response.SignDataResponse;
 import vn.easyca.signserver.business.utils.CommonUtils;
+import vn.easyca.signserver.pki.sign.rawsign.SignatureValidator;
 
 import java.util.*;
 

@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.sign.dto.response;
+package vn.easyca.signserver.business.services.dto;
 
 import java.util.ArrayList;
 import java.util.List;

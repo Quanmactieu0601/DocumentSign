@@ -31,7 +31,6 @@ public class P12ImportService {
             X509Certificate x509Certificate = (X509Certificate) p12CryptoToken.getCertificate(alias);
             String serial = x509Certificate.getSerialNumber().toString(16);
             String base64Cert = CommonUtils.encodeBase64X509(x509Certificate);
-
             Certificate certificate =  new Certificate();
             certificate.setRawData(base64Cert);
             certificate.setOwnerId(input.getOwnerId());

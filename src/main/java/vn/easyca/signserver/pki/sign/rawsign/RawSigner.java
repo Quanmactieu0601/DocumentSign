@@ -55,7 +55,9 @@ public class RawSigner {
         }
         signature.initSign(privateKey);
         signature.update(data);
-        return signature.sign();
+        byte[] signResult = signature.sign();
+        return signResult;
+
     }
 
     public String getHashAlgoUsed() {

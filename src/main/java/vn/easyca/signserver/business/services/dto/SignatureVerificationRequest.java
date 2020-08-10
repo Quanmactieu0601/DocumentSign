@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.sign.dto.request;
+package vn.easyca.signserver.business.services.dto;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -32,16 +32,8 @@ public class SignatureVerificationRequest {
         this.hashAlgorithm = hashAlgorithm;
     }
 
-    public List<Element> getSignatureElements() {
-        return elements;
-    }
-
     public void add(Element element) {
         elements.add(element);
-    }
-
-    public void setSignatureElements(List<Element> elements) {
-        this.elements = elements;
     }
 
     public List<Element> getElements() {
@@ -50,16 +42,25 @@ public class SignatureVerificationRequest {
 
 
     public static class Element {
+        public Element(String key, String base64Signature, String base64OriginalData) {
+            this.key = key;
+            this.base64Signature = base64Signature;
+            this.base64OriginalData = base64OriginalData;
+        }
+
         private String key;
         private String base64Signature;
         private String base64OriginalData;
+
+        public Element() {
+        }
 
         public byte[] getSignature() {
             return Base64.getDecoder().decode(base64Signature);
         }
 
         public byte[] getOriginalData() {
-            return Base64.getDecoder().decode(base64Signature);
+            return Base64.getDecoder().decode(base64OriginalData);
         }
 
         public String getKey() {
