@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import liquibase.pro.packaged.S;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -8,19 +7,16 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.business.services.signing.SignService;
-import vn.easyca.signserver.business.services.signing.dto.request.SignElement;
-import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSignContent;
-import vn.easyca.signserver.business.services.signing.dto.request.SignRequest;
-import vn.easyca.signserver.business.services.signing.dto.response.PDFSigningDataRes;
+import vn.easyca.signserver.business.services.sign.SignService;
+import vn.easyca.signserver.business.services.sign.dto.request.content.PDFSignContent;
+import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
+import vn.easyca.signserver.business.services.sign.dto.response.PDFSigningDataRes;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/sign")
-public class SigningController {
+public class SignController {
 
     @Autowired
     private SignService signService;
@@ -54,7 +50,7 @@ public class SigningController {
     }
 
     @PostMapping(value = "/raw")
-    public ResponseEntity<BaseResponseVM> signHashBatch(@RequestBody SigningVM<String> signingVM) {
+    public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signRaw(request);
@@ -63,4 +59,5 @@ public class SigningController {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
         }
     }
+
 }

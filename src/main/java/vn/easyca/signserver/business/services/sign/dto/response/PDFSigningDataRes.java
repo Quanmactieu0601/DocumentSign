@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.dto.response;
+package vn.easyca.signserver.business.services.sign.dto.response;
 
 public class PDFSigningDataRes {
 

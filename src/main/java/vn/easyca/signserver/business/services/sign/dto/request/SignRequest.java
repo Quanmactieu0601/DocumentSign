@@ -1,6 +1,6 @@
-package vn.easyca.signserver.business.services.signing.dto.request;
+package vn.easyca.signserver.business.services.sign.dto.request;
 
-import vn.easyca.signserver.business.services.signing.dto.TokenInfoDTO;
+import vn.easyca.signserver.business.services.sign.dto.TokenInfoDTO;
 import vn.easyca.signserver.business.services.dto.OptionalDTO;
 
 import java.util.ArrayList;

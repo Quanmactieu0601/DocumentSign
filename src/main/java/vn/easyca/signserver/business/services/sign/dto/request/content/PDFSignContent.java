@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.dto.request.content;
+package vn.easyca.signserver.business.services.sign.dto.request.content;
 
 public class PDFSignContent {
 

@@ -1,5 +1,7 @@
 package vn.easyca.signserver.pki.sign.rawsign;
 
+import vn.easyca.signserver.pki.sign.commond.DigestCreator;
+
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.cert.X509Certificate;
@@ -7,7 +9,7 @@ import java.security.cert.X509Certificate;
 /**
  * Created by chen on 7/24/17.
  */
-public class RawValidator {
+public class SignatureValidator {
 
     private final String DEFAULT_SIG_ALGO = "SHA1withRSA";
 
@@ -28,7 +30,7 @@ public class RawValidator {
         hashAlgo = hashAlgo.replace("-", "");
         switch (hashAlgo) {
             case "sha1":
-                signature = Signature.getInstance("DEFAULT_SIG_ALGO");
+                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
                 break;
             case "sha256":
                 signature = Signature.getInstance("SHA256withRSA");
@@ -38,7 +40,7 @@ public class RawValidator {
                 break;
             default:
                 throw new Exception("Algorithm not supported");
-        }
+        };
         signature.initVerify(publicKey);
         signature.update(origData);
         return signature.verify(sig);
@@ -47,4 +49,5 @@ public class RawValidator {
     public boolean verify(byte[] origData, byte[] sig, X509Certificate cert, String hashAlgo) throws Exception {
         return verify(origData, sig, cert.getPublicKey(), hashAlgo);
     }
+
 }

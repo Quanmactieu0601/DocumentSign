@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.signer;
+package vn.easyca.signserver.business.services.sign.signer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,6 +3,7 @@ package vn.easyca.signserver.pki.sign.integrated.pdf;
 import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
+import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 import vn.easyca.signserver.pki.sign.utils.Base64Utils;
 import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.pki.sign.utils.UniqueID;

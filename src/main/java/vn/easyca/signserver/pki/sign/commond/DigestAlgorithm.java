@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.sign.integrated.pdf;
+package vn.easyca.signserver.pki.sign.commond;
 
 import org.bouncycastle.asn1.DERNull;
 import org.bouncycastle.asn1.DERObjectIdentifier;

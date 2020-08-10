@@ -1,18 +1,17 @@
-package vn.easyca.signserver.business.services.signing.signer;
+package vn.easyca.signserver.business.services.sign.signer;
 
 import org.apache.commons.io.IOUtils;
-import vn.easyca.signserver.business.services.signing.dto.request.SignElement;
+import vn.easyca.signserver.business.services.sign.dto.request.SignElement;
 import vn.easyca.signserver.pki.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.pki.sign.integrated.pdf.SignPDFDto;
 import vn.easyca.signserver.pki.sign.integrated.pdf.SignPDFPlugin;
 import vn.easyca.signserver.pki.sign.utils.UniqueID;
-import vn.easyca.signserver.business.services.signing.dto.request.SignRequest;
-import vn.easyca.signserver.business.services.signing.dto.request.content.PDFSignContent;
+import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
+import vn.easyca.signserver.business.services.sign.dto.request.content.PDFSignContent;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.cert.Certificate;
-import java.util.Map;
 
 
 public class PDFSigner {

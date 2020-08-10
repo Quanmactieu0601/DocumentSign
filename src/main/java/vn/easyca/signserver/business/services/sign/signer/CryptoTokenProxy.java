@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.signer;
+package vn.easyca.signserver.business.services.sign.signer;
 
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.business.domain.Certificate;

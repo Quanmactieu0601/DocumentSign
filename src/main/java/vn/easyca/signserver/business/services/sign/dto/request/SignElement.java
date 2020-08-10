@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.dto.request;
+package vn.easyca.signserver.business.services.sign.dto.request;
 
 import java.util.Date;
 

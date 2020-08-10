@@ -1,12 +1,12 @@
-package vn.easyca.signserver.business.services.signing.dto.response;
+package vn.easyca.signserver.business.services.sign.dto.response;
 
-public class SigningDataResponse<T> {
+public class SignDataResponse<T> {
 
     private final T signResult;
 
     private final String certificate;
 
-    public SigningDataResponse(T signResult, String certificate) {
+    public SignDataResponse(T signResult, String certificate) {
         this.signResult = signResult;
         this.certificate = certificate;
     }

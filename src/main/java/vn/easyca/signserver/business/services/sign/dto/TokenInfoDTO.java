@@ -1,4 +1,4 @@
-package vn.easyca.signserver.business.services.signing.dto;
+package vn.easyca.signserver.business.services.sign.dto;
 
 public class TokenInfoDTO {
 

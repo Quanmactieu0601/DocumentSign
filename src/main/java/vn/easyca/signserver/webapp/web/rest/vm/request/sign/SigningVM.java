@@ -1,10 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
-import vn.easyca.signserver.business.services.signing.dto.request.SignRequest;
+import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignVMMapper;
 
 import java.util.List;
-import java.util.Map;
 
 public class SigningVM<T> {
     private TokenVM tokenInfo;
