@@ -1,5 +1,7 @@
 package vn.easyca.signserver.pki.sign.rawsign;
 
+import vn.easyca.signserver.pki.sign.commond.DigestCreator;
+
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
 import java.security.Signature;
@@ -33,30 +35,39 @@ public class RawSigner {
         return signature.sign();
     }
 
-    public byte[] signData(byte[] data, PrivateKey privateKey, String hashAlgo) throws Exception {
-        Signature signature = null;
-        hashAlgo = hashAlgo.trim().toLowerCase();
-        hashAlgo = hashAlgo.replace("-", "");
-        switch (hashAlgo) {
-            case "sha1":
-                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
-                hashAlgoUsed = DEFAULT_SIG_ALGO;
-                break;
-            case "sha256":
-                signature = Signature.getInstance("SHA256withRSA");
-                hashAlgo = "SHA256withRSA";
-                break;
-            case "sha512":
-                signature = Signature.getInstance("SHA512withRSA");
-                hashAlgo = "SHA512withRSA";
-                break;
-            default:
-                throw new Exception("Algorithm not supported");
-        }
-        signature.initSign(privateKey);
-        signature.update(data);
-        byte[] signResult = signature.sign();
-        return signResult;
+    public byte[] signData(byte[] data, PrivateKey privateKey, String hashAlgorithm) throws Exception {
+
+        DigestCreator digestCreator = new DigestCreator();
+        byte[] digest = digestCreator.digestWithSHAInfo(hashAlgorithm, data);
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+        return cipher.doFinal(digest);
+//
+//
+//
+//        Signature signature = null;
+//        hashAlgo = hashAlgo.trim().toLowerCase();
+//        hashAlgo = hashAlgo.replace("-", "");
+//        switch (hashAlgo) {
+//            case "sha1":
+//                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
+//                hashAlgoUsed = DEFAULT_SIG_ALGO;
+//                break;
+//            case "sha256":
+//                signature = Signature.getInstance("SHA256withRSA");
+//                hashAlgo = "SHA256withRSA";
+//                break;
+//            case "sha512":
+//                signature = Signature.getInstance("SHA512withRSA");
+//                hashAlgo = "SHA512withRSA";
+//                break;
+//            default:
+//                throw new Exception("Algorithm not supported");
+//        }
+//        signature.initSign(privateKey);
+//        signature.update(data);
+//         byte[] signResult = signature.sign();
+//        return signResult;
 
     }
 
