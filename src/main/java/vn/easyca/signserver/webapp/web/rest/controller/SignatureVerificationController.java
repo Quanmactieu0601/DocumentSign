@@ -21,6 +21,7 @@ public class SignatureVerificationController {
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> verifyHash(@RequestBody SignatureVerificationVM signatureVerificationVM) {
         try {
+
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));

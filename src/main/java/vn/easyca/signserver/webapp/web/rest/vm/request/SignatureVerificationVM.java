@@ -1,8 +1,10 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 import vn.easyca.signserver.business.services.dto.SignatureVerificationRequest;
+import vn.easyca.signserver.business.utils.CommonUtils;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignatureVerificationRequestMapper;
 
+import java.security.cert.X509Certificate;
 import java.util.List;
 
 public class SignatureVerificationVM {
@@ -12,6 +14,8 @@ public class SignatureVerificationVM {
     private List<ElementVM> elements;
 
     private String serial;
+
+    private String base64Certificate;
 
     public String getHashAlgorithm() {
         return hashAlgorithm;
@@ -30,17 +34,33 @@ public class SignatureVerificationVM {
     }
 
     public String getSerial() {
-        return serial;
+        if (serial != null && !serial.isEmpty())
+            return serial;
+        try {
+            if (base64Certificate != null && !base64Certificate.isEmpty()) {
+                X509Certificate certificate = CommonUtils.decodeBase64X509(base64Certificate);
+                return certificate.getSerialNumber().toString(16);
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 
     public void setSerial(String serial) {
         this.serial = serial;
     }
 
-    public SignatureVerificationRequest mapToDTO(){
+    public SignatureVerificationRequest mapToDTO() {
         return new SignatureVerificationRequestMapper().map(this);
     }
 
+    public String getBase64Certificate() {
+        return base64Certificate;
+    }
+
+    public void setBase64Certificate(String base64Certificate) {
+        this.base64Certificate = base64Certificate;
+    }
 
     public static class ElementVM {
         private String key;

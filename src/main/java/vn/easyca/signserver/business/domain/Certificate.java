@@ -109,6 +109,4 @@ public class Certificate {
             return x509Certificate;
         return x509Certificate = CommonUtils.decodeBase64X509(rawData);
     }
-
-
 }

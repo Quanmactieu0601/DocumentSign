@@ -52,7 +52,6 @@ public class CertGenService {
     }
 
     private CertificateGeneratedResult.User createUser(CertificateGeneratorDto dto) {
-
         String username = dto.getOwnerId();
         String password = dto.getPassword() == null || dto.getPassword().isEmpty() ? dto.getOwnerId() : dto.getPassword();
         try {
@@ -65,7 +64,6 @@ public class CertGenService {
             e.printStackTrace();
             return null;
         }
-
     }
 
     private CertificateGeneratedResult.Cert createCert(CertificateGeneratorDto dto) throws Exception {
