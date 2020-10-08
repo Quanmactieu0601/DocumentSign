@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
-import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.UserApplicationService;

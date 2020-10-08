@@ -2,7 +2,6 @@ package vn.easyca.signserver.webapp;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import vn.easyca.signserver.ca.api.api.CAFacadeApi;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;
@@ -16,7 +15,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
-import vn.easyca.signserver.webapp.config.Constants;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -27,7 +25,7 @@ import java.util.Collection;
 @ComponentScan(basePackages = "vn.easyca.signserver")
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-@EnableJpaRepositories(basePackages = "vn.easyca.signserver.webapp.jpa.repository")
+@EnableJpaRepositories(basePackages = "vn.easyca.signserver.infrastructure.database.jpa.repository")
 public class WebappApp {
 
 
@@ -69,7 +67,6 @@ public class WebappApp {
         SpringApplication app = new SpringApplication(WebappApp.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
-        CAFacadeApi.getInstance().init(Constants.RaConfig.URL, Constants.RaConfig.USER, Constants.RaConfig.PASS);
         logApplicationStartup(env);
     }
 

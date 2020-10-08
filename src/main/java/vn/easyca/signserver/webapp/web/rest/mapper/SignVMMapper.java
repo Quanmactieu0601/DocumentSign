@@ -1,9 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest.mapper;
 
 import org.modelmapper.ModelMapper;
-import vn.easyca.signserver.business.services.dto.OptionalDTO;
-import vn.easyca.signserver.business.services.sign.dto.TokenInfoDTO;
-import vn.easyca.signserver.business.services.sign.dto.request.SignRequest;
+import vn.easyca.signserver.application.dto.OptionalDTO;
+import vn.easyca.signserver.application.dto.sign.TokenInfoDTO;
+import vn.easyca.signserver.application.dto.sign.request.SignRequest;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SignElementVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
