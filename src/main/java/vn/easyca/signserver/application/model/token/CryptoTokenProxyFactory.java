@@ -1,9 +1,5 @@
 package vn.easyca.signserver.application.model.token;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.application.exception.TokenException;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
@@ -13,6 +9,7 @@ import vn.easyca.signserver.pki.sign.cache.AbstractCachedObject;
 import vn.easyca.signserver.pki.sign.cache.GuavaCache;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.application.domain.TokenInfo;
+import vn.easyca.signserver.pki.cryptotoken.error.*;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
@@ -20,11 +17,9 @@ import java.util.Base64;
 @Service
 public class CryptoTokenProxyFactory {
 
-    private final Logger logger = LoggerFactory.getLogger(CryptoTokenProxy.class);
-
-    public CryptoTokenProxy resolveCryptoTokenProxy(Certificate certificate) throws TokenException {
+    public CryptoTokenProxy resolveCryptoTokenProxy(Certificate certificate) throws CryptoTokenProxyException {
         if (certificate == null)
-            throw new TokenException("Certificate is not null");
+            throw new CryptoTokenProxyException("Certificate is not null");
         GuavaCache cache = GuavaCache.getInstance();
         CryptoToken token = null;
         if (!cache.contain(certificate.getSerial())) {
@@ -34,31 +29,31 @@ public class CryptoTokenProxyFactory {
         return new CryptoTokenProxy(((CacheElement) cache.get(certificate.getSerial())).getCryptoToken(), certificate);
     }
 
-    private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws TokenException {
+    private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws CryptoTokenProxyException {
         switch (type) {
             case CertificateEntity.PKCS_11:
                 return resolveP11Token(tokenInfo);
             case CertificateEntity.PKCS_12:
                 return resolveP12Token(tokenInfo, pin);
             default:
-                throw new TokenException("Not found token type" + type);
+                throw new CryptoTokenProxyException("Not found token type" + type);
         }
     }
 
-    private CryptoToken resolveP12Token(TokenInfo tokenInfo, String pin) throws TokenException {
+    private CryptoToken resolveP12Token(TokenInfo tokenInfo, String pin) throws CryptoTokenProxyException {
         byte[] fileContent = Base64.getDecoder().decode(tokenInfo.getData());
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         Config config = new Config();
         config.initPkcs12(new ByteArrayInputStream(fileContent), pin);
         try {
             p12CryptoToken.init(config);
-        } catch (Exception exception) {
-            throw new TokenException("Can not resolve CryptoToken.Please check information Serial and pin");
+        } catch (InitCryptoTokenException e) {
+            throw new CryptoTokenProxyException("init token has error", e);
         }
         return p12CryptoToken;
     }
 
-    private CryptoToken resolveP11Token(TokenInfo tokenInfo) throws TokenException {
+    private CryptoToken resolveP11Token(TokenInfo tokenInfo) throws CryptoTokenProxyException {
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
         Config config = new Config();
         config = config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), tokenInfo.getPassword());
@@ -67,7 +62,7 @@ public class CryptoTokenProxyFactory {
         try {
             p11CryptoToken.init(config);
         } catch (Exception exception) {
-            throw new TokenException("Can not resolve CryptoToken.Please check information Serial and pin");
+            throw new CryptoTokenProxyException("Can not resolve CryptoToken.Please check information Serial and pin", exception);
         }
         return p11CryptoToken;
     }

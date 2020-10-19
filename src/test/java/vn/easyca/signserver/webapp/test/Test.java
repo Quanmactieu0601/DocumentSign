@@ -4,7 +4,7 @@ import org.bouncycastle.util.encoders.Base64;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.utils.CertRequestUtils;
+import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.pki.cryptotoken.utils.SignUtils;
 
 import java.io.File;
@@ -23,14 +23,22 @@ public class Test {
     private static void gen() throws Exception {
         Config config = Config.build().initPkcs11("token", "C:\\Windows\\System32\\easyca_csp11_v1.dll", "12345678").withSlot("1");
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
-        p11CryptoToken.init(config);
+        try {
+            p11CryptoToken.init(config);
+        } catch (InitCryptoTokenException e) {
+            e.printStackTrace();
+        }
         p11CryptoToken.genKeyPair("truonglx",1024);
 
     }
     private static void testSignHashWithToken() throws Exception {
         Config config = Config.build().initPkcs11("token", "C:\\Windows\\System32\\easyca_csp11_v1.dll", "EasyCA").withSlot("1");
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
-        p11CryptoToken.init(config);
+        try {
+            p11CryptoToken.init(config);
+        } catch (InitCryptoTokenException e) {
+            e.printStackTrace();
+        }
         List<String> aliasList = p11CryptoToken.getAliases();
         String alias = aliasList.get(0);
         PrivateKey privateKey = p11CryptoToken.getPrivateKey(alias);
@@ -43,14 +51,18 @@ public class Test {
     private static void testGenCsrWithToken() throws Exception {
         Config config = Config.build().initPkcs11("token", "C:\\Windows\\System32\\easyca_csp11_v1.dll", "EasyCA").withSlot("1");
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
-        p11CryptoToken.init(config);
+        try {
+            p11CryptoToken.init(config);
+        } catch (InitCryptoTokenException e) {
+            e.printStackTrace();
+        }
         List<String> aliasList = p11CryptoToken.getAliases();
         String alias = aliasList.get(0);
         PrivateKey privateKey = p11CryptoToken.getPrivateKey(alias);
         PublicKey publicKey = p11CryptoToken.getPublicKey(alias);
         String providerName = p11CryptoToken.getProviderName();
         String testSubject = "CN=HoangTD, OU=IT, O=SDS, ST=HN, C=VN";
-        CertRequestUtils requestUtils = new CertRequestUtils();
+        CSRGenerator requestUtils = new CSRGenerator();
         String pkcs10Request = requestUtils.genCsr(testSubject, providerName, privateKey, publicKey, "SHA256withRSA", false, false);
         System.out.println(pkcs10Request);
     }
@@ -61,7 +73,11 @@ public class Test {
         FileInputStream fis = new FileInputStream(new File(filePath));
         Config config = Config.build().initPkcs12(fis, filePin);
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
-        p12CryptoToken.init(config);
+        try {
+            p12CryptoToken.init(config);
+        } catch (InitCryptoTokenException e) {
+            e.printStackTrace();
+        }
         List<String> aliasList = p12CryptoToken.getAliases();
         for (String alias : aliasList) {
             System.out.println(alias);
@@ -71,7 +87,7 @@ public class Test {
         PublicKey publicKey = p12CryptoToken.getPublicKey(alias);
         String providerName = "";
         String testSubject = "CN=HoangTD, OU=IT, O=SDS, ST=HN, C=VN";
-        CertRequestUtils requestUtils = new CertRequestUtils();
+        CSRGenerator requestUtils = new CSRGenerator();
         String pkcs10Request = requestUtils.genCsr(testSubject, providerName, privateKey, publicKey, "SHA256withRSA", false, false);
         System.out.println(pkcs10Request);
     }

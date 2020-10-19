@@ -6,7 +6,8 @@ import java.util.List;
 public class SignatureVerificationResponse {
 
     private String certificate;
-    private List<Element> elements = new ArrayList<>();
+
+    private final List<Element> elements = new ArrayList<>();
 
     public List<Element> getElements() {
         return elements;

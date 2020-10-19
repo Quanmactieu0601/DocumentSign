@@ -19,26 +19,29 @@ public class CertificateRequesterImpl implements CertificateRequester {
     private static RAServiceFade raServiceFade;
 
     @Override
-    public RawCertificate request(String csr, CertPackage certPackage, SubjectDN subjectDN, OwnerInfo ownerInfo) throws Exception {
-
-        RegisterCertificateApi registerCertificateApi = getRAService().createRegisterCertificateApi();
-        RegisterInputDto registerInputDto = new RegisterInputDto();
-        registerInputDto.setCsr(csr);
-        registerInputDto.setCertMethod(certPackage.getCertMethod());
-        registerInputDto.setCertProfile(certPackage.getCertProfile());
-        registerInputDto.setCertProfileType(certPackage.getCertProfileType());
-        registerInputDto.setCn(subjectDN.getCn());
-        registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
-        registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
-        registerInputDto.setId(ownerInfo.getOwnerId());
-        registerInputDto.setO(subjectDN.getO());
-        registerInputDto.setOu(subjectDN.getOu());
-        registerInputDto.setSt(subjectDN.getS());
-        registerInputDto.genHash();
-        RegisterResultDto registerResultDto = registerCertificateApi.register(registerInputDto);
-        if (registerResultDto.getStatus() == 1)
-            throw new Exception(registerResultDto.getMessage());
-        return new RawCertificate(registerResultDto.getCertSerial(), registerResultDto.getCert());
+    public RawCertificate request(String csr, CertPackage certPackage, SubjectDN subjectDN, OwnerInfo ownerInfo) throws CertificateRequesterException {
+        try {
+            RegisterCertificateApi registerCertificateApi = getRAService().createRegisterCertificateApi();
+            RegisterInputDto registerInputDto = new RegisterInputDto();
+            registerInputDto.setCsr(csr);
+            registerInputDto.setCertMethod(certPackage.getCertMethod());
+            registerInputDto.setCertProfile(certPackage.getCertProfile());
+            registerInputDto.setCertProfileType(certPackage.getCertProfileType());
+            registerInputDto.setCn(subjectDN.getCn());
+            registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
+            registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
+            registerInputDto.setId(ownerInfo.getOwnerId());
+            registerInputDto.setO(subjectDN.getO());
+            registerInputDto.setOu(subjectDN.getOu());
+            registerInputDto.setSt(subjectDN.getS());
+            registerInputDto.genHash();
+            RegisterResultDto registerResultDto = registerCertificateApi.register(registerInputDto);
+            if (registerResultDto.getStatus() == 1)
+                throw new Exception(registerResultDto.getMessage());
+            return new RawCertificate(registerResultDto.getCertSerial(), registerResultDto.getCert());
+        } catch (Exception ex) {
+            throw new CertificateRequesterException(ex);
+        }
     }
 
     private synchronized RAServiceFade getRAService() {

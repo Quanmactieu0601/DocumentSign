@@ -24,44 +24,58 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-public class CertRequestUtils {
+public class CSRGenerator {
+    public class CSRGeneratorException extends Exception {
+        public CSRGeneratorException(String message) {
+            super(message);
+        }
+
+        public CSRGeneratorException(Throwable cause) {
+            super(cause);
+        }
+    }
+
     private final String BEGIN_CERTIFICATE_REQUEST = "-----BEGIN CERTIFICATE REQUEST-----";
     private final String END_CERTIFICATE_REQUEST = "-----END CERTIFICATE REQUEST-----";
 
-    public String genCsr(String subjectDn, String providerName, PrivateKey privateKey, PublicKey publicKey, String signatureAlg, Boolean withHeaderAndFooter, Boolean ldapOder) throws Exception {
-        if (signatureAlg == null || signatureAlg.isEmpty()) {
-            signatureAlg = "SHA1withRSA";
-        }
-        X500Name x500Subject = stringToBcX500Name(subjectDn, ldapOder);
-        if (x500Subject == null)
-            throw new Exception("subjectDn string is not in right format");
-        if (providerName == null || providerName.isEmpty()) {
-            Security.addProvider(new BouncyCastleProvider());
-            providerName = BouncyCastleProvider.PROVIDER_NAME;
-        }
-        SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
-        CertificationRequestInfo reqInfo = new CertificationRequestInfo(x500Subject, pkInfo, new DERSet());
-        ContentSigner signer = new BufferingContentSigner(new JcaContentSignerBuilder(signatureAlg).setProvider(providerName).build(privateKey), 20480);
-        signer.getOutputStream().write(reqInfo.getEncoded(ASN1Encoding.DER));
-        signer.getOutputStream().flush();
+    public String genCsr(String subjectDn, String providerName, PrivateKey privateKey, PublicKey publicKey, String signatureAlg, Boolean withHeaderAndFooter, Boolean ldapOder) throws CSRGeneratorException {
+        try {
+            if (signatureAlg == null || signatureAlg.isEmpty()) {
+                signatureAlg = "SHA1withRSA";
+            }
+            X500Name x500Subject = stringToBcX500Name(subjectDn, ldapOder);
+            if (x500Subject == null)
+                throw new Exception("subjectDn string is not in right format");
+            if (providerName == null || providerName.isEmpty()) {
+                Security.addProvider(new BouncyCastleProvider());
+                providerName = BouncyCastleProvider.PROVIDER_NAME;
+            }
+            SubjectPublicKeyInfo pkInfo = SubjectPublicKeyInfo.getInstance(publicKey.getEncoded());
+            CertificationRequestInfo reqInfo = new CertificationRequestInfo(x500Subject, pkInfo, new DERSet());
+            ContentSigner signer = new BufferingContentSigner(new JcaContentSignerBuilder(signatureAlg).setProvider(providerName).build(privateKey), 20480);
+            signer.getOutputStream().write(reqInfo.getEncoded(ASN1Encoding.DER));
+            signer.getOutputStream().flush();
 
-        byte[] sig = signer.getSignature();
-        DERBitString sigBits = new DERBitString(sig);
-        CertificationRequest req = new CertificationRequest(reqInfo, signer.getAlgorithmIdentifier(), sigBits);
-        PKCS10CertificationRequest pkcs10Req = new PKCS10CertificationRequest(req);
-        String certReq = DatatypeConverter.printBase64Binary(pkcs10Req.getEncoded());
-        final StringBuilder sb = new StringBuilder();
-        if (withHeaderAndFooter) {
-            sb.append(BEGIN_CERTIFICATE_REQUEST);
-            sb.append("\n");
-            sb.append(certReq);
-            sb.append("\n");
-            sb.append(END_CERTIFICATE_REQUEST);
-            sb.append("\n");
-        } else {
-            sb.append(certReq);
+            byte[] sig = signer.getSignature();
+            DERBitString sigBits = new DERBitString(sig);
+            CertificationRequest req = new CertificationRequest(reqInfo, signer.getAlgorithmIdentifier(), sigBits);
+            PKCS10CertificationRequest pkcs10Req = new PKCS10CertificationRequest(req);
+            String certReq = DatatypeConverter.printBase64Binary(pkcs10Req.getEncoded());
+            final StringBuilder sb = new StringBuilder();
+            if (withHeaderAndFooter) {
+                sb.append(BEGIN_CERTIFICATE_REQUEST);
+                sb.append("\n");
+                sb.append(certReq);
+                sb.append("\n");
+                sb.append(END_CERTIFICATE_REQUEST);
+                sb.append("\n");
+            } else {
+                sb.append(certReq);
+            }
+            return sb.toString();
+        } catch (Exception ex) {
+            throw new CSRGeneratorException(ex);
         }
-        return sb.toString();
     }
 
     private X500Name stringToBcX500Name(String dn, final boolean ldapOder) throws Exception {

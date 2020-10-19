@@ -13,11 +13,12 @@ import java.util.*;
 @Component
 public class UserCreatorImpl implements UserCreator {
 
+
     @Autowired
     private UserApplicationService userApplicationService;
 
     @Override
-    public int CreateUser(String username, String password, String fullName) throws Exception {
+    public int CreateUser(String username, String password, String fullName) throws UserCreatorException {
         try {
             Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(username);
             if (userEntity.isPresent())
@@ -25,14 +26,13 @@ public class UserCreatorImpl implements UserCreator {
             UserDTO userDTO = new UserDTO();
             userDTO.setLogin(username);
             userDTO.setFirstName(fullName);
-            Set<String> authorities=  new HashSet<>();
+            Set<String> authorities = new HashSet<>();
             authorities.add(AuthoritiesConstants.USER);
             userDTO.setAuthorities(authorities);
             userApplicationService.createUser(userDTO, password);
             return UserCreator.RESULT_CREATED;
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            throw new Exception("Can not create user");
+        } catch (Exception ex) {
+            throw new UserCreatorException(ex);
         }
     }
 }

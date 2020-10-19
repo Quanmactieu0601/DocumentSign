@@ -1,8 +1,7 @@
 package vn.easyca.signserver.pki.sign.rawsign;
-
-import vn.easyca.signserver.application.exception.SigningException;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 import javax.crypto.Cipher;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.Signature;
 
@@ -20,16 +19,12 @@ public class RawSigner {
         return signature.sign();
     }
 
-    public byte[] signHash(byte[] hash, PrivateKey privateKey) throws SigningException {
-        try {
-            DigestCreator digestCreator = new DigestCreator();
-            hash = digestCreator.digestWithSHAInfo("sha1", hash);
-            Cipher cipher = Cipher.getInstance("RSA");
-            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
-            return cipher.doFinal(hash);
-        } catch (Exception ex) {
-            throw new SigningException();
-        }
+    public byte[] signHash(byte[] hash, PrivateKey privateKey) throws Exception {
+        DigestCreator digestCreator = new DigestCreator();
+        hash = digestCreator.digestWithSHAInfo("sha1", hash);
+        Cipher cipher = Cipher.getInstance("RSA");
+        cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+        return cipher.doFinal(hash);
     }
 
     public byte[] signData(byte[] data, PrivateKey privateKey) throws Exception {
@@ -40,33 +35,29 @@ public class RawSigner {
         return signature.sign();
     }
 
-    public byte[] signData(byte[] data, PrivateKey privateKey, String hashAlgorithm) throws SigningException {
-        try {
-            Signature signature = null;
-            hashAlgorithm = hashAlgorithm.trim().toLowerCase();
-            hashAlgorithm = hashAlgorithm.replace("-", "");
-            switch (hashAlgorithm) {
-                case "sha1":
-                    signature = Signature.getInstance(DEFAULT_SIG_ALGO);
-                    signedAlgorithmName = "SHA1withRSA";
-                    break;
-                case "sha256":
-                    signature = Signature.getInstance("SHA256withRSA");
-                    signedAlgorithmName = "SHA256withRSA";
-                    break;
-                case "sha512":
-                    signature = Signature.getInstance("SHA512withRSA");
-                    signedAlgorithmName = "SHA512withRSA";
-                    break;
-                default:
-                    throw new Exception("Algorithm not supported");
-            }
-            signature.initSign(privateKey);
-            signature.update(data);
-            return signature.sign();
-        } catch (Exception exception) {
-            throw new SigningException();
+    public byte[] signData(byte[] data, PrivateKey privateKey, String hashAlgorithm) throws Exception {
+        Signature signature = null;
+        hashAlgorithm = hashAlgorithm.trim().toLowerCase();
+        hashAlgorithm = hashAlgorithm.replace("-", "");
+        switch (hashAlgorithm) {
+            case "sha1":
+                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
+                signedAlgorithmName = "SHA1withRSA";
+                break;
+            case "sha256":
+                signature = Signature.getInstance("SHA256withRSA");
+                signedAlgorithmName = "SHA256withRSA";
+                break;
+            case "sha512":
+                signature = Signature.getInstance("SHA512withRSA");
+                signedAlgorithmName = "SHA512withRSA";
+                break;
+            default:
+                throw new Exception("Algorithm not supported");
         }
+        signature.initSign(privateKey);
+        signature.update(data);
+        return signature.sign();
     }
 
     public String getSignedAlgorithmName() {

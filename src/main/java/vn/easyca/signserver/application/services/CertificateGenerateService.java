@@ -2,26 +2,22 @@ package vn.easyca.signserver.application.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.application.cryptotoken.ConnectionException;
-import vn.easyca.signserver.application.cryptotoken.NotConfigException;
+import vn.easyca.signserver.application.cryptotoken.CryptoTokenConnectorException;
 import vn.easyca.signserver.application.dependency.CertificateRequester;
 import vn.easyca.signserver.application.cryptotoken.CryptoTokenConnector;
 import vn.easyca.signserver.application.dependency.UserCreator;
-import vn.easyca.signserver.application.exception.GenCSRException;
-import vn.easyca.signserver.application.exception.GenKeyPairException;
+import vn.easyca.signserver.application.exception.ApplicationException;
 import vn.easyca.signserver.application.repository.CertificateRepository;
 import vn.easyca.signserver.pki.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.utils.CertRequestUtils;
+import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.application.domain.*;
 import vn.easyca.signserver.application.dto.*;
 
-import java.net.ConnectException;
+
 import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Date;
 
 @Service
@@ -45,71 +41,53 @@ public class CertificateGenerateService {
     }
 
 
-    public CertificateGenerateResult genCertificate(CertificateGenerateDTO dto) throws Exception {
+    public CertificateGenerateResult genCertificate(CertificateGenerateDTO dto) throws ApplicationException {
         CertificateGenerateResult result = new CertificateGenerateResult();
-        result.setCert(createCert(dto));
-        CertificateGenerateResult.User newUser = createUser(dto);
-        if (newUser != null)
+        try {
+            result.setCert(createCert(dto));
+        } catch (CryptoTokenConnectorException | CertificateRequester.CertificateRequesterException e) {
+            throw ApplicationException.throwServerInternalError("can not create new certificate. check log for know detail reason", e);
+        } catch (CryptoTokenException e) {
+            throw ApplicationException.throwCryptoTokenError(e);
+        } catch (CSRGenerator.CSRGeneratorException e) {
+            throw ApplicationException.throwGenCSRError(e);
+        }
+
+        try {
+            CertificateGenerateResult.User newUser = createUser(dto);
             result.setUser(createUser(dto));
+        } catch (UserCreator.UserCreatorException e) {
+            log.error("Can not create user: cn is" + dto.getCn(), e);
+        }
+
         return result;
     }
 
-    private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) {
-        String username = dto.getOwnerId();
-        String password = dto.getPassword();
-        if (password == null || password.isEmpty())
-            password = username;
-        try {
-            int createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
-            return createdUserResult == UserCreator.RESULT_CREATED ?
-                new CertificateGenerateResult.User(username, password, createdUserResult) :
-                new CertificateGenerateResult.User(username, null, createdUserResult);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws Exception {
+    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws CryptoTokenConnectorException,
+        CertificateRequester.CertificateRequesterException,
+        CryptoTokenException, CSRGenerator.CSRGeneratorException {
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenConnector.getToken();
-        KeyPair keyPair = genKeyPair(cryptoToken, alias, dto.getKeyLen());
-        String csr = genCsr(cryptoToken.getProviderName(), keyPair.getPrivate(), keyPair.getPublic(), dto.getSubjectDN());
+        KeyPair keyPair = null;
+        String csr = null;
+        csr = new CSRGenerator().genCsr(
+            dto.getSubjectDN().toString(),
+            cryptoToken.getProviderName(),
+            keyPair.getPrivate(),
+            keyPair.getPublic(),
+            null,
+            false,
+            false);
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
-//        cryptoToken.installCert(alias, CommonUtils.decodeBase64X509(rawCertificate.getCert()));
         Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
         return new CertificateGenerateResult.Cert(certificate.getSerial(), certificate.getRawData());
-    }
 
-    private KeyPair genKeyPair(CryptoToken cryptoToken, String alias, int keyLength) throws GenKeyPairException {
-        try {
-            return cryptoToken.genKeyPair(alias, keyLength);
-        } catch (Exception ex) {
-            throw new GenKeyPairException();
-        }
-    }
-
-    private String genCsr(String providerName, PrivateKey privateKey, PublicKey publicKey, SubjectDN subjectDN) throws GenCSRException {
-        CertRequestUtils certRequestUtils = new CertRequestUtils();
-        try {
-            return certRequestUtils.genCsr(subjectDN.toString(),
-                providerName,
-                privateKey,
-                publicKey,
-                null,
-                false,
-                false);
-        } catch (Exception ex) {
-            log.error(ex.getMessage());
-            throw new GenCSRException();
-        }
     }
 
     private Certificate saveNewCertificate(RawCertificate rawCertificate,
                                            String alias,
                                            String subjectInfo,
-                                           CryptoToken cryptoToken) throws Exception {
+                                           CryptoToken cryptoToken) throws CryptoTokenException {
         Certificate certificate = new Certificate();
         certificate.setRawData(rawCertificate.getCert());
         certificate.setSerial(rawCertificate.getSerial());
@@ -119,24 +97,28 @@ public class CertificateGenerateService {
         certificate.setOwnerId(alias);
         certificate.setModifiedDate(new Date());
         Config cfg = cryptoToken.getConfig();
+
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName());
-        if (cfg.getSlot() != null) {
-            try {
-                tokenInfo.setSlot(Long.parseLong(cfg.getSlot()));
-            } catch (Exception ignored) {
-            }
-        }
+        if (cfg.getSlot() != null)
+            tokenInfo.setSlot(Long.parseLong(cfg.getSlot()));
         tokenInfo.setPassword(cfg.getModulePin());
         tokenInfo.setLibrary(cfg.getLibrary());
-        if (cfg.getAttributes() != null) {
-            try {
-                tokenInfo.setP11Attrs(cfg.getAttributes());
-            } catch (Exception ignored) {
-            }
-        }
+        if (cfg.getAttributes() != null)
+            tokenInfo.setP11Attrs(cfg.getAttributes());
         certificateRepository.save(certificate);
         return certificate;
+    }
+
+    private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws UserCreator.UserCreatorException {
+        String username = dto.getOwnerId();
+        String password = dto.getPassword();
+        if (password == null || password.isEmpty())
+            password = username;
+        int createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
+        return createdUserResult == UserCreator.RESULT_CREATED ?
+            new CertificateGenerateResult.User(username, password, createdUserResult) :
+            new CertificateGenerateResult.User(username, null, createdUserResult);
     }
 
 }
