@@ -1,8 +1,6 @@
 package vn.easyca.signserver.application.services;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.application.dto.sign.request.SignElement;
 import vn.easyca.signserver.application.exception.*;
@@ -55,12 +53,12 @@ public class SigningService {
     public PDFSigningDataRes signPDFFile(SignRequest<PDFSignContent> request) throws ApplicationException {
         SignElement<PDFSignContent> element = request.getSignElements().get(0);
         if (element == null)
-            throw new BadServiceInputException("have not element to sign", null);
+            throw new BadServiceInputAppException("have not element to sign", null);
 
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         vn.easyca.signserver.application.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
             cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate);
@@ -111,7 +109,7 @@ public class SigningService {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         vn.easyca.signserver.application.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
             cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate);
@@ -139,14 +137,14 @@ public class SigningService {
     public SignDataResponse<List<SignResultElement>> signRaw(SignRequest<String> request) throws ApplicationException {
         List<SignElement<String>> signElements = request.getSignElements();
         if (signElements == null || signElements.size() == 0)
-            throw new BadServiceInputException("have not element to sign");
+            throw new BadServiceInputAppException("have not element to sign");
 
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         if (tokenInfoDTO == null)
-            throw new BadServiceInputException("have not token info");
+            throw new BadServiceInputAppException("have not token info");
         vn.easyca.signserver.application.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
 
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
@@ -183,7 +181,7 @@ public class SigningService {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         vn.easyca.signserver.application.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
             cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate);

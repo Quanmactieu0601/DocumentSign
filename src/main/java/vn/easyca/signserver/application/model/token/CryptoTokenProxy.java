@@ -1,8 +1,5 @@
 package vn.easyca.signserver.application.model.token;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import vn.easyca.signserver.application.services.CertificateGenerateService;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.application.domain.Certificate;
 

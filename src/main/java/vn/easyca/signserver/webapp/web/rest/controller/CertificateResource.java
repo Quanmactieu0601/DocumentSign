@@ -3,6 +3,8 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import vn.easyca.signserver.application.domain.Certificate;
+import vn.easyca.signserver.application.exception.ApplicationException;
+import vn.easyca.signserver.application.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.application.services.P12ImportService;
 import vn.easyca.signserver.application.services.CertificateGenerateService;
 import vn.easyca.signserver.application.services.CertificateService;
@@ -51,8 +53,8 @@ public class CertificateResource {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
-        } catch (Exception e) {
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
+        } catch (ApplicationException e) {
+            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
 
@@ -67,16 +69,20 @@ public class CertificateResource {
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("get certificate error",e);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(e.getMessage()));
         }
     }
 
     @GetMapping("/get-by-serial")
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
-        Certificate certificate = certificateService.getBySerial(serial);
-        if (certificate != null)
+        try {
+            Certificate certificate = certificateService.getBySerial(serial);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.getRawData()));
-        else
+        } catch (CertificateNotFoundAppException e) {
+            e.printStackTrace();
+            log.error("Certificate not found",e);
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse("Cert is not found"));
+        }
     }
 }

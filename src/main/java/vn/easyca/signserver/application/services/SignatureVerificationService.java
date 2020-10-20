@@ -1,13 +1,12 @@
 package vn.easyca.signserver.application.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.application.domain.Certificate;
 import vn.easyca.signserver.application.exception.ApplicationException;
 import vn.easyca.signserver.application.dto.SignatureVerificationRequest;
 import vn.easyca.signserver.application.dto.SignatureVerificationResponse;
 import vn.easyca.signserver.application.exception.CertificateAppException;
-import vn.easyca.signserver.application.exception.CertificateNotFoundException;
+import vn.easyca.signserver.application.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.application.exception.VerifiedAppException;
 import vn.easyca.signserver.pki.sign.rawsign.SignatureValidator;
 
@@ -27,7 +26,7 @@ public class SignatureVerificationService {
         SignatureVerificationResponse response = new SignatureVerificationResponse();
         Certificate certificate = certificateService.getBySerial(request.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
 
         X509Certificate x509Certificate = null;
         try {
@@ -55,7 +54,7 @@ public class SignatureVerificationService {
         SignatureVerificationResponse response = new SignatureVerificationResponse();
         Certificate certificate = certificateService.getBySerial(request.getSerial());
         if (certificate == null)
-            throw new CertificateNotFoundException();
+            throw new CertificateNotFoundAppException();
         response.setCertificate(certificate.getRawData());
         X509Certificate x509Certificate = null;
         try {

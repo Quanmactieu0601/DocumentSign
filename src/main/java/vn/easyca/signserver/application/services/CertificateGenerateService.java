@@ -3,9 +3,8 @@ package vn.easyca.signserver.application.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.application.cryptotoken.CryptoTokenConnectorException;
 import vn.easyca.signserver.application.dependency.CertificateRequester;
-import vn.easyca.signserver.application.cryptotoken.CryptoTokenConnector;
+import vn.easyca.signserver.application.dependency.CryptoTokenConnector;
 import vn.easyca.signserver.application.dependency.UserCreator;
 import vn.easyca.signserver.application.exception.ApplicationException;
 import vn.easyca.signserver.application.repository.CertificateRepository;
@@ -45,7 +44,7 @@ public class CertificateGenerateService {
         CertificateGenerateResult result = new CertificateGenerateResult();
         try {
             result.setCert(createCert(dto));
-        } catch (CryptoTokenConnectorException | CertificateRequester.CertificateRequesterException e) {
+        } catch (CryptoTokenConnector.CryptoTokenConnectorException | CertificateRequester.CertificateRequesterException e) {
             throw ApplicationException.throwServerInternalError("can not create new certificate. check log for know detail reason", e);
         } catch (CryptoTokenException e) {
             throw ApplicationException.throwCryptoTokenError(e);
@@ -59,18 +58,18 @@ public class CertificateGenerateService {
         } catch (UserCreator.UserCreatorException e) {
             log.error("Can not create user: cn is" + dto.getCn(), e);
         }
-
         return result;
     }
 
-    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws CryptoTokenConnectorException,
+    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
         CertificateRequester.CertificateRequesterException,
-        CryptoTokenException, CSRGenerator.CSRGeneratorException {
+        CryptoTokenException,
+        CSRGenerator.CSRGeneratorException,
+        CryptoTokenConnector.CryptoTokenConnectorException {
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenConnector.getToken();
         KeyPair keyPair = null;
-        String csr = null;
-        csr = new CSRGenerator().genCsr(
+        String csr = new CSRGenerator().genCsr(
             dto.getSubjectDN().toString(),
             cryptoToken.getProviderName(),
             keyPair.getPrivate(),

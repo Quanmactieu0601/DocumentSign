@@ -43,7 +43,6 @@ public class P12ImportService {
         Config config = new Config();
         byte[] fileContent = Base64.getDecoder().decode(input.getP12Base64());
         config.initPkcs12(new ByteArrayInputStream(fileContent), input.getPin());
-        Certificate result;
         try {
             p12CryptoToken.init(config);
         } catch (InitCryptoTokenException e) {
@@ -78,7 +77,7 @@ public class P12ImportService {
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
         certificate.setTokenInfo(tokenInfo);
-        result = repository.save(certificate);
+        Certificate result = repository.save(certificate);
 
         try {
             userCreator.CreateUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());

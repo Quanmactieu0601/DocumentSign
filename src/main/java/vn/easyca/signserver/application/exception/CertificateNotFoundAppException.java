@@ -1,8 +1,8 @@
 package vn.easyca.signserver.application.exception;
 
-public class CertificateNotFoundException extends ApplicationException {
+public class CertificateNotFoundAppException extends ApplicationException {
 
-    public CertificateNotFoundException() {
+    public CertificateNotFoundAppException() {
         super(CERTIFICATE_NOT_FOUND, "The certificate is not found");
     }
 
