@@ -2,20 +2,20 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
-import vn.easyca.signserver.application.domain.Certificate;
-import vn.easyca.signserver.application.exception.ApplicationException;
-import vn.easyca.signserver.application.exception.CertificateNotFoundAppException;
-import vn.easyca.signserver.application.services.P12ImportService;
-import vn.easyca.signserver.application.services.CertificateGenerateService;
-import vn.easyca.signserver.application.services.CertificateService;
-import vn.easyca.signserver.application.dto.CertificateGenerateResult;
-import vn.easyca.signserver.application.dto.CertificateGenerateDTO;
+import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
+import vn.easyca.signserver.core.services.P12ImportService;
+import vn.easyca.signserver.core.services.CertificateGenerateService;
+import vn.easyca.signserver.core.services.CertificateService;
+import vn.easyca.signserver.core.dto.CertificateGenerateResult;
+import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.easyca.signserver.application.dto.ImportP12FileDTO;
+import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
@@ -26,7 +26,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 @RestController
 @RequestMapping("/api/certificate")
-@ComponentScan("vn.easyca.signserver.application.services")
+@ComponentScan("vn.easyca.signserver.core.services")
 public class CertificateResource {
 
     private final Logger log = LoggerFactory.getLogger(CertificateResource.class);
@@ -67,10 +67,10 @@ public class CertificateResource {
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel =  MappingHelper.map(result,certificateGeneratorResultVM.getClass());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("get certificate error",e);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(e.getMessage()));
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 
@@ -79,10 +79,10 @@ public class CertificateResource {
         try {
             Certificate certificate = certificateService.getBySerial(serial);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.getRawData()));
-        } catch (CertificateNotFoundAppException e) {
-            e.printStackTrace();
-            log.error("Certificate not found",e);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse("Cert is not found"));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 }

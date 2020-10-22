@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request.sign;
 
-import vn.easyca.signserver.application.dto.sign.request.SignRequest;
+import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignVMMapper;
 
 import java.util.List;

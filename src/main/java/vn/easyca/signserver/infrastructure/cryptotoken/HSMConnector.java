@@ -1,7 +1,7 @@
 package vn.easyca.signserver.infrastructure.cryptotoken;
 
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.application.dependency.CryptoTokenConnector;
+import vn.easyca.signserver.core.interfaces.CryptoTokenConnector;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;

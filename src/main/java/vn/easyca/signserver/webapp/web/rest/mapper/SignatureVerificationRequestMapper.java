@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.mapper;
 
 import org.modelmapper.ModelMapper;
-import vn.easyca.signserver.application.dto.SignatureVerificationRequest;
+import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
 
 public class SignatureVerificationRequestMapper {

@@ -1,4 +1,5 @@
 package vn.easyca.signserver.infrastructure.database.jpa.repository;
+import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.PersistentAuditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +10,7 @@ import java.util.List;
 /**
  * Spring Data JPA repository for the {@link PersistentAuditEvent} entity.
  */
+@Repository
 public interface PersistenceAuditEventRepository extends JpaRepository<PersistentAuditEvent, Long> {
 
     List<PersistentAuditEvent> findByPrincipal(String principal);

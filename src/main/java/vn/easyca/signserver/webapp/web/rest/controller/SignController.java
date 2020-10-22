@@ -7,14 +7,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.application.exception.ApplicationException;
-import vn.easyca.signserver.application.services.SignatureVerificationService;
-import vn.easyca.signserver.application.services.SigningService;
-import vn.easyca.signserver.application.dto.sign.request.content.PDFSignContent;
-import vn.easyca.signserver.application.dto.sign.request.SignRequest;
-import vn.easyca.signserver.application.dto.sign.response.PDFSigningDataRes;
-import vn.easyca.signserver.application.dto.sign.response.SignDataResponse;
-import vn.easyca.signserver.application.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.services.SigningService;
+import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
+import vn.easyca.signserver.core.dto.sign.request.SignRequest;
+import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
+import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
+import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -23,10 +22,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sign")
 public class SignController {
-
     @Autowired
     private SigningService signService;
-
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
@@ -53,8 +50,10 @@ public class SignController {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 
@@ -64,8 +63,10 @@ public class SignController {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e.getMessage()));
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 

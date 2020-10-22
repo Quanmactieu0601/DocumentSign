@@ -1,7 +1,5 @@
 package vn.easyca.signserver.infrastructure.cryptotoken;
 
-import jdk.nashorn.internal.parser.Token;
-
 public class TokenConfig {
 
     private String name = "EasyCAToken";

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @ComponentScan(basePackages = "vn.easyca.signserver")
+@EntityScan("vn.easyca.signserver.infrastructure.database.jpa.entity")
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 @EnableJpaRepositories(basePackages = "vn.easyca.signserver.infrastructure.database.jpa.repository")

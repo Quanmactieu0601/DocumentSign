@@ -1,6 +1,6 @@
 package vn.easyca.signserver.infrastructure.database.repositoryimpl.mapper;
-import vn.easyca.signserver.application.domain.Certificate;
-import vn.easyca.signserver.application.domain.TokenInfo;
+import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 
 public class CertificateMapper {

@@ -1,16 +1,15 @@
 package vn.easyca.signserver.webapp.implement;
 
 import org.springframework.stereotype.Component;
-import vn.easyca.signserver.application.dependency.CertificateRequester;
+import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.ra.RAServiceFade;
 import vn.easyca.signserver.ra.api.RegisterCertificateApi;
 import vn.easyca.signserver.ra.dto.RegisterInputDto;
 import vn.easyca.signserver.ra.dto.RegisterResultDto;
-import vn.easyca.signserver.application.domain.CertPackage;
-import vn.easyca.signserver.application.domain.OwnerInfo;
-import vn.easyca.signserver.application.domain.SubjectDN;
-import vn.easyca.signserver.application.domain.RawCertificate;
-import vn.easyca.signserver.application.services.CertificateGenerateService;
+import vn.easyca.signserver.core.domain.CertPackage;
+import vn.easyca.signserver.core.domain.OwnerInfo;
+import vn.easyca.signserver.core.domain.SubjectDN;
+import vn.easyca.signserver.core.domain.RawCertificate;
 import vn.easyca.signserver.webapp.config.Constants;
 
 @Component

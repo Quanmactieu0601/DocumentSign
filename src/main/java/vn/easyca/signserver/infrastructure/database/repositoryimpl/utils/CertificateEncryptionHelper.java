@@ -1,6 +1,6 @@
 package vn.easyca.signserver.infrastructure.database.repositoryimpl.utils;
 
-import vn.easyca.signserver.application.domain.Certificate;
+import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.webapp.utils.AESCBCEncryptor;
 
 public class CertificateEncryptionHelper {

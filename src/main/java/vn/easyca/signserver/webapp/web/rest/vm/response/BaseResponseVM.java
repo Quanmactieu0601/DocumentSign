@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.vm.response;
 
-import vn.easyca.signserver.application.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.ApplicationException;
 
 public class BaseResponseVM {
 
@@ -18,7 +18,7 @@ public class BaseResponseVM {
         return new BaseResponseVM(STATUS_OK, data, null);
     }
 
-    private int status = 0;
+    private int status;
 
     private String msg;
 

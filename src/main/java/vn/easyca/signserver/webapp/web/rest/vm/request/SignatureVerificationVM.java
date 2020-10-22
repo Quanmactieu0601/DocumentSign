@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
-import vn.easyca.signserver.application.dto.SignatureVerificationRequest;
-import vn.easyca.signserver.application.utils.CommonUtils;
+import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
+import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignatureVerificationRequestMapper;
 
 import java.security.cert.X509Certificate;
