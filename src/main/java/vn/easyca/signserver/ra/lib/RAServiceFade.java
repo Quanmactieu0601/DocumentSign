@@ -1,25 +1,18 @@
-package vn.easyca.signserver.ra;
+package vn.easyca.signserver.ra.lib;
 
-import vn.easyca.signserver.ra.api.RegisterCertificateApi;
-import vn.easyca.signserver.ra.authenticate.RAAuthenticate;
+import vn.easyca.signserver.ra.lib.api.RegisterCertificateApi;
+import vn.easyca.signserver.ra.lib.authenticate.RAAuthenticate;
 
 public class RAServiceFade {
 
-    private static RAServiceFade instance;
-
-    public static RAServiceFade getInstance() {
-        if (instance == null)
-            instance = new RAServiceFade();
-        return instance;
-    }
-
-    private RAServiceFade() {
-    }
-
     private static final String ACTION_AUTHENTICATE = "authenticate";
     private static final String ACTION_REGISTER = "ra/register-cert";
+
     private RAConfig config;
     private RAAuthenticate RAAuthenticate;
+    public RAServiceFade(RAConfig raConfig) {
+        this.config = raConfig;
+    }
 
     public RAServiceFade init(RAConfig config) {
         this.config = config;

@@ -1,4 +1,4 @@
-package vn.easyca.signserver.ra.dto; /* created by truonglx  on 7/16/20 */
+package vn.easyca.signserver.ra.lib.dto; /* created by truonglx  on 7/16/20 */
 
 import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;

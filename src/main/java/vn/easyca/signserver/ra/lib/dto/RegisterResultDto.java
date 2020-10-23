@@ -1,4 +1,4 @@
-package vn.easyca.signserver.ra.dto;
+package vn.easyca.signserver.ra.lib.dto;
 
 public class RegisterResultDto {
     private String activeCode;

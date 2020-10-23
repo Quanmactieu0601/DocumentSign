@@ -1,4 +1,4 @@
-package vn.easyca.signserver.ra;
+package vn.easyca.signserver.ra.lib;
 
 public class RAConfig {
     private String baseUrl;

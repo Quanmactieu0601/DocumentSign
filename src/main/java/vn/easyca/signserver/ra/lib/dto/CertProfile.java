@@ -1,4 +1,4 @@
-package vn.easyca.signserver.ra.dto;
+package vn.easyca.signserver.ra.lib.dto;
 
 public enum CertProfile {
     //Cá nhân G1 (12 tháng)

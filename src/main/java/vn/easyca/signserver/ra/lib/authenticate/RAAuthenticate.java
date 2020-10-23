@@ -1,9 +1,9 @@
 /* created by truonglx  on 7/16/20 */
-package vn.easyca.signserver.ra.authenticate;
+package vn.easyca.signserver.ra.lib.authenticate;
 
 import org.json.JSONObject;
-import vn.easyca.signserver.ra.network.PostRequester;
-import vn.easyca.signserver.ra.exception.RAUnAuthorized;
+import vn.easyca.signserver.ra.lib.network.PostRequester;
+import vn.easyca.signserver.ra.lib.exception.RAUnAuthorized;
 
 import java.io.IOException;
 

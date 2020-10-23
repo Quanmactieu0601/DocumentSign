@@ -1,11 +1,11 @@
-package vn.easyca.signserver.ra.network;
+package vn.easyca.signserver.ra.lib.network;
 
 import com.google.gson.Gson;
 import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
-import vn.easyca.signserver.ra.exception.RAUnAuthorized;
+import vn.easyca.signserver.ra.lib.exception.RAUnAuthorized;
 
 import java.io.IOException;
 

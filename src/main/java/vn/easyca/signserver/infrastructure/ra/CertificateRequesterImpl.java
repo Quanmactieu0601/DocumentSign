@@ -1,11 +1,11 @@
-package vn.easyca.signserver.webapp.implement;
+package vn.easyca.signserver.infrastructure.ra;
 
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
-import vn.easyca.signserver.ra.RAServiceFade;
-import vn.easyca.signserver.ra.api.RegisterCertificateApi;
-import vn.easyca.signserver.ra.dto.RegisterInputDto;
-import vn.easyca.signserver.ra.dto.RegisterResultDto;
+import vn.easyca.signserver.ra.lib.RAServiceFade;
+import vn.easyca.signserver.ra.lib.api.RegisterCertificateApi;
+import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
+import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
 import vn.easyca.signserver.core.domain.CertPackage;
 import vn.easyca.signserver.core.domain.OwnerInfo;
 import vn.easyca.signserver.core.domain.SubjectDN;
@@ -17,10 +17,16 @@ public class CertificateRequesterImpl implements CertificateRequester {
 
     private static RAServiceFade raServiceFade;
 
+    public static void init(RAServiceFade ra) {
+        if (CertificateRequesterImpl.raServiceFade == null)
+            raServiceFade=ra;
+
+    }
+
     @Override
     public RawCertificate request(String csr, CertPackage certPackage, SubjectDN subjectDN, OwnerInfo ownerInfo) throws CertificateRequesterException {
         try {
-            RegisterCertificateApi registerCertificateApi = getRAService().createRegisterCertificateApi();
+            RegisterCertificateApi registerCertificateApi = raServiceFade.createRegisterCertificateApi();
             RegisterInputDto registerInputDto = new RegisterInputDto();
             registerInputDto.setCsr(csr);
             registerInputDto.setCertMethod(certPackage.getCertMethod());
@@ -42,13 +48,4 @@ public class CertificateRequesterImpl implements CertificateRequester {
             throw new CertificateRequesterException(ex);
         }
     }
-
-    private synchronized RAServiceFade getRAService() {
-        if (raServiceFade == null) {
-            raServiceFade = RAServiceFade.getInstance();
-            raServiceFade.init(Constants.RA_CONFIG);
-        }
-        return raServiceFade;
-    }
-
 }

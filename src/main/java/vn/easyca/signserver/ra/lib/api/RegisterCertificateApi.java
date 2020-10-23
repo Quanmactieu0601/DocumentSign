@@ -1,10 +1,10 @@
-package vn.easyca.signserver.ra.api;
+package vn.easyca.signserver.ra.lib.api;
 
-import vn.easyca.signserver.ra.authenticate.RAAuthenticate;
-import vn.easyca.signserver.ra.dto.RegisterInputDto;
-import vn.easyca.signserver.ra.dto.RegisterResultDto;
-import vn.easyca.signserver.ra.network.PostRequester;
-import vn.easyca.signserver.ra.exception.RAUnAuthorized;
+import vn.easyca.signserver.ra.lib.authenticate.RAAuthenticate;
+import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
+import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
+import vn.easyca.signserver.ra.lib.network.PostRequester;
+import vn.easyca.signserver.ra.lib.exception.RAUnAuthorized;
 
 public class RegisterCertificateApi {
 

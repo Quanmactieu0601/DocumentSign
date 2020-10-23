@@ -3,6 +3,10 @@ package vn.easyca.signserver.webapp;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import vn.easyca.signserver.infrastructure.cryptotoken.HSMConnector;
+import vn.easyca.signserver.infrastructure.ra.CertificateRequesterImpl;
+import vn.easyca.signserver.ra.lib.RAConfig;
+import vn.easyca.signserver.ra.lib.RAServiceFade;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;
@@ -16,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -29,7 +34,6 @@ import java.util.Collection;
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
 @EnableJpaRepositories(basePackages = "vn.easyca.signserver.infrastructure.database.jpa.repository")
 public class WebappApp {
-
 
 
     private static final Logger log = LoggerFactory.getLogger(WebappApp.class);
@@ -70,6 +74,22 @@ public class WebappApp {
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
+    }
+
+    private void init() {
+
+        // init hsm connection
+        HSMConnector.HSMConnectorConfig hsmConnConfig = new HSMConnector.HSMConnectorConfig(Constants.HSMConfig.NAME,
+            Constants.HSMConfig.LIB,
+            Constants.HSMConfig.PIN,
+            Constants.HSMConfig.SLOT,
+            Constants.HSMConfig.ATTRIBUTES);
+        HSMConnector.Init(hsmConnConfig);
+
+        // init ra-service
+        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL,Constants.RAConfig.UserName,Constants.RAConfig.Password);
+        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
+
     }
 
     private static void logApplicationStartup(Environment env) {

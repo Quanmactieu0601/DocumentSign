@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.implement;
+package vn.easyca.signserver.infrastructure.identity;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,6 @@ import java.util.*;
 
 @Component
 public class UserCreatorImpl implements UserCreator {
-
 
     @Autowired
     private UserApplicationService userApplicationService;
