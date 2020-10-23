@@ -12,4 +12,6 @@ public interface CertificateRepository {
 
     Certificate getBySerial(String serial);
 
+    boolean isExistCert(String serial);
+
 }

@@ -80,7 +80,6 @@ public class CertificateGenerateService {
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
         Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
         return new CertificateGenerateResult.Cert(certificate.getSerial(), certificate.getRawData());
-
     }
 
     private Certificate saveNewCertificate(RawCertificate rawCertificate,
@@ -98,12 +97,13 @@ public class CertificateGenerateService {
         Config cfg = cryptoToken.getConfig();
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName());
-        if (cfg.getSlot() != null)
+        if (cfg.getSlot() != null && !cfg.getSlot().isEmpty())
             tokenInfo.setSlot(Long.parseLong(cfg.getSlot()));
         tokenInfo.setPassword(cfg.getModulePin());
         tokenInfo.setLibrary(cfg.getLibrary());
         if (cfg.getAttributes() != null)
             tokenInfo.setP11Attrs(cfg.getAttributes());
+        certificate.setTokenInfo(tokenInfo);
         certificateRepository.save(certificate);
         return certificate;
     }

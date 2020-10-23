@@ -32,13 +32,14 @@ spring:
     livereload:
       enabled: false
   datasource:
-    type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mariadb://10.100.100.14:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign
-    password: EasySign@202o
-    #    url: jdbc:mariadb://localhost:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: signserver
-    #    password: Hddt@202o
+    type:
+      com.zaxxer.hikari.HikariDataSource
+      #    url: jdbc:mariadb://10.100.100.14:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+      #    username: easysign
+      #    password: EasySign@202o
+    url: jdbc:mariadb://localhost:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: signserver
+    password: Hddt@202o
     hikari:
       poolName: Hikari
       auto-commit: false

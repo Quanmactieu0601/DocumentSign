@@ -29,31 +29,34 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 @ComponentScan("vn.easyca.signserver.core.services")
 public class CertificateResource {
 
-    private final Logger log = LoggerFactory.getLogger(CertificateResource.class);
+    private static final Logger log = LoggerFactory.getLogger(CertificateResource.class);
 
     private static final String ENTITY_NAME = "certificate";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    @Autowired
-    private CertificateGenerateService p11GeneratorService;
+    private final CertificateGenerateService p11GeneratorService;
 
-    @Autowired
-    private CertificateService certificateService;
+    private final CertificateService certificateService;
 
-    @Autowired
-    private P12ImportService p12ImportService;
+    private final P12ImportService p12ImportService;
 
+    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, P12ImportService p12ImportService) {
+        this.p11GeneratorService = p11GeneratorService;
+        this.certificateService = certificateService;
+        this.p12ImportService = p12ImportService;
+    }
 
 
     @PostMapping("/import/p12")
-    public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM)  {
+    public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
@@ -65,11 +68,13 @@ public class CertificateResource {
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
-            Object viewModel =  MappingHelper.map(result,certificateGeneratorResultVM.getClass());
+            Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -80,8 +85,10 @@ public class CertificateResource {
             Certificate certificate = certificateService.getBySerial(serial);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.getRawData()));
         } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

@@ -74,9 +74,10 @@ public class WebappApp {
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
+        init();
     }
 
-    private void init() {
+    private static void init() {
 
         // init hsm connection
         HSMConnector.HSMConnectorConfig hsmConnConfig = new HSMConnector.HSMConnectorConfig(Constants.HSMConfig.NAME,

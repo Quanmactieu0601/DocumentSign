@@ -53,4 +53,14 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         }
         return null;
     }
+
+    @Override
+    public boolean isExistCert(String serial) {
+        try {
+            Optional<CertificateEntity> entity = repository.getCertificateBySerial(serial);
+            return entity.isPresent();
+        } catch (Exception exception) {
+            return false;
+        }
+    }
 }

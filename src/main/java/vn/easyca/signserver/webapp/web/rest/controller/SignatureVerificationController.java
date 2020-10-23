@@ -1,5 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,12 +15,18 @@ import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.util.logging.LogManager;
+
 @Controller
 @RequestMapping("/api/verification")
 public class SignatureVerificationController {
 
-    @Autowired
-    SignatureVerificationService verificationService;
+    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
+    private final SignatureVerificationService verificationService;
+
+    public SignatureVerificationController(SignatureVerificationService verificationService) {
+        this.verificationService = verificationService;
+    }
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> verifyHash(@RequestBody SignatureVerificationVM signatureVerificationVM) {
@@ -27,8 +36,10 @@ public class SignatureVerificationController {
             Object result = verificationService.verifyHash(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
 
@@ -41,8 +52,10 @@ public class SignatureVerificationController {
             Object result = verificationService.verifyRaw(request);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
 

@@ -129,11 +129,11 @@ public class P11CryptoToken implements CryptoToken {
         } catch (Exception exception) {
             throw new CryptoTokenException("gen self signed Cert occurs has error ", exception);
         }
-        try {
-            ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
-        } catch (KeyStoreException e) {
-            throw new CryptoTokenException("set entry key occurs error", e);
-        }
+//        try {
+//            ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+//        } catch (KeyStoreException e) {
+//            throw new CryptoTokenException("set entry key occurs error", e);
+//        }
         return keyPair;
     }
 

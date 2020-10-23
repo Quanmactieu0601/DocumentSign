@@ -20,8 +20,7 @@ public class RegisterCertificateApi {
         try {
             return post(0, registerInputDto);
         } catch (Exception ex) {
-            ex.printStackTrace();
-            throw new Exception("Has err to connect ra service");
+            throw new Exception("Has err to connect ra service", ex);
         }
     }
 
