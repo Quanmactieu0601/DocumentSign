@@ -22,10 +22,10 @@
     <properties>
         <!-- Build properties -->
         <spring.profiles.active>local,no-liquibase</spring.profiles.active>
-        <maven.version>3.3.9</maven.version>
+        <maven.version>3.6.3</maven.version>
         <java.version>1.8</java.version>
-        <node.version>v12.16.1</node.version>
-        <npm.version>6.14.5</npm.version>
+        <node.version>v12.18.3</node.version>
+        <npm.version>6.14.6</npm.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.testresult.directory>${project.build.directory}/test-results</project.testresult.directory>

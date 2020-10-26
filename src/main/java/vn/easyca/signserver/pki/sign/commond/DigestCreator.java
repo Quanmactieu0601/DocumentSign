@@ -9,9 +9,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.MessageDigest;
 import java.security.Security;
 
-/**
- * Created by chen on 7/24/17.
- */
 public class DigestCreator {
 
     public byte[] hash(byte[] data, String hashAlgo) throws Exception {
@@ -30,7 +27,6 @@ public class DigestCreator {
         messageDigest.update(data);
         byte[] digest = messageDigest.digest();
         ASN1ObjectIdentifier sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());
-
         AlgorithmIdentifier sha1aid_ = new AlgorithmIdentifier(sha1oid_, null);
         DigestInfo di = new DigestInfo(sha1aid_, digest);
         return di.getEncoded();

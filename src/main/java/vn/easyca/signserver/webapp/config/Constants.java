@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.config;
 
+import vn.easyca.signserver.ra.lib.RAConfig;
+
 /**
  * Application constants.
  */
@@ -13,20 +15,27 @@ public final class Constants {
     public static final String ANONYMOUS_USER = "anonymoususer";
     public static final String KEY_ENCRYPTION = "abcdpoiuytrefghijklmop";
 
+
+    public interface RAConfig {
+        String URL = "http://172.16.11.84:8787/api/";
+        String UserName = "admin";
+        String Password = "admin";
+    }
+
+    public interface HSMConfig {
+        String NAME = "EasyCAToken";
+        String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
+        String PIN = "12345678";
+        String SLOT = null;
+        String ATTRIBUTES = null;
+
+//        public static final String NAME = "nCipher";
+//        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
+//        public static final String PIN = "05111989";
+//        public static final String SLOT = "761406615";
+//        public static final String ATTRIBUTES = "compatibility";
+    }
+
     private Constants() {
-    }
-
-    public static class RaConfig {
-        public static final String URL = "http://14.225.17.177:8787/api/";
-        public static final String USER = "admin";
-        public static final String PASS = "Sds@202o";
-    }
-
-    public static class HSMConfig {
-        public static final String NAME = "nCipher";
-        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
-        public static final String PIN = "05111989";
-        public static final String SLOT = "761406615";
-        public static final String ATTRIBUTES = "compatibility";
     }
 }

@@ -1,31 +1,30 @@
 package vn.easyca.signserver.pki.cryptotoken;
 
-import java.security.KeyPair;
-import java.security.KeyStoreException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import vn.easyca.signserver.pki.cryptotoken.error.*;
+
 public interface CryptoToken {
-    void init(Config config) throws Exception;
+    void init(Config config) throws InitCryptoTokenException;
 
-    PrivateKey getPrivateKey(String alias) throws Exception;
+    PrivateKey getPrivateKey(String alias) throws CryptoTokenException;
 
-    PublicKey getPublicKey(String alias) throws Exception;
+    PublicKey getPublicKey(String alias) throws CryptoTokenException;
 
-    Boolean containAlias(String alias) throws Exception;
+    Boolean containAlias(String alias) throws CryptoTokenException;
 
-    KeyPair genKeyPair(String alias, int keyLen) throws Exception;
+    KeyPair genKeyPair(String alias, int keyLen) throws CryptoTokenException;
 
-    void installCert(String alias, X509Certificate cert) throws Exception;
+    void installCert(String alias, X509Certificate cert) throws CryptoTokenException;
 
-    List<String> getAliases() throws Exception;
+    List<String> getAliases() throws CryptoTokenException;
 
-    Config getConfig() throws Exception;
+    Config getConfig() throws CryptoTokenException;
 
     Certificate getCertificate(String alias) throws KeyStoreException;
 
-    String getProviderName() throws Exception;
+    String getProviderName() throws CryptoTokenException;
 }
