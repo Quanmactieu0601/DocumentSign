@@ -2,9 +2,9 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
-import vn.easyca.signserver.webapp.jpa.repository.AuthorityRepository;
-import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.AuthorityRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;

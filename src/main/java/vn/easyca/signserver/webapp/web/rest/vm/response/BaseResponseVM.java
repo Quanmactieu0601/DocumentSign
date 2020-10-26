@@ -1,25 +1,30 @@
 package vn.easyca.signserver.webapp.web.rest.vm.response;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
+
 public class BaseResponseVM {
 
-    public static final int STATUS_OK = 0,STATUS_ERROR=-1;
+    public static final int STATUS_OK = 0, STATUS_ERROR = -1;
 
-    public static  BaseResponseVM CreateNewErrorResponse(String msg){
-        BaseResponseVM baseResponseVM = new BaseResponseVM(STATUS_ERROR,null,msg);
-        return baseResponseVM;
-    }
-    public static BaseResponseVM CreateNewSuccessResponse(Object data){
-        BaseResponseVM baseResponseVM = new BaseResponseVM(STATUS_OK,data,null);
-        return baseResponseVM;
+    public static BaseResponseVM CreateNewErrorResponse(String msg) {
+        return new BaseResponseVM(STATUS_ERROR, null, msg);
     }
 
-    private int status = 0;
+    public static BaseResponseVM CreateNewErrorResponse(ApplicationException ex) {
+        return new BaseResponseVM(ex.getCode(), null, ex.getMessage());
+    }
+
+    public static BaseResponseVM CreateNewSuccessResponse(Object data) {
+        return new BaseResponseVM(STATUS_OK, data, null);
+    }
+
+    private int status;
 
     private String msg;
 
     private Object data;
 
-    public BaseResponseVM(int status,Object data,String msg) {
+    public BaseResponseVM(int status, Object data, String msg) {
         this.status = status;
         this.data = data;
         this.msg = msg;

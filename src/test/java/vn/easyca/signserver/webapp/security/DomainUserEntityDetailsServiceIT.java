@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.security;
 
 import vn.easyca.signserver.webapp.WebappApp;
-import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 
 import java.util.Locale;
 

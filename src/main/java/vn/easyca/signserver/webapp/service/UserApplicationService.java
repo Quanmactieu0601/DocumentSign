@@ -1,10 +1,10 @@
 package vn.easyca.signserver.webapp.service;
 
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.webapp.jpa.entity.Authority;
-import vn.easyca.signserver.webapp.jpa.entity.UserEntity;
-import vn.easyca.signserver.webapp.jpa.repository.AuthorityRepository;
-import vn.easyca.signserver.webapp.jpa.repository.UserRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.AuthorityRepository;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
@@ -97,12 +97,14 @@ public class UserApplicationService {
                 throw new UsernameAlreadyUsedException();
             }
         });
+
         userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
             boolean removed = removeNonActivatedUser(existingUser);
             if (!removed) {
                 throw new EmailAlreadyUsedException();
             }
         });
+
         UserEntity newUserEntity = new UserEntity();
         String encryptedPassword = passwordEncoder.encode(password);
         newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
@@ -138,38 +140,48 @@ public class UserApplicationService {
         return true;
     }
 
+
     public UserEntity createUser(UserDTO userDTO, String password) {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setLogin(userDTO.getLogin().toLowerCase());
-        userEntity.setFirstName(userDTO.getFirstName());
-        userEntity.setLastName(userDTO.getLastName());
-        if (userDTO.getEmail() != null) {
-            userEntity.setEmail(userDTO.getEmail().toLowerCase());
+
+        userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
+            boolean removed = removeNonActivatedUser(existingUser);
+            if (!removed) {
+                throw new UsernameAlreadyUsedException();
+            }
+        });
+
+        if(userDTO.getEmail() != null) {
+            userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new EmailAlreadyUsedException();
+                }
+            });
         }
-        userEntity.setImageUrl(userDTO.getImageUrl());
-        if (userDTO.getLangKey() == null) {
-            userEntity.setLangKey(Constants.DEFAULT_LANGUAGE); // default language
-        } else {
-            userEntity.setLangKey(userDTO.getLangKey());
-        }
-        password = password != null ? password : RandomUtil.generatePassword();
+
+        UserEntity newUserEntity = new UserEntity();
         String encryptedPassword = passwordEncoder.encode(password);
-        userEntity.setPassword(encryptedPassword);
-        userEntity.setResetKey(RandomUtil.generateResetKey());
-        userEntity.setResetDate(Instant.now());
-        userEntity.setActivated(true);
-        if (userDTO.getAuthorities() != null) {
-            Set<Authority> authorities = userDTO.getAuthorities().stream()
-                .map(authorityRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-            userEntity.setAuthorities(authorities);
+        newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
+        // new user gets initially a generated password
+        newUserEntity.setPassword(encryptedPassword);
+        newUserEntity.setFirstName(userDTO.getFirstName());
+        newUserEntity.setLastName(userDTO.getLastName());
+        if (userDTO.getEmail() != null) {
+            newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
-        userRepository.save(userEntity);
-        this.clearUserCaches(userEntity);
-        log.debug("Created Information for User: {}", userEntity);
-        return userEntity;
+        newUserEntity.setImageUrl(userDTO.getImageUrl());
+        newUserEntity.setLangKey(userDTO.getLangKey());
+        // new user is not active
+        newUserEntity.setActivated(true);
+        // new user gets registration key
+        newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        newUserEntity.setAuthorities(authorities);
+        userRepository.save(newUserEntity);
+        this.clearUserCaches(newUserEntity);
+        log.debug("Created Information for User: {}", newUserEntity);
+        return newUserEntity;
     }
 
     /**

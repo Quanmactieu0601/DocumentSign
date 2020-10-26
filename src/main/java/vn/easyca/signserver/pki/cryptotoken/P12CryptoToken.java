@@ -8,72 +8,108 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
+import vn.easyca.signserver.pki.cryptotoken.error.*;
+
 public class P12CryptoToken implements CryptoToken {
     private KeyStore ks = null;
     private Config config = null;
 
-    public void init(Config config) throws Exception {
+    public void init(Config config) throws InitCryptoTokenException {
         if (config == null)
-            throw new Exception("Config is null");
+            throw new InitCryptoTokenException("Config is null");
         String modulePin = config.getModulePin();
         InputStream is = config.getP12InputStream();
         if (modulePin == null || modulePin.isEmpty())
-            throw new Exception("Module pin is required");
+            throw new InitCryptoTokenException("Module pin is required");
         if (is == null)
-            throw new Exception("P12 input stream is required");
+            throw new InitCryptoTokenException("P12 input stream is required");
         this.config = config;
 
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
-        keyStore.load(is, modulePin.toCharArray());
+        KeyStore keyStore = null;
+        try {
+            keyStore = KeyStore.getInstance("PKCS12");
+        } catch (KeyStoreException e) {
+            throw new InitCryptoTokenException("get instance occurs error", e);
+        }
+        try {
+            keyStore.load(is, modulePin.toCharArray());
+        } catch (Exception e) {
+
+        }
         this.ks = keyStore;
     }
 
-    public PrivateKey getPrivateKey(String alias) throws Exception {
+    public PrivateKey getPrivateKey(String alias) throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        if (!ks.containsAlias(alias))
-            throw new Exception("Private key alias not found");
-        return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            if (!ks.containsAlias(alias))
+                throw new CryptoTokenException("Private key alias not found");
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get alias occurs err", e);
+        }
+        try {
+            return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
+        } catch (Exception e) {
+            throw new CryptoTokenException("get private key occurs err", e);
+        }
     }
 
-    public PublicKey getPublicKey(String alias) throws Exception {
+    public PublicKey getPublicKey(String alias) throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        if (!ks.containsAlias(alias))
-            throw new Exception("Public key alias not found");
-        return ks.getCertificate(alias).getPublicKey();
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            if (!ks.containsAlias(alias))
+                throw new CryptoTokenException("Public key alias not found");
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("keystore get alias occurs error", e);
+        }
+        try {
+            return ks.getCertificate(alias).getPublicKey();
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("Keystore get certificate occurs error", e);
+        }
     }
 
-    public Boolean containAlias(String alias) throws Exception {
+    public Boolean containAlias(String alias) throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        return ks.containsAlias(alias);
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            return ks.containsAlias(alias);
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get alias occurs error", e);
+        }
     }
 
     @Override
-    public KeyPair genKeyPair(String alias, int keyLen) throws Exception {
-        throw new Exception("Method is not supported with PKCS12");
+    public KeyPair genKeyPair(String alias, int keyLen) throws CryptoTokenException {
+        throw new CryptoTokenException("Method is not supported with PKCS12");
     }
 
     @Override
-    public void installCert(String alias, X509Certificate cert) throws Exception {
-        throw new Exception("Method is not supported with PKCS12");
+    public void installCert(String alias, X509Certificate cert) throws CryptoTokenException {
+        throw new CryptoTokenException("Method is not supported with PKCS12");
     }
 
-    public List<String> getAliases() throws Exception {
+    public List<String> getAliases() throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
+            throw new CryptoTokenException("cryptoToken is not initialized");
         List<String> aliases = new ArrayList<>();
-        Enumeration<String> aliasEnum = ks.aliases();
+        Enumeration<String> aliasEnum = null;
+        try {
+            aliasEnum = ks.aliases();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        }
         while (aliasEnum.hasMoreElements()) {
             aliases.add(aliasEnum.nextElement());
         }
         return aliases;
     }
 
-    public Config getConfig() throws Exception {
+    public Config getConfig() throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
+            throw new CryptoTokenException("cryptoToken is not initialized");
         return this.config;
     }
 
@@ -83,7 +119,7 @@ public class P12CryptoToken implements CryptoToken {
     }
 
     @Override
-    public String getProviderName() throws Exception {
-        throw new Exception("Method is not supported with PKCS12");
+    public String getProviderName() throws CryptoTokenException {
+        throw new CryptoTokenException("Method is not supported with PKCS12");
     }
 }

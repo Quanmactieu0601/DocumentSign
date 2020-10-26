@@ -7,31 +7,35 @@ import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Field;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
+
+import vn.easyca.signserver.pki.cryptotoken.error.*;
 
 public class P11CryptoToken implements CryptoToken {
     private KeyStore ks = null;
     private Config config = null;
     private String providerName;
 
-    public void init(Config config) throws Exception {
+    public void init(Config config) throws InitCryptoTokenException {
         if (config == null)
-            throw new Exception("Config is null");
+            throw new InitCryptoTokenException("Config is null");
         String pkcs11Config = config.getPkcs11Config();
         String modulePin = config.getModulePin();
         if (pkcs11Config.isEmpty())
-            throw new Exception("pkcs11Config is required");
+            throw new InitCryptoTokenException("Config is empty");
         if (modulePin.isEmpty())
-            throw new Exception("modulePin is required");
+            throw new InitCryptoTokenException("modulePin is required");
         this.config = config;
 
         // init provider
@@ -42,9 +46,19 @@ public class P11CryptoToken implements CryptoToken {
 
         // load keystore
         char[] passphrase = modulePin.toCharArray();
-        KeyStore ks = KeyStore.getInstance("PKCS11", prov);
+        KeyStore ks = null;
+        try {
+            ks = KeyStore.getInstance("PKCS11", prov);
+        } catch (KeyStoreException e) {
+            throw new InitCryptoTokenException("Create KeyStore instance has error", e);
+        }
         KeyStore.PasswordProtection pp = new KeyStore.PasswordProtection(passphrase);
-        ks.load(null, pp.getPassword());
+        try {
+            ks.load(null, pp.getPassword());
+        } catch (Exception e) {
+            throw new InitCryptoTokenException("loading keystore has error", e);
+        }
+
         this.ks = ks;
     }
 
@@ -52,63 +66,108 @@ public class P11CryptoToken implements CryptoToken {
         return providerName;
     }
 
-    public PrivateKey getPrivateKey(String alias) throws Exception {
+    public PrivateKey getPrivateKey(String alias) throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        if (!ks.containsAlias(alias))
-            throw new Exception("Private key alias not found");
-        return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
-    }
-
-    public PublicKey getPublicKey(String alias) throws Exception {
-        if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        if (!ks.containsAlias(alias))
-            throw new Exception("Public key alias not found");
-        return ks.getCertificate(alias).getPublicKey();
-    }
-
-    public Boolean containAlias(String alias) throws Exception {
-        if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        return ks.containsAlias(alias);
-    }
-
-    public KeyPair genKeyPair(String alias, int keyLen) throws Exception {
-        if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
-            throw new Exception("Only support keyLen as follows: 1024 2048 4096");
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            if (!ks.containsAlias(alias))
+                throw new CryptoTokenException("Private key alias not found");
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("KeyStore Exception", e);
         }
-        KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", providerName);
+        try {
+            return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
+        } catch (Exception e) {
+            throw new CryptoTokenException("load private key has error", e);
+        }
+    }
+
+    public PublicKey getPublicKey(String alias) throws CryptoTokenException {
+        if (this.ks == null)
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            if (!ks.containsAlias(alias))
+                throw new CryptoTokenException("Public key alias not found");
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get alias occurs error", e);
+        }
+        try {
+            return ks.getCertificate(alias).getPublicKey();
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get public key occurs error", e);
+        }
+    }
+
+    public Boolean containAlias(String alias) throws CryptoTokenException {
+        if (this.ks == null)
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            return ks.containsAlias(alias);
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get alias occurs error", e);
+        }
+    }
+
+    public KeyPair genKeyPair(String alias, int keyLen) throws CryptoTokenException {
+        if (this.ks == null)
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        if (keyLen != 1024 && keyLen != 2048 && keyLen != 4096) {
+            throw new CryptoTokenException("Only support keyLen as follows: 1024 2048 4096");
+        }
+        KeyPairGenerator kpg = null;
+        try {
+            kpg = KeyPairGenerator.getInstance("RSA", providerName);
+        } catch (Exception e) {
+            throw new CryptoTokenException("get keypair instance occurs error", e);
+        }
         kpg.initialize(keyLen);
         KeyPair keyPair = kpg.generateKeyPair();
         //Gen self-signed cert, just is a temporary cert when we are waiting the right one from the CA
-        X509Certificate cert = genSelfSignedCert(alias, keyPair, providerName);
-        ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+        X509Certificate cert;
+        try {
+            cert = genSelfSignedCert(alias, keyPair, providerName);
+        } catch (Exception exception) {
+            throw new CryptoTokenException("gen self signed Cert occurs has error ", exception);
+        }
+//        try {
+//            ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+//        } catch (KeyStoreException e) {
+//            throw new CryptoTokenException("set entry key occurs error", e);
+//        }
         return keyPair;
     }
 
-    public void installCert(String alias, X509Certificate cert) throws Exception {
+    public void installCert(String alias, X509Certificate cert) throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
-        ks.setCertificateEntry(alias, cert);
+            throw new CryptoTokenException("cryptoToken is not initialized");
+        try {
+            ks.setCertificateEntry(alias, cert);
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("set CertificateEntry occurs error", e);
+        }
     }
 
-    public List<String> getAliases() throws Exception {
+
+    public List<String> getAliases() throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
+            throw new CryptoTokenException("cryptoToken is not initialized");
         List<String> aliases = new ArrayList<>();
-        Enumeration<String> aliasEnum = ks.aliases();
+        Enumeration<String> aliasEnum = null;
+        try {
+            aliasEnum = ks.aliases();
+        } catch (KeyStoreException e) {
+            throw new CryptoTokenException("get alias occurs error", e);
+        }
+
         while (aliasEnum.hasMoreElements()) {
             aliases.add(aliasEnum.nextElement());
         }
         return aliases;
     }
 
-    public Config getConfig() throws Exception {
+    public Config getConfig() throws CryptoTokenException {
         if (this.ks == null)
-            throw new Exception("cryptoToken is not initialized");
+            throw new CryptoTokenException("cryptoToken is not initialized");
         return this.config;
     }
 
