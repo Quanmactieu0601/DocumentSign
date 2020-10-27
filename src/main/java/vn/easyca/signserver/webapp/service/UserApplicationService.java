@@ -166,6 +166,14 @@ public class UserApplicationService {
         newUserEntity.setPassword(encryptedPassword);
         newUserEntity.setFirstName(userDTO.getFirstName());
         newUserEntity.setLastName(userDTO.getLastName());
+        newUserEntity.setOwnerId(userDTO.getOwnerId());
+        newUserEntity.setPhone(userDTO.getPhone());
+        newUserEntity.setCommonName(userDTO.getCommonName());
+        newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+        newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+        newUserEntity.setLocalityName(userDTO.getLocalityName());
+        newUserEntity.setStateName(userDTO.getStateName());
+        newUserEntity.setCountry(userDTO.getCountry());
         if (userDTO.getEmail() != null) {
             newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
@@ -203,6 +211,14 @@ public class UserApplicationService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                user.setCommonName(userDTO.getCommonName());
+                user.setOrganizationName(userDTO.getOrganizationName());
+                user.setOrganizationUnit(userDTO.getOrganizationUnit());
+                user.setLocalityName(userDTO.getLocalityName());
+                user.setStateName(userDTO.getStateName());
+                user.setCountry(userDTO.getCountry());
+                user.setOwnerId(userDTO.getOwnerId());
+                user.setPhone(userDTO.getPhone());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());

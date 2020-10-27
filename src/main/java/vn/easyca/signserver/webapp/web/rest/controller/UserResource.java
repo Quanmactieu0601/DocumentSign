@@ -26,6 +26,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -71,6 +72,8 @@ public class UserResource {
 
     private final MailService mailService;
 
+    public String newPassCreated = RandomStringUtils.randomAlphanumeric(10);
+
     public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
@@ -102,7 +105,7 @@ public class UserResource {
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyUsedException();
         } else {
-            UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
+            UserEntity newUserEntity = userApplicationService.createUser(userDTO, newPassCreated);
             mailService.sendCreationEmail(newUserEntity);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))

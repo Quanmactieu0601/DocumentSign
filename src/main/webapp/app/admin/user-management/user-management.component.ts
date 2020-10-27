@@ -37,7 +37,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-    this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
+    this.userListSubscription = this.eventManager.subscribe('userListModification', () => {
+      this.loadAll();
+    });
     this.handleNavigation();
   }
 
@@ -102,5 +104,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private onSuccess(users: User[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.users = users;
+    console.error(this.users);
   }
 }
