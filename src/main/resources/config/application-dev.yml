@@ -40,6 +40,9 @@ spring:
     url: jdbc:mariadb://10.100.110.7:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: signserver
     password: Hddt@202o
+    #    url: jdbc:postgresql://10.100.110.7:5432/signserver
+    #    username: postgres
+    #    password: 123456a@
     hikari:
       poolName: Hikari
       auto-commit: false

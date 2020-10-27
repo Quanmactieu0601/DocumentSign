@@ -112,11 +112,58 @@ public class CertificateGenerateService {
         String username = dto.getOwnerId();
         String password = dto.getPassword();
         if (password == null || password.isEmpty())
-            password = username;
+            password = username; // TODO: change to random password
         int createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
         return createdUserResult == UserCreator.RESULT_CREATED ?
             new CertificateGenerateResult.User(username, password, createdUserResult) :
             new CertificateGenerateResult.User(username, null, createdUserResult);
+    }
+
+    /**
+     * Tạo CSR từ thông tin KH
+     * Keypair được lưu vào HSM khi sinh CSR
+     * @param dto
+     * @return
+     * @throws Exception
+     */
+    public String createCSR(CertificateGenerateDTO dto) throws Exception {
+        String alias = dto.getOwnerId();
+        CryptoToken cryptoToken = cryptoTokenConnector.getToken();
+        KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
+        String csr = new CSRGenerator().genCsr(
+            dto.getSubjectDN().toString(),
+            cryptoToken.getProviderName(),
+            keyPair.getPrivate(),
+            keyPair.getPublic(),
+            null,
+            false,
+            false);
+        return csr;
+    }
+
+    /**
+     * Tạo cert từ CSR
+     * @param dto
+     * @return
+     * @throws CryptoTokenException
+     * @throws CryptoTokenConnector.CryptoTokenConnectorException
+     */
+    private CertificateGenerateResult.Cert createCertFromCSR(CertificateGenerateDTO dto) throws
+        CryptoTokenException,
+        CryptoTokenConnector.CryptoTokenConnectorException {
+        String alias = dto.getOwnerId();
+        CryptoToken cryptoToken = cryptoTokenConnector.getToken();
+        RawCertificate rawCertificate = dto.getRawCertificate();
+        Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
+        return new CertificateGenerateResult.Cert(certificate.getSerial(), certificate.getRawData());
+    }
+
+
+    public CertificateGenerateResult saveUserAndCreateCSR(CertificateGenerateDTO dto) throws Exception {
+        CertificateGenerateResult result = new CertificateGenerateResult();
+        result.setCsr(createCSR(dto));
+        result.setUser(createUser(dto));
+        return result;
     }
 
 }

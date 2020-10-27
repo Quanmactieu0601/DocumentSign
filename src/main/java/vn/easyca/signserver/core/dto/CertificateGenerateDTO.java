@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.dto;
 
 import vn.easyca.signserver.core.domain.CertPackage;
 import vn.easyca.signserver.core.domain.OwnerInfo;
+import vn.easyca.signserver.core.domain.RawCertificate;
 import vn.easyca.signserver.core.domain.SubjectDN;
 
 public class CertificateGenerateDTO {
@@ -19,6 +20,8 @@ public class CertificateGenerateDTO {
     private String ownerPhone;
     private int keyLen;
     private String certProfile;
+
+    private RawCertificate rawCertificate; // used to register internal HSM
 
     public String getL() {
         return l;
@@ -130,5 +133,17 @@ public class CertificateGenerateDTO {
 
     public void setO(String o) {
         this.o = o;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public RawCertificate getRawCertificate() {
+        return rawCertificate;
+    }
+
+    public void setRawCertificate(RawCertificate rawCertificate) {
+        this.rawCertificate = rawCertificate;
     }
 }

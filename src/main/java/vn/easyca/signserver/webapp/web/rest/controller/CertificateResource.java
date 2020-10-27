@@ -79,6 +79,29 @@ public class CertificateResource {
         }
     }
 
+    /**
+     * Tạo CSR và User (nếu chưa tồn tại) theo thông tin gửi lên
+     * @param certificateGeneratorVM
+     * @return
+     */
+    @PostMapping("/createCSR")
+    public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
+        try {
+            CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
+            CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
+            CertificateGenerateResult result = p11GeneratorService.saveUserAndCreateCSR(dto);
+            CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
+            Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
     @GetMapping("/get-by-serial")
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
         try {
