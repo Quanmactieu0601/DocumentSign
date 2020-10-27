@@ -3,10 +3,10 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
-import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
+import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
@@ -73,12 +73,14 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
+    private final TransactionService transactionService;
 
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService) {
+    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService, TransactionService transactionService) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
         this.mailService = mailService;
+        this.transactionService = transactionService;
     }
 
     /**
@@ -110,6 +112,7 @@ public class UserResource {
             mailService.sendCreationEmail(newUserEntity);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("create user successfully");
+            transactionService.save(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
@@ -140,6 +143,7 @@ public class UserResource {
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("update user successfully");
+        transactionService.save(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
@@ -158,6 +162,7 @@ public class UserResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("get all users successfully");
+        transactionService.save(transactionDTO);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -184,6 +189,7 @@ public class UserResource {
         TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("get user successfully");
+        transactionService.save(transactionDTO);
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
@@ -203,6 +209,7 @@ public class UserResource {
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("delete user successfully");
+        transactionService.save(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

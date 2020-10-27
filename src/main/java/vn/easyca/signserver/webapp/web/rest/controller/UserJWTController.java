@@ -1,10 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import liquibase.pro.packaged.T;
-import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
+import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 
@@ -28,10 +27,12 @@ public class UserJWTController {
     private final TokenProvider tokenProvider;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TransactionService transactionService;
 
-    public UserJWTController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public UserJWTController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, TransactionService transactionService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
+        this.transactionService = transactionService;
     }
 
     @PostMapping("/authenticate")
@@ -48,6 +49,7 @@ public class UserJWTController {
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("authorize successfully");
+        transactionService.save(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
     /**

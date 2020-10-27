@@ -2,7 +2,6 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -16,8 +15,8 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -30,9 +29,11 @@ public class SignController {
 
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
+    private final TransactionService transactionService;
 
-    public SignController(SigningService signService) {
+    public SignController(SigningService signService, TransactionService transactionService) {
         this.signService = signService;
+        this.transactionService = transactionService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -46,6 +47,7 @@ public class SignController {
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
             transactionDTO.setCode("200");
             transactionDTO.setMessage("sign PDF successfully");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
                 .contentLength(resource.contentLength()) //
@@ -54,10 +56,12 @@ public class SignController {
             log.error(applicationException.getMessage(), applicationException);
             transactionDTO.setCode("400");
             transactionDTO.setMessage("ApplicationException");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Exception");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -70,16 +74,19 @@ public class SignController {
             Object signingDataResponse = signService.signHash(request);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("sign hash successfully");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             transactionDTO.setCode("400");
             transactionDTO.setMessage("ApplicationException");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Exception");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -92,16 +99,19 @@ public class SignController {
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("sign Raw successfully");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             transactionDTO.setCode("400");
             transactionDTO.setMessage("ApplicationException");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Exception");
+            transactionService.save(transactionDTO);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
