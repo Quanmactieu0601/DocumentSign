@@ -1,5 +1,6 @@
 package vn.easyca.signserver.infrastructure.database.jpa.entity;
 
+import io.swagger.models.auth.In;
 import vn.easyca.signserver.webapp.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,7 +42,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     @NotNull
-    @Size(min = 60, max = 60)
+    @Size(min = 5, max = 60)
     @Column(name = "password_hash", length = 60, nullable = false)
     private String password;
 
@@ -82,6 +83,37 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     @Column(name = "reset_date")
     private Instant resetDate = null;
+
+    @Size(max = 200)
+    @Column(name ="common_name")
+    private String commonName ;
+
+    @Size(max = 200)
+    @Column(name ="organization_name")
+    private String organizationName ;
+
+    @Size(max = 200)
+    @Column(name ="organization_unit")
+    private String organizationUnit ;
+
+    @Size(max = 200)
+    @Column(name ="locality_name")
+    private String localityName ;
+
+    @Size(max = 200)
+    @Column(name ="state_name")
+    private String stateName ;
+
+    @Size(max = 200)
+    @Column(name ="country")
+    private String country ;
+
+    @Column(name = "owner_id")
+    private Integer ownerId ;
+
+    @Size(max = 50)
+    @Column(name = "phone")
+    private String phone ;
 
     @JsonIgnore
     @ManyToMany
@@ -197,6 +229,70 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getOrganizationUnit() {
+        return organizationUnit;
+    }
+
+    public void setOrganizationUnit(String organizationUnit) {
+        this.organizationUnit = organizationUnit;
+    }
+
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public Integer getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Integer ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     @Override
