@@ -38,7 +38,7 @@ public class Transaction implements Serializable {
     private String data;
 
     @Column(name = "type")
-    private Integer type;
+    private String type;
 
     public Transaction() {
 
@@ -118,16 +118,16 @@ public class Transaction implements Serializable {
         this.data = data;
     }
 
-    public Integer getType() {
+    public String getType() {
         return type;
     }
 
-    public Transaction type(Integer type) {
+    public Transaction type(String type) {
         this.type = type;
         return this;
     }
 
-    public void setType(Integer type) {
+    public void setType(String type) {
         this.type = type;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

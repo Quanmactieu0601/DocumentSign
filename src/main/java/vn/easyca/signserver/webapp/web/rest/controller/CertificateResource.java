@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -16,13 +15,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
+import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-
 
 @RestController
 @RequestMapping("/api/certificate")
@@ -48,47 +49,65 @@ public class CertificateResource {
         this.p12ImportService = p12ImportService;
     }
 
-
     @PostMapping("/import/p12")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/import/p12", TransactionType.IMPORT_CERT);
         try {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("Insert successfully");
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("ApplicationException");
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
 
     @PostMapping("/gen/p11")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/gen/p11",TransactionType.IMPORT_CERT);
         try {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("Gen successfully");
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("ApplicationException");
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("Exception");
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 
     @GetMapping("/get-by-serial")
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/get-by-serial",TransactionType.IMPORT_CERT);
         try {
             Certificate certificate = certificateService.getBySerial(serial);
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("getBase64Cert successfully");
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("ApplicationException");
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("Exception");
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

@@ -49,8 +49,8 @@ public class TransactionResourceIT {
     private static final String DEFAULT_DATA = "AAAAAAAAAA";
     private static final String UPDATED_DATA = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_TYPE = 1;
-    private static final Integer UPDATED_TYPE = 2;
+    private static final String DEFAULT_TYPE = "AAAAAAAAAA";
+    private static final String UPDATED_TYPE = "BBBBBBBBBB";
 
     @Autowired
     private TransactionRepository transactionRepository;
@@ -169,7 +169,7 @@ public class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].data").value(hasItem(DEFAULT_DATA)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)));
     }
-    
+
     @Test
     @Transactional
     public void getTransaction() throws Exception {
