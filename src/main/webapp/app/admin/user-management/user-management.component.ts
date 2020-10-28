@@ -87,7 +87,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    console.error(data.email);
+    console.error(data.account);
     this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
   }
 
