@@ -2,7 +2,15 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.service.ResponseMessage;
 import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.P12ImportService;
@@ -16,12 +24,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -81,10 +97,11 @@ public class CertificateResource {
 
     /**
      * Tạo CSR và User (nếu chưa tồn tại) theo thông tin gửi lên
+     *
      * @param certificateGeneratorVM
      * @return
      */
-    @PostMapping("/createCSR")
+    @PostMapping("/createCSRAndUser")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
@@ -99,6 +116,60 @@ public class CertificateResource {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    /**
+     * Tạo CSR từ user có sẵn
+     *
+     * @param csrGeneratorVM
+     * @return
+     */
+    @PostMapping("/createCSR")
+    public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
+        try {
+            CertificateGenerateResult result = p11GeneratorService.createCSR(csrGeneratorVM);
+            CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
+            Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    /**
+     * tạo csr từ các user có sẵn và trả về file excel
+     *
+     * @param
+     * @return
+     */
+    @PostMapping("/exportCsr")
+    public ResponseEntity<Resource> createCSRs(CsrsGeneratorVM dto) {
+        String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
+        try {
+            List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
+            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
+            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .body(file);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
+        String message = "";
+        try {
+//            storageService.save(file);
+            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(BaseResponseVM.CreateNewSuccessResponse(null));
+        } catch (Exception e) {
+            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 
