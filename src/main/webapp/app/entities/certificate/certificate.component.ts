@@ -88,6 +88,14 @@ export class CertificateComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.certificate = certificate;
   }
 
+  updateStatus(id: any): void {
+    this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
+      if (res.ok) {
+        this.loadPage(this.page, true);
+      }
+    });
+  }
+
   sort(): string[] {
     const result = [this.predicate + ',' + (this.ascending ? 'asc' : 'desc')];
     if (this.predicate !== 'id') {

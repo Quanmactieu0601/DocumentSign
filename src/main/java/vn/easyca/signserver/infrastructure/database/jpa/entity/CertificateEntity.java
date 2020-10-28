@@ -2,10 +2,12 @@ package vn.easyca.signserver.infrastructure.database.jpa.entity;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import vn.easyca.signserver.webapp.config.DateTimeFormatConfiguration;
 
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * A Certificate.
@@ -47,6 +49,16 @@ public class CertificateEntity implements Serializable {
     @Column(name = "raw_data")
     private String rawData;
 
+    @Column(name = "valid_date")
+    private Instant validDate;
+
+
+    @Column(name = "expired_date")
+    private Instant expiredDate;
+
+    @Column(name = "active_status")
+    private int activeStatus;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -75,6 +87,11 @@ public class CertificateEntity implements Serializable {
 
     public CertificateEntity tokenType(String tokenType) {
         this.tokenType = tokenType;
+        return this;
+    }
+
+    public CertificateEntity validDate(Instant validDate){
+        this.validDate = validDate;
         return this;
     }
 
@@ -167,27 +184,50 @@ public class CertificateEntity implements Serializable {
         return id != null && id.equals(((CertificateEntity) o).id);
     }
 
+    public void setValidDate(Instant validDate) {
+        this.validDate = validDate;
+    }
+
+    public Instant getValidDate() {
+        return validDate;
+    }
+
+
+    public Instant getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Instant expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    public int getActiveStatus() {
+        return activeStatus;
+    }
+
+    public void setActiveStatus(int active_status) {
+        this.activeStatus = active_status;
+    }
     @Override
     public int hashCode() {
         return 31;
     }
 
-    // prettier-ignore
     @Override
     public String toString() {
-        return "Certificate{" +
-            "id=" + getId() +
-            ", lastUpdate='" + getLastUpdate() + "'" +
-            ", tokenType='" + getTokenType() + "'" +
-            ", serial='" + getSerial() + "'" +
-            ", ownerId='" + getOwnerId() + "'" +
-            ", subjectInfo='" + getSubjectInfo() + "'" +
-            ", alias='" + getAlias() + "'" +
-            ", tokenInfo='" + getTokenInfo() + "'" +
-            ", rawData='" + getRawData() + "'" +
-            "}";
+        return "CertificateEntity{" +
+            "id=" + id +
+            ", lastUpdate='" + lastUpdate + '\'' +
+            ", tokenType='" + tokenType + '\'' +
+            ", serial='" + serial + '\'' +
+            ", ownerId='" + ownerId + '\'' +
+            ", subjectInfo='" + subjectInfo + '\'' +
+            ", alias='" + alias + '\'' +
+            ", tokenInfo='" + tokenInfo + '\'' +
+            ", rawData='" + rawData + '\'' +
+            ", validDate=" + validDate +
+            ", expiredDate=" + expiredDate +
+            ", activeStatus=" + activeStatus +
+            '}';
     }
-
-
-
 }

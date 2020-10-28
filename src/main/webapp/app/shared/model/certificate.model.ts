@@ -1,3 +1,5 @@
+import DateTimeFormat = Intl.DateTimeFormat;
+
 export interface ICertificate {
   id?: number;
   lastUpdate?: string;
@@ -8,6 +10,9 @@ export interface ICertificate {
   alias?: string;
   tokenInfo?: string;
   rawData?: string;
+  validDate?: Date;
+  expiredDate?: Date;
+  activeStatus?: number;
 }
 
 export class Certificate implements ICertificate {
@@ -20,6 +25,9 @@ export class Certificate implements ICertificate {
     public subjectInfo?: string,
     public alias?: string,
     public tokenInfo?: string,
-    public rawData?: string
+    public rawData?: string,
+    public validDate?: Date,
+    public expiredDate?: Date,
+    public activeStatus?: number
   ) {}
 }
