@@ -30,7 +30,8 @@
         "audits": "Kiểm duyệt",
         "apidocs": "API",
         "database": "Cơ sở dữ liệu",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
+        "uploadUser": "Upload User"
       },
       "language": "Ngôn ngữ"
     },
