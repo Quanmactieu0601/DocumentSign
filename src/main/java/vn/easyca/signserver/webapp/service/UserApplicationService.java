@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
@@ -289,6 +290,11 @@ public class UserApplicationService {
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone ) {
+        return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone).map(UserDTO::new);
     }
 
     @Transactional(readOnly = true)
