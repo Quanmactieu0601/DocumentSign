@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 //        String sort = Common.addSort(pageable.getSort());
 
         sqlBuilder.append(" WHERE 1 = 1 ");
-        if (!Strings.isNullOrEmpty(account)) {
+        if (!CommonUntil.isNullOrEmptyProperty(account)) {
             sqlBuilder.append("AND a.login like :login ");
             params.put("login", "%" + account + "%");
         }
