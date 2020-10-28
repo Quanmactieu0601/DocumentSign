@@ -26,7 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.apache.commons.lang3.RandomStringUtils;
 
+import javax.persistence.Convert;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -70,6 +72,8 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
+
+//    public String newPassCreated = RandomStringUtils.randomAlphanumeric(10);
 
     public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService) {
         this.userApplicationService = userApplicationService;
@@ -149,6 +153,13 @@ public class UserResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/users/search")
+    public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone) {
+        final Page<UserDTO> page = userApplicationService.getByFilter(pageable, account, name, email, ownerId, commonName, country, phone);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
     /**
      * Gets a list of all roles.
      *
@@ -173,6 +184,7 @@ public class UserResource {
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
     }
+
 
     /**
      * {@code DELETE /users/:login} : delete the "login" User.

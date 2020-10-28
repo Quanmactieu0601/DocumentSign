@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiEventManager } from 'ng-jhipster';
+import { Form, FormBuilder } from '@angular/forms';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -17,6 +18,16 @@ import { UserManagementDeleteDialogComponent } from './user-management-delete-di
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
+  userSearch = this.fb.group({
+    account: [],
+    name: [],
+    phone: [],
+    email: [],
+    ownerId: [],
+    commonName: [],
+    country: [],
+  });
+
   currentAccount: Account | null = null;
   users: User[] | null = null;
   userListSubscription?: Subscription;
@@ -32,12 +43,15 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private eventManager: JhiEventManager,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-    this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
+    this.userListSubscription = this.eventManager.subscribe('userListModification', () => {
+      this.loadAll();
+    });
     this.handleNavigation();
   }
 
@@ -60,6 +74,23 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
+  searchUser(): any {
+    const data = {
+      account: this.userSearch.get(['account'])!.value,
+      name: this.userSearch.get(['name'])!.value,
+      email: this.userSearch.get(['email'])!.value,
+      ownerId: this.userSearch.get(['ownerId'])!.value,
+      commonName: this.userSearch.get(['commonName'])!.value,
+      country: this.userSearch.get(['country'])!.value,
+      phone: this.userSearch.get(['phone'])!.value,
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+    console.error(data.email);
+    this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
+  }
+
   transition(): void {
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute.parent,
@@ -77,7 +108,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       const sort = (params.get('sort') ?? data['defaultSort']).split(',');
       this.predicate = sort[0];
       this.ascending = sort[1] === 'asc';
-      this.loadAll();
+      this.searchUser();
     }).subscribe();
   }
 

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
@@ -166,6 +167,14 @@ public class UserApplicationService {
         newUserEntity.setPassword(encryptedPassword);
         newUserEntity.setFirstName(userDTO.getFirstName());
         newUserEntity.setLastName(userDTO.getLastName());
+        newUserEntity.setOwnerId(userDTO.getOwnerId());
+        newUserEntity.setPhone(userDTO.getPhone());
+        newUserEntity.setCommonName(userDTO.getCommonName());
+        newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+        newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+        newUserEntity.setLocalityName(userDTO.getLocalityName());
+        newUserEntity.setStateName(userDTO.getStateName());
+        newUserEntity.setCountry(userDTO.getCountry());
         if (userDTO.getEmail() != null) {
             newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
@@ -203,6 +212,14 @@ public class UserApplicationService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                user.setCommonName(userDTO.getCommonName());
+                user.setOrganizationName(userDTO.getOrganizationName());
+                user.setOrganizationUnit(userDTO.getOrganizationUnit());
+                user.setLocalityName(userDTO.getLocalityName());
+                user.setStateName(userDTO.getStateName());
+                user.setCountry(userDTO.getCountry());
+                user.setOwnerId(userDTO.getOwnerId());
+                user.setPhone(userDTO.getPhone());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());
                 user.setLangKey(userDTO.getLangKey());
@@ -273,6 +290,11 @@ public class UserApplicationService {
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone ) {
+        return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone).map(UserDTO::new);
     }
 
     @Transactional(readOnly = true)
