@@ -12,6 +12,7 @@ import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
+import { CertificateService } from 'app/entities/certificate/certificate.service';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -36,7 +37,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   page!: number;
   predicate!: string;
   ascending!: boolean;
-
+  listId: number[] = [];
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -44,6 +45,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private router: Router,
     private eventManager: JhiEventManager,
     private modalService: NgbModal,
+    private certificateService: CertificateService,
     private fb: FormBuilder
   ) {}
 
@@ -133,5 +135,50 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private onSuccess(users: User[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.users = users;
+  }
+
+  // check or unckeck all elements of checkbox
+  checkAll(row: any): void {
+    const elements = document.getElementsByName('checkboxElement');
+    if (row.target.checked) {
+      elements.forEach(element => {
+        element['checked'] = true;
+      });
+      // push all id to listId sent to backed
+      elements.forEach((inputRow: any) => {
+        this.listId.push(Number(inputRow.value));
+      });
+    } else {
+      elements.forEach(element => {
+        element['checked'] = false;
+      });
+      // reset list id
+      this.listId = [];
+    }
+  }
+
+  // change select event: add or remove into listId when click each checkbox element
+  changeSelect(row: any): void {
+    if (row.target.checked) {
+      this.listId.push(Number(row.target.value));
+    } else {
+      const index: number = this.listId.indexOf(Number(row.target.value));
+      if (index !== -1) {
+        this.listId.splice(index, 1);
+      }
+    }
+  }
+
+  // Send data invoices to server
+  sendData(): void {
+    if (this.listId.length > 0) {
+      this.certificateService.sendData(this.listId).subscribe((res: any) => {
+        // refresh data
+        if (res.success) {
+          // this.toastr.success("Gửi dữ liệu thành công", this.translate.instant('registerUseInv.alert.title'));
+          // this.search(this.p);
+        }
+      });
+    }
   }
 }

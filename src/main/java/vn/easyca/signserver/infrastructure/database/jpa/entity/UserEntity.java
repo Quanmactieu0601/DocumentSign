@@ -115,6 +115,11 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "phone")
     private String phone ;
 
+    @Column(name="csr_status")
+    private int csrStatus;
+
+
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(
@@ -295,6 +300,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.phone = phone;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -325,4 +331,5 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             "}";
     }
+
 }

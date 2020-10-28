@@ -3,7 +3,7 @@
 </h2>
 <h2>
     <div class="text-right">
-        <button type="submit" class="btn btn-primary ">
+        <button type="submit" class="btn btn-primary" (click)="sendData()">
             <fa-icon icon="plus"></fa-icon>
             Create CRM
         </button>
@@ -95,6 +95,7 @@
         <table class="table table-striped" aria-describedby="user-management-page-heading">
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="transition.bind(this)">
+                <th><input type="checkbox" name="checkboxAll" (change)="checkAll(this.$event)"></th>
                 <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
@@ -159,6 +160,10 @@
             </thead>
             <tbody *ngIf="users">
             <tr *ngFor="let user of users; trackBy: trackIdentity">
+                <td>
+                    <input type="checkbox" name="checkboxElement" (change)="changeSelect(this.$event)" value="{{user.id}}">
+                </td>
+
                 <td>
                     <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
                 </td>
