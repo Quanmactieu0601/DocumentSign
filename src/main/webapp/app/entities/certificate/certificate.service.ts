@@ -14,7 +14,7 @@ const httpOptions = {
 
 @Injectable({ providedIn: 'root' })
 export class CertificateService {
-  public resourceUrl = SERVER_API_URL + 'api/certificates';
+  public resourceUrl = SERVER_API_URL + 'api/certificate';
 
   constructor(protected http: HttpClient) {}
 

@@ -1,9 +1,15 @@
 <h2>
     <span>Search User</span>
 </h2>
-
+<h2>
+    <div class="text-right">
+        <button type="submit" class="btn btn-primary ">
+            <fa-icon icon="plus"></fa-icon>
+            Create CRM
+        </button>
+    </div>
+</h2>
 <div class="card mb-5">
-
     <div class="card-header">
         <form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">
             <div class="row my-3">
