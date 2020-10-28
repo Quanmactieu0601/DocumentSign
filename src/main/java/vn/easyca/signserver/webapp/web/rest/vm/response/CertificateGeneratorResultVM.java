@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.vm.response;
 
 public class CertificateGeneratorResultVM {
 
+    private String csr;
     private String certSerial;
     private String certData;
     private String userName;
@@ -37,5 +38,13 @@ public class CertificateGeneratorResultVM {
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    public String getCsr() {
+        return csr;
+    }
+
+    public void setCsr(String csr) {
+        this.csr = csr;
     }
 }

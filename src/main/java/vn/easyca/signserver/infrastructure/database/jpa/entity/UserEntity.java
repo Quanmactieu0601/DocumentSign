@@ -109,7 +109,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     private String country ;
 
     @Column(name = "owner_id")
-    private Integer ownerId ;
+    private String ownerId ;
 
     @Size(max = 50)
     @Column(name = "phone")
@@ -279,11 +279,11 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.country = country;
     }
 
-    public Integer getOwnerId() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwnerId(Integer ownerId) {
+    public void setOwnerId(String ownerId) {
         this.ownerId = ownerId;
     }
 
