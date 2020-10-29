@@ -4,7 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiEventManager } from 'ng-jhipster';
-import { Form, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
