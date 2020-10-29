@@ -67,14 +67,11 @@
             </div>
         </form>
     </div>
-
 </div>
-
 <div>
-
     <h2>
         <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
-        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="sendData()" [disabled]="this.listId.length == 0">
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="createCSR()" [disabled]="this.listId.length == 0">
             <fa-icon icon="plus"></fa-icon>
             Xuất Excel CSR
         </button>
@@ -82,7 +79,6 @@
             <fa-icon icon="plus"></fa-icon>
             <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
         </button>
-
         <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
             <fa-icon icon="plus"></fa-icon>
             Upload tệp CER

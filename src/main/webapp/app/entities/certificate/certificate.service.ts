@@ -60,7 +60,7 @@ export class CertificateService {
 
     formData.append('file', file);
 
-    const req = new HttpRequest('POST', `${this.resourceUrl}/upload`, formData, {
+    const req = new HttpRequest('POST', `${this.resourceUrl}/uploadCert`, formData, {
       reportProgress: true,
       responseType: 'json',
     });

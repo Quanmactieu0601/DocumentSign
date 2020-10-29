@@ -1,5 +1,3 @@
-import DateTimeFormat = Intl.DateTimeFormat;
-
 export interface ICertificate {
   id?: number;
   lastUpdate?: string;

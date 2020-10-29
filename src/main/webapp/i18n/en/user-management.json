@@ -34,6 +34,14 @@
     "createdBy": "Created by",
     "createdDate": "Created date",
     "lastModifiedBy": "Modified by",
-    "lastModifiedDate": "Modified date"
+    "lastModifiedDate": "Modified date",
+    "alert": {
+      "success": {
+        "csrExported": "Export CSR successfully"
+      },
+      "fail": {
+        "csrExported": "Export CSR failure"
+      }
+    }
   }
 }

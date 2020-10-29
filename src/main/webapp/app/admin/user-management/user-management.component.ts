@@ -3,7 +3,7 @@ import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
-import { JhiEventManager } from 'ng-jhipster';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 import { Form, FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
@@ -38,6 +38,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   listId: number[] = [];
+
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -46,7 +47,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private eventManager: JhiEventManager,
     private modalService: NgbModal,
     private certificateService: CertificateService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertService: JhiAlertService
   ) {}
 
   ngOnInit(): void {
@@ -163,16 +165,19 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Send data invoices to server
-  sendData(): void {
+  createCSR(): void {
     if (this.listId.length > 0) {
       this.certificateService
         .sendData({
           userIds: this.listId,
         })
         .subscribe((response: any) => {
-          if (response.byteLength == 0) {
-          } else saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+          if (response.byteLength === 0) {
+            this.alertService.error('userManagement.alert.fail.csrExported');
+          } else {
+            this.alertService.success('userManagement.alert.success.csrExported');
+            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+          }
         });
     }
   }

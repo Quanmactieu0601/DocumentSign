@@ -34,6 +34,14 @@
     "createdBy": "Người tạo",
     "createdDate": "Ngày tạo",
     "lastModifiedBy": "Người sửa",
-    "lastModifiedDate": "Ngày sửa"
+    "lastModifiedDate": "Ngày sửa",
+    "alert": {
+      "success": {
+        "csrExported": "Tạo tệp CSR thành công"
+      },
+      "fail": {
+        "csrExported": "Tạo tệp CSR thất bại"
+      }
+    }
   }
 }
