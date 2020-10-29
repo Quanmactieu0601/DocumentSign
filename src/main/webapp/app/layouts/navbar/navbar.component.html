@@ -95,7 +95,7 @@
                     </li>
 
                     <li *ngIf="!inProduction">
-                        <a class="dropdown-item" href='#' (click)="openModal(cancelModal)">
+                        <a class="dropdown-item" href='#'>
                             <fa-icon icon="hdd" [fixedWidth]="true"></fa-icon>
                             <span jhiTranslate="global.menu.admin.uploadUser">Upload User</span>
                         </a>
@@ -164,22 +164,4 @@
     </div>
 </nav>
 
-<!-- Modal Upload User Excel File -->
-<ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">
-    <div class="modal-header">
-        <h5 class="modal-title text-uppercase" id="ModalLabelThemChungThuSo">Upload User</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d( 'Close')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <div class="form-group col-md-12">
-            <jhi-upload-files></jhi-upload-files>
-        </div>
-    </div>
-    <div class="modal-footer">
-        <div class="group-btn">
-            <button type="button" class="btn btn-sm" (click)="d( 'Close')">Hủy</button>
-        </div>
-    </div>
-</ng-template>
+

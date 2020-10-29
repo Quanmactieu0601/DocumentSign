@@ -1,14 +1,7 @@
 <h2>
     <span>Search User</span>
 </h2>
-<h2>
-    <div class="text-right">
-        <button type="submit" class="btn btn-primary" (click)="sendData()">
-            <fa-icon icon="plus"></fa-icon>
-            Create CRM
-        </button>
-    </div>
-</h2>
+
 <div class="card mb-5">
     <div class="card-header">
         <form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">
@@ -78,12 +71,20 @@
 </div>
 
 <div>
+
     <h2>
         <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
-
         <button class="btn btn-primary float-right jh-create-entity" [routerLink]="['./new']">
             <fa-icon icon="plus"></fa-icon>
             <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
+        </button>
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="sendData()" [disabled]="this.listId.length == 0">
+            <fa-icon icon="plus"></fa-icon>
+            Create CSR
+        </button>
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
+            <fa-icon icon="plus"></fa-icon>
+            Upload User
         </button>
     </h2>
 
@@ -252,3 +253,22 @@
         </div>
     </div>
 </div>
+<!-- Modal Upload User Excel File -->
+<ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">
+    <div class="modal-header">
+        <h5 class="modal-title text-uppercase">Upload User</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group col-md-12">
+            <jhi-upload-files></jhi-upload-files>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="group-btn">
+            <button type="button" class="btn btn-sm" (click)="d('Close')">Hủy</button>
+        </div>
+    </div>
+</ng-template>

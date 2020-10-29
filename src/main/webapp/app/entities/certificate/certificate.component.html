@@ -72,13 +72,6 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="webappApp.certificate.home.title">Certificates</span>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-certificate" [routerLink]="['/certificate/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span  jhiTranslate="webappApp.certificate.home.createLabel">
-            Create a new Certificate
-            </span>
-        </button>
     </h2>
 
     <jhi-alert-error></jhi-alert-error>
@@ -130,15 +123,8 @@
                                 <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
                             </button>
 
-                            <button type="submit"
-                                    [routerLink]="['/certificate', certificate.id, 'edit']"
-                                    class="btn btn-primary btn-sm">
-                                <fa-icon icon="pencil-alt"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                            </button>
-
                             <button type="submit" (click)="updateStatus(certificate.id)"
-                                    class="btn btn-danger btn-sm">
+                                    class="btn btn-danger btn-sm" [disabled]="certificate.activeStatus == 1">
                                 <fa-icon icon="times"></fa-icon>
                                 <span class="d-none d-md-inline" jhiTranslate="webappApp.certificate.deactive">Deactive</span>
                             </button>

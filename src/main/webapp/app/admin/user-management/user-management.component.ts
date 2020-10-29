@@ -178,4 +178,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       });
     }
   }
+
+  //open modal
+  openModal(content: any): void {
+    this.modalService.open(content, { size: 'lg' });
+  }
 }
