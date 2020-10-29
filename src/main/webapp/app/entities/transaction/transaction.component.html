@@ -60,19 +60,7 @@
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>
-
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-transaction" [routerLink]="['/transaction/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span  jhiTranslate="webappApp.transaction.home.createLabel">
-            Create a new Transaction
-            </span>
-        </button>
     </h2>
-
-    <jhi-alert-error></jhi-alert-error>
-
-    <jhi-alert></jhi-alert>
-
     <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
         <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
     </div>
@@ -100,29 +88,7 @@
                     <td>{{ transaction.message }}</td>
                     <td>{{ transaction.data }}</td>
                     <td>{{ transaction.type }}</td>
-                    <td class="text-right">
-                        <div class="btn-group">
-                            <button type="submit"
-                                    [routerLink]="['/transaction', transaction.id, 'view']"
-                                    class="btn btn-info btn-sm">
-                                <fa-icon icon="eye"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                            </button>
 
-                            <button type="submit"
-                                    [routerLink]="['/transaction', transaction.id, 'edit']"
-                                    class="btn btn-primary btn-sm">
-                                <fa-icon icon="pencil-alt"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                            </button>
-
-                            <button type="submit" (click)="delete(transaction)"
-                                    class="btn btn-danger btn-sm">
-                                <fa-icon icon="times"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                            </button>
-                        </div>
-                    </td>
                 </tr>
             </tbody>
         </table>
