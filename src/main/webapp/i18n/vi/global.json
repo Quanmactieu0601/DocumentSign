@@ -107,6 +107,9 @@
     "delete": {
       "title": "Xác nhận hành động xóa"
     },
+    "viewCer": {
+      "title": "User Certificate"
+    },
     "validation": {
       "required": "Trường này bắt buộc phải nhập.",
       "minlength": "Trường này phải có ít nhất {{ min }} ký tự.",

@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 
+import org.springframework.data.jpa.repository.Query;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.utils.CommonUntil;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.*;
 import java.time.Instant;
 
@@ -39,6 +39,9 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     Optional<UserEntity> findOneByEmailIgnoreCase(String email);
 
     Optional<UserEntity> findOneByLogin(String login);
+
+    Optional<UserEntity> findOneById(Long id);
+
 
     @EntityGraph(attributePaths = "authorities")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)

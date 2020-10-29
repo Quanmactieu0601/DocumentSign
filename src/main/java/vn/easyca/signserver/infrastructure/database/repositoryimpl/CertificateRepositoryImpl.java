@@ -8,6 +8,7 @@ import vn.easyca.signserver.infrastructure.database.jpa.repository.CertificateJp
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.infrastructure.database.repositoryimpl.mapper.CertificateMapper;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -41,6 +42,16 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         CertificateEntity entity = mapper.map(certificate);
         entity = repository.save(entity);
         return mapper.map(entity);
+    }
+
+    @Override
+    public List<CertificateEntity> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public List<CertificateEntity> getByOwnerId(String ownerId) {
+        return repository.findByOwnerId(ownerId);
     }
 
     @Override

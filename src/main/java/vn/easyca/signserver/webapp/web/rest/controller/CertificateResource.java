@@ -74,6 +74,12 @@ public class CertificateResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("ownerId/{ownerId}")
+    public ResponseEntity<List<CertificateEntity>> findByOwnerId(@PathVariable String ownerId) {
+        List<CertificateEntity> certificateEntityList = certificateService.getByOwnerId(ownerId);
+        return new ResponseEntity<>(certificateEntityList, HttpStatus.OK);
+    }
+
     @PostMapping("/import/p12")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
@@ -159,7 +165,7 @@ public class CertificateResource {
         try {
 //            List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
 //            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
-            byte[] byteData =  Files.readAllBytes(Paths.get("D:\\test.xlsx"));
+            byte[] byteData = Files.readAllBytes(Paths.get("D:\\test.xlsx"));
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

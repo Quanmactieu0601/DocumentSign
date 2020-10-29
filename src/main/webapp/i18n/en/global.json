@@ -109,6 +109,9 @@
     "delete": {
       "title": "Confirm delete operation"
     },
+    "viewCer": {
+      "title": "User Certificate"
+    },
     "validation": {
       "required": "This field is required.",
       "minlength": "This field is required to be at least {{ min }} characters.",
