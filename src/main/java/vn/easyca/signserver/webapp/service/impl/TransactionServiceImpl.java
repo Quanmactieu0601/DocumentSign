@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
+import vn.easyca.signserver.webapp.repository.impl.TransactionRepositoryImpl;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.repository.TransactionRepository;
@@ -25,6 +27,8 @@ public class TransactionServiceImpl implements TransactionService {
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     private final TransactionRepository transactionRepository;
+
+    private TransactionRepositoryImpl transactionRepositoryImpl;
 
     private final TransactionMapper transactionMapper;
 
@@ -75,14 +79,18 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(id)
             .map(transactionMapper::toDto);
     }
-
+    @Transactional(readOnly = true)
+    public Page<TransactionDTO> getByFilter(Pageable pageable, Long id, String api, String code, String message, String data, String type ) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable,id, api, code, message, data, type);
+        return page.map(TransactionDTO::new);
+    }
     /**
      * Delete the transaction by id.
      *
      * @param id the id of the entity.
      */
     @Override
-    public void delete(Long id) {
+    public void delete( Long id) {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
     }

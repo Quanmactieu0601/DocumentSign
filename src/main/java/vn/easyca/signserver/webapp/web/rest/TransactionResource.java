@@ -3,7 +3,7 @@ package vn.easyca.signserver.webapp.web.rest;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-
+import vn.easyca.signserver.webapp.service.impl.TransactionServiceImpl;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -32,15 +32,15 @@ public class TransactionResource {
 
     private final Logger log = LoggerFactory.getLogger(TransactionResource.class);
 
-    private static final String ENTITY_NAME = "transaction";
+    private final String ENTITY_NAME = "transaction";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
-    private final TransactionService transactionService;
+    private final TransactionServiceImpl transactionServiceImpl;
 
-    public TransactionResource(TransactionService transactionService) {
-        this.transactionService = transactionService;
+    public TransactionResource(TransactionServiceImpl transactionService) {
+        this.transactionServiceImpl = transactionService;
     }
 
     /**
@@ -56,7 +56,7 @@ public class TransactionResource {
         if (transactionDTO.getId() != null) {
             throw new BadRequestAlertException("A new transaction cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        TransactionDTO result = transactionService.save(transactionDTO);
+        TransactionDTO result = transactionServiceImpl.save(transactionDTO);
         return ResponseEntity.created(new URI("/api/transactions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -77,7 +77,7 @@ public class TransactionResource {
         if (transactionDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        TransactionDTO result = transactionService.save(transactionDTO);
+        TransactionDTO result = transactionServiceImpl.save(transactionDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, transactionDTO.getId().toString()))
             .body(result);
@@ -92,7 +92,14 @@ public class TransactionResource {
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionDTO>> getAllTransactions(Pageable pageable) {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.findAll(pageable);
+        Page<TransactionDTO> page = transactionServiceImpl.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+    @GetMapping("/transactions/search")
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable,@RequestParam(required = false) Long id,@RequestParam(required = false) String api,@RequestParam(required = false) String code,@RequestParam(required = false) String message,@RequestParam(required = false) String data,@RequestParam(required = false) String type ) {
+        log.debug("REST request to get a page of Transactions");
+        Page<TransactionDTO> page = transactionServiceImpl.getByFilter(pageable ,id, api,code,message,data,type);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -106,7 +113,7 @@ public class TransactionResource {
     @GetMapping("/transactions/{id}")
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
         log.debug("REST request to get Transaction : {}", id);
-        Optional<TransactionDTO> transactionDTO = transactionService.findOne(id);
+        Optional<TransactionDTO> transactionDTO = transactionServiceImpl.findOne(id);
         return ResponseUtil.wrapOrNotFound(transactionDTO);
     }
 
@@ -119,7 +126,7 @@ public class TransactionResource {
     @DeleteMapping("/transactions/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         log.debug("REST request to delete Transaction : {}", id);
-        transactionService.delete(id);
+        transactionServiceImpl.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

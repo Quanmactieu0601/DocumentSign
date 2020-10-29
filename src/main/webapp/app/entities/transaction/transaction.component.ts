@@ -10,14 +10,23 @@ import { ITransaction } from 'app/shared/model/transaction.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'jhi-transaction',
   templateUrl: './transaction.component.html',
 })
 export class TransactionComponent implements OnInit, OnDestroy {
-  transactions?: ITransaction[];
+  transactions: ITransaction[] | null = null;
   eventSubscriber?: Subscription;
+  searchForm = this.fb.group({
+    id: [],
+    api: [],
+    code: [],
+    message: [],
+    data: [],
+    type: [],
+  });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
   page!: number;
@@ -30,7 +39,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected eventManager: JhiEventManager,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected fb: FormBuilder
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -63,6 +73,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
+        // this.searchTransactions();
         this.loadPage(pageNumber, true);
       }
     }).subscribe();
@@ -81,6 +92,21 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
+  }
+  searchTransactions(): any {
+    const data1 = {
+      id: this.searchForm.get(['id'])!.value,
+      api: this.searchForm.get(['api'])!.value,
+      code: this.searchForm.get(['code'])!.value,
+      message: this.searchForm.get(['message'])!.value,
+      data: this.searchForm.get(['data'])!.value,
+      type: this.searchForm.get(['type'])!.value,
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+    console.error(data1.code);
+    this.transactionService.findByTransaction(data1).subscribe((res: HttpResponse<any>) => this.onSuccessTwo(res.body, res.headers));
   }
 
   delete(transaction: ITransaction): void {
@@ -114,5 +140,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+  protected onSuccessTwo(transaction: any | null, headers: HttpHeaders): void {
+    this.totalItems = Number(headers.get('X-Total-Count'));
+    this.transactions = transaction;
   }
 }
