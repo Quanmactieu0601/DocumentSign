@@ -36,7 +36,6 @@ public class CertificateResource {
     private static final String ENTITY_NAME = "certificate";
 
     private final CertificateGenerateService p11GeneratorService;
-
     private final CertificateService certificateService;
 
     private final P12ImportService p12ImportService;
