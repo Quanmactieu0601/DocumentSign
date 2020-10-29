@@ -5,6 +5,7 @@ public class CertDTO {
     private String ownerId;
     private String csr;
     private String cert;
+    private String serial;
     private String message;
 
     public Long getUserId() {
@@ -48,6 +49,14 @@ public class CertDTO {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getSerial() {
+        return serial;
+    }
+
+    public void setSerial(String serial) {
+        this.serial = serial;
     }
 
     public CertDTO(Long userId, String ownerId, String message) {

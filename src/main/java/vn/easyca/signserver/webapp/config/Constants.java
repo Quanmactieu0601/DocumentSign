@@ -29,11 +29,11 @@ public final class Constants {
         String SLOT = null;
         String ATTRIBUTES = null;
 
-//        public static final String NAME = "nCipher";
-//        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
-//        public static final String PIN = "05111989";
-//        public static final String SLOT = "761406615";
-//        public static final String ATTRIBUTES = "compatibility";
+//        String NAME = "nCipher";
+//        String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
+//        String PIN = "05111989";
+//        String SLOT = "761406615";
+//        String ATTRIBUTES = "compatibility";
     }
 
     private Constants() {

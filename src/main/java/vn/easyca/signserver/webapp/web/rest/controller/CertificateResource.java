@@ -160,15 +160,14 @@ public class CertificateResource {
         }
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/uploadCert")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
-        String message = "";
         try {
-//            storageService.save(file);
-            message = "Uploaded the file successfully: " + file.getOriginalFilename();
+            List<CertDTO> dtos = ExcelUtils.convertExcelToCertDTO(file.getInputStream());
+            p11GeneratorService.saveCerts(dtos);
+            //TODO: hien tai moi chi luu chu chua dua ra thong bao loi chi tiet tung cert (neu xay ra loi)
             return ResponseEntity.status(HttpStatus.OK).body(BaseResponseVM.CreateNewSuccessResponse(null));
         } catch (Exception e) {
-            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
