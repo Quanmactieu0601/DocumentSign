@@ -2,10 +2,11 @@
   "webappApp": {
     "certificate": {
       "home": {
-        "title": "Certificates",
+        "title": "Danh sách chứng thư số",
         "createLabel": "Thêm mới một Certificate",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Certificate",
-        "notFound": "No Certificates found"
+        "notFound": "No Certificates found",
+        "searchCertificates": "Tìm kiếm chứng thư số"
       },
       "created": "Một Certificate mới được tạo với định danh {{ param }}",
       "updated": "Một Certificate cập nhật với định danh {{ param }}",
@@ -13,21 +14,20 @@
       "delete": {
         "question": "Bạn có chắc là muốn xóa Certificate {{ id }}?"
       },
-      "deactive": "Chuyển trạng thái",
+      "deactive": "Vô hiệu hóa",
       "detail": {
         "title": "Certificate"
       },
-      "lastUpdate": "Last Update",
-      "tokenType": "Token Type",
-      "serial": "Serial",
-      "ownerTaxcode": "Owner Taxcode",
-      "subjectInfo": "Subject Info",
-      "alias": "Alias",
-      "tokenInfoDTO": "Token Info",
+      "tokenType": "Loại token",
+      "serial": "Số serial",
+      "ownerTaxcode": "Mã số thuế",
+      "ownerId": "Owner ID",
+      "subjectInfo": "Subject Infor",
+      "alias": "Bí danh",
       "rawData": "Raw Data",
-      "validDate": "Valid Date",
-      "expiredDate": "Expired Date",
-      "activeStatus": "Active Status"
+      "validDate": "Từ ngày",
+      "expiredDate": "Đến ngày",
+      "activeStatus": "Trạng thái"
     }
   }
 }

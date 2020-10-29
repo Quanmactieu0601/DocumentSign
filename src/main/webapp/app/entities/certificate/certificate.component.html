@@ -1,5 +1,5 @@
 <h2>
-    <span>Search Certificate</span>
+    <span jhiTranslate="webappApp.certificate.home.searchCertificates">Certificates</span>
 </h2>
 <div class="card mb-5">
     <div class="card-header">
@@ -9,20 +9,22 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="form-control-label">Alias :</label>
+                                <label class="form-control-label"><span
+                                    jhiTranslate="webappApp.certificate.alias">Alias</span></label>
                                 <input type="text" class="form-control" name="alias" formControlName="alias">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label class="form-control-label">Owner ID :</label>
+                                <label class="form-control-label"><span
+                                    jhiTranslate="webappApp.certificate.ownerId">Owner ID</span></label>
                                 <input type="text" class="form-control" name="ownerId" formControlName="ownerId">
                             </div>
                         </div>
 
                         <div class="col">
                             <div class="form-group">
-                                <label class="form-control-label">Serial :</label>
+                                <label class="form-control-label"><span jhiTranslate="webappApp.certificate.serial">Serial</span></label>
                                 <input type="text" class="form-control" name="serial" formControlName="serial">
                             </div>
                         </div>
@@ -30,13 +32,13 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="form-control-label">Valid Date:</label>
+                                <label class="form-control-label"><span jhiTranslate="webappApp.certificate.validDate">Valid Date</span></label>
                                 <input type="date" class="form-control" name="validDate" formControlName="validDate">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label class="form-control-label">Expired Date:</label>
+                                <label class="form-control-label"><span jhiTranslate="webappApp.certificate.expiredDate">Expired Date</span></label>
                                 <input type="date" class="form-control" name="expiredDate"
                                        formControlName="expiredDate">
                             </div>
@@ -76,10 +78,6 @@
                 <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="lastUpdate"><span
-                    jhiTranslate="webappApp.certificate.lastUpdate">Last Update</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
                 <th scope="col" jhiSortBy="tokenType"><span
                     jhiTranslate="webappApp.certificate.tokenType">Token Type</span>
                     <fa-icon icon="sort"></fa-icon>
@@ -87,16 +85,11 @@
                 <th scope="col" jhiSortBy="serial"><span jhiTranslate="webappApp.certificate.serial">Serial</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="ownerTaxcode"><span jhiTranslate="webappApp.certificate.ownerTaxcode">Owner Taxcode</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="subjectInfo"><span jhiTranslate="webappApp.certificate.subjectInfo">Subject Info</span>
+
+                <th scope="col" jhiSortBy="alias"><span jhiTranslate="webappApp.certificate.ownerId">Owner ID</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="alias"><span jhiTranslate="webappApp.certificate.alias">Alias</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="tokenInfoDTO"><span jhiTranslate="webappApp.certificate.tokenInfoDTO">Token Info</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="activeStatus"><span jhiTranslate="webappApp.certificate.activeStatus">Active Status</span>
@@ -115,13 +108,11 @@
             <tbody>
             <tr *ngFor="let certificate of certificates ;trackBy: trackId">
                 <td><a [routerLink]="['/certificate', certificate.id, 'view']">{{ certificate.id }}</a></td>
-                <td>{{ certificate.lastUpdate }}</td>
                 <td>{{ certificate.tokenType }}</td>
                 <td>{{ certificate.serial }}</td>
-                <td>{{ certificate.ownerTaxcode }}</td>
-                <td>{{ certificate.subjectInfo }}</td>
+                <td>{{ certificate.ownerId }}</td>
                 <td>{{ certificate.alias }}</td>
-                <td>{{ certificate.tokenInfo }}</td>
+
                 <div *ngIf="certificate.activeStatus == 1; else elseBlock">Đã kích hoạt</div>
                 <ng-template #elseBlock>Chưa kích hoạt</ng-template>
                 <td>{{ certificate.validDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
