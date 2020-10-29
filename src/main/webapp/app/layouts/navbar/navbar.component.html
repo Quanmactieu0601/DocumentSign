@@ -93,6 +93,13 @@
                             <span jhiTranslate="global.menu.admin.database">Database</span>
                         </a>
                     </li>
+
+                    <li *ngIf="!inProduction">
+                        <a class="dropdown-item" href='#'>
+                            <fa-icon icon="hdd" [fixedWidth]="true"></fa-icon>
+                            <span jhiTranslate="global.menu.admin.uploadUser">Upload User</span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li ngbDropdown class="nav-item dropdown pointer" display="dynamic" *ngIf="languages && languages.length > 1">
@@ -156,3 +163,5 @@
         </ul>
     </div>
 </nav>
+
+

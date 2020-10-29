@@ -17,6 +17,9 @@ public class CertificateMapper {
         certificate.setSubjectInfo(entity.getSubjectInfo());
         certificate.setTokenType(entity.getTokenType());
         certificate.setTokenInfo(TokenInfo.createInstance(entity.getTokenInfo()));
+        certificate.setValidDate(entity.getValidDate());
+        certificate.setExpiredDate(entity.getExpiredDate());
+        certificate.setActiveStatus(entity.getActiveStatus());
         return certificate;
     }
 
@@ -32,6 +35,9 @@ public class CertificateMapper {
         entity.setSubjectInfo(certificate.getSubjectInfo());
         entity.setTokenType(certificate.getTokenType());
         entity.setTokenInfo(certificate.getTokenInfo().toString());
+        entity.setValidDate(certificate.getValidDate());
+        entity.setExpiredDate(certificate.getExpiredDate());
+        entity.setActiveStatus(certificate.getActiveStatus());
         return entity;
     }
 

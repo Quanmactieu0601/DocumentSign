@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
+import { observable, Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
@@ -22,6 +22,11 @@ export class UserService {
 
   find(login: string): Observable<IUser> {
     return this.http.get<IUser>(`${this.resourceUrl}/${login}`);
+  }
+
+  findByUser(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<IUser[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
   }
 
   query(req?: Pagination): Observable<HttpResponse<IUser[]>> {

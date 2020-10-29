@@ -13,6 +13,7 @@
       "delete": {
         "question": "Are you sure you want to delete Certificate {{ id }}?"
       },
+      "deactive": "Deactive",
       "detail": {
         "title": "Certificate"
       },
@@ -22,8 +23,11 @@
       "ownerTaxcode": "Owner Taxcode",
       "subjectInfo": "Subject Info",
       "alias": "Alias",
-      "tokenInfo": "Token Info",
-      "rawData": "Raw Data"
+      "tokenInfoDTO": "Token Info",
+      "rawData": "Raw Data",
+      "validDate": "Valid Date",
+      "expiredDate": "Expired Date",
+      "activeStatus": "Active Status"
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
@@ -8,6 +8,10 @@ import { ICertificate } from 'app/shared/model/certificate.model';
 
 type EntityResponseType = HttpResponse<ICertificate>;
 type EntityArrayResponseType = HttpResponse<ICertificate[]>;
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  responseType: 'arraybuffer' as 'arraybuffer',
+};
 
 @Injectable({ providedIn: 'root' })
 export class CertificateService {
@@ -23,6 +27,10 @@ export class CertificateService {
     return this.http.put<ICertificate>(this.resourceUrl, certificate, { observe: 'response' });
   }
 
+  updateActiveStatus(id: number): Observable<EntityResponseType> {
+    return this.http.put<ICertificate>(this.resourceUrl + '/update-active-status', id, { observe: 'response' });
+  }
+
   find(id: number): Observable<EntityResponseType> {
     return this.http.get<ICertificate>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
@@ -34,5 +42,33 @@ export class CertificateService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  public uploadFile(fileToUpload: File): Observable<object> {
+    const formData = new FormData();
+    formData.append('formData', fileToUpload, fileToUpload.name);
+
+    // return this.http.post(this.resourceUrl + '/upload-file-data', _formData, { headers:{'Content-Type': 'undefined'} ,observe: 'response' });
+    return this.http.post(this.resourceUrl + '/upload-file-data', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+  }
+
+  sendData(req?: any): Observable<any> {
+    return this.http.post(this.resourceUrl + '/exportCsr', req, httpOptions);
+  }
+  upload(file: File): Observable<HttpEvent<any>> {
+    const formData: FormData = new FormData();
+
+    formData.append('file', file);
+
+    const req = new HttpRequest('POST', `${this.resourceUrl}/upload`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+    });
+
+    return this.http.request(req);
+  }
+
+  getFiles(): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/files`);
   }
 }

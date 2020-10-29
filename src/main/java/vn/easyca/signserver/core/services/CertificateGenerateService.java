@@ -137,7 +137,7 @@ public class CertificateGenerateService {
      * Tạo CSR từ thông tin KH
      * Keypair được lưu vào HSM khi sinh CSR
      *
-     * @param dto
+     * @param dtoUserRepository
      * @return
      * @throws Exception
      */

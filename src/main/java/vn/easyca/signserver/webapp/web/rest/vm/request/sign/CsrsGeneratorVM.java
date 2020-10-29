@@ -21,4 +21,12 @@ public class CsrsGeneratorVM {
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
     }
+
+    public CsrsGeneratorVM(List<Long> userIds, int keyLen) {
+        this.userIds = userIds;
+        this.keyLen = keyLen;
+    }
+
+    public CsrsGeneratorVM() {
+    }
 }
