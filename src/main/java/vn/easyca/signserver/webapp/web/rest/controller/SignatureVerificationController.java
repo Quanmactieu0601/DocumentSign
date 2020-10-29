@@ -19,6 +19,8 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 @Controller
 @RequestMapping("/api/verification")
 public class SignatureVerificationController {
+    String code = null;
+    String message = null;
 
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final SignatureVerificationService verificationService;
@@ -35,24 +37,24 @@ public class SignatureVerificationController {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("verification hash successful");
-            transactionService.save(transactionDTO);
+            code = "200";
+            message = "Verification Hash Successfully";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("ApplicationException");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "ApplicationException";
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Exception");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
-
     }
 
     @PostMapping(value = "/raw")
@@ -61,22 +63,23 @@ public class SignatureVerificationController {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("Verification Raw Successfully");
-            transactionService.save(transactionDTO);
+            code = "200";
+            message = "Verification Raw Successfully";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("ApplicationException");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "ApplicationException";
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Exception");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
 
     }

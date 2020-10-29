@@ -62,6 +62,8 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class UserResource {
+    String code = null;
+    String message = null;
 
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
@@ -101,23 +103,33 @@ public class UserResource {
         TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("BadRequestAlertException");
+            transactionService.save(transactionDTO);
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("LoginAlreadyUsedException");
+            transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("EmailAlreadyUsedException");
+            transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
             mailService.sendCreationEmail(newUserEntity);
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("create user successfully");
+            transactionDTO.setMessage("Create User Successfully");
             transactionService.save(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
         }
-    }
+        }
+
 
     /**
      * {@code PUT /users} : Updates an existing User.
@@ -134,15 +146,21 @@ public class UserResource {
         log.debug("REST request to update User : {}", userDTO);
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("EmailAlreadyUsedException");
+            transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("LoginAlreadyUsedException");
+            transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("update user successfully");
+        transactionDTO.setMessage("Update User Successfully");
         transactionService.save(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
@@ -188,7 +206,7 @@ public class UserResource {
         log.debug("REST request to get User : {}", login);
         TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("get user successfully");
+        transactionDTO.setMessage("Get User Successfully");
         transactionService.save(transactionDTO);
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
@@ -208,7 +226,7 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("delete user successfully");
+        transactionDTO.setMessage("Delete User Successfully");
         transactionService.save(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }

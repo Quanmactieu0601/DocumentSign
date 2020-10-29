@@ -26,6 +26,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sign")
 public class SignController {
+    String code = null;
+    String message = null;
 
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
@@ -45,24 +47,25 @@ public class SignController {
             signRequest.getSignElements().get(0).getContent().setFileData(fileData);
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("sign PDF successfully");
-            transactionService.save(transactionDTO);
+            code = "200";
+            message = "Sign PDF Successfully";
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
                 .contentLength(resource.contentLength()) //
                 .body(resource);
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("ApplicationException");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "ApplicationException";
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Exception");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
     }
 
@@ -72,22 +75,23 @@ public class SignController {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("sign hash successfully");
-            transactionService.save(transactionDTO);
+            code = "200";
+            message = "Sign Hash Successfully";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("ApplicationException");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "ApplicationException";
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Exception");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
     }
 
@@ -97,22 +101,23 @@ public class SignController {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("sign Raw successfully");
-            transactionService.save(transactionDTO);
+            code = "200";
+            message = "Sign Raw Successfully";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("ApplicationException");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "ApplicationException";
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Exception");
-            transactionService.save(transactionDTO);
+            code = "400";
+            message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
     }
 
