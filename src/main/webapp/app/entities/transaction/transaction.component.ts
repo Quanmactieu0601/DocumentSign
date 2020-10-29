@@ -10,7 +10,7 @@ import { ITransaction } from 'app/shared/model/transaction.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'jhi-transaction',
@@ -50,7 +50,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       .query({
         page: pageToLoad - 1,
         size: this.itemsPerPage,
-        sort: this.sort(),
+        // sort: this.sort(),
       })
       .subscribe(
         (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
@@ -73,8 +73,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
       if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
-        // this.searchTransactions();
-        this.loadPage(pageNumber, true);
+        this.searchTransactions();
+        // this.loadPage(pageNumber, true);
       }
     }).subscribe();
   }
@@ -89,7 +89,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     return item.id!;
   }
-
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
@@ -105,7 +104,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    console.error(data1.code);
+    // console.error(data1.code);
     this.transactionService.findByTransaction(data1).subscribe((res: HttpResponse<any>) => this.onSuccessTwo(res.body, res.headers));
   }
 

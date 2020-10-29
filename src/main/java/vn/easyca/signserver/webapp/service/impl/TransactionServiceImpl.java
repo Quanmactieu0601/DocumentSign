@@ -28,8 +28,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    private TransactionRepositoryImpl transactionRepositoryImpl;
-
     private final TransactionMapper transactionMapper;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
@@ -64,8 +62,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll(pageable)
             .map(transactionMapper::toDto);
     }
-
-
     /**
      * Get one transaction by id.
      *
@@ -79,9 +75,10 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(id)
             .map(transactionMapper::toDto);
     }
+    @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, Long id, String api, String code, String message, String data, String type ) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable,id, api, code, message, data, type);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String code, String message, String data, String type ) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, code, message, data, type);
         return page.map(TransactionDTO::new);
     }
     /**

@@ -28,7 +28,6 @@ public interface TransactionService {
      */
     Page<TransactionDTO> findAll(Pageable pageable);
 
-
     /**
      * Get the "id" transaction.
      *
@@ -43,4 +42,7 @@ public interface TransactionService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+     Page<TransactionDTO> getByFilter(Pageable pageable,  String api, String code,
+                                            String message, String data, String type);
 }

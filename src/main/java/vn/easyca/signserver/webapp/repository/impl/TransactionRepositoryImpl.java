@@ -20,7 +20,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
     @Override
-    public Page<Transaction> findByFilter(Pageable pageable, Long id, String api, String code, String message, String data, String type) {
+    public Page<Transaction> findByFilter(Pageable pageable, String api, String code, String message, String data, String type) {
         Map<String, Object> params = new HashMap<>();
         List<Transaction> transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -32,28 +32,24 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
 //            sqlBuilder.append("AND a.login like :login ");
 //            params.put("login", "%" + account + "%");
 //        }
-        if (!CommonUtils.isNullOrEmptyProperty(String.valueOf(id))) {
-            sqlBuilder.append("AND a.id like : id ");
-            params.put("id", "%" + id + "%");
-        }
         if (!CommonUtils.isNullOrEmptyProperty(api)) {
-            sqlBuilder.append("AND a.api like : api ");
+            sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
         if (!CommonUtils.isNullOrEmptyProperty(code)) {
-            sqlBuilder.append("AND a.code like : code ");
+            sqlBuilder.append("AND a.code like :code ");
             params.put("code", "%" + code + "%");
         }
         if (!CommonUtils.isNullOrEmptyProperty(message)) {
-            sqlBuilder.append("AND a.message like : message ");
+            sqlBuilder.append("AND a.message like :message ");
             params.put("message", "%" + message + "%");
         }
         if (!CommonUtils.isNullOrEmptyProperty(data)) {
-            sqlBuilder.append("AND a.data like : data ");
+            sqlBuilder.append("AND a.data like :data ");
             params.put("data", "%" + data + "%");
         }
         if (!CommonUtils.isNullOrEmptyProperty(type)) {
-            sqlBuilder.append("AND a.type like : type ");
+            sqlBuilder.append("AND a.type like :type ");
             params.put("type", "%" + type + "%");
         }
         Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());

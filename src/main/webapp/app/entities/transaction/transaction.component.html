@@ -1,6 +1,6 @@
 
 <div class="card mb-5" >
-    <form name = "userSearch" [formGroup] = "searchForm" (ngSubmit)="searchTransactions()">
+    <form name = "searchTransactions" [formGroup] = "searchForm" (ngSubmit)="searchTransactions()">
     <div class="card-header">
         <div class="row my-3">
             <div class="col">
@@ -34,12 +34,8 @@
                                 </div>
                             </div>
                         </div>
-
             </div>
-
             <div class="col">
-
-
                     <div class="form-group">
                         <label for="data">Data :</label>
                         <input type="text" class="form-control" formControlName="data">
@@ -51,27 +47,16 @@
                                 <input type="text" class="form-control" formControlName="type">
                             </div>
                         </div>
-
                     </div>
-
-
-
             </div>
         </div>
         <div class="text-center">
-            <button type="submit" class="btn btn-primary "><fa-icon icon="search"></fa-icon> Search</button>
+            <button type="submit" class="btn btn-primary " ><fa-icon icon="search"></fa-icon> Search</button>
         </div>
     </div>
     </form>
 </div>
-
-
-
-
 <!-- abcd ----------------------------------------------------->
-
-
-
 <div>
     <h2 id="page-heading">
         <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>

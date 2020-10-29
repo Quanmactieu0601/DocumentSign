@@ -25,7 +25,16 @@ public class TransactionDTO implements Serializable {
 
     private String type;
 
+    public TransactionDTO () {
+    }
+
     public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();
+        this.api = transaction.getApi();
+        this.code = transaction.getCode();
+        this.message = transaction.getMessage();
+        this.data = transaction.getData();
+        this.type = transaction.getType();
     }
 
     public Long getId() {
@@ -130,7 +139,6 @@ public class TransactionDTO implements Serializable {
         this.type = type;
         this.triggerTime = Instant.now();
     }
-    public TransactionDTO () {
-    }
+
 
 }
