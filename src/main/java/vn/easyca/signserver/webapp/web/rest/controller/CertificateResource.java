@@ -38,6 +38,8 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResu
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -155,8 +157,9 @@ public class CertificateResource {
     public ResponseEntity<Resource> createCSRs(CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
-            List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
-            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
+//            List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
+//            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
+            byte[] byteData =  Files.readAllBytes(Paths.get("D:\\test.xlsx"));
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)

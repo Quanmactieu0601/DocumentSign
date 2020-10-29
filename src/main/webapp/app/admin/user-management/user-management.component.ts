@@ -5,7 +5,7 @@ import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiEventManager } from 'ng-jhipster';
 import { Form, FormBuilder } from '@angular/forms';
-
+import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
@@ -172,12 +172,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   // Send data invoices to server
   sendData(): void {
     if (this.listId.length > 0) {
-      this.certificateService.sendData(this.listId).subscribe((res: any) => {
-        // refresh data
-        if (res.success) {
-          // this.toastr.success("Gửi dữ liệu thành công", this.translate.instant('registerUseInv.alert.title'));
-          // this.search(this.p);
-        }
+      this.certificateService.sendData(this.listId).subscribe((response: any) => {
+        // use the saveAs library to save the buffer as a blob on the user's machine. Use the correct MIME type!
+        saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
       });
     }
   }

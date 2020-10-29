@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
@@ -10,6 +10,7 @@ type EntityResponseType = HttpResponse<ICertificate>;
 type EntityArrayResponseType = HttpResponse<ICertificate[]>;
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  responseType: 'arraybuffer' as 'arraybuffer',
 };
 
 @Injectable({ providedIn: 'root' })
@@ -54,5 +55,21 @@ export class CertificateService {
   sendData(req?: any): Observable<any> {
     const content = JSON.stringify(req);
     return this.http.post(this.resourceUrl + '/exportCsr', content, httpOptions);
+  }
+  upload(file: File): Observable<HttpEvent<any>> {
+    const formData: FormData = new FormData();
+
+    formData.append('file', file);
+
+    const req = new HttpRequest('POST', `${this.resourceUrl}/upload`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+    });
+
+    return this.http.request(req);
+  }
+
+  getFiles(): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/files`);
   }
 }
