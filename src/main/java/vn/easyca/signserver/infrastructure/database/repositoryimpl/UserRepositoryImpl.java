@@ -1,26 +1,24 @@
 package vn.easyca.signserver.infrastructure.database.repositoryimpl;
 
-import com.google.common.base.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepositoryCustom;
 import vn.easyca.signserver.webapp.utils.CommonUntil;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 public class UserRepositoryImpl implements UserRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
+
 
 
     @Override
@@ -72,6 +70,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     }
 
-    ;
+
+
 
 }

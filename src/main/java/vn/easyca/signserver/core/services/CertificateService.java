@@ -1,7 +1,5 @@
 package vn.easyca.signserver.core.services;
 
-import org.bouncycastle.asn1.x509.CertificateList;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,25 +12,23 @@ import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.CertificateJpaRepository;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.infrastructure.database.repositoryimpl.UserRepositoryImpl;
 
-import javax.annotation.Resource;
 import java.util.*;
 
 @Service
 public class CertificateService {
 
-    @Resource
-    UserRepository userRepository;
-
-
     private Optional<UserEntity> userEntityOptional;
     private List<CertificateEntity> certificateList = new ArrayList<>();
     private final CertificateRepository certificateRepository;
     private final CertificateJpaRepository certificateJpaRepository;
+    private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateJpaRepository certificateJpaRepository) {
+    public CertificateService(CertificateRepository certificateRepository, CertificateJpaRepository certificateJpaRepository, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
         this.certificateJpaRepository = certificateJpaRepository;
+        this.userRepository = userRepository;
     }
 
     public Certificate save(Certificate certificate) {
@@ -46,15 +42,13 @@ public class CertificateService {
 
     public List<CertificateEntity> getByOwnerId(String ownerId) {
         Long id = Long.parseLong(ownerId);
-        userEntityOptional = userRepository.findOneById(id);
+        userEntityOptional = userRepository.findById(id);
         System.out.println(userEntityOptional);
         UserEntity userEntity = userEntityOptional.get();
-        Authority authority = new Authority();
-        authority.setName("ROLE_ADMIN");
         boolean roleAdmin = false;
         Set<Authority> userAuthority = userEntity.getAuthorities();
         for (Authority setAuthority : userAuthority) {
-            if (setAuthority.getName().equals(authority.getName())) {
+            if (setAuthority.getName().equals("ROLE_ADMIN")) {
                 roleAdmin = true;
             }
         }
@@ -63,7 +57,6 @@ public class CertificateService {
         } else {
             certificateList = certificateRepository.getByOwnerId(ownerId);
         }
-
         return certificateList;
     }
 

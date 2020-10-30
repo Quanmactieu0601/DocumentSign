@@ -57,7 +57,7 @@ public class CertificateEntity implements Serializable {
     private Instant expiredDate;
 
     @Column(name = "active_status")
-    private int activeStatus;
+    private Integer activeStatus;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -205,7 +205,7 @@ public class CertificateEntity implements Serializable {
         return activeStatus;
     }
 
-    public void setActiveStatus(int active_status) {
+    public void setActiveStatus(Integer active_status) {
         this.activeStatus = active_status;
     }
     @Override
