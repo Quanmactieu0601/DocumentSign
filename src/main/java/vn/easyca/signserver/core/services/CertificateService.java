@@ -8,6 +8,7 @@ import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.repository.CertificateRepository;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.CertificateJpaRepository;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final CertificateJpaRepository certificateJpaRepository;
+
     public CertificateService(CertificateRepository certificateRepository, CertificateJpaRepository certificateJpaRepository) {
         this.certificateRepository = certificateRepository;
         this.certificateJpaRepository = certificateJpaRepository;
@@ -48,10 +50,14 @@ public class CertificateService {
         Certificate certificate = certificateRepository.getById(id);
         if (certificate.getActiveStatus() == 1) {
             certificate.setActiveStatus(0);
-        }
-        else {
+        } else {
             certificate.setActiveStatus(1);
         }
         certificateRepository.save(certificate);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CertificateEntity> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+        return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
     }
 }

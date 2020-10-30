@@ -5,7 +5,8 @@
         "title": "Certificates",
         "createLabel": "Create a new Certificate",
         "createOrEditLabel": "Create or edit a Certificate",
-        "notFound": "No Certificates found"
+        "notFound": "No Certificates found",
+        "searchCertificates": "Search certificate"
       },
       "created": "A new Certificate is created with identifier {{ param }}",
       "updated": "A Certificate is updated with identifier {{ param }}",
@@ -21,6 +22,7 @@
       "tokenType": "Token Type",
       "serial": "Serial",
       "ownerTaxcode": "Owner Taxcode",
+      "ownerId": "Owner Id",
       "subjectInfo": "Subject Info",
       "alias": "Alias",
       "tokenInfoDTO": "Token Info",

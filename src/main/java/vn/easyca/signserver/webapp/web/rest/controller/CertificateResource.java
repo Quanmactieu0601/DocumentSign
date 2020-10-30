@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
@@ -72,6 +73,17 @@ public class CertificateResource {
         Page<CertificateEntity> page = certificateService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CertificateEntity>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
+        try{
+            Page<CertificateEntity> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        }catch (Exception ex) {
+            return new ResponseEntity<>(null, null, HttpStatus.OK);
+        }
     }
 
     @PostMapping("/import/p12")
@@ -205,4 +217,5 @@ public class CertificateResource {
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
+
 }
