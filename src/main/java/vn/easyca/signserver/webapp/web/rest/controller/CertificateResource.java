@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.core.domain.Certificate;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
+import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
@@ -93,6 +95,7 @@ public class CertificateResource {
     }
 
     @PostMapping("/import/p12")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
@@ -105,6 +108,7 @@ public class CertificateResource {
     }
 
     @PostMapping("/gen/p11")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
@@ -129,6 +133,7 @@ public class CertificateResource {
      * @return
      */
     @PostMapping("/createCSRAndUser")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
@@ -153,6 +158,7 @@ public class CertificateResource {
      * @return
      */
     @PostMapping("/createCSR")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
         try {
             CertificateGenerateResult result = p11GeneratorService.createCSR(csrGeneratorVM);
@@ -172,6 +178,7 @@ public class CertificateResource {
      * @return
      */
     @PostMapping("/exportCsr")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Resource> createCSRs(@RequestBody CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
@@ -189,6 +196,7 @@ public class CertificateResource {
     }
 
     @PostMapping("/uploadCert")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             List<CertDTO> dtos = ExcelUtils.convertExcelToCertDTO(file.getInputStream());
@@ -215,6 +223,7 @@ public class CertificateResource {
     }
 
     @PutMapping("/update-active-status")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> updateActiveStatus(@RequestBody Long id) {
         try {
             certificateService.updateActiveStatus(id);
