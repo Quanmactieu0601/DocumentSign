@@ -205,9 +205,10 @@ public class CertificateEntity implements Serializable {
         return activeStatus;
     }
 
-    public void setActiveStatus(int active_status) {
-        this.activeStatus = active_status;
+    public void setActiveStatus(int activeStatus) {
+        this.activeStatus = activeStatus;
     }
+
     @Override
     public int hashCode() {
         return 31;
