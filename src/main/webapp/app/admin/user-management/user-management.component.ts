@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
@@ -42,6 +42,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   listId: number[] = [];
 
+  modalRef: NgbModalRef | undefined;
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -216,6 +217,12 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   //open modal
   openModal(content: any): void {
-    this.modalService.open(content, { size: 'lg' });
+    this.modalRef = this.modalService.open(content, { size: 'lg' });
+  }
+
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+    }
   }
 }
