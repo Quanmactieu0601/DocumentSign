@@ -57,6 +57,5 @@ public class SignatureVerificationController {
             log.error(e.getMessage(), e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
-
     }
 }
