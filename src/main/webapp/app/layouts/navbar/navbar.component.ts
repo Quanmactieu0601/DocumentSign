@@ -73,9 +73,4 @@ export class NavbarComponent implements OnInit {
   getImageUrl(): string {
     return this.isAuthenticated() ? this.accountService.getImageUrl() : '';
   }
-
-  //open modalCancelInv
-  openModal(content: any): void {
-    this.modalService.open(content, { size: 'lg' });
-  }
 }

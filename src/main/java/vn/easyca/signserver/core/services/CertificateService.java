@@ -23,6 +23,7 @@ public class CertificateService {
     private List<CertificateEntity> certificateList = new ArrayList<>();
     private final CertificateRepository certificateRepository;
     private final CertificateJpaRepository certificateJpaRepository;
+
     private final UserRepository userRepository;
 
     public CertificateService(CertificateRepository certificateRepository, CertificateJpaRepository certificateJpaRepository, UserRepository userRepository) {
@@ -81,5 +82,10 @@ public class CertificateService {
             certificate.setActiveStatus(1);
         }
         certificateRepository.save(certificate);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<CertificateEntity> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+        return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
     }
 }

@@ -3,8 +3,8 @@ import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
-import { JhiEventManager } from 'ng-jhipster';
-import { FormBuilder } from '@angular/forms';
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { Form, FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -13,6 +13,8 @@ import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { map } from 'rxjs/operators';
 
@@ -40,6 +42,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   listId: number[] = [];
+
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -48,7 +51,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private eventManager: JhiEventManager,
     private modalService: NgbModal,
     private certificateService: CertificateService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private alertService: JhiAlertService,
+    private toastrService: ToastrService,
+    public translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -85,13 +91,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   searchUser(): any {
     const data = {
-      account: this.userSearch.get(['account'])!.value,
-      name: this.userSearch.get(['name'])!.value,
-      email: this.userSearch.get(['email'])!.value,
-      ownerId: this.userSearch.get(['ownerId'])!.value,
-      commonName: this.userSearch.get(['commonName'])!.value,
-      country: this.userSearch.get(['country'])!.value,
-      phone: this.userSearch.get(['phone'])!.value,
+      ...this.userSearch.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
@@ -207,13 +207,25 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Send data invoices to server
-  sendData(): void {
+  createCSR(): void {
     if (this.listId.length > 0) {
-      this.certificateService.sendData(this.listId).subscribe((response: any) => {
-        // use the saveAs library to save the buffer as a blob on the user's machine. Use the correct MIME type!
-        saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
-      });
+      this.certificateService
+        .sendData({
+          userIds: this.listId,
+        })
+        .subscribe((response: any) => {
+          if (response.byteLength === 0) {
+            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
+          } else {
+            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
+            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+          }
+        });
     }
+  }
+
+  //open modal
+  openModal(content: any): void {
+    this.modalService.open(content, { size: 'lg' });
   }
 }

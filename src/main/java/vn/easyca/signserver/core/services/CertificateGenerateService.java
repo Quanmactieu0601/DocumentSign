@@ -45,7 +45,7 @@ public class CertificateGenerateService {
                                       UserCreator userCreator,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository
-                                      ) {
+    ) {
         this.cryptoTokenConnector = cryptoTokenConnector;
         this.certificateRequester = certificateRequester;
         this.userCreator = userCreator;
@@ -137,7 +137,7 @@ public class CertificateGenerateService {
      * Tạo CSR từ thông tin KH
      * Keypair được lưu vào HSM khi sinh CSR
      *
-     * @param dto
+     * @param dtoUserRepository
      * @return
      * @throws Exception
      */
@@ -205,6 +205,13 @@ public class CertificateGenerateService {
         return result;
     }
 
+    /**
+     * Tạo csr từ user có sẵn
+     *
+     * @param dto
+     * @return
+     * @throws Exception
+     */
     public CertificateGenerateResult createCSR(CsrGeneratorVM dto) throws Exception {
         CertificateGenerateResult result = new CertificateGenerateResult();
         Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUserId());
@@ -218,30 +225,52 @@ public class CertificateGenerateService {
         return result;
     }
 
+    /**
+     * Tạo nhiều csr từ list userid.
+     *
+     * @param dto
+     * @return
+     * @throws Exception
+     */
     public List<CertDTO> createCSRs(CsrsGeneratorVM dto) throws Exception {
         List<CertDTO> result = new ArrayList<>();
         int keyLength = dto.getKeyLen();
         CryptoToken cryptoToken = cryptoTokenConnector.getToken();
         CertDTO certDto = null;
         String crs = null;
-        for(Long userId : dto.getUserIds()) {
+        for (Long userId : dto.getUserIds()) {
             Optional<UserEntity> userEntityOptional = userRepository.findById(userId);
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
                 try {
                     CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
                         user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getOwnerId(), keyLength);
-                    crs =  createCSR(cryptoToken, certificateGenerateDTO);
+                    crs = createCSR(cryptoToken, certificateGenerateDTO);
                     certDto = new CertDTO(userId, user.getOwnerId(), crs, null);
+                    //TODO: update csr status of user here
                 } catch (Exception ex) {
                     certDto = new CertDTO(userId, user.getOwnerId(), ex.getMessage());
                 }
-            }
-            else
+            } else
                 certDto = new CertDTO(userId, null, "Tài khoản không tồn tại");
             result.add(certDto);
         }
         return result;
     }
 
+
+    public void saveCerts(List<CertDTO> dtos) throws
+        CryptoTokenConnector.CryptoTokenConnectorException, CryptoTokenException {
+        CryptoToken cryptoToken = cryptoTokenConnector.getToken();
+        for (CertDTO dto : dtos) {
+            Optional<UserEntity> userEntityOptional = userRepository.findOneByOwnerId(dto.getOwnerId());
+            if (userEntityOptional.isPresent()) {
+                UserEntity user = userEntityOptional.get();
+                // TODO: viet lai ham luu cert
+                saveNewCertificate(new RawCertificate(dto.getSerial(), dto.getCert()), dto.getOwnerId(), new SubjectDN(user.getCommonName(), user.getOrganizationUnit(),
+                    user.getOrganizationName(), user.getLocalityName(), user.getStateName(), user.getCountry()).toString(), cryptoToken);
+                //TODO: update csr status of user here
+            }
+        }
+    }
 }

@@ -118,7 +118,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "csr_status")
     private int csrStatus;
 
-
     //TODO: Chang fetch_type;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
@@ -129,7 +128,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
-
 
     public Long getId() {
         return id;

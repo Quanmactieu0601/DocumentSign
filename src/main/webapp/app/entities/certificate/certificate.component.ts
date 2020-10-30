@@ -10,6 +10,7 @@ import { ICertificate } from 'app/shared/model/certificate.model';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CertificateService } from './certificate.service';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'jhi-certificate',
@@ -25,12 +26,20 @@ export class CertificateComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
+  certificateSearch = this.fb.group({
+    alias: [],
+    ownerId: [],
+    serial: [],
+    validDate: [],
+    expiredDate: [],
+  });
   constructor(
     protected certificateService: CertificateService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected eventManager: JhiEventManager,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected fb: FormBuilder
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -63,7 +72,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
       if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
-        this.loadPage(pageNumber, true);
+        this.searchCertificate();
       }
     }).subscribe();
   }
@@ -91,7 +100,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   updateStatus(id: any): void {
     this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
       if (res.ok) {
-        this.loadPage(this.page, true);
+        this.searchCertificate();
       }
     });
   }
@@ -122,5 +131,19 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+
+  searchCertificate(): any {
+    const data = {
+      alias: this.certificateSearch.get(['alias'])?.value,
+      ownerId: this.certificateSearch.get(['ownerId'])?.value,
+      serial: this.certificateSearch.get(['serial'])?.value,
+      validDate: this.certificateSearch.get(['validDate'])?.value,
+      expiredDate: this.certificateSearch.get(['expiredDate'])?.value,
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, this.page, false));
   }
 }

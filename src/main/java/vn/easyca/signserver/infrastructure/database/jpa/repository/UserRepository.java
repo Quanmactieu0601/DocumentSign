@@ -52,4 +52,5 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
 
     Page<UserEntity> findAllByLoginNot(Pageable pageable, String login);
 
+    Optional<UserEntity> findOneByOwnerId(String ownerId);
 }

@@ -1,11 +1,10 @@
-import DateTimeFormat = Intl.DateTimeFormat;
-
 export interface ICertificate {
   id?: number;
   lastUpdate?: string;
   tokenType?: string;
   serial?: string;
   ownerTaxcode?: string;
+  ownerId?: number;
   subjectInfo?: string;
   alias?: string;
   tokenInfo?: string;
@@ -22,6 +21,7 @@ export class Certificate implements ICertificate {
     public tokenType?: string,
     public serial?: string,
     public ownerTaxcode?: string,
+    public ownerId?: number,
     public subjectInfo?: string,
     public alias?: string,
     public tokenInfo?: string,

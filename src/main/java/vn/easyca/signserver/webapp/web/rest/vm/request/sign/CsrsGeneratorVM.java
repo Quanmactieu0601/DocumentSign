@@ -7,7 +7,7 @@ public class CsrsGeneratorVM {
     private int keyLen;
 
     public int getKeyLen() {
-        return keyLen;
+        return keyLen == 0 ? 1024 : keyLen;
     }
 
     public void setKeyLen(int keyLen) {
@@ -20,5 +20,13 @@ public class CsrsGeneratorVM {
 
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
+    }
+
+    public CsrsGeneratorVM(List<Long> userIds, int keyLen) {
+        this.userIds = userIds;
+        this.keyLen = keyLen;
+    }
+
+    public CsrsGeneratorVM() {
     }
 }

@@ -19,8 +19,6 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
 
-
-
     @Override
     public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
         Map<String, Object> params = new HashMap<>();
@@ -69,8 +67,5 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return new PageImpl<>(userEntityList, pageable, total.longValue());
 
     }
-
-
-
 
 }

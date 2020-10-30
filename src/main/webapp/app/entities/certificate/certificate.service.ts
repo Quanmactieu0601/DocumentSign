@@ -63,15 +63,14 @@ export class CertificateService {
   }
 
   sendData(req?: any): Observable<any> {
-    const content = JSON.stringify(req);
-    return this.http.post(this.resourceUrl + '/exportCsr', content, httpOptions);
+    return this.http.post(this.resourceUrl + '/exportCsr', req, httpOptions);
   }
   upload(file: File): Observable<HttpEvent<any>> {
     const formData: FormData = new FormData();
 
     formData.append('file', file);
 
-    const req = new HttpRequest('POST', `${this.resourceUrl}/upload`, formData, {
+    const req = new HttpRequest('POST', `${this.resourceUrl}/uploadCert`, formData, {
       reportProgress: true,
       responseType: 'json',
     });
@@ -81,5 +80,10 @@ export class CertificateService {
 
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
+  }
+
+  findCertificate(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<ICertificate[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
   }
 }

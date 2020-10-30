@@ -8,6 +8,7 @@ import vn.easyca.signserver.core.dto.CertDTO;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,8 +20,7 @@ public class ExcelUtils {
         headerRow.createCell(0).setCellValue("STT");
         headerRow.createCell(1).setCellValue("OwnerID");
         headerRow.createCell(2).setCellValue("CSR VALUE");
-        headerRow.createCell(3).setCellValue("CER VALUE");
-        headerRow.createCell(4).setCellValue("MESSAGE");
+        headerRow.createCell(3).setCellValue("MESSAGE");
 
         int index = 1;
         for (CertDTO dto : dtos) {
@@ -28,8 +28,7 @@ public class ExcelUtils {
             row.createCell(0).setCellValue(index);
             row.createCell(1).setCellValue(dto.getOwnerId());
             row.createCell(2).setCellValue(dto.getCsr());
-            row.createCell(3).setCellValue("");
-            row.createCell(4).setCellValue(dto.getMessage());
+            row.createCell(3).setCellValue(dto.getMessage());
             index++;
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -43,7 +42,7 @@ public class ExcelUtils {
         return bos.toByteArray();
     }
 
-    public static List<CertDTO> convertExcelToCertDTO(FileInputStream inputStream) throws IOException {
+    public static List<CertDTO> convertExcelToCertDTO(InputStream inputStream) throws IOException {
         Workbook wb = new XSSFWorkbook(inputStream);
         Sheet sheet = wb.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -53,8 +52,9 @@ public class ExcelUtils {
             Row row = sheet.getRow(i);
             if (row != null) {
                 dto = new CertDTO();
-                dto.setCert(row.getCell(3).getStringCellValue());
                 dto.setOwnerId(row.getCell(1).getStringCellValue());
+                dto.setSerial(row.getCell(2).getStringCellValue());
+                dto.setCert(row.getCell(3).getStringCellValue());
                 dtos.add(dto);
             }
         }
