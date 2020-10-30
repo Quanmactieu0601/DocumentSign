@@ -35,7 +35,7 @@ public class Certificate {
 
     private Instant expiredDate;
 
-    private int active_status;
+    private int activeStatus;
 
     private X509Certificate x509Certificate;
 
@@ -128,11 +128,11 @@ public class Certificate {
     }
 
     public int getActiveStatus() {
-        return active_status;
+        return activeStatus;
     }
 
     public void setActiveStatus(int active_status) {
-        this.active_status = active_status;
+        this.activeStatus = active_status;
     }
 
     public X509Certificate getX509Certificate() throws CertificateException {
