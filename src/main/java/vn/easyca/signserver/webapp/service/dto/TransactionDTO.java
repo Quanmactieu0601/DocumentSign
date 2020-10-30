@@ -35,6 +35,7 @@ public class TransactionDTO implements Serializable {
         this.message = transaction.getMessage();
         this.data = transaction.getData();
         this.type = transaction.getType();
+        this.triggerTime = transaction.getTriggerTime();
     }
 
     public Long getId() {

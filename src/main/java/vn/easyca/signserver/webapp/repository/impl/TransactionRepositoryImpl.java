@@ -20,7 +20,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
     @Override
-    public Page<Transaction> findByFilter(Pageable pageable, String api, String code, String message, String data, String type) {
+    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type) {
         Map<String, Object> params = new HashMap<>();
         List<Transaction> transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -35,6 +35,10 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         if (!CommonUtils.isNullOrEmptyProperty(api)) {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
+        }
+        if (!CommonUtils.isNullOrEmptyProperty(triggerTime)) {
+            sqlBuilder.append("AND a.trigger_Time like :triggerTime ");
+            params.put("triggerTime", "%" + triggerTime + "%");
         }
         if (!CommonUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");

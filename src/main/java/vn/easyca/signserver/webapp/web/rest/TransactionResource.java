@@ -15,7 +15,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.easyca.signserver.webapp.service.impl.TransactionServiceImpl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -95,9 +94,9 @@ public class TransactionResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
     @GetMapping("/transactions/search")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable,@RequestParam(required = false) String api,@RequestParam(required = false) String code,@RequestParam(required = false) String message,@RequestParam(required = false) String data,@RequestParam(required = false) String type ) {
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type ) {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable , api,code,message,data,type);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable , api,triggerTime,code,message,data,type);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

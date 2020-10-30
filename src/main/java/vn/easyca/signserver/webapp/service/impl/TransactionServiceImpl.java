@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -77,8 +78,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String code, String message, String data, String type ) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, code, message, data, type);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime,code, message, data, type);
         return page.map(TransactionDTO::new);
     }
     /**
@@ -91,4 +92,5 @@ public class TransactionServiceImpl implements TransactionService {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
     }
+
 }

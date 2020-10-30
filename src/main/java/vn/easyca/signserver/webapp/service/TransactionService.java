@@ -1,10 +1,12 @@
 package vn.easyca.signserver.webapp.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.Instant;
 import java.util.Optional;
 
 /**
@@ -36,13 +38,8 @@ public interface TransactionService {
      */
     Optional<TransactionDTO> findOne(Long id);
 
-    /**
-     * Delete the "id" transaction.
-     *
-     * @param id the id of the entity.
-     */
     void delete(Long id);
 
-     Page<TransactionDTO> getByFilter(Pageable pageable,  String api, String code,
-                                            String message, String data, String type);
+     Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code,
+                                      String message, String data, String type);
 }
