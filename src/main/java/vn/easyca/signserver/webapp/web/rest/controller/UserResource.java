@@ -3,9 +3,12 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
+import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
@@ -72,13 +75,15 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
+    private final TransactionService transactionService;
 
 //    public String newPassCreated = RandomStringUtils.randomAlphanumeric(10);
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService) {
+    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService, TransactionService transactionService) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
         this.mailService = mailService;
+        this.transactionService = transactionService;
     }
 
     /**
@@ -96,8 +101,8 @@ public class UserResource {
     @PostMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
         log.debug("REST request to save User : {}", userDTO);
-
         if (userDTO.getId() != null) {
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
@@ -108,6 +113,9 @@ public class UserResource {
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
             mailService.sendCreationEmail(newUserEntity);
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("create user successfully");
+            transactionService.save(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
@@ -125,6 +133,7 @@ public class UserResource {
     @PutMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
         log.debug("REST request to update User : {}", userDTO);
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
@@ -135,6 +144,9 @@ public class UserResource {
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
+        transactionDTO.setCode("200");
+        transactionDTO.setMessage("update user successfully");
+        transactionService.save(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
@@ -148,8 +160,12 @@ public class UserResource {
      */
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
         final Page<UserDTO> page = userApplicationService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        transactionDTO.setCode("200");
+        transactionDTO.setMessage("get all users successfully");
+        transactionService.save(transactionDTO);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -180,6 +196,10 @@ public class UserResource {
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
+        transactionDTO.setCode("200");
+        transactionDTO.setMessage("get user successfully");
+        transactionService.save(transactionDTO);
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
@@ -195,8 +215,12 @@ public class UserResource {
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
+        transactionDTO.setCode("200");
+        transactionDTO.setMessage("delete user successfully");
+        transactionService.save(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

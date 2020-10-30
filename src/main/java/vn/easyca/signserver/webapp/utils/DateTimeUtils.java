@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -33,5 +34,18 @@ public class DateTimeUtils {
 
     public static String getCurrentTimeStamp() {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
+
+
+    public static Instant convertToInstant(String date)  {
+        SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
+        Date dates = null;
+        try {
+            dates = formatter.parse(date);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return dates.toInstant();
     }
 }
