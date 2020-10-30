@@ -175,12 +175,8 @@ public class UserResource {
      */
     @GetMapping("/users")
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
         final Page<UserDTO> page = userApplicationService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("Get All Users Successfully");
-        transactionService.save(transactionDTO);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
@@ -204,10 +200,6 @@ public class UserResource {
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:" + Constants.LOGIN_REGEX + "}", TransactionType.SYSTEM);
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("Get User Successfully");
-        transactionService.save(transactionDTO);
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
