@@ -2,7 +2,6 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
-import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.*;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.awt.font.TransformAttribute;
 import java.util.*;
 
 /**
@@ -74,7 +72,7 @@ public class AccountResource {
         TransactionDTO transactionDTO = new TransactionDTO("/api/register", TransactionType.SYSTEM);
         if (!checkPasswordLength(managedUserVM.getPassword())) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("InvalidPasswordException");
+            transactionDTO.setMessage("Invalid Password");
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         } else {
@@ -98,7 +96,7 @@ public class AccountResource {
         Optional<UserEntity> user = userApplicationService.activateRegistration(key);
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("AccountResourceException");
+            transactionDTO.setMessage("No user was found for this activation key");
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this activation key");
         } else {
@@ -154,15 +152,16 @@ public class AccountResource {
         Optional<UserEntity> user = userRepository.findOneByLogin(userLogin);
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("AccountResourceException");
+            transactionDTO.setMessage("User could not be found");
             transactionService.save(transactionDTO);
             throw new AccountResourceException("User could not be found");
+        } else {
+            userApplicationService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
+                userDTO.getLangKey(), userDTO.getImageUrl());
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("Update User Successfully");
+            transactionService.save(transactionDTO);
         }
-        userApplicationService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
-            userDTO.getLangKey(), userDTO.getImageUrl());
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("Update User Successfully");
-        transactionService.save(transactionDTO);
     }
 
     /**
@@ -176,7 +175,7 @@ public class AccountResource {
         TransactionDTO transactionDTO = new TransactionDTO("/api/account/change-password", TransactionType.SYSTEM);
         if (!checkPasswordLength(passwordChangeDto.getNewPassword())) {
             transactionDTO.setMessage("400");
-            transactionDTO.setCode("InvalidPasswordException");
+            transactionDTO.setCode("Invalid Password");
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         } else {
@@ -223,20 +222,21 @@ public class AccountResource {
         TransactionDTO transactionDTO = new TransactionDTO("/api/account/reset-password/finish", TransactionType.SYSTEM);
         if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("InvalidPasswordException");
+            transactionDTO.setMessage("Invalid Password");
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         }
         Optional<UserEntity> user =
             userApplicationService.completePasswordReset(keyAndPassword.getNewPassword(), keyAndPassword.getKey());
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("Reset password successfully");
-        transactionService.save(transactionDTO);
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("AccountResourceException");
+            transactionDTO.setMessage("No user was found for this reset key");
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this reset key");
+        } else {
+            transactionDTO.setCode("200");
+            transactionDTO.setMessage("Reset password successfully");
+            transactionService.save(transactionDTO);
         }
     }
 

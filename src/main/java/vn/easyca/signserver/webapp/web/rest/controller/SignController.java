@@ -56,11 +56,11 @@ public class SignController {
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             code = "400";
-            message = "ApplicationException";
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             code = "400";
-            message = "Exception";
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
             transactionDTO.setCode(code);
@@ -81,12 +81,12 @@ public class SignController {
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             code = "400";
-            message = "ApplicationException";
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             code = "400";
-            message = "Exception";
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
             transactionDTO.setCode(code);
@@ -107,12 +107,12 @@ public class SignController {
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             code = "400";
-            message = "ApplicationException";
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             code = "400";
-            message = "Exception";
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
             transactionDTO.setCode(code);

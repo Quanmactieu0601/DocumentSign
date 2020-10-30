@@ -104,18 +104,18 @@ public class UserResource {
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("BadRequestAlertException");
+            transactionDTO.setMessage("A new user cannot already have an ID");
             transactionService.save(transactionDTO);
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("LoginAlreadyUsedException");
+            transactionDTO.setMessage("Login Already Used ");
             transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("EmailAlreadyUsedException");
+            transactionDTO.setMessage("Email Already Used ");
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         } else {
@@ -147,14 +147,14 @@ public class UserResource {
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("EmailAlreadyUsedException");
+            transactionDTO.setMessage("Email Already Used");
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             transactionDTO.setCode("400");
-            transactionDTO.setMessage("LoginAlreadyUsedException");
+            transactionDTO.setMessage(" Login Already Used ");
             transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         }
@@ -179,7 +179,7 @@ public class UserResource {
         final Page<UserDTO> page = userApplicationService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("get all users successfully");
+        transactionDTO.setMessage("Get All Users Successfully");
         transactionService.save(transactionDTO);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
