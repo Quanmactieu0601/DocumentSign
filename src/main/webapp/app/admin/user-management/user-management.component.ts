@@ -13,6 +13,8 @@ import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -48,7 +50,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private certificateService: CertificateService,
     private fb: FormBuilder,
-    private alertService: JhiAlertService
+    private alertService: JhiAlertService,
+    private toastrService: ToastrService,
+    public translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -173,9 +177,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         })
         .subscribe((response: any) => {
           if (response.byteLength === 0) {
-            this.alertService.error('userManagement.alert.fail.csrExported');
+            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
           } else {
-            this.alertService.success('userManagement.alert.success.csrExported');
+            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
             saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
           }
         });

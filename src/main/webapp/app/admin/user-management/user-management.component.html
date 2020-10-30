@@ -75,14 +75,15 @@
             <fa-icon icon="plus"></fa-icon>
             Xuất Excel CSR
         </button>
-        <button class="btn btn-primary float-right jh-create-entity" [routerLink]="['./new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
-        </button>
         <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
             <fa-icon icon="plus"></fa-icon>
             Upload tệp CER
         </button>
+        <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
+        </button>
+
     </h2>
 
     <jhi-alert-error></jhi-alert-error>
