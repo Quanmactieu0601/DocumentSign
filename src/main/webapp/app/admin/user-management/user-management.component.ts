@@ -15,6 +15,7 @@ import { UserManagementDeleteDialogComponent } from './user-management-delete-di
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -82,15 +83,42 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
+  viewCertificate(user: User): void {
+    const modalRef = this.modalService.open(UserManagementViewCertificateComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.user = user;
+  }
+
   searchUser(): any {
-    this.userService
-      .findByUser({
-        ...this.userSearch.value,
-        page: this.page - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
+    const data = {
+      ...this.userSearch.value,
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+
+    if (data.account != null) {
+      data.account = data.account.trim();
+    }
+    if (data.name != null) {
+      data.name = data.name.trim();
+    }
+    if (data.email != null) {
+      data.email = data.email.trim();
+    }
+    if (data.ownerId != null) {
+      data.ownerId = data.ownerId.trim();
+    }
+    if (data.commonName != null) {
+      data.commonName = data.commonName.trim();
+    }
+    if (data.country != null) {
+      data.country = data.country.trim();
+    }
+    if (data.phone != null) {
+      data.phone = data.phone.trim();
+    }
+
+    this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
   }
 
   transition(): void {

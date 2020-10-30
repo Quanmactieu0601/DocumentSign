@@ -36,6 +36,15 @@ export class CertificateService {
     return this.http.get<ICertificate>(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  // findByUserLogin(user: IUser): Observable<EntityArrayResponseType> {
+  //   const option = createRequestOption(user)
+  //   return this.http.get<ICertificate[]>(this.resourceUrl + 'search', { params: option, observe: 'response' });
+  // }
+
+  findByCurrentUser(userId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<ICertificate[]>(`${this.resourceUrl + '/ownerId'}/${userId}`, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http.get<ICertificate[]>(this.resourceUrl, { params: options, observe: 'response' });

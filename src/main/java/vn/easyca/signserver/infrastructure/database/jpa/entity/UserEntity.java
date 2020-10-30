@@ -85,41 +85,42 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     private Instant resetDate = null;
 
     @Size(max = 200)
-    @Column(name ="common_name")
-    private String commonName ;
+    @Column(name = "common_name")
+    private String commonName;
 
     @Size(max = 200)
-    @Column(name ="organization_name")
-    private String organizationName ;
+    @Column(name = "organization_name")
+    private String organizationName;
 
     @Size(max = 200)
-    @Column(name ="organization_unit")
-    private String organizationUnit ;
+    @Column(name = "organization_unit")
+    private String organizationUnit;
 
     @Size(max = 200)
-    @Column(name ="locality_name")
-    private String localityName ;
+    @Column(name = "locality_name")
+    private String localityName;
 
     @Size(max = 200)
-    @Column(name ="state_name")
-    private String stateName ;
+    @Column(name = "state_name")
+    private String stateName;
 
     @Size(max = 200)
-    @Column(name ="country")
-    private String country ;
+    @Column(name = "country")
+    private String country;
 
     @Column(name = "owner_id")
-    private String ownerId ;
+    private String ownerId;
 
     @Size(max = 50)
     @Column(name = "phone")
-    private String phone ;
+    private String phone;
 
-    @Column(name="csr_status")
+    @Column(name = "csr_status")
     private int csrStatus;
 
+    //TODO: Chang fetch_type;
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},

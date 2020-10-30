@@ -16,6 +16,8 @@ import vn.easyca.signserver.webapp.utils.CommonUntil;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class CertificateRepositoryImpl implements CertificateRepository {
@@ -51,6 +53,16 @@ public class CertificateRepositoryImpl implements CertificateRepository {
         CertificateEntity entity = mapper.map(certificate);
         entity = repository.save(entity);
         return mapper.map(entity);
+    }
+
+    @Override
+    public List<CertificateEntity> findAll() {
+        return repository.findAll();
+    }
+
+    @Override
+    public List<CertificateEntity> getByOwnerId(String ownerId) {
+        return repository.findByOwnerId(ownerId);
     }
 
     @Override

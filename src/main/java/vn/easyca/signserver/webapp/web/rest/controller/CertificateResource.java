@@ -77,13 +77,19 @@ public class CertificateResource {
 
     @GetMapping("/search")
     public ResponseEntity<List<CertificateEntity>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
-        try{
+        try {
             Page<CertificateEntity> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
             return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             return new ResponseEntity<>(null, null, HttpStatus.OK);
         }
+    }
+
+    @GetMapping("ownerId/{ownerId}")
+    public ResponseEntity<List<CertificateEntity>> findByOwnerId(@PathVariable String ownerId) {
+        List<CertificateEntity> certificateEntityList = certificateService.getByOwnerId(ownerId);
+        return new ResponseEntity<>(certificateEntityList, HttpStatus.OK);
     }
 
     @PostMapping("/import/p12")

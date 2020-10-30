@@ -4,11 +4,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import java.util.List;
 
 public interface CertificateRepository {
 
+    List<CertificateEntity> findAll();
     Certificate getById(long id);
+
+    List<CertificateEntity> getByOwnerId(String ownerId);
 
     Certificate getBySerial(String ownerId,String serial);
 
