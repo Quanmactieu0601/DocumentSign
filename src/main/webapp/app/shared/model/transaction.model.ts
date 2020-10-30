@@ -7,7 +7,7 @@ export interface ITransaction {
   code?: string;
   message?: string;
   data?: string;
-  type?: number;
+  type?: String;
 }
 
 export class Transaction implements ITransaction {
@@ -18,6 +18,6 @@ export class Transaction implements ITransaction {
     public code?: string,
     public message?: string,
     public data?: string,
-    public type?: number
+    public type?: String
   ) {}
 }
