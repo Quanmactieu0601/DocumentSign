@@ -65,7 +65,7 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public Page<CertificateEntity> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate){
+    public Page<CertificateEntity> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
         Map<String, Object> params = new HashMap<>();
         List<CertificateEntity> certificateEntityList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -82,8 +82,8 @@ public class CertificateRepositoryImpl implements CertificateRepository {
             params.put("ownerId", "%" + ownerId + "%");
         }
         if (!CommonUntil.isNullOrEmptyProperty(serial)) {
-            sqlBuilder.append("AND a.serial like :serial ");
-            params.put("serial", "%" + serial + "%");
+            sqlBuilder.append("AND a.serial = :serial ");
+            params.put("serial", "" + serial + "");
         }
         if (!CommonUntil.isNullOrEmptyProperty(validDate)) {
             sqlBuilder.append("AND a.valid_date >= :validDate ");
