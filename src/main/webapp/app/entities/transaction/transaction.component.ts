@@ -20,7 +20,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactions: ITransaction[] | null = null;
   eventSubscriber?: Subscription;
   searchForm = this.fb.group({
-    id: [],
+    // id: [],
     api: [],
     code: [],
     message: [],
@@ -50,7 +50,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
       .query({
         page: pageToLoad - 1,
         size: this.itemsPerPage,
-        // sort: this.sort(),
+        sort: this.sort(),
       })
       .subscribe(
         (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
@@ -94,7 +94,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
   searchTransactions(): any {
     const data1 = {
-      id: this.searchForm.get(['id'])!.value,
+      // id: this.searchForm.get(['id'])!.value,
       api: this.searchForm.get(['api'])!.value,
       code: this.searchForm.get(['code'])!.value,
       message: this.searchForm.get(['message'])!.value,
