@@ -62,7 +62,7 @@ public class SignController {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
@@ -71,7 +71,7 @@ public class SignController {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/hash",TransactionType.SIGNING);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/hash", TransactionType.SIGNING);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
@@ -88,7 +88,7 @@ public class SignController {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
@@ -97,7 +97,7 @@ public class SignController {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/raw",TransactionType.SIGNING);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/raw", TransactionType.SIGNING);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
@@ -114,7 +114,7 @@ public class SignController {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);

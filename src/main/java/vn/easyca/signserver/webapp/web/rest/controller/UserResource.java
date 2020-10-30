@@ -128,7 +128,7 @@ public class UserResource {
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
         }
-        }
+    }
 
 
     /**
@@ -204,7 +204,7 @@ public class UserResource {
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:" + Constants.LOGIN_REGEX + "}", TransactionType.SYSTEM);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("Get User Successfully");
         transactionService.save(transactionDTO);
@@ -222,7 +222,7 @@ public class UserResource {
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:"+Constants.LOGIN_REGEX+"}", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:" + Constants.LOGIN_REGEX + "}", TransactionType.SYSTEM);
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");

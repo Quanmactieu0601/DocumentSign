@@ -52,6 +52,7 @@ public class UserJWTController {
         transactionService.save(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
+
     /**
      * Object to return as body in JWT Authentication.
      */

@@ -50,7 +50,7 @@ public class SignatureVerificationController {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
@@ -59,7 +59,7 @@ public class SignatureVerificationController {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> verifyRaw(@RequestBody SignatureVerificationVM signatureVerificationVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/raw",TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/raw", TransactionType.SYSTEM);
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
@@ -76,7 +76,7 @@ public class SignatureVerificationController {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);

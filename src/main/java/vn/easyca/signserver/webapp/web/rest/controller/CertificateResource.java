@@ -1,7 +1,5 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -12,7 +10,6 @@ import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
@@ -25,6 +22,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+
 @RestController
 @RequestMapping("/api/certificate")
 @ComponentScan("vn.easyca.signserver.core.services")
@@ -63,7 +61,7 @@ public class CertificateResource {
             code = "400";
             message = "ApplicationException";
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
@@ -72,14 +70,14 @@ public class CertificateResource {
 
     @PostMapping("/gen/p11")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/gen/p11",TransactionType.IMPORT_CERT);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/gen/p11", TransactionType.IMPORT_CERT);
         try {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
-            code ="200";
+            code = "200";
             message = "Gen Certificate Successfully";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
@@ -92,7 +90,7 @@ public class CertificateResource {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
@@ -101,7 +99,7 @@ public class CertificateResource {
 
     @GetMapping("/get-by-serial")
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/get-by-serial",TransactionType.IMPORT_CERT);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT);
         try {
             Certificate certificate = certificateService.getBySerial(serial);
             code = "200";
@@ -117,7 +115,7 @@ public class CertificateResource {
             code = "400";
             message = "Exception";
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }finally {
+        } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
