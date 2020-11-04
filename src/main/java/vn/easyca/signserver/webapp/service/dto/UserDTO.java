@@ -28,12 +28,37 @@ public class UserDTO {
     @Size(max = 50)
     private String lastName;
 
+    @Size(max = 200)
+    private String commonName;
+
+    @Size(max = 200)
+    private String organizationName;
+
+    @Size(max = 200)
+    private String organizationUnit;
+
+    @Size(max = 200)
+    private String stateName;
+
+    @Size(max = 200)
+    private String localityName;
+
+    @Size(max = 200)
+    private String country;
+
+    private String ownerId;
+
+    @Size(max = 50)
+    private String phone;
+
     @Email
     @Size(min = 5, max = 254)
     private String email;
 
     @Size(max = 256)
     private String imageUrl;
+
+
 
     private boolean activated = false;
 
@@ -67,6 +92,14 @@ public class UserDTO {
         this.createdDate = userEntity.getCreatedDate();
         this.lastModifiedBy = userEntity.getLastModifiedBy();
         this.lastModifiedDate = userEntity.getLastModifiedDate();
+        this.commonName = userEntity.getCommonName();
+        this.localityName = userEntity.getLocalityName();
+        this.organizationName = userEntity.getOrganizationName();
+        this.organizationUnit = userEntity.getOrganizationUnit();
+        this.stateName = userEntity.getStateName();
+        this.country = userEntity.getCountry();
+        this.ownerId = userEntity.getOwnerId();
+        this.phone = userEntity.getPhone();
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
@@ -87,6 +120,7 @@ public class UserDTO {
     public void setLogin(String login) {
         this.login = login;
     }
+
 
     public String getFirstName() {
         return firstName;
@@ -176,6 +210,70 @@ public class UserDTO {
         this.authorities = authorities;
     }
 
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getOrganizationUnit() {
+        return organizationUnit;
+    }
+
+    public void setOrganizationUnit(String organizationUnit) {
+        this.organizationUnit = organizationUnit;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     // prettier-ignore
     @Override
     public String toString() {
@@ -192,6 +290,14 @@ public class UserDTO {
             ", lastModifiedBy='" + lastModifiedBy + '\'' +
             ", lastModifiedDate=" + lastModifiedDate +
             ", authorities=" + authorities +
+            ", commonName=" + commonName +
+            ", organizationName=" + organizationName +
+            ", organizationUnit=" + organizationUnit +
+            ", localityName=" + localityName +
+            ", stateName=" + stateName +
+            ", country=" + country +
+            ", ownerId=" + ownerId +
+            ", phone=" + phone +
             "}";
     }
 }

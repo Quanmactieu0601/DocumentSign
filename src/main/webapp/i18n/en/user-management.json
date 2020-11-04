@@ -14,10 +14,19 @@
     "detail": {
       "title": "User"
     },
-    "login": "Login",
+    "login": "Account",
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email",
+    "ownerId": "Owner ID",
+    "phone": "Phone",
+    "password": "Pass Word",
+    "commonName": "Common Name",
+    "organizationName": "Organization Name",
+    "organizationUnit": "Organization Unit",
+    "localityName": "Locality Name",
+    "stateName": "StateName",
+    "country": "Country",
     "activated": "Activated",
     "deactivated": "Deactivated",
     "profiles": "Profiles",
@@ -25,6 +34,16 @@
     "createdBy": "Created by",
     "createdDate": "Created date",
     "lastModifiedBy": "Modified by",
-    "lastModifiedDate": "Modified date"
+    "lastModifiedDate": "Modified date",
+    "alert": {
+      "success": {
+        "csrExported": "Export CSR successfully",
+        "uploaded": "Upload User file successfully"
+      },
+      "fail": {
+        "csrExported": "Export CSR failure",
+        "uploaded": "Upload User file failure"
+      }
+    }
   }
 }

@@ -38,11 +38,6 @@ public class HSMConnector implements CryptoTokenConnector {
             return slot;
         }
 
-        public boolean isInit(){
-            return false;
-        }
-
-
         public HSMConnectorConfig(String name, String lib, String pin, String slot, String attr) {
             this.name = name;
             this.lib = lib;
@@ -62,8 +57,8 @@ public class HSMConnector implements CryptoTokenConnector {
     @Override
     public CryptoToken getToken() throws CryptoTokenConnector.CryptoTokenConnectorException {
 
-        if (!config.isInit())
-            throw new CryptoTokenConnectorException("Config is not correct");
+        if (config == null)
+            throw new CryptoTokenConnectorException("hsm connector is not config");
         Config cryptoTokenConfig = new Config();
         cryptoTokenConfig.initPkcs11(config.getName(), config.getLib(), config.getPin());
         if (config.getSlot() != null)

@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "Webapp",
+    "title": "SignServer",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
@@ -8,6 +8,7 @@
       "entities": {
         "main": "Entities",
         "certificate": "Certificate",
+        "transaction": "Transaction",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -30,7 +31,8 @@
         "audits": "Audits",
         "apidocs": "API",
         "database": "Database",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
+        "uploadUser": "Upload User"
       },
       "language": "Language"
     },
@@ -87,7 +89,7 @@
     "ribbon": {
       "dev": "Development"
     },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+    "item-count": "Showing 1 - {{second}} of {{total}} items."
   },
   "entity": {
     "action": {
@@ -107,6 +109,9 @@
     },
     "delete": {
       "title": "Confirm delete operation"
+    },
+    "viewCer": {
+      "title": "User Certificate"
     },
     "validation": {
       "required": "This field is required.",

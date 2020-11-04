@@ -4,6 +4,7 @@ import vn.easyca.signserver.core.utils.CommonUtils;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.util.Date;
 
 public class Certificate {
@@ -29,6 +30,12 @@ public class Certificate {
     private String rawData;
 
     private TokenInfo tokenInfo;
+
+    private Instant validDate;
+
+    private Instant expiredDate;
+
+    private int activeStatus;
 
     private X509Certificate x509Certificate;
 
@@ -102,6 +109,30 @@ public class Certificate {
 
     public void setTokenInfo(TokenInfo tokenInfo) {
         this.tokenInfo = tokenInfo;
+    }
+
+    public Instant getValidDate() {
+        return validDate;
+    }
+
+    public void setValidDate(Instant validDate) {
+        this.validDate = validDate;
+    }
+
+    public Instant getExpiredDate() {
+        return expiredDate;
+    }
+
+    public void setExpiredDate(Instant expiredDate) {
+        this.expiredDate = expiredDate;
+    }
+
+    public int getActiveStatus() {
+        return activeStatus;
+    }
+
+    public void setActiveStatus(int active_status) {
+        this.activeStatus = active_status;
     }
 
     public X509Certificate getX509Certificate() throws CertificateException {

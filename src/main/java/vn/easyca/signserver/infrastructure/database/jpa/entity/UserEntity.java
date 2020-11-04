@@ -1,5 +1,6 @@
 package vn.easyca.signserver.infrastructure.database.jpa.entity;
 
+import io.swagger.models.auth.In;
 import vn.easyca.signserver.webapp.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -41,7 +42,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     @JsonIgnore
     @NotNull
-    @Size(min = 60, max = 60)
+    @Size(min = 5, max = 60)
     @Column(name = "password_hash", length = 60, nullable = false)
     private String password;
 
@@ -83,8 +84,43 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private Instant resetDate = null;
 
+    @Size(max = 200)
+    @Column(name = "common_name")
+    private String commonName;
+
+    @Size(max = 200)
+    @Column(name = "organization_name")
+    private String organizationName;
+
+    @Size(max = 200)
+    @Column(name = "organization_unit")
+    private String organizationUnit;
+
+    @Size(max = 200)
+    @Column(name = "locality_name")
+    private String localityName;
+
+    @Size(max = 200)
+    @Column(name = "state_name")
+    private String stateName;
+
+    @Size(max = 200)
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "owner_id")
+    private String ownerId;
+
+    @Size(max = 50)
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "csr_status")
+    private int csrStatus;
+
+    //TODO: Chang fetch_type;
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -92,7 +128,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
-
 
     public Long getId() {
         return id;
@@ -199,6 +234,71 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.authorities = authorities;
     }
 
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getOrganizationUnit() {
+        return organizationUnit;
+    }
+
+    public void setOrganizationUnit(String organizationUnit) {
+        this.organizationUnit = organizationUnit;
+    }
+
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -229,4 +329,5 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
             ", activationKey='" + activationKey + '\'' +
             "}";
     }
+
 }

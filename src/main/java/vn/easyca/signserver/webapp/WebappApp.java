@@ -29,10 +29,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 @ComponentScan(basePackages = "vn.easyca.signserver")
-@EntityScan("vn.easyca.signserver.infrastructure.database.jpa.entity")
+@EntityScan({"vn.easyca.signserver.infrastructure.database.jpa.entity", "vn.easyca.signserver.webapp.domain"})
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-@EnableJpaRepositories(basePackages = "vn.easyca.signserver.infrastructure.database.jpa.repository")
+@EnableJpaRepositories(basePackages = {"vn.easyca.signserver.infrastructure.database.jpa.repository", "vn.easyca.signserver.webapp.repository"})
 public class WebappApp {
 
 
@@ -74,9 +74,10 @@ public class WebappApp {
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
+        init();
     }
 
-    private void init() {
+    private static void init() {
 
         // init hsm connection
         HSMConnector.HSMConnectorConfig hsmConnConfig = new HSMConnector.HSMConnectorConfig(Constants.HSMConfig.NAME,
@@ -87,7 +88,7 @@ public class WebappApp {
         HSMConnector.Init(hsmConnConfig);
 
         // init ra-service
-        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL,Constants.RAConfig.UserName,Constants.RAConfig.Password);
+        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
         CertificateRequesterImpl.init(new RAServiceFade(raConfig));
 
     }

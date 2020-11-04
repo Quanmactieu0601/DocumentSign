@@ -30,6 +30,14 @@ export class UserManagementUpdateComponent implements OnInit {
     firstName: ['', [Validators.maxLength(50)]],
     lastName: ['', [Validators.maxLength(50)]],
     email: ['', [Validators.minLength(5), Validators.maxLength(254), Validators.email]],
+    commonName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    organizationName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    organizationUnit: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    localityName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    stateName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    country: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    ownerId: ['', [Validators.maxLength(50)]],
+    phone: ['', [Validators.minLength(5), Validators.maxLength(50)]],
     activated: [],
     langKey: [],
     authorities: [],
@@ -79,6 +87,14 @@ export class UserManagementUpdateComponent implements OnInit {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
+      ownerId: user.ownerId,
+      phone: user.phone,
+      commonName: user.commonName,
+      organizationUnit: user.organizationUnit,
+      organizationName: user.organizationName,
+      localityName: user.localityName,
+      stateName: user.stateName,
+      country: user.country,
       activated: user.activated,
       langKey: user.langKey,
       authorities: user.authorities,
@@ -90,9 +106,17 @@ export class UserManagementUpdateComponent implements OnInit {
     user.firstName = this.editForm.get(['firstName'])!.value;
     user.lastName = this.editForm.get(['lastName'])!.value;
     user.email = this.editForm.get(['email'])!.value;
+    user.commonName = this.editForm.get(['commonName'])!.value;
+    user.organizationName = this.editForm.get(['organizationName'])!.value;
+    user.organizationUnit = this.editForm.get(['organizationUnit'])!.value;
+    user.localityName = this.editForm.get(['localityName'])!.value;
+    user.stateName = this.editForm.get(['stateName'])!.value;
+    user.country = this.editForm.get(['country'])!.value;
     user.activated = this.editForm.get(['activated'])!.value;
     user.langKey = this.editForm.get(['langKey'])!.value;
     user.authorities = this.editForm.get(['authorities'])!.value;
+    user.ownerId = this.editForm.get(['ownerId'])!.value;
+    user.phone = this.editForm.get(['phone'])!.value;
   }
 
   private onSaveSuccess(): void {

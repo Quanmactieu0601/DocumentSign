@@ -3,20 +3,35 @@ import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
-import { JhiEventManager } from 'ng-jhipster';
-
+import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { Form, FormBuilder } from '@angular/forms';
+import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
+import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 
 @Component({
   selector: 'jhi-user-mgmt',
   templateUrl: './user-management.component.html',
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
+  userSearch = this.fb.group({
+    account: [],
+    name: [],
+    phone: [],
+    email: [],
+    ownerId: [],
+    commonName: [],
+    country: [],
+  });
+
   currentAccount: Account | null = null;
   users: User[] | null = null;
   userListSubscription?: Subscription;
@@ -25,6 +40,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   page!: number;
   predicate!: string;
   ascending!: boolean;
+  listId: number[] = [];
 
   constructor(
     private userService: UserService,
@@ -32,12 +48,19 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private eventManager: JhiEventManager,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private certificateService: CertificateService,
+    private fb: FormBuilder,
+    private alertService: JhiAlertService,
+    private toastrService: ToastrService,
+    public translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
-    this.userListSubscription = this.eventManager.subscribe('userListModification', () => this.loadAll());
+    this.userListSubscription = this.eventManager.subscribe('userListModification', () => {
+      this.loadAll();
+    });
     this.handleNavigation();
   }
 
@@ -60,6 +83,44 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
+  viewCertificate(user: User): void {
+    const modalRef = this.modalService.open(UserManagementViewCertificateComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.user = user;
+  }
+
+  searchUser(): any {
+    const data = {
+      ...this.userSearch.value,
+      page: this.page - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+    };
+
+    if (data.account != null) {
+      data.account = data.account.trim();
+    }
+    if (data.name != null) {
+      data.name = data.name.trim();
+    }
+    if (data.email != null) {
+      data.email = data.email.trim();
+    }
+    if (data.ownerId != null) {
+      data.ownerId = data.ownerId.trim();
+    }
+    if (data.commonName != null) {
+      data.commonName = data.commonName.trim();
+    }
+    if (data.country != null) {
+      data.country = data.country.trim();
+    }
+    if (data.phone != null) {
+      data.phone = data.phone.trim();
+    }
+
+    this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
+  }
+
   transition(): void {
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute.parent,
@@ -77,7 +138,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       const sort = (params.get('sort') ?? data['defaultSort']).split(',');
       this.predicate = sort[0];
       this.ascending = sort[1] === 'asc';
-      this.loadAll();
+      this.searchUser();
     }).subscribe();
   }
 
@@ -102,5 +163,59 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   private onSuccess(users: User[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.users = users;
+  }
+
+  // check or unckeck all elements of checkbox
+  checkAll(row: any): void {
+    const elements = document.getElementsByName('checkboxElement');
+    if (row.target.checked) {
+      elements.forEach(element => {
+        element['checked'] = true;
+      });
+      // push all id to listId sent to backed
+      elements.forEach((inputRow: any) => {
+        this.listId.push(Number(inputRow.value));
+      });
+    } else {
+      elements.forEach(element => {
+        element['checked'] = false;
+      });
+      // reset list id
+      this.listId = [];
+    }
+  }
+
+  // change select event: add or remove into listId when click each checkbox element
+  changeSelect(row: any): void {
+    if (row.target.checked) {
+      this.listId.push(Number(row.target.value));
+    } else {
+      const index: number = this.listId.indexOf(Number(row.target.value));
+      if (index !== -1) {
+        this.listId.splice(index, 1);
+      }
+    }
+  }
+
+  createCSR(): void {
+    if (this.listId.length > 0) {
+      this.certificateService
+        .sendData({
+          userIds: this.listId,
+        })
+        .subscribe((response: any) => {
+          if (response.byteLength === 0) {
+            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
+          } else {
+            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
+            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+          }
+        });
+    }
+  }
+
+  //open modal
+  openModal(content: any): void {
+    this.modalService.open(content, { size: 'lg' });
   }
 }

@@ -30,4 +30,8 @@ public class DateTimeUtils {
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
         return formatter.format(date);
     }
+
+    public static String getCurrentTimeStamp() {
+        return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
 }

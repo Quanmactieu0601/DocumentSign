@@ -5,7 +5,8 @@
         "title": "Certificates",
         "createLabel": "Create a new Certificate",
         "createOrEditLabel": "Create or edit a Certificate",
-        "notFound": "No Certificates found"
+        "notFound": "No Certificates found",
+        "searchCertificates": "Search certificate"
       },
       "created": "A new Certificate is created with identifier {{ param }}",
       "updated": "A Certificate is updated with identifier {{ param }}",
@@ -13,6 +14,7 @@
       "delete": {
         "question": "Are you sure you want to delete Certificate {{ id }}?"
       },
+      "deactive": "Deactive",
       "detail": {
         "title": "Certificate"
       },
@@ -20,10 +22,14 @@
       "tokenType": "Token Type",
       "serial": "Serial",
       "ownerTaxcode": "Owner Taxcode",
+      "ownerId": "Owner Id",
       "subjectInfo": "Subject Info",
       "alias": "Alias",
-      "tokenInfo": "Token Info",
-      "rawData": "Raw Data"
+      "tokenInfoDTO": "Token Info",
+      "rawData": "Raw Data",
+      "validDate": "Valid Date",
+      "expiredDate": "Expired Date",
+      "activeStatus": "Active Status"
     }
   }
 }

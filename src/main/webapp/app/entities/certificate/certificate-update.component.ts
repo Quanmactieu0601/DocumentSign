@@ -23,7 +23,7 @@ export class CertificateUpdateComponent implements OnInit {
     ownerTaxcode: [],
     subjectInfo: [],
     alias: [],
-    tokenInfo: [],
+    tokenInfoDTO: [],
     rawData: [],
   });
 

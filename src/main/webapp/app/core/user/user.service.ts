@@ -24,6 +24,11 @@ export class UserService {
     return this.http.get<IUser>(`${this.resourceUrl}/${login}`);
   }
 
+  findByUser(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<IUser[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
+  }
+
   query(req?: Pagination): Observable<HttpResponse<IUser[]>> {
     const options = createRequestOption(req);
     return this.http.get<IUser[]>(this.resourceUrl, { params: options, observe: 'response' });

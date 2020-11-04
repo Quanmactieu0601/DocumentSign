@@ -18,6 +18,15 @@
     "firstName": "Tên",
     "lastName": "Họ",
     "email": "Email",
+    "ownerId": "ID Chủ sở hữu",
+    "phone": "Số điện thoại",
+    "password": "Mật Khẩu",
+    "commonName": "Tên Chung",
+    "organizationName": "Tên Tổ Chức",
+    "organizationUnit": "Đơn Vị",
+    "localityName": "Tên Địa Điểm",
+    "stateName": "Tên Khu Vực",
+    "country": "Quốc Gia",
     "activated": "Kích hoạt",
     "deactivated": "Khóa",
     "profiles": "Các quyền",
@@ -25,6 +34,16 @@
     "createdBy": "Người tạo",
     "createdDate": "Ngày tạo",
     "lastModifiedBy": "Người sửa",
-    "lastModifiedDate": "Ngày sửa"
+    "lastModifiedDate": "Ngày sửa",
+    "alert": {
+      "success": {
+        "csrExported": "Tạo tệp CSR thành công",
+        "uploaded": "Tải lên tệp người dùng thành công"
+      },
+      "fail": {
+        "csrExported": "Tạo tệp CSR thất bại",
+        "uploaded": "Tải lên tệp người dùng thất bại"
+      }
+    }
   }
 }
