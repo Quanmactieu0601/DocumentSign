@@ -48,7 +48,7 @@ public class UserJWTController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("authorize successfully");
+        transactionDTO.setMessage("Authorize Successfully");
         transactionService.save(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }

@@ -214,7 +214,7 @@ public class UserResource {
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/{login:" + Constants.LOGIN_REGEX + "}", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/delete", TransactionType.SYSTEM);
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");
