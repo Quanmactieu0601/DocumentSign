@@ -115,7 +115,7 @@ public class SignController {
             final String templatePath = System.getProperty("user.dir") + "/src/main/resources/templates/signature/signature.html";
             String htmlContent = FileOIHelper.readFile(templatePath);
 
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/dd HH:mm:ss Z", Locale.getDefault());
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss Z", Locale.getDefault());
             Calendar cal = Calendar.getInstance();
 
             htmlContent = htmlContent.replaceFirst("signer", signer)
