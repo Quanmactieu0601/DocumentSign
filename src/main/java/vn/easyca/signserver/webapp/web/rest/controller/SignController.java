@@ -130,7 +130,7 @@ public class SignController {
             BufferedImage originalImage = imageGenerator.getBufferedImage();
             ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
 
-            ImageIO.write(originalImage, "jpg", imageBytes);
+            ImageIO.write(originalImage, "png", imageBytes);
             imageBytes.flush();
 
             byte[] imageContentByte = imageBytes.toByteArray();
