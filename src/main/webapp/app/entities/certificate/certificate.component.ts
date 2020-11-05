@@ -135,15 +135,18 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   searchCertificate(): any {
     const data = {
-      alias: this.certificateSearch.get(['alias'])?.value,
-      ownerId: this.certificateSearch.get(['ownerId'])?.value,
-      serial: this.certificateSearch.get(['serial'])?.value,
-      validDate: this.certificateSearch.get(['validDate'])?.value,
-      expiredDate: this.certificateSearch.get(['expiredDate'])?.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
+      ...this.certificateSearch.value,
     };
+
+    data.alias = data.alias ? data.alias.trim() : null;
+    data.ownerId = data.ownerId ? data.ownerId.trim() : null;
+    data.serial = data.serial ? data.serial.trim() : null;
+    data.validDate = data.validDate ? data.validDate.trim() : null;
+    data.expiredDate = data.expiredDate ? data.expiredDate.trim() : null;
+
     this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, this.page, false));
   }
 }

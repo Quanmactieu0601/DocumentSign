@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
-import { Form, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -100,6 +100,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (data.account != null) {
       data.account = data.account.trim();
     }
+
     if (data.name != null) {
       data.name = data.name.trim();
     }
@@ -215,7 +216,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
-  //open modal
+  // open modal
   openModal(content: any): void {
     this.modalRef = this.modalService.open(content, { size: 'lg' });
   }
