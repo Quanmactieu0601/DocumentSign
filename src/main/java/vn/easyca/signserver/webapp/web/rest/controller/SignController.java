@@ -41,9 +41,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Base64;
-import java.util.Dictionary;
-import java.util.Hashtable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
 @RestController
@@ -107,21 +107,25 @@ public class SignController {
         }
     }
 
-    @PostMapping(path = "/signatureImage")
-    public ResponseEntity<Resource> signImage(@RequestParam(required = false, name = "signer") String signer, @RequestParam(required = false, name = "emailAddress") String emailAddress, @RequestParam(required = false, name = "organization") String organization, @RequestParam(required = false, name = "timeSign") String timeSign) {
+    @PostMapping(path = "/getImage")
+    public ResponseEntity<Resource> getImage(@RequestParam(required = false, name = "signer") String signer, @RequestParam(required = false, name = "emailAddress") String emailAddress, @RequestParam(required = false, name = "organization") String organization) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
             HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
             final String templatePath = System.getProperty("user.dir") + "/src/main/resources/templates/signature/signature.html";
             String htmlContent = FileOIHelper.readFile(templatePath);
+
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/dd HH:mm:ss Z", Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+
             htmlContent = htmlContent.replaceFirst("signer", signer)
                 .replaceFirst("emailAddress", emailAddress)
                 .replaceFirst("organization", organization)
                 .replaceFirst("emailAddress", emailAddress)
-                .replaceFirst("timeSign", timeSign);
+                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
 
             imageGenerator.loadHtml(htmlContent);
-            imageGenerator.saveAsImage("D:\\hello-world.png");
+//            imageGenerator.saveAsImage("D:\\hello-world.png");
             // convert Image to byte
             BufferedImage originalImage = imageGenerator.getBufferedImage();
             ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
