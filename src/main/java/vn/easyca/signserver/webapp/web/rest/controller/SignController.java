@@ -108,9 +108,10 @@ public class SignController {
     }
 
     @PostMapping(path = "/getImage")
-    public ResponseEntity<Resource> getImage(@RequestParam(required = false, name = "signer") String signer, @RequestParam(required = false, name = "emailAddress") String emailAddress, @RequestParam(required = false, name = "organization") String organization) {
+    public byte[] getImage(@RequestParam(required = false, name = "serial") String serial) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
+
             HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
             final String templatePath = System.getProperty("user.dir") + "/src/main/resources/templates/signature/signature.html";
             String htmlContent = FileOIHelper.readFile(templatePath);
@@ -118,6 +119,9 @@ public class SignController {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
             Calendar cal = Calendar.getInstance();
 
+            String signer = "Pham Thanh Tung";
+            String emailAddress = "Dong Anh, Ha Noi";
+            String organization = "CTY CP SOFTDREAMS- ME TRI, HA NOI";
             htmlContent = htmlContent.replaceFirst("signer", signer)
                 .replaceFirst("emailAddress", emailAddress)
                 .replaceFirst("organization", organization)
@@ -136,11 +140,12 @@ public class SignController {
             byte[] imageContentByte = imageBytes.toByteArray();
             imageBytes.close();
 
-            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(imageContentByte));
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .body(file);
+//            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(imageContentByte));
+//            return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+//                .body(file);
+            return imageContentByte;
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
