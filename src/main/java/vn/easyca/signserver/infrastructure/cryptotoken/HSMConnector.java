@@ -64,7 +64,7 @@ public class HSMConnector implements CryptoTokenConnector {
         if (config.getSlot() != null)
             cryptoTokenConfig.withSlot(config.getSlot());
         if (config.getAttr() != null)
-            cryptoTokenConfig.withSlot(config.getAttr());
+            cryptoTokenConfig.withAttributes(config.getAttr());
         P11CryptoToken p11CryptoToken = new P11CryptoToken();
         try {
             p11CryptoToken.init(cryptoTokenConfig);

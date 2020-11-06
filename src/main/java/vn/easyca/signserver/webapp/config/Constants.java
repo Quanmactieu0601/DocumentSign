@@ -35,10 +35,13 @@ public final class Constants {
 //        public static final String SLOT = "761406615";
 //        public static final String ATTRIBUTES = "compatibility";
 //
-        public static final String NAME = "ND1_HSM2";
+//        public static final String NAME = "ND1_HSM2";
+        public static final String NAME = "ND1";
         public static final String LIB = "/opt/safenet/protecttoolkit5/ptk/lib/libcryptoki.so";
-        public static final String PIN = "Hanoi@202o";
-        public static final String SLOT = "1"; //614352
+//        public static final String PIN = "Hanoi@202o";
+//        public static final String SLOT = "1"; //614352
+        public static final String PIN = "ND!202o";
+        public static final String SLOT = "0"; //614352
         public static final String ATTRIBUTES = "compatibility";
     }
 
