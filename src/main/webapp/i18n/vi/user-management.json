@@ -37,10 +37,12 @@
     "lastModifiedDate": "Ngày sửa",
     "alert": {
       "success": {
-        "csrExported": "Tạo tệp CSR thành công"
+        "csrExported": "Tạo tệp CSR thành công",
+        "uploaded": "Tải lên tệp người dùng thành công"
       },
       "fail": {
-        "csrExported": "Tạo tệp CSR thất bại"
+        "csrExported": "Tạo tệp CSR thất bại",
+        "uploaded": "Tải lên tệp người dùng thất bại"
       }
     }
   }

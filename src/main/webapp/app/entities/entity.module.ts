@@ -8,6 +8,10 @@ import { RouterModule } from '@angular/router';
         path: 'certificate',
         loadChildren: () => import('./certificate/certificate.module').then(m => m.WebappCertificateModule),
       },
+      {
+        path: 'transaction',
+        loadChildren: () => import('./transaction/transaction.module').then(m => m.WebappTransactionModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

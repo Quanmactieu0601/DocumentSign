@@ -3,6 +3,8 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { UserService } from 'app/core/user/user.service';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'jhi-upload-files',
   templateUrl: './upload-files.component.html',
@@ -15,7 +17,7 @@ export class UploadFilesComponent implements OnInit {
   message = '';
 
   fileInfos: Observable<any> = new Observable<any>();
-  constructor(private certificateService: CertificateService) {}
+  constructor(private certificateService: CertificateService, private toastService: ToastrService, private translate: TranslateService) {}
 
   ngOnInit(): void {}
   selectFile(event: any): void {
@@ -25,12 +27,16 @@ export class UploadFilesComponent implements OnInit {
     this.progress = 0;
 
     this.currentFile = this.selectedFiles.item(0);
+
     this.certificateService.upload(this.currentFile).subscribe((res: any) => {
       if (res.type === HttpEventType.UploadProgress) {
         this.progress = Math.round((100 * res.loaded) / res.total);
       } else if (res instanceof HttpResponse) {
-        this.message = res.body.message;
-        this.fileInfos = this.certificateService.getFiles();
+        if (res.body.status === 200) {
+          this.toastService.success(this.translate.instant('userManagement.alert.success.uploaded'));
+        } else if (res.body.status === 417) {
+          this.toastService.error(this.translate.instant('userManagement.alert.fail.uploaded'));
+        }
       }
     });
     this.selectedFiles = [];

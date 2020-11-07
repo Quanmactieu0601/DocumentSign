@@ -37,10 +37,12 @@
     "lastModifiedDate": "Modified date",
     "alert": {
       "success": {
-        "csrExported": "Export CSR successfully"
+        "csrExported": "Export CSR successfully",
+        "uploaded": "Upload User file successfully"
       },
       "fail": {
-        "csrExported": "Export CSR failure"
+        "csrExported": "Export CSR failure",
+        "uploaded": "Upload User file failure"
       }
     }
   }
