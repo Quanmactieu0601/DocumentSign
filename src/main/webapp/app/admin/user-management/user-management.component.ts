@@ -42,7 +42,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   listId: number[] = [];
 
-  modalRef: NgbModalRef | undefined;
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -209,21 +208,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           if (response.byteLength === 0) {
             this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
           } else {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
+            this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
             saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
           }
         });
-    }
-  }
-
-  // open modal
-  openModal(content: any): void {
-    this.modalRef = this.modalService.open(content, { size: 'lg' });
-  }
-
-  isUploadedSucessfully(agreed: boolean): void {
-    if (agreed) {
-      this.modalRef?.close();
     }
   }
 }

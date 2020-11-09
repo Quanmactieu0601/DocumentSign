@@ -3,7 +3,7 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ICertificate } from 'app/shared/model/certificate.model';
 
@@ -25,6 +25,8 @@ export class CertificateComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+
+  modalRef: NgbModalRef | undefined;
 
   certificateSearch = this.fb.group({
     alias: [],
@@ -150,5 +152,15 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
     const pageToLoad: number = page || this.page || 1;
     this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
+  }
+  // open modal
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'lg' });
+  }
+
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+    }
   }
 }

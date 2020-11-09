@@ -1,15 +1,16 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+
 @Component({
-  selector: 'jhi-upload-files',
-  templateUrl: './upload-files.component.html',
-  styleUrls: ['./upload-files.component.scss'],
+  selector: 'jhi-upload-certificate',
+  templateUrl: './upload-certificate.component.html',
+  styleUrls: ['./upload-certificate.component.scss'],
 })
-export class UploadFilesComponent implements OnInit {
+export class UploadCertificateComponent implements OnInit {
   @Output() isUploadedSucessfully = new EventEmitter<boolean>();
   selectedFiles: any;
   currentFile: any;
