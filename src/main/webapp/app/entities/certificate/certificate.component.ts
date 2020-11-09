@@ -45,16 +45,17 @@ export class CertificateComponent implements OnInit, OnDestroy {
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
 
-    this.certificateService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.certificateService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
+    this.searchCertificate(page);
   }
 
   ngOnInit(): void {
@@ -62,7 +63,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.registerChangeInCertificates();
   }
 
-  protected handleNavigation(): void {
+  handleNavigation(): void {
     combineLatest(this.activatedRoute.data, this.activatedRoute.queryParamMap, (data: Data, params: ParamMap) => {
       const page = params.get('page');
       const pageNumber = page !== null ? +page : 1;
@@ -133,7 +134,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.ngbPaginationPage = this.page ?? 1;
   }
 
-  searchCertificate(): any {
+  searchCertificate(page?: number): any {
     const data = {
       page: this.page - 1,
       size: this.itemsPerPage,
@@ -147,6 +148,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     data.validDate = data.validDate ? data.validDate.trim() : null;
     data.expiredDate = data.expiredDate ? data.expiredDate.trim() : null;
 
-    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, this.page, false));
+    const pageToLoad: number = page || this.page || 1;
+    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
 }
