@@ -71,11 +71,11 @@
     <h2>
         <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
         <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="createCSR()" [disabled]="this.listId.length == 0">
-            <fa-icon icon="plus"></fa-icon>
+            <fa-icon icon="file-excel"></fa-icon>
             Xuất Excel CSR
         </button>
         <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
-            <fa-icon icon="plus"></fa-icon>
+            <fa-icon icon="upload"></fa-icon>
             Upload tệp CER
         </button>
         <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">
