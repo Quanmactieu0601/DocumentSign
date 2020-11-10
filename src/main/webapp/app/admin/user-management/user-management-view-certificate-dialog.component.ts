@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { User } from 'app/core/user/user.model';
+import { ICertificate } from 'app/shared/model/certificate.model';
 import { JhiEventManager } from 'ng-jhipster';
 import { CertificateService } from '../../entities/certificate/certificate.service';
 
@@ -13,7 +14,7 @@ import { CertificateService } from '../../entities/certificate/certificate.servi
 })
 export class UserManagementViewCertificateComponent implements OnInit {
   user?: User;
-  certificateList: any;
+  certificateList?: ICertificate[];
   constructor(private activeModal: NgbActiveModal, private eventManager: JhiEventManager, private certificateService: CertificateService) {}
   ngOnInit(): void {
     this.getCertificateByCurrentUser();

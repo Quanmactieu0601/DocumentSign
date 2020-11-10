@@ -16,7 +16,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+
+import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
 
 /**
  * Service Implementation for managing {@link Transaction}.
@@ -42,6 +49,8 @@ public class TransactionServiceImpl implements TransactionService {
      * @param transactionDTO the entity to save.
      * @return the persisted entity.
      */
+
+
     @Override
     public TransactionDTO save(TransactionDTO transactionDTO) {
         log.debug("Request to save Transaction : {}", transactionDTO);
@@ -93,4 +102,12 @@ public class TransactionServiceImpl implements TransactionService {
         transactionRepository.deleteById(id);
     }
 
+    /**
+     * get all transaction between startDate and endDate
+     */
+    @Override
+    public List<TransactionDTO> findTransactionType(String startDate, String endDate, String type) {
+        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToInstant(startDate), convertToInstant(endDate), type);
+        return transactionMapper.toDto(listTransaction);
+    }
 }
