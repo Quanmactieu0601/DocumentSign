@@ -137,8 +137,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
 
   searchCertificate(page?: number): any {
+    const pageToLoad: number = page || this.page || 1;
+
     const data = {
-      page: this.page - 1,
+      page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
       ...this.certificateSearch.value,
@@ -150,7 +152,6 @@ export class CertificateComponent implements OnInit, OnDestroy {
     data.validDate = data.validDate ? data.validDate.trim() : null;
     data.expiredDate = data.expiredDate ? data.expiredDate.trim() : null;
 
-    const pageToLoad: number = page || this.page || 1;
     this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
   // open modal
@@ -161,6 +162,21 @@ export class CertificateComponent implements OnInit, OnDestroy {
   isUploadedSucessfully(agreed: boolean): void {
     if (agreed) {
       this.modalRef?.close();
+      this.loadLastestRecord();
     }
+  }
+  loadLastestRecord(): void {
+    const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
+
+    this.certificateService
+      .query({
+        page: lastPage - 1,
+        size: this.itemsPerPage,
+        sort: this.sort(),
+      })
+      .subscribe(
+        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, lastPage, false),
+        () => this.onError()
+      );
   }
 }
