@@ -1,9 +1,11 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
 import gui.ava.html.image.generator.HtmlImageGenerator;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -34,10 +36,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.ImageView;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -148,27 +147,23 @@ public class SignController {
 
     @PostMapping(path = "/getImage")
     public byte[] getImage(@RequestParam(required = false, name = "serial") String serial) {
-        String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
-
+            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
             HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-            final String templatePath = System.getProperty("user.dir") + "/src/main/resources/templates/signature/signature.html";
-            String htmlContent = FileOIHelper.readFile(templatePath);
+            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
             Calendar cal = Calendar.getInstance();
 
-            String signer = "Pham Thanh Tung";
-            String emailAddress = "Dong Anh, Ha Noi";
-            String organization = "CTY CP SOFTDREAMS- ME TRI, HA NOI";
+            String signer = "BV Nhi Đồng 1";
+            String address = "Quận 10, Thành phố Hồ Chí Minh";
+            String organization = "BV Nhi Đồng 1";
             htmlContent = htmlContent.replaceFirst("signer", signer)
-                .replaceFirst("emailAddress", emailAddress)
+                .replaceFirst("address", address)
                 .replaceFirst("organization", organization)
-                .replaceFirst("emailAddress", emailAddress)
                 .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
 
             imageGenerator.loadHtml(htmlContent);
-//            imageGenerator.saveAsImage("D:\\hello-world.png");
             // convert Image to byte
             BufferedImage originalImage = imageGenerator.getBufferedImage();
             ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
@@ -178,12 +173,6 @@ public class SignController {
 
             byte[] imageContentByte = imageBytes.toByteArray();
             imageBytes.close();
-
-//            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(imageContentByte));
-//            return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-//                .body(file);
             return imageContentByte;
         } catch (Exception e) {
             log.error(e.getMessage());
