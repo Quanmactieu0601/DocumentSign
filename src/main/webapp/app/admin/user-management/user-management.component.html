@@ -68,28 +68,35 @@
   </div>
 </div>
 <div>
-    <h2>
-        <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
-        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="createCSR()" [disabled]="this.listId.length == 0">
-            <fa-icon icon="plus"></fa-icon>
-            Xuất Excel CSR
-        </button>
-        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
-            <fa-icon icon="plus"></fa-icon>
-            Upload tệp CER
-        </button>
-        <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
-        </button>
+  <h2>
+    <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
+    <button
+      type="submit"
+      class="btn btn-primary float-right jh-create-entity mr-2"
+      (click)="createCSR()"
+      [disabled]="this.listId.length == 0"
+    >
+      <fa-icon icon="plus"></fa-icon>
+      Xuất Excel CSR
+    </button>
+    <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
+      <fa-icon icon="plus"></fa-icon>
+      Upload tệp CER
+    </button>
+    <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">
+      <fa-icon icon="plus"></fa-icon>
+      <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
+    </button>
+  </h2>
 
-    </h2>
+  <!-- <jhi-alert-error></jhi-alert-error>
 
-  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert> -->
 
-  <jhi-alert></jhi-alert>
-
-  <div class="table-responsive" *ngIf="users">
+  <div class="alert alert-warning" id="no-result" *ngIf="users?.length === 0">
+    <span jhiTranslate="webappApp.certificate.home.notFound">No User found</span>
+  </div>
+  <div class="table-responsive" *ngIf="users && users.length > 0">
     <table class="table table-striped" aria-describedby="user-management-page-heading">
       <thead>
         <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="transition.bind(this)">
@@ -264,20 +271,20 @@
 </div>
 <!-- Modal Upload User Excel File -->
 <ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">
-    <div class="modal-header">
-        <h5 class="modal-title text-uppercase">Upload User</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
-            <span aria-hidden="true">&times;</span>
-        </button>
+  <div class="modal-header">
+    <h5 class="modal-title text-uppercase">Upload User</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group col-md-12">
+      <jhi-upload-files></jhi-upload-files>
     </div>
-    <div class="modal-body">
-        <div class="form-group col-md-12">
-            <jhi-upload-files></jhi-upload-files>
-        </div>
+  </div>
+  <div class="modal-footer">
+    <div class="group-btn">
+      <button type="button" class="btn btn-sm" (click)="d('Close')">Hủy</button>
     </div>
-    <div class="modal-footer">
-        <div class="group-btn">
-            <button type="button" class="btn btn-sm" (click)="d('Close')">Hủy</button>
-        </div>
-    </div>
+  </div>
 </ng-template>
