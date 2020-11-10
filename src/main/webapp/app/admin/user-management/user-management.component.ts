@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
-import { Form, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -99,6 +99,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (data.account != null) {
       data.account = data.account.trim();
     }
+
     if (data.name != null) {
       data.name = data.name.trim();
     }
@@ -207,15 +208,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           if (response.byteLength === 0) {
             this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
           } else {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
+            this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
             saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
           }
         });
     }
-  }
-
-  //open modal
-  openModal(content: any): void {
-    this.modalService.open(content, { size: 'lg' });
   }
 }

@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserService } from 'app/core/user/user.service';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+
 @Component({
-  selector: 'jhi-upload-files',
-  templateUrl: './upload-files.component.html',
-  styleUrls: ['./upload-files.component.scss'],
+  selector: 'jhi-upload-certificate',
+  templateUrl: './upload-certificate.component.html',
+  styleUrls: ['./upload-certificate.component.scss'],
 })
-export class UploadFilesComponent implements OnInit {
+export class UploadCertificateComponent implements OnInit {
+  @Output() isUploadedSucessfully = new EventEmitter<boolean>();
   selectedFiles: any;
   currentFile: any;
   progress = 0;
@@ -34,11 +35,17 @@ export class UploadFilesComponent implements OnInit {
       } else if (res instanceof HttpResponse) {
         if (res.body.status === 200) {
           this.toastService.success(this.translate.instant('userManagement.alert.success.uploaded'));
+          this.transformVariable(true);
         } else if (res.body.status === 417) {
           this.toastService.error(this.translate.instant('userManagement.alert.fail.uploaded'));
+          this.transformVariable(false);
         }
       }
     });
     this.selectedFiles = [];
+  }
+
+  transformVariable(agreed: boolean): void {
+    this.isUploadedSucessfully.emit(agreed);
   }
 }
