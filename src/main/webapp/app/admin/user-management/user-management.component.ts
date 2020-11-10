@@ -16,6 +16,7 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -96,6 +97,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       sort: this.sort(),
     };
 
+    // const jsonData = JSON.stringify(data);
+    // for (let i = 0; i < jsonData.length; i++){
+    //   if (jsonData[i] != null) {
+    //     jsonData[i] === jsonData[i].trim();
+    //     }
+    // }
+
     if (data.account != null) {
       data.account = data.account.trim();
     }
@@ -119,6 +127,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       data.phone = data.phone.trim();
     }
 
+    // console.error(jsonData);
+    // console.error(data);
     this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
   }
 
