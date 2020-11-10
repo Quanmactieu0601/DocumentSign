@@ -7,7 +7,7 @@ public class CsrsGeneratorVM {
     private int keyLen;
 
     public int getKeyLen() {
-        return keyLen == 0 ? 1024 : keyLen;
+        return keyLen == 0 ? 2048 : keyLen;
     }
 
     public void setKeyLen(int keyLen) {

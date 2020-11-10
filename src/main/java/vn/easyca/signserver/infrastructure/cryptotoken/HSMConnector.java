@@ -5,6 +5,7 @@ import vn.easyca.signserver.core.interfaces.CryptoTokenConnector;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.P11ProtectServerCryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
 
 @Component
@@ -65,7 +66,9 @@ public class HSMConnector implements CryptoTokenConnector {
             cryptoTokenConfig.withSlot(config.getSlot());
         if (config.getAttr() != null)
             cryptoTokenConfig.withAttributes(config.getAttr());
-        P11CryptoToken p11CryptoToken = new P11CryptoToken();
+
+        // TODO: tam thoi resolve bang tay
+        P11ProtectServerCryptoToken p11CryptoToken = new P11ProtectServerCryptoToken();
         try {
             p11CryptoToken.init(cryptoTokenConfig);
         } catch (InitCryptoTokenException e) {

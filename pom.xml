@@ -105,6 +105,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.safenet</groupId>
+            <artifactId>protect-server</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>io.github.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
         </dependency>
