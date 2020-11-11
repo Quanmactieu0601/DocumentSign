@@ -1,0 +1,57 @@
+<form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="col control-label no-padding-left">Ngày bắt đầu </label>
+                <input type="date" class="form-control" name="startDate" formControlName="startDate"/>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="col control-label no-padding-left">Ngày kết thúc </label>
+                <input type="date" class="form-control" name="endDate" formControlName="endDate"/>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="cars">Kiểu</label>
+                <select class="form-control" name="cars" id="cars" formControlName="type">
+                    <option value="SYSTEM">SYSTEM</option>
+                    <option value="SIGNING">SIGNING</option>
+                    <option value="IMPORT_CERT">IMPORT_CERT</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-md-2  ">
+            <div class="form-group">
+                <label class="form-control-label"></label>
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary">
+                        <fa-icon icon="search"></fa-icon>
+                        Search
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="charts">
+        <div>
+            <div class="chart">
+                <canvas baseChart class="chartsize"
+                        [data]="pieChartData"
+                        [labels]="pieChartLabels"
+                        [chartType]="pieChartType"
+                        [options]="pieChartOptions"
+                        [plugins]="pieChartPlugins"
+                        [colors]="pieChartColors"
+                        [legend]="pieChartLegend">
+                </canvas>
+            </div>
+        </div>
+    </div>
+</form>
