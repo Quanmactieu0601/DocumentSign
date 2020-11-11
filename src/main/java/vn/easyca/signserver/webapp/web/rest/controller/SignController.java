@@ -1,8 +1,13 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import gui.ava.html.image.generator.HtmlImageGenerator;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +20,32 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.FileOIHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.ImageView;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
 @RestController
@@ -121,4 +146,40 @@ public class SignController {
         }
     }
 
+    @PostMapping(path = "/getImage")
+    public byte[] getImage(@RequestParam(required = false, name = "serial") String serial) {
+        try {
+            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
+            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
+            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+
+            String signer = "BV Nhi Đồng 1";
+            String address = "Quận 10, Thành phố Hồ Chí Minh";
+            String organization = "BV Nhi Đồng 1";
+            htmlContent = htmlContent.replaceFirst("signer", signer)
+                .replaceFirst("address", address)
+                .replaceFirst("organization", organization)
+                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+
+            imageGenerator.loadHtml(htmlContent);
+            // convert Image to byte
+            BufferedImage originalImage = imageGenerator.getBufferedImage();
+            ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
+
+            ImageIO.write(originalImage, "png", imageBytes);
+            imageBytes.flush();
+
+            byte[] imageContentByte = imageBytes.toByteArray();
+            imageBytes.close();
+            return imageContentByte;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
 }
+
+

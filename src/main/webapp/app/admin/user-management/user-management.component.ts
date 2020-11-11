@@ -1,10 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpResponse, HttpHeaders } from '@angular/common/http';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
-import { Form, FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
@@ -16,6 +16,7 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -96,9 +97,17 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       sort: this.sort(),
     };
 
+    // const jsonData = JSON.stringify(data);
+    // for (let i = 0; i < jsonData.length; i++){
+    //   if (jsonData[i] != null) {
+    //     jsonData[i] === jsonData[i].trim();
+    //     }
+    // }
+
     if (data.account != null) {
       data.account = data.account.trim();
     }
+
     if (data.name != null) {
       data.name = data.name.trim();
     }
@@ -118,6 +127,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       data.phone = data.phone.trim();
     }
 
+    // console.error(jsonData);
+    // console.error(data);
     this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
   }
 
@@ -207,15 +218,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           if (response.byteLength === 0) {
             this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
           } else {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.success.csrExported'));
+            this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
             saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
           }
         });
     }
-  }
-
-  //open modal
-  openModal(content: any): void {
-    this.modalService.open(content, { size: 'lg' });
   }
 }

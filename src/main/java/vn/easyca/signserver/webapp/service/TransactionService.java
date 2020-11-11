@@ -1,12 +1,11 @@
 package vn.easyca.signserver.webapp.service;
 
-import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -42,4 +41,12 @@ public interface TransactionService {
 
      Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code,
                                       String message, String data, String type);
+
+
+    /**
+     * get total request transaction success and fail .
+     *
+     * @param startDate , enddate ,ttype
+     */
+    List<TransactionDTO> findTransactionType(String startDate, String endDate, String type);
 }

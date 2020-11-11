@@ -52,7 +52,13 @@ public class ExcelUtils {
             Row row = sheet.getRow(i);
             if (row != null) {
                 dto = new CertDTO();
-                dto.setOwnerId(row.getCell(1).getStringCellValue());
+                if (row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING) {
+                    dto.setOwnerId(row.getCell(1).getStringCellValue());
+                }
+                if (row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                    dto.setOwnerId(String.valueOf(row.getCell(1).getNumericCellValue()));
+                }
+
                 dto.setSerial(row.getCell(2).getStringCellValue());
                 dto.setCert(row.getCell(3).getStringCellValue());
                 dtos.add(dto);

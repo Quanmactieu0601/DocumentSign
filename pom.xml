@@ -11,6 +11,10 @@
 
     <repositories>
         <!-- jhipster-needle-maven-repository -->
+<!--        <repository>-->
+<!--            <id>jitpack.io</id>-->
+<!--            <url>https://jitpack.io</url>-->
+<!--        </repository>-->
     </repositories>
 
     <pluginRepositories>
@@ -104,6 +108,7 @@
     </dependencyManagement>
 
     <dependencies>
+
         <dependency>
             <groupId>io.github.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
@@ -396,6 +401,11 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>3.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xuwei-k</groupId>
+            <artifactId>html2image</artifactId>
+            <version>0.1.0</version>
         </dependency>
     </dependencies>
 

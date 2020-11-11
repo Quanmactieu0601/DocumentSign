@@ -10,14 +10,16 @@
     </div>
 </div>
 
-<label class="btn btn-default">
-    <input type="file" (change)="selectFile($event)" />
+<label class="btn btn-default lblUpload">
+    <input type="file" (change)="selectFile($event)" (click)="onInputClick($event)" class="inputFile" />
 </label>
 
-<button class="btn btn-success" [disabled]="!selectedFiles" (click)="upload()">
-    Upload
+<button class="btn btn-success" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">
+        Upload
 </button>
 
-<div class="alert alert-light" role="alert">{{ message }}</div>
+
+
+
 
 

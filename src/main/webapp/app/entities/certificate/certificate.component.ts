@@ -3,7 +3,7 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ICertificate } from 'app/shared/model/certificate.model';
 
@@ -15,6 +15,7 @@ import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'jhi-certificate',
   templateUrl: './certificate.component.html',
+  styleUrls: ['./certificate.component.scss'],
 })
 export class CertificateComponent implements OnInit, OnDestroy {
   certificates?: ICertificate[];
@@ -25,6 +26,8 @@ export class CertificateComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+
+  modalRef: NgbModalRef | undefined;
 
   certificateSearch = this.fb.group({
     alias: [],
@@ -45,16 +48,17 @@ export class CertificateComponent implements OnInit, OnDestroy {
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
 
-    this.certificateService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.certificateService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
+    this.searchCertificate(page);
   }
 
   ngOnInit(): void {
@@ -62,7 +66,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.registerChangeInCertificates();
   }
 
-  protected handleNavigation(): void {
+  handleNavigation(): void {
     combineLatest(this.activatedRoute.data, this.activatedRoute.queryParamMap, (data: Data, params: ParamMap) => {
       const page = params.get('page');
       const pageNumber = page !== null ? +page : 1;
@@ -133,17 +137,47 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.ngbPaginationPage = this.page ?? 1;
   }
 
-  searchCertificate(): any {
+  searchCertificate(page?: number): any {
+    const pageToLoad: number = page || this.page || 1;
+
     const data = {
-      alias: this.certificateSearch.get(['alias'])?.value,
-      ownerId: this.certificateSearch.get(['ownerId'])?.value,
-      serial: this.certificateSearch.get(['serial'])?.value,
-      validDate: this.certificateSearch.get(['validDate'])?.value,
-      expiredDate: this.certificateSearch.get(['expiredDate'])?.value,
-      page: this.page - 1,
+      page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
+      ...this.certificateSearch.value,
     };
-    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, this.page, false));
+
+    data.alias = data.alias ? data.alias.trim() : null;
+    data.ownerId = data.ownerId ? data.ownerId.trim() : null;
+    data.serial = data.serial ? data.serial.trim() : null;
+    data.validDate = data.validDate ? data.validDate.trim() : null;
+    data.expiredDate = data.expiredDate ? data.expiredDate.trim() : null;
+
+    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
+  }
+  // open modal
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'md' });
+  }
+
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+      this.loadLastestRecord();
+    }
+  }
+  loadLastestRecord(): void {
+    const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
+
+    this.certificateService
+      .query({
+        page: lastPage - 1,
+        size: this.itemsPerPage,
+        sort: this.sort(),
+      })
+      .subscribe(
+        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, lastPage, false),
+        () => this.onError()
+      );
   }
 }

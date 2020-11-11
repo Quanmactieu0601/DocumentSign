@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ICertificate } from 'app/shared/model/certificate.model';
-import { IUser } from 'app/core/user/user.model';
 
 type EntityResponseType = HttpResponse<ICertificate>;
 type EntityArrayResponseType = HttpResponse<ICertificate[]>;

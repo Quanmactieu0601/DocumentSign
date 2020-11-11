@@ -36,9 +36,14 @@ export class TransactionService {
       .get<ITransaction>(`${this.resourceUrl}/${id}`, { observe: 'response' })
       .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
   }
+
   findByTransaction(req?: any): Observable<any> {
     const options = createRequestOption(req);
     return this.http.get<any>(this.resourceUrl + '/search', { params: options, observe: 'response' });
+  }
+
+  queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl + '/report'}/${startDate}/${endDate}/${type}`, { observe: 'response' });
   }
 
   query(req?: any): Observable<EntityArrayResponseType> {
