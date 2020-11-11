@@ -57,6 +57,12 @@
                         </a>
                     </li>
                     <li>
+                        <a class="dropdown-item" routerLink="certificate" routerLinkActive="active" (click)="collapseNavbar()">
+                            <fa-icon icon="asterisk" [fixedWidth]="true"></fa-icon>
+                            <span jhiTranslate="global.menu.entities.certificate">Certificate</span>
+                        </a>
+                    </li>
+                    <li>
                         <a class="dropdown-item" routerLink="admin/metrics" routerLinkActive="active" (click)="collapseNavbar()">
                             <fa-icon icon="tachometer-alt" [fixedWidth]="true"></fa-icon>
                             <span jhiTranslate="global.menu.admin.metrics">Metrics</span>
@@ -162,3 +168,5 @@
         </ul>
     </div>
 </nav>
+
+

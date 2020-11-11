@@ -81,6 +81,5 @@ public class SignatureVerificationController {
             transactionDTO.setMessage(message);
             transactionService.save(transactionDTO);
         }
-
     }
 }

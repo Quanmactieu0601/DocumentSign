@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
+import vn.easyca.signserver.webapp.repository.impl.TransactionRepositoryImpl;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.repository.TransactionRepository;
@@ -13,7 +15,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+
+import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
 
 /**
  * Service Implementation for managing {@link Transaction}.
@@ -39,6 +49,8 @@ public class TransactionServiceImpl implements TransactionService {
      * @param transactionDTO the entity to save.
      * @return the persisted entity.
      */
+
+
     @Override
     public TransactionDTO save(TransactionDTO transactionDTO) {
         log.debug("Request to save Transaction : {}", transactionDTO);
@@ -60,8 +72,6 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findAll(pageable)
             .map(transactionMapper::toDto);
     }
-
-
     /**
      * Get one transaction by id.
      *
@@ -75,15 +85,29 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(id)
             .map(transactionMapper::toDto);
     }
-
+    @Override
+    @Transactional(readOnly = true)
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime,code, message, data, type);
+        return page.map(TransactionDTO::new);
+    }
     /**
      * Delete the transaction by id.
      *
      * @param id the id of the entity.
      */
     @Override
-    public void delete(Long id) {
+    public void delete( Long id) {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
+    }
+
+    /**
+     * get all transaction between startDate and endDate
+     */
+    @Override
+    public List<TransactionDTO> findTransactionType(String startDate, String endDate, String type) {
+        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToInstant(startDate), convertToInstant(endDate), type);
+        return transactionMapper.toDto(listTransaction);
     }
 }

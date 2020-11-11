@@ -1,5 +1,11 @@
 package vn.easyca.signserver.infrastructure.database.jpa.repository;
 
+import ch.qos.logback.classic.db.SQLBuilder;
+import com.google.common.base.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+
+import org.springframework.data.jpa.repository.Query;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -8,16 +14,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import vn.easyca.signserver.webapp.utils.CommonUntil;
 
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.EntityManager;
+import java.util.*;
 import java.time.Instant;
 
 /**
  * Spring Data JPA repository for the {@link UserEntity} entity.
  */
-@Repository
-public interface UserRepository extends JpaRepository<UserEntity, Long> {
+
+public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRepositoryCustom {
 
     String USERS_BY_LOGIN_CACHE = "usersByLogin";
 
@@ -33,6 +40,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     Optional<UserEntity> findOneByLogin(String login);
 
+
+
     @EntityGraph(attributePaths = "authorities")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
     Optional<UserEntity> findOneWithAuthoritiesByLogin(String login);
@@ -42,4 +51,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findOneWithAuthoritiesByEmailIgnoreCase(String email);
 
     Page<UserEntity> findAllByLoginNot(Pageable pageable, String login);
+
+    Optional<UserEntity> findOneByOwnerId(String ownerId);
 }

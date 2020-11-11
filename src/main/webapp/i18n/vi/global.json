@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "Webapp",
+    "title": "SignServer",
     "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
     "menu": {
       "home": "Trang chủ",
@@ -31,7 +31,8 @@
         "audits": "Kiểm duyệt",
         "apidocs": "API",
         "database": "Cơ sở dữ liệu",
-        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)"
+        "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
+        "uploadUser": "Upload User"
       },
       "language": "Ngôn ngữ"
     },
@@ -86,7 +87,7 @@
     "ribbon": {
       "dev": "Phát triển"
     },
-    "item-count": "Showing {{first}} - {{second}} of {{total}} items."
+    "item-count": "Hiển thị {{first}} - {{second}} trong số {{total}} mục."
   },
   "entity": {
     "action": {
@@ -106,6 +107,9 @@
     },
     "delete": {
       "title": "Xác nhận hành động xóa"
+    },
+    "viewCer": {
+      "title": "User Certificate"
     },
     "validation": {
       "required": "Trường này bắt buộc phải nhập.",

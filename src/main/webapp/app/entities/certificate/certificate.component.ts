@@ -3,13 +3,14 @@ import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ICertificate } from 'app/shared/model/certificate.model';
 
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CertificateService } from './certificate.service';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
+import { FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'jhi-certificate',
@@ -25,27 +26,38 @@ export class CertificateComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
+  modalRef: NgbModalRef | undefined;
+
+  certificateSearch = this.fb.group({
+    alias: [],
+    ownerId: [],
+    serial: [],
+    validDate: [],
+    expiredDate: [],
+  });
   constructor(
     protected certificateService: CertificateService,
     protected activatedRoute: ActivatedRoute,
     protected router: Router,
     protected eventManager: JhiEventManager,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    protected fb: FormBuilder
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
 
-    this.certificateService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.certificateService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
+    this.searchCertificate(page);
   }
 
   ngOnInit(): void {
@@ -53,7 +65,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.registerChangeInCertificates();
   }
 
-  protected handleNavigation(): void {
+  handleNavigation(): void {
     combineLatest(this.activatedRoute.data, this.activatedRoute.queryParamMap, (data: Data, params: ParamMap) => {
       const page = params.get('page');
       const pageNumber = page !== null ? +page : 1;
@@ -63,7 +75,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
       if (pageNumber !== this.page || predicate !== this.predicate || ascending !== this.ascending) {
         this.predicate = predicate;
         this.ascending = ascending;
-        this.loadPage(pageNumber, true);
+        this.searchCertificate();
       }
     }).subscribe();
   }
@@ -86,6 +98,14 @@ export class CertificateComponent implements OnInit, OnDestroy {
   delete(certificate: ICertificate): void {
     const modalRef = this.modalService.open(CertificateDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+  }
+
+  updateStatus(id: any): void {
+    this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
+      if (res.ok) {
+        this.searchCertificate();
+      }
+    });
   }
 
   sort(): string[] {
@@ -114,5 +134,49 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+
+  searchCertificate(page?: number): any {
+    const pageToLoad: number = page || this.page || 1;
+
+    const data = {
+      page: pageToLoad - 1,
+      size: this.itemsPerPage,
+      sort: this.sort(),
+      ...this.certificateSearch.value,
+    };
+
+    data.alias = data.alias ? data.alias.trim() : null;
+    data.ownerId = data.ownerId ? data.ownerId.trim() : null;
+    data.serial = data.serial ? data.serial.trim() : null;
+    data.validDate = data.validDate ? data.validDate.trim() : null;
+    data.expiredDate = data.expiredDate ? data.expiredDate.trim() : null;
+
+    this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
+  }
+  // open modal
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'lg' });
+  }
+
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+      this.loadLastestRecord();
+    }
+  }
+  loadLastestRecord(): void {
+    const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
+
+    this.certificateService
+      .query({
+        page: lastPage - 1,
+        size: this.itemsPerPage,
+        sort: this.sort(),
+      })
+      .subscribe(
+        (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, lastPage, false),
+        () => this.onError()
+      );
   }
 }

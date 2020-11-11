@@ -1,0 +1,43 @@
+<!-- <div *ngIf="certificateList?.length === undefined"></div> -->
+
+<form name="certificateView">
+  <div class="modal-header">
+    <h4 class="modal-title" jhiTranslate="entity.viewCer.title">Certificate</h4>
+
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close()">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
+    <div class="alert alert-warning" id="no-result" *ngIf="certificateList?.length === 0">
+      <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
+    </div>
+    <div *ngIf="certificateList && certificateList!.length > 0">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Alias</th>
+            <th scope="col">Serial</th>
+            <th scope="col">Expired Date</th>
+            <th scope="col">Valid Date</th>
+          </tr>
+        </thead>
+
+        <tbody *ngFor="let certificate of certificateList">
+          <tr>
+            <th>{{ certificate.alias }}</th>
+            <th>{{ certificate.serial }}</th>
+            <th>{{ certificate.expiredDate | date: 'dd/MM/yy HH:mm' }}</th>
+            <th>{{ certificate.validDate | date: 'dd/MM/yy HH:mm' }}</th>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="close()">
+      <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Close</span>
+    </button>
+  </div>
+</form>

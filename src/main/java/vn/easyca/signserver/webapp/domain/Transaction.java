@@ -40,9 +40,6 @@ public class Transaction implements Serializable {
     @Column(name = "type")
     private String type;
 
-    public Transaction() {
-
-    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -87,7 +84,6 @@ public class Transaction implements Serializable {
         this.code = code;
         return this;
     }
-
     public void setCode(String code) {
         this.code = code;
     }
@@ -161,4 +157,5 @@ public class Transaction implements Serializable {
             ", type=" + getType() +
             "}";
     }
+
 }

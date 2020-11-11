@@ -4,6 +4,7 @@ public class CertificateGenerateResult {
 
     private Cert cert;
     private User user;
+    private String csr;
 
     public void setCert(Cert cert) {
         this.cert = cert;
@@ -23,8 +24,8 @@ public class CertificateGenerateResult {
 
     public static class Cert {
 
-        private final String certData;
-        private final String certSerial;
+        private String certData;
+        private String certSerial;
 
         public Cert(String certSerial, String certData) {
             this.certSerial = certSerial;
@@ -41,9 +42,9 @@ public class CertificateGenerateResult {
     }
 
     public static class User {
-        private final String username;
-        private final String userPassword;
-        private final int state;
+        private String username;
+        private String userPassword;
+        private int state;
 
         public User(String username, String userPassword, int state) {
             this.username = username;
@@ -64,4 +65,11 @@ public class CertificateGenerateResult {
         }
     }
 
+    public String getCsr() {
+        return csr;
+    }
+
+    public void setCsr(String csr) {
+        this.csr = csr;
+    }
 }

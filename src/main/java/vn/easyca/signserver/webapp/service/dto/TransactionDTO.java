@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 
 import java.time.Instant;
@@ -23,6 +24,19 @@ public class TransactionDTO implements Serializable {
     private String data;
 
     private String type;
+
+    public TransactionDTO () {
+    }
+
+    public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();
+        this.api = transaction.getApi();
+        this.code = transaction.getCode();
+        this.message = transaction.getMessage();
+        this.data = transaction.getData();
+        this.type = transaction.getType();
+        this.triggerTime = transaction.getTriggerTime();
+    }
 
     public Long getId() {
         return id;
@@ -117,7 +131,8 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = Instant.now();
     }
 
-    public TransactionDTO(String api, String code, String message, String data, String type) {
+    public TransactionDTO(Long id, String api, String code, String message, String data, String type) {
+        this.id = id;
         this.api = api;
         this.code = code;
         this.message = message;
@@ -126,6 +141,5 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = Instant.now();
     }
 
-    public TransactionDTO() {
-    }
+
 }

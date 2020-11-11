@@ -4,10 +4,14 @@ export interface ICertificate {
   tokenType?: string;
   serial?: string;
   ownerTaxcode?: string;
+  ownerId?: number;
   subjectInfo?: string;
   alias?: string;
   tokenInfo?: string;
   rawData?: string;
+  validDate?: Date;
+  expiredDate?: Date;
+  activeStatus?: number;
 }
 
 export class Certificate implements ICertificate {
@@ -17,9 +21,13 @@ export class Certificate implements ICertificate {
     public tokenType?: string,
     public serial?: string,
     public ownerTaxcode?: string,
+    public ownerId?: number,
     public subjectInfo?: string,
     public alias?: string,
     public tokenInfo?: string,
-    public rawData?: string
+    public rawData?: string,
+    public validDate?: Date,
+    public expiredDate?: Date,
+    public activeStatus?: number
   ) {}
 }
