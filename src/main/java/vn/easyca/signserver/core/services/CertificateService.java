@@ -70,6 +70,7 @@ public class CertificateService {
 
     @Transactional(readOnly = true)
     public Page<CertificateEntity> findAll(Pageable pageable) {
+
         return certificateJpaRepository.findAll(pageable);
     }
 

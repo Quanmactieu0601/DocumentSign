@@ -90,7 +90,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
-  searchTransactions(): any {
+  searchTransactions(page?: number): any {
+    const pageToLoad: number = page || this.page || 1;
     const data1 = {
       // id: this.searchForm.get(['id'])!.value,
       api: this.searchForm.get(['api'])!.value,
@@ -103,7 +104,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
       sort: this.sort(),
     };
     // console.error(data1.code);
-    this.transactionService.findByTransaction(data1).subscribe((res: HttpResponse<any>) => this.onSuccessTwo(res.body, res.headers));
+    this.transactionService
+      .findByTransaction(data1)
+      .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
 
   delete(transaction: ITransaction): void {
@@ -137,9 +140,5 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
-  }
-  protected onSuccessTwo(transaction: any | null, headers: HttpHeaders): void {
-    this.totalItems = Number(headers.get('X-Total-Count'));
-    this.transactions = transaction;
   }
 }
