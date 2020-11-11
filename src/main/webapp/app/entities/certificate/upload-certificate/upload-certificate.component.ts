@@ -15,14 +15,17 @@ export class UploadCertificateComponent implements OnInit {
   selectedFiles: any;
   currentFile: any;
   progress = 0;
-  message = '';
-
   fileInfos: Observable<any> = new Observable<any>();
   constructor(private certificateService: CertificateService, private toastService: ToastrService, private translate: TranslateService) {}
 
   ngOnInit(): void {}
   selectFile(event: any): void {
     this.selectedFiles = event.target.files;
+    const sizeFile = event.target.files.item(0).size / 1024000;
+    if (sizeFile > 1) {
+      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
+      this.selectedFiles = [];
+    }
   }
   upload(): void {
     this.progress = 0;
@@ -38,14 +41,16 @@ export class UploadCertificateComponent implements OnInit {
           this.transformVariable(true);
         } else if (res.body.status === 417) {
           this.toastService.error(this.translate.instant('userManagement.alert.fail.uploaded'));
-          this.transformVariable(false);
         }
       }
     });
-    this.selectedFiles = [];
   }
 
   transformVariable(agreed: boolean): void {
     this.isUploadedSucessfully.emit(agreed);
   }
+  onInputClick = (event: any) => {
+    const element = event.target as HTMLInputElement;
+    element.value = '';
+  };
 }
