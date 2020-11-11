@@ -94,7 +94,7 @@
   <jhi-alert></jhi-alert> -->
 
   <div class="alert alert-warning" id="no-result" *ngIf="users?.length === 0">
-    <span jhiTranslate="webappApp.certificate.home.notFound">No User found</span>
+    <span jhiTranslate="userManagement.home.notfound">No User found</span>
   </div>
   <div class="table-responsive" *ngIf="users && users.length > 0">
     <table class="table table-striped" aria-describedby="user-management-page-heading">
@@ -227,7 +227,7 @@
                 [disabled]="!currentAccount || currentAccount.login === user.login"
               >
                 <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline">Certificate</span>
+                <span class="d-none d-md-inline" jhiTranslate="webappApp.certificate.home.title">Certificate</span>
               </button>
 
               <button type="submit" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" class="btn btn-primary btn-sm">

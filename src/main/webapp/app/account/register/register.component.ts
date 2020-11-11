@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { JhiLanguageService } from 'ng-jhipster';
-
+import { TranslateService } from '@ngx-translate/core';
 import { EMAIL_ALREADY_USED_TYPE, LOGIN_ALREADY_USED_TYPE } from 'app/shared/constants/error.constants';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { RegisterService } from './register.service';
@@ -42,7 +42,8 @@ export class RegisterComponent implements AfterViewInit {
     private loginModalService: LoginModalService,
     private registerService: RegisterService,
     private fb: FormBuilder,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private translateService: TranslateService
   ) {}
 
   ngAfterViewInit(): void {
@@ -60,7 +61,7 @@ export class RegisterComponent implements AfterViewInit {
     const password = this.registerForm.get(['password'])!.value;
     if (password !== this.registerForm.get(['confirmPassword'])!.value) {
       this.doNotMatch = true;
-      this.toastrService.error(' The password and its confirmation do not match!');
+      this.toastrService.error(this.translateService.instant('register.messages.validate.login.notmatch'));
     } else {
       const login = this.registerForm.get(['login'])!.value;
       const email = this.registerForm.get(['email'])!.value;
@@ -84,7 +85,7 @@ export class RegisterComponent implements AfterViewInit {
           langKey: this.languageService.getCurrentLanguage(),
         })
         .subscribe(
-          () => ((this.success = true), this.toastrService.success('Registration saved! Please check your email for confirmation.')),
+          () => ((this.success = true), this.toastrService.success(this.translateService.instant('register.messages.success'))),
           response => this.processError(response)
         );
     }
@@ -97,13 +98,13 @@ export class RegisterComponent implements AfterViewInit {
   private processError(response: HttpErrorResponse): void {
     if (response.status === 400 && response.error.type === LOGIN_ALREADY_USED_TYPE) {
       this.errorUserExists = true;
-      this.toastrService.error('Login name already registered! Please choose another one.');
+      this.toastrService.error(this.translateService.instant('register.messages.error.userexists'));
     } else if (response.status === 400 && response.error.type === EMAIL_ALREADY_USED_TYPE) {
       this.errorEmailExists = true;
-      this.toastrService.error('Email is already in use! Please choose another one.');
+      this.toastrService.error(this.translateService.instant('register.messages.error.emailexists'));
     } else {
       this.error = true;
-      this.toastrService.error('Registration failed! Please try again later.');
+      this.toastrService.error(this.translateService.instant('register.messages.error.fail'));
     }
   }
 }

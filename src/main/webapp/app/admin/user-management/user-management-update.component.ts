@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-user-mgmt-update',
@@ -47,7 +48,8 @@ export class UserManagementUpdateComponent implements OnInit {
     private userService: UserService,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -80,7 +82,7 @@ export class UserManagementUpdateComponent implements OnInit {
       this.user.localityName === '' &&
       this.user.country === ''
     ) {
-      this.toastrService.error('You must add at least one value from Common Name to Country !');
+      this.toastrService.error(this.translateService.instant('userManagement.updated-err'));
       this.onSaveError();
     } else if (this.user.id !== undefined) {
       this.userService.update(this.user).subscribe(
@@ -136,7 +138,7 @@ export class UserManagementUpdateComponent implements OnInit {
 
   private onSaveSuccess(): void {
     this.isSaving = false;
-    this.toastrService.success('User ' + this.user.login + ' updated');
+    this.toastrService.success(this.translateService.instant('userManagement.updated'));
     this.previousState();
   }
 
