@@ -24,6 +24,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     message: [],
     data: [],
     type: [],
+    host: [],
+    method: [],
+    userID: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -99,6 +102,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
       message: this.searchForm.get(['message'])!.value,
       data: this.searchForm.get(['data'])!.value,
       type: this.searchForm.get(['type'])!.value,
+      method: this.searchForm.get(['method'])!.value,
+      host: this.searchForm.get(['host'])!.value,
+      userID: this.searchForm.get(['userID'])!.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import sun.rmi.runtime.Log;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public interface TransactionService {
     void delete(Long id);
 
      Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code,
-                                      String message, String data, String type);
+                                      String message, String data, String type , String host, String method);
 
 
     /**

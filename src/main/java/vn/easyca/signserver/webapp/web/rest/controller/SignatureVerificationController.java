@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SignatureVerificationService;
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
+import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
@@ -33,12 +34,12 @@ public class SignatureVerificationController {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> verifyHash(@RequestBody SignatureVerificationVM signatureVerificationVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/hash", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/hash", TransactionType.SYSTEM , TransactionMethod.POST);
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
             code = "200";
-            message = "Verification Hash Successfully";
+            message = "OK";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
@@ -59,12 +60,12 @@ public class SignatureVerificationController {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> verifyRaw(@RequestBody SignatureVerificationVM signatureVerificationVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/raw", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/raw", TransactionType.SYSTEM , TransactionMethod.POST);
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
             code = "200";
-            message = "Verification Raw Successfully";
+            message = "OK";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);

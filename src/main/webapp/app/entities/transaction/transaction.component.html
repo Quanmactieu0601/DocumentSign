@@ -3,18 +3,17 @@
         <div class="card-header">
             <div class="row my-3">
                 <div class="col">
-
                     <div class="row">
-                        <!-- <div class="col">
-                            <div class="form-group">
-                                <label for="id">ID :</label>
-                                <input type="text" class="form-control" formControlName="id" >
-                            </div>
-                        </div> -->
                         <div class="col">
                             <div class="form-group">
                                 <label for="api">API :</label>
                                 <input type="text" class="form-control" formControlName="api">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="method">Method :</label>
+                                <input type="text" class="form-control" formControlName="method">
                             </div>
                         </div>
                     </div>
@@ -35,11 +34,13 @@
                     </div>
                 </div>
                 <div class="col">
-                    <div class="form-group">
-                        <label for="data">Data :</label>
-                        <input type="text" class="form-control" formControlName="data">
-                    </div>
                     <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="data">Data :</label>
+                                <input type="text" class="form-control" formControlName="data">
+                            </div>
+                        </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="type">Type :</label>
@@ -47,10 +48,26 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="host"> Host :</label>
+                                <input type="text" class="form-control" formControlName="host">
+                            </div>
+                        </div>
+                        <!-- <div class="col">
+                            <div class="form-group">
+                                <label for="userID">UserID :</label>
+                                <input type="text" class="form-control" formControlName="userID">
+                            </div>
+                        </div> -->
+                    </div>
                 </div>
+
             </div>
             <div class="text-center">
-                <button type="submit" class="btn btn-primary " >
+                <button type="submit" class="btn btn-primary ">
                     <fa-icon icon="search"></fa-icon> Search
                 </button>
             </div>
@@ -91,7 +108,16 @@
                     <th scope="col" jhiSortBy="type"><span jhiTranslate="webappApp.transaction.type">Type</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th scope="col"></th>
+                    <th scope="col" jhiSortBy="method"><span jhiTranslate="webappApp.transaction.method">Method</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <!-- <th scope="col" jhiSortBy="userID"><span jhiTranslate="webappApp.transaction.userID">UserID</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th> -->
+                    <!-- <th scope="col"></th> -->
                 </tr>
             </thead>
             <tbody>
@@ -103,6 +129,9 @@
                     <td>{{ transaction.message }}</td>
                     <td>{{ transaction.data }}</td>
                     <td>{{ transaction.type }}</td>
+                    <td>{{ transaction.method }}</td>
+                    <td>{{ transaction.host }}</td>
+                    <!-- <td>{{ transaction.userID }}</td> -->
 
                 </tr>
             </tbody>

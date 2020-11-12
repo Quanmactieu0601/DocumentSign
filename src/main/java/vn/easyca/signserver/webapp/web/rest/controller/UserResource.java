@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
@@ -101,7 +102,7 @@ public class UserResource {
     @PostMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM , TransactionMethod.POST);
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
             transactionDTO.setCode("400");
@@ -123,7 +124,7 @@ public class UserResource {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
             mailService.sendCreationEmail(newUserEntity);
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("Create User Successfully");
+            transactionDTO.setMessage("OK");
             transactionService.save(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
@@ -143,7 +144,7 @@ public class UserResource {
     @PutMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM ,TransactionMethod.UPDATE);
         log.debug("REST request to update User : {}", userDTO);
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
@@ -161,7 +162,7 @@ public class UserResource {
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("Update User Successfully");
+        transactionDTO.setMessage("OK");
         transactionService.save(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
@@ -223,11 +224,11 @@ public class UserResource {
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/delete", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/users/delete", TransactionType.SYSTEM ,TransactionMethod.DELETE);
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("Delete User Successfully");
+        transactionDTO.setMessage("OK");
         transactionService.save(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }

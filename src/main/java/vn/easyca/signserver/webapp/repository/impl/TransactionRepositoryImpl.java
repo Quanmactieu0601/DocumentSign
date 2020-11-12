@@ -20,7 +20,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
     @Override
-    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type) {
+    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type , String host, String method) {
         Map<String, Object> params = new HashMap<>();
         List<Transaction> transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -56,6 +56,19 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.type like :type ");
             params.put("type", "%" + type + "%");
         }
+//        if (!CommonUtils.isNullOrEmptyProperty(userID)) {
+//            sqlBuilder.append("AND a.user_id like :userID ");
+//            params.put("userID", "%" + userID + "%");
+//        }
+        if (!CommonUtils.isNullOrEmptyProperty(host)) {
+            sqlBuilder.append("AND a.host like :host ");
+            params.put("host", "%" + host + "%");
+        }
+        if (!CommonUtils.isNullOrEmptyProperty(method)) {
+            sqlBuilder.append("AND a.method like :method ");
+            params.put("method", "%" + method + "%");
+        }
+
         Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         CommonUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();

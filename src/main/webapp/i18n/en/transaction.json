@@ -21,7 +21,10 @@
       "code": "Code",
       "message": "Message",
       "data": "Data",
-      "type": "Type"
+      "type": "Type",
+      "host": "Host",
+      "method": "Method",
+      "userID": "UserID"
     }
   }
 }

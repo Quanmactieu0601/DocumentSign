@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.*;
@@ -38,6 +39,7 @@ public class AccountResource {
 
     String code = null;
     String message = null;
+    String data = null;
 
     private final Logger log = LoggerFactory.getLogger(AccountResource.class);
 
@@ -69,17 +71,18 @@ public class AccountResource {
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/register", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/register", TransactionType.SYSTEM , TransactionMethod.POST);
         if (!checkPasswordLength(managedUserVM.getPassword())) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Invalid Password");
+            transactionDTO.setData("InvalidPasswordException");
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         } else {
             UserEntity userEntity = userApplicationService.registerUser(managedUserVM, managedUserVM.getPassword());
             mailService.sendActivationEmail(userEntity);
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("Register successful");
+            transactionDTO.setMessage("OK");
             transactionService.save(transactionDTO);
         }
     }
@@ -92,16 +95,17 @@ public class AccountResource {
      */
     @GetMapping("/activate")
     public void activateAccount(@RequestParam(value = "key") String key) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/activate", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/activate", TransactionType.SYSTEM ,TransactionMethod.GET);
         Optional<UserEntity> user = userApplicationService.activateRegistration(key);
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("No user was found for this activation key");
+            transactionDTO.setData("AccountResourceException");
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this activation key");
         } else {
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("Activate Successfully");
+            transactionDTO.setMessage("OK");
             transactionService.save(transactionDTO);
         }
     }
@@ -140,12 +144,12 @@ public class AccountResource {
      */
     @PostMapping("/account")
     public void saveAccount(@Valid @RequestBody UserDTO userDTO) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/account", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/account", TransactionType.SYSTEM , TransactionMethod.POST);
         String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new AccountResourceException("Current user login not found"));
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("Save Account Successfully");
+            transactionDTO.setCode("400");
+            transactionDTO.setMessage("Email already Used");
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
@@ -159,7 +163,7 @@ public class AccountResource {
             userApplicationService.updateUser(userDTO.getFirstName(), userDTO.getLastName(), userDTO.getEmail(),
                 userDTO.getLangKey(), userDTO.getImageUrl());
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("Update User Successfully");
+            transactionDTO.setMessage("OK");
             transactionService.save(transactionDTO);
         }
     }
@@ -172,7 +176,7 @@ public class AccountResource {
      */
     @PostMapping(path = "/account/change-password")
     public void changePassword(@RequestBody PasswordChangeDTO passwordChangeDto) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/account/change-password", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/account/change-password", TransactionType.SYSTEM , TransactionMethod.POST);
         if (!checkPasswordLength(passwordChangeDto.getNewPassword())) {
             transactionDTO.setMessage("400");
             transactionDTO.setCode("Invalid Password");
@@ -180,7 +184,7 @@ public class AccountResource {
             throw new InvalidPasswordException();
         } else {
             transactionDTO.setMessage("200");
-            transactionDTO.setCode("Change Password Successfully");
+            transactionDTO.setCode("OK");
             transactionService.save(transactionDTO);
             userApplicationService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
         }
@@ -193,12 +197,12 @@ public class AccountResource {
      */
     @PostMapping(path = "/account/reset-password/init")
     public void requestPasswordReset(@RequestBody String mail) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/account/reset-password/init", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/account/reset-password/init", TransactionType.SYSTEM ,TransactionMethod.POST);
         Optional<UserEntity> user = userApplicationService.requestPasswordReset(mail);
         if (user.isPresent()) {
             mailService.sendPasswordResetMail(user.get());
             code = "200";
-            message = "Reset Password Successfully";
+            message = "OK";
         } else {
             // Pretend the request has been successful to prevent checking which emails really exist
             // but log that an invalid attempt has been made
@@ -219,10 +223,11 @@ public class AccountResource {
      */
     @PostMapping(path = "/account/reset-password/finish")
     public void finishPasswordReset(@RequestBody KeyAndPasswordVM keyAndPassword) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/account/reset-password/finish", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/account/reset-password/finish", TransactionType.SYSTEM , TransactionMethod.POST);
         if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Invalid Password");
+            transactionDTO.setData("InvalidPasswordException");
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         }
@@ -231,11 +236,12 @@ public class AccountResource {
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("No user was found for this reset key");
+            transactionDTO.setData("AccountResourceException");
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this reset key");
         } else {
             transactionDTO.setCode("200");
-            transactionDTO.setMessage("Reset password successfully");
+            transactionDTO.setMessage("OK");
             transactionService.save(transactionDTO);
         }
     }

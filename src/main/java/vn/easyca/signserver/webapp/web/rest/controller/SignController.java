@@ -20,6 +20,7 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
@@ -64,7 +65,7 @@ public class SignController {
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/pdf", TransactionType.SIGNING);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/pdf", TransactionType.SIGNING , TransactionMethod.POST);
         try {
             byte[] fileData = file.getBytes();
             SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
@@ -72,7 +73,7 @@ public class SignController {
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
             code = "200";
-            message = "Sign PDF Successfully";
+            message = "OK";
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
                 .contentLength(resource.contentLength()) //
@@ -95,12 +96,12 @@ public class SignController {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/hash", TransactionType.SIGNING);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/hash", TransactionType.SIGNING ,TransactionMethod.POST);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
             code = "200";
-            message = "Sign Hash Successfully";
+            message = "OK";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
@@ -121,12 +122,12 @@ public class SignController {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/raw", TransactionType.SIGNING);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/raw", TransactionType.SIGNING ,TransactionMethod.POST);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             code = "200";
-            message = "Sign Raw Successfully";
+            message = "OK";
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);

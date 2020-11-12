@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
@@ -37,7 +38,7 @@ public class UserJWTController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/authenticate", TransactionType.SYSTEM);
+        TransactionDTO transactionDTO = new TransactionDTO("/api/authenticate", TransactionType.SYSTEM , TransactionMethod.POST);
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
 
@@ -48,7 +49,7 @@ public class UserJWTController {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         transactionDTO.setCode("200");
-        transactionDTO.setMessage("Authorize Successfully");
+        transactionDTO.setMessage("OK");
         transactionService.save(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
