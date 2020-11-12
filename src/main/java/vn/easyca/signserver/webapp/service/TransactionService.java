@@ -41,7 +41,7 @@ public interface TransactionService {
     void delete(Long id);
 
      Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code,
-                                      String message, String data, String type , String host, String method);
+                                      String message, String data, String type ,Long userID, String host, String method);
 
 
     /**

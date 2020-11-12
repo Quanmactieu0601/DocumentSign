@@ -20,7 +20,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
     @Override
-    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type , String host, String method) {
+    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type ,Long userID, String host, String method) {
         Map<String, Object> params = new HashMap<>();
         List<Transaction> transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();

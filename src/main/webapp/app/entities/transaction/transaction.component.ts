@@ -26,7 +26,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     type: [],
     host: [],
     method: [],
-    userID: [],
+    // userID: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -47,16 +47,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
 
-    this.transactionService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.transactionService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
+    this.searchTransactions(page);
   }
 
   ngOnInit(): void {
@@ -75,7 +76,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.predicate = predicate;
         this.ascending = ascending;
         this.searchTransactions();
-        // this.loadPage(pageNumber, true);
       }
     }).subscribe();
   }
@@ -96,20 +96,33 @@ export class TransactionComponent implements OnInit, OnDestroy {
   searchTransactions(page?: number): any {
     const pageToLoad: number = page || this.page || 1;
     const data1 = {
-      // id: this.searchForm.get(['id'])!.value,
-      api: this.searchForm.get(['api'])!.value,
-      code: this.searchForm.get(['code'])!.value,
-      message: this.searchForm.get(['message'])!.value,
-      data: this.searchForm.get(['data'])!.value,
-      type: this.searchForm.get(['type'])!.value,
-      method: this.searchForm.get(['method'])!.value,
-      host: this.searchForm.get(['host'])!.value,
-      userID: this.searchForm.get(['userID'])!.value,
-      page: this.page - 1,
+      page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
+      ...this.searchForm.value,
     };
-    // console.error(data1.code);
+    if (data1.api != null) {
+      data1.api = data1.api.trim();
+    }
+    if (data1.code != null) {
+      data1.code = data1.code.trim();
+    }
+    if (data1.message != null) {
+      data1.message = data1.message.trim();
+    }
+    if (data1.data != null) {
+      data1.data = data1.data.trim();
+    }
+    if (data1.type != null) {
+      data1.type = data1.type.trim();
+    }
+    if (data1.host != null) {
+      data1.host = data1.host.trim();
+    }
+    if (data1.method != null) {
+      data1.method = data1.method.trim();
+    }
+
     this.transactionService
       .findByTransaction(data1)
       .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));

@@ -107,7 +107,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     if (data.account != null) {
       data.account = data.account.trim();
     }
-
     if (data.name != null) {
       data.name = data.name.trim();
     }
