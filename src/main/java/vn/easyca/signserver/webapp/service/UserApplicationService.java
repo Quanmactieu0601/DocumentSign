@@ -116,6 +116,8 @@ public class UserApplicationService {
         if (userDTO.getEmail() != null) {
             newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
+        newUserEntity.setOwnerId(userDTO.getOwnerId());
+        newUserEntity.setPhone(userDTO.getPhone());
         newUserEntity.setCommonName(userDTO.getCommonName());
         newUserEntity.setOrganizationName(userDTO.getOrganizationName());
         newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());

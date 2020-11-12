@@ -44,7 +44,8 @@
       },
       "fail": {
         "csrExported": "Tạo tệp CSR thất bại",
-        "uploaded": "Tải lên tệp người dùng thất bại"
+        "uploaded": "Tải lên tệp người dùng thất bại",
+        "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
     }
   }

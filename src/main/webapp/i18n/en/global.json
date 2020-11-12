@@ -110,6 +110,9 @@
     "delete": {
       "title": "Confirm delete operation"
     },
+    "upload": {
+      "title": "Upload User"
+    },
     "viewCer": {
       "title": "User Certificate"
     },

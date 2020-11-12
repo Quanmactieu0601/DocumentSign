@@ -4,6 +4,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import vn.easyca.signserver.core.dto.CertDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -65,5 +66,39 @@ public class ExcelUtils {
             }
         }
         return dtos;
+    }
+
+    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws IOException{
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        int rows = sheet.getPhysicalNumberOfRows();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        UserDTO userDTO = null;
+        for(int i = 1; i< rows; i++){
+            Row row = sheet.getRow(i);
+            if( row!= null){
+                userDTO = new UserDTO();
+                if(row.getCell(1).getCellType() == Cell.CELL_TYPE_STRING){
+                    userDTO.setOwnerId(row.getCell(1).getStringCellValue());
+                }
+                if(row.getCell(1).getCellType() == Cell.CELL_TYPE_NUMERIC){
+                    userDTO.setOwnerId((String.valueOf(row.getCell(1).getNumericCellValue())));
+                }
+                userDTO.setLogin(row.getCell(2).getStringCellValue());
+                userDTO.setFirstName(row.getCell(3).getStringCellValue());
+                userDTO.setLastName(row.getCell(4).getStringCellValue());
+                userDTO.setEmail(row.getCell(5).getStringCellValue());
+                userDTO.setPhone(row.getCell(6).getStringCellValue());
+                userDTO.setCommonName(row.getCell(7).getStringCellValue());
+                userDTO.setOrganizationName(row.getCell(8).getStringCellValue());
+                userDTO.setOrganizationUnit(row.getCell(9).getStringCellValue());
+                userDTO.setLocalityName(row.getCell(10).getStringCellValue());
+                userDTO.setStateName(row.getCell(11).getStringCellValue());
+                userDTO.setCountry(row.getCell(12).getStringCellValue());
+                userDTO.setLangKey(row.getCell(13).getStringCellValue());
+                userDTOList.add(userDTO);
+            }
+        }
+        return userDTOList;
     }
 }

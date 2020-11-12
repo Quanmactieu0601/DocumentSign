@@ -4,6 +4,7 @@
       "title": "Users",
       "createLabel": "Create a new user",
       "createOrEditLabel": "Create or edit a user",
+      "uploadUser": "Upload Users",
       "notfound": "No User Found"
     },
     "created": "Create user success !",
@@ -44,7 +45,8 @@
       },
       "fail": {
         "csrExported": "Export CSR failure",
-        "uploaded": "Upload User file failure"
+        "uploaded": "Upload User file failure",
+        "sizeErr": "File size need smaller than 1 MB"
       }
     }
   }
