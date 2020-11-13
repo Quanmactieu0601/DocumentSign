@@ -33,13 +33,13 @@ public class SignatureValidator {
         hashAlgo = hashAlgo.replace("-", "");
         switch (hashAlgo) {
             case "sha1":
-                signature = Signature.getInstance(DEFAULT_SIG_ALGO, new SAFENETProvider());
+                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
                 break;
             case "sha256":
-                signature = Signature.getInstance("SHA256withRSA", new SAFENETProvider());
+                signature = Signature.getInstance("SHA256withRSA");
                 break;
             case "sha512":
-                signature = Signature.getInstance("SHA512withRSA", new SAFENETProvider());
+                signature = Signature.getInstance("SHA512withRSA");
                 break;
             default:
                 throw new Exception("Algorithm not supported");
