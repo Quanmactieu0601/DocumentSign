@@ -15,6 +15,7 @@ import { FormBuilder } from '@angular/forms';
 @Component({
   selector: 'jhi-certificate',
   templateUrl: './certificate.component.html',
+  styleUrls: ['./certificate.component.scss'],
 })
 export class CertificateComponent implements OnInit, OnDestroy {
   certificates?: ICertificate[];
@@ -156,7 +157,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
   // open modal
   openModal(content: any): void {
-    this.modalRef = this.modalService.open(content, { size: 'lg' });
+    this.modalRef = this.modalService.open(content, { size: 'md' });
   }
 
   isUploadedSucessfully(agreed: boolean): void {

@@ -3,10 +3,12 @@
     "home": {
       "title": "Tài khoản",
       "createLabel": "Tạo tài khoản mới",
-      "createOrEditLabel": "Tạo hoặc sửa tài khoản"
+      "createOrEditLabel": "Tạo hoặc sửa tài khoản",
+      "notfound": "Không tìm thấy người dùng"
     },
-    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
-    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
+    "created": "Tạo tài khoản mới thành công",
+    "updated": "Cập nhật tài khoản thành công",
+    "updated-err": "Bạn cần thêm ít nhất một giá trị từ trường Tên Chung đến trường Quốc Gia",
     "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
     "delete": {
       "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?"
@@ -42,7 +44,8 @@
       },
       "fail": {
         "csrExported": "Tạo tệp CSR thất bại",
-        "uploaded": "Tải lên tệp người dùng thất bại"
+        "uploaded": "Tải lên tệp người dùng thất bại",
+        "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
     }
   }

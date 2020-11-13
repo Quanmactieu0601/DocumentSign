@@ -37,6 +37,10 @@ import { RouterModule } from '@angular/router';
         path: 'metrics',
         loadChildren: () => import('./metrics/metrics.module').then(m => m.MetricsModule),
       },
+      {
+        path: 'transaction-report',
+        loadChildren: () => import('../entities/transaction-report/transaction-report.module').then(m => m.TransactionReportModule),
+      },
       /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
     ]),
   ],

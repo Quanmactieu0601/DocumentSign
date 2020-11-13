@@ -116,6 +116,14 @@ public class UserApplicationService {
         if (userDTO.getEmail() != null) {
             newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
+        newUserEntity.setOwnerId(userDTO.getOwnerId());
+        newUserEntity.setPhone(userDTO.getPhone());
+        newUserEntity.setCommonName(userDTO.getCommonName());
+        newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+        newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+        newUserEntity.setLocalityName(userDTO.getLocalityName());
+        newUserEntity.setStateName(userDTO.getStateName());
+        newUserEntity.setCountry(userDTO.getCountry());
         newUserEntity.setImageUrl(userDTO.getImageUrl());
         newUserEntity.setLangKey(userDTO.getLangKey());
         // new user is not active

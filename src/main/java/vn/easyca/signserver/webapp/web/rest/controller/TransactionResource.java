@@ -147,10 +147,10 @@ public class TransactionResource {
      */
 
 
-    @GetMapping("/transaction/report")
-    public TransactionReportDTO getAllTransactionBetweenDate(@RequestParam("startDate") String startdate,
-                                                             @RequestParam("endDate") String enddate,
-                                                             @RequestParam("type") String type) throws ParseException {
+    @GetMapping("/transactions/report/{startDate}/{endDate}/{type}")
+    public ResponseEntity<TransactionReportDTO> getAllTransactionBetweenDate(@PathVariable("startDate") String startdate,
+                                                             @PathVariable("endDate") String enddate,
+                                                             @PathVariable("type") String type) throws ParseException {
 
         log.debug("REST request to get all Transactions beween date and type ");
         TransactionReportDTO transactionReportDTO = new TransactionReportDTO();
@@ -170,6 +170,6 @@ public class TransactionResource {
             transactionReportDTO.setTotalsuccess(totalsuccess);
 
         }
-        return transactionReportDTO;
+        return ResponseEntity.ok().body(transactionReportDTO);
     }
 }
