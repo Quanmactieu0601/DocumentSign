@@ -156,12 +156,13 @@ public class SignController {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
             Calendar cal = Calendar.getInstance();
 
-            String signer = "BV Nhi Đồng 1";
-            String address = "Quận 10, Thành phố Hồ Chí Minh";
-            String organization = "BV Nhi Đồng 1";
-            htmlContent = htmlContent.replaceFirst("signer", signer)
-                .replaceFirst("address", address)
-                .replaceFirst("organization", organization)
+//            String signer = "BV Nhi Đồng 1";
+//            String address = "Quận 10, Thành phố Hồ Chí Minh";
+//            String organization = "BV Nhi Đồng 1";
+            htmlContent = htmlContent
+//                .replaceFirst("signer", signer)
+//                .replaceFirst("address", address)
+//                .replaceFirst("organization", organization)
                 .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
 
             imageGenerator.loadHtml(htmlContent);
