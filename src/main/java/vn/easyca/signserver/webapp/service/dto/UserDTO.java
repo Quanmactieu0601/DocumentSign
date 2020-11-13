@@ -52,7 +52,7 @@ public class UserDTO {
     private String phone;
 
     @Email
-    @Size(min = 5, max = 254)
+    @Size( max = 254)
     private String email;
 
     @Size(max = 256)

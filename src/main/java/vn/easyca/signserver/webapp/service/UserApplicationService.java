@@ -21,9 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException;
-import vn.easyca.signserver.webapp.service.error.InvalidPasswordException;
-import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
+import vn.easyca.signserver.webapp.service.error.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -100,22 +98,30 @@ public class UserApplicationService {
         });
 
         userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
+
             boolean removed = removeNonActivatedUser(existingUser);
             if (!removed) {
                 throw new EmailAlreadyUsedException();
             }
+
         });
 
+
         UserEntity newUserEntity = new UserEntity();
+        if (userDTO.getCountry().length() == 0 && userDTO.getCommonName().length() == 0 && userDTO.getOrganizationName().length() == 0 && userDTO.getOrganizationUnit().length() == 0 && userDTO.getLocalityName().length() == 0 && userDTO.getStateName().length() == 0) {
+            throw new InfoFromCNToCountryNotFoundException();
+        } else if (userDTO.getCountry().length() != 0 && (userDTO.getCountry().length() != 2)) {
+            System.out.println(userDTO.getCountry().length());
+            throw new InvalidCountryColumnLength();
+        }
+
         String encryptedPassword = passwordEncoder.encode(password);
         newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
         // new user gets initially a generated password
         newUserEntity.setPassword(encryptedPassword);
         newUserEntity.setFirstName(userDTO.getFirstName());
         newUserEntity.setLastName(userDTO.getLastName());
-        if (userDTO.getEmail() != null) {
-            newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
-        }
+        newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         newUserEntity.setOwnerId(userDTO.getOwnerId());
         newUserEntity.setPhone(userDTO.getPhone());
         newUserEntity.setCommonName(userDTO.getCommonName());
@@ -159,7 +165,7 @@ public class UserApplicationService {
             }
         });
 
-        if(userDTO.getEmail() != null) {
+        if (userDTO.getEmail() != null) {
             userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
                 boolean removed = removeNonActivatedUser(existingUser);
                 if (!removed) {
@@ -301,7 +307,7 @@ public class UserApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone ) {
+    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
         return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone).map(UserDTO::new);
     }
 

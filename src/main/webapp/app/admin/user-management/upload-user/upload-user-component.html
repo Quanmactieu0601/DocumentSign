@@ -15,6 +15,16 @@
   <input type="file" (change)="selectFile($event)" (click)="onInputClick($event)" class="inputFile" />
 </label>
 
-<button class="btn btn-success" [disabled]="!selectFiles || this.selectFiles.length == 0" (click)="upload()">
+<button
+  class="btn btn-success"
+  [disabled]="!selectFiles || this.selectFiles.length == 0"
+  (click)="upload()"
+  jhiTranslate="userManagement.home.upload"
+>
   Upload
 </button>
+<div class="text-center mt-2">
+  <button class="btn btn-primary" (click)="downLoadFileTemplate()">
+    <fa-icon icon="download"></fa-icon> <span jhiTranslate="userManagement.downloadFileTemp">Down load file template</span>
+  </button>
+</div>
