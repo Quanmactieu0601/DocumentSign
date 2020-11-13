@@ -17,6 +17,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { map } from 'rxjs/operators';
+import { IUser } from '../../core/user/user.model';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -33,6 +34,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     country: [],
   });
 
+  modalRef: NgbModalRef | undefined;
+
   currentAccount: Account | null = null;
   users: User[] | null = null;
   userListSubscription?: Subscription;
@@ -42,7 +45,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   listId: number[] = [];
-
+  ngbPaginationPage = 1;
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -71,6 +74,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected onError(): void {
+    this.ngbPaginationPage = this.page ?? 1;
+  }
+
   setActive(user: User, isActivated: boolean): void {
     this.userService.update({ ...user, activated: isActivated }).subscribe(() => this.loadAll());
   }
@@ -89,14 +96,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
-  searchUser(): any {
+  searchUser(page?: number): any {
     const data = {
       ...this.userSearch.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-
+    const pageToLoad: number = page || this.page || 1;
     // const jsonData = JSON.stringify(data);
     // for (let i = 0; i < jsonData.length; i++){
     //   if (jsonData[i] != null) {
@@ -173,7 +180,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   private onSuccess(users: User[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
-    this.users = users;
+
+    this.users = users || [];
   }
 
   // check or unckeck all elements of checkbox
@@ -223,5 +231,29 @@ export class UserManagementComponent implements OnInit, OnDestroy {
           }
         });
     }
+  }
+
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'md' });
+  }
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+      this.loadLastestRecord();
+    }
+  }
+  loadLastestRecord(): void {
+    const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
+
+    this.userService
+      .query({
+        page: lastPage - 1,
+        size: this.itemsPerPage,
+        sort: this.sort(),
+      })
+      .subscribe(
+        (res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers),
+        () => this.onError()
+      );
   }
 }

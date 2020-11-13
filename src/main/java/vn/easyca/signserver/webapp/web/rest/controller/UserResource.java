@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
@@ -10,6 +11,8 @@ import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
 import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
@@ -30,9 +33,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.apache.commons.lang3.RandomStringUtils;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import javax.persistence.Convert;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -131,6 +136,24 @@ public class UserResource {
         }
     }
 
+    @PostMapping("users/uploadUser")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> uploadUser(@RequestParam ("file") MultipartFile file){
+        try{
+            List<UserDTO> userDTOList = ExcelUtils.convertExcelToUserDTO(file.getInputStream());
+            for(UserDTO userDTO: userDTOList){
+                userApplicationService.registerUser(userDTO, "Manhmin99");
+            }
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
+
+        } catch (IOException e) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
+        } catch (UsernameAlreadyUsedException usernameAlreadyUsedException){
+            return  ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
+        } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException){
+            return  ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
+        }
+    }
 
     /**
      * {@code PUT /users} : Updates an existing User.

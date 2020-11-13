@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         }
         if (!CommonUntil.isNullOrEmptyProperty(email)) {
             sqlBuilder.append("AND a.email like :email ");
-            params.put("email", "%" + email + "%");
+            params.put("email",  email );
         }
         if (!CommonUntil.isNullOrEmptyProperty(ownerId)) {
             sqlBuilder.append("AND a.owner_id like :ownerId ");
