@@ -208,10 +208,9 @@ public class SignController {
             Tidy tidy = new Tidy();
             org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream,"UTF-8"), null);
 
-            Java2DRenderer renderer = new Java2DRenderer(doc, 450, 150);
+            Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
             BufferedImage img = renderer.getImage();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
-//            FileOutputStream os = new FileOutputStream("D:/image.png");
             ImageIO.write(img, "png", os);
             return Base64.getEncoder().encodeToString(os.toByteArray());
         } catch (Exception e) {
