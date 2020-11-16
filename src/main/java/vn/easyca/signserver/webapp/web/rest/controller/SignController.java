@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.tidy.Tidy;
+import org.xhtmlrenderer.swing.Java2DRenderer;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
@@ -181,6 +183,43 @@ public class SignController {
             return null;
         }
     }
+
+    @PostMapping(path = "/getImageBase64")
+    public String getImageBase64(@RequestParam(required = false, name = "serial") String serial) {
+        try {
+            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
+            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
+            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
+            Calendar cal = Calendar.getInstance();
+
+//            String signer = "BV Nhi Đồng 1";
+//            String address = "Quận 10, Thành phố Hồ Chí Minh";
+//            String organization = "BV Nhi Đồng 1";
+            htmlContent = htmlContent
+//                .replaceFirst("signer", signer)
+//                .replaceFirst("address", address)
+//                .replaceFirst("organization", organization)
+                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+
+            //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
+            InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+            Tidy tidy = new Tidy();
+            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream,"UTF-8"), null);
+
+            Java2DRenderer renderer = new Java2DRenderer(doc, 450, 150);
+            BufferedImage img = renderer.getImage();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+//            FileOutputStream os = new FileOutputStream("D:/image.png");
+            ImageIO.write(img, "png", os);
+            return Base64.getEncoder().encodeToString(os.toByteArray());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return null;
+        }
+    }
+
 }
 
 
