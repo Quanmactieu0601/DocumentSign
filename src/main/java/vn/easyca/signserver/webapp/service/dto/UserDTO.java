@@ -2,8 +2,8 @@ package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.config.Constants;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 
 import javax.validation.constraints.*;
 import java.time.Instant;

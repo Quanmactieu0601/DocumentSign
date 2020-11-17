@@ -1,22 +1,13 @@
-package vn.easyca.signserver.infrastructure.database.jpa.repository;
+package vn.easyca.signserver.webapp.repository;
 
-import ch.qos.logback.classic.db.SQLBuilder;
-import com.google.common.base.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
-
-import org.springframework.data.jpa.repository.Query;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-import vn.easyca.signserver.webapp.utils.CommonUntil;
 
-import javax.persistence.EntityManager;
 import java.util.*;
 import java.time.Instant;
 
@@ -39,8 +30,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     Optional<UserEntity> findOneByEmailIgnoreCase(String email);
 
     Optional<UserEntity> findOneByLogin(String login);
-
-
 
     @EntityGraph(attributePaths = "authorities")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)

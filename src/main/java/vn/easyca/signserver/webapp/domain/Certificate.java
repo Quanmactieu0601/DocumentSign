@@ -1,8 +1,7 @@
-package vn.easyca.signserver.infrastructure.database.jpa.entity;
+package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import vn.easyca.signserver.webapp.config.DateTimeFormatConfiguration;
 
 import javax.persistence.*;
 
@@ -15,7 +14,7 @@ import java.time.Instant;
 @Entity
 @Table(name = "certificate")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class CertificateEntity implements Serializable {
+public class Certificate implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String PKCS_11 = "PKCS_11";
@@ -72,7 +71,7 @@ public class CertificateEntity implements Serializable {
         return lastUpdate;
     }
 
-    public CertificateEntity lastUpdate(String lastUpdate) {
+    public Certificate lastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
         return this;
     }
@@ -85,12 +84,12 @@ public class CertificateEntity implements Serializable {
         return tokenType;
     }
 
-    public CertificateEntity tokenType(String tokenType) {
+    public Certificate tokenType(String tokenType) {
         this.tokenType = tokenType;
         return this;
     }
 
-    public CertificateEntity validDate(Instant validDate){
+    public Certificate validDate(Instant validDate){
         this.validDate = validDate;
         return this;
     }
@@ -103,7 +102,7 @@ public class CertificateEntity implements Serializable {
         return serial;
     }
 
-    public CertificateEntity serial(String serial) {
+    public Certificate serial(String serial) {
         this.serial = serial;
         return this;
     }
@@ -117,7 +116,7 @@ public class CertificateEntity implements Serializable {
         return ownerId;
     }
 
-    public CertificateEntity setOwnerId(String ownerId) {
+    public Certificate setOwnerId(String ownerId) {
         this.ownerId = ownerId;
         return this;
     }
@@ -126,7 +125,7 @@ public class CertificateEntity implements Serializable {
         return subjectInfo;
     }
 
-    public CertificateEntity subjectInfo(String subjectInfo) {
+    public Certificate subjectInfo(String subjectInfo) {
         this.subjectInfo = subjectInfo;
         return this;
     }
@@ -139,7 +138,7 @@ public class CertificateEntity implements Serializable {
         return alias;
     }
 
-    public CertificateEntity alias(String alias) {
+    public Certificate alias(String alias) {
         this.alias = alias;
         return this;
     }
@@ -152,7 +151,7 @@ public class CertificateEntity implements Serializable {
         return tokenInfo;
     }
 
-    public CertificateEntity tokenInfo(String tokenInfo) {
+    public Certificate tokenInfo(String tokenInfo) {
         this.tokenInfo = tokenInfo;
         return this;
     }
@@ -165,7 +164,7 @@ public class CertificateEntity implements Serializable {
         return rawData;
     }
 
-    public CertificateEntity rawData(String rawData) {
+    public Certificate rawData(String rawData) {
         this.rawData = rawData;
         return this;
     }
@@ -178,10 +177,10 @@ public class CertificateEntity implements Serializable {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof CertificateEntity)) {
+        if (!(o instanceof Certificate)) {
             return false;
         }
-        return id != null && id.equals(((CertificateEntity) o).id);
+        return id != null && id.equals(((Certificate) o).id);
     }
 
     public void setValidDate(Instant validDate) {

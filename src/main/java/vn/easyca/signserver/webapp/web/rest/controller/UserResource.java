@@ -2,8 +2,8 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
@@ -32,10 +32,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.apache.commons.lang3.RandomStringUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import javax.persistence.Convert;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;

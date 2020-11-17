@@ -1,6 +1,6 @@
-package vn.easyca.signserver.infrastructure.database.jpa.repository;
+package vn.easyca.signserver.webapp.repository;
 import org.springframework.stereotype.Repository;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.PersistentAuditEvent;
+import vn.easyca.signserver.webapp.domain.PersistentAuditEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

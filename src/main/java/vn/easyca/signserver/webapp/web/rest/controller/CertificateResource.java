@@ -12,12 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
-import vn.easyca.signserver.core.services.CertificateService;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import org.slf4j.Logger;
@@ -25,11 +25,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
-import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
@@ -43,8 +42,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResu
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -71,16 +68,16 @@ public class CertificateResource {
     }
 
     @GetMapping()
-    public ResponseEntity<List<CertificateEntity>> getAll(Pageable pageable) {
-        Page<CertificateEntity> page = certificateService.findAll(pageable);
+    public ResponseEntity<List<Certificate>> getAll(Pageable pageable) {
+        Page<Certificate> page = certificateService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<CertificateEntity>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
+    public ResponseEntity<List<Certificate>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
         try {
-            Page<CertificateEntity> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
+            Page<Certificate> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
             return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
         } catch (Exception ex) {
@@ -89,9 +86,9 @@ public class CertificateResource {
     }
 
     @GetMapping("ownerId/{ownerId}")
-    public ResponseEntity<List<CertificateEntity>> findByOwnerId(@PathVariable String ownerId) {
-        List<CertificateEntity> certificateEntityList = certificateService.getByOwnerId(ownerId);
-        return new ResponseEntity<>(certificateEntityList, HttpStatus.OK);
+    public ResponseEntity<List<Certificate>> findByOwnerId(@PathVariable String ownerId) {
+        List<Certificate> certificateList = certificateService.getByOwnerId(ownerId);
+        return new ResponseEntity<>(certificateList, HttpStatus.OK);
     }
 
     @PostMapping("/import/p12")
@@ -235,10 +232,10 @@ public class CertificateResource {
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
         TransactionDTO transactionDTO = new TransactionDTO("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT);
         try {
-            Certificate certificate = certificateService.getBySerial(serial);
+            CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             code = "200";
             message = "Get Base64Cert Successfully";
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificate.getRawData()));
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             code = "400";
