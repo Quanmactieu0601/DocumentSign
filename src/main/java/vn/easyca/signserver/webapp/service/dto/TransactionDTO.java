@@ -26,14 +26,18 @@ public class TransactionDTO implements Serializable {
 
     private String type;
 
-    private Long userID;
+    private String createdBy;
 
     private String host;
 
     private String method;
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public void setHost(String host) {
@@ -42,10 +46,6 @@ public class TransactionDTO implements Serializable {
 
     public void setMethod(String method) {
         this.method = method;
-    }
-
-    public Long getUserID() {
-        return userID;
     }
 
     public String getHost() {
@@ -67,7 +67,7 @@ public class TransactionDTO implements Serializable {
         this.data = transaction.getData();
         this.type = transaction.getType();
         this.triggerTime = transaction.getTriggerTime();
-        this.userID = transaction.getUserID();
+        this.createdBy = transaction.getCreatedBy();
         this.host = transaction.getHost();
         this.method = transaction.getMethod();
     }
@@ -158,7 +158,7 @@ public class TransactionDTO implements Serializable {
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
-            ", userID=" + getUserID() +
+            ", userID=" + getCreatedBy() +
             "}";
     }
 
@@ -170,7 +170,7 @@ public class TransactionDTO implements Serializable {
     }
 
     public TransactionDTO(Long id, String api, String code, String message, String data,
-                          String type, Long userID , String host, String method) {
+                          String type, String createdBy , String host, String method) {
         this.id = id;
         this.api = api;
         this.code = code;
@@ -178,7 +178,7 @@ public class TransactionDTO implements Serializable {
         this.data = data;
         this.type = type;
         this.triggerTime = Instant.now();
-        this.userID = userID;
+        this.createdBy = createdBy;
         this.method = method;
         this.host = host;
     }

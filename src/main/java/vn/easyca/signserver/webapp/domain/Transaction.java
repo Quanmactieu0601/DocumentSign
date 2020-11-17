@@ -40,8 +40,8 @@ public class Transaction implements Serializable {
     @Column(name = "type")
     private String type;
 
-    @Column(name = "user_id")
-    private Long userID;
+    @Column(name = "created_by")
+    private String createdBy;
 
     @Column(name = "host")
     private String host;
@@ -49,8 +49,12 @@ public class Transaction implements Serializable {
     @Column(name = "method")
     private String method;
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
     public void setHost(String host) {
@@ -59,10 +63,6 @@ public class Transaction implements Serializable {
 
     public void setMethod(String method) {
         this.method = method;
-    }
-
-    public Long getUserID() {
-        return userID;
     }
 
     public String getHost() {
@@ -189,7 +189,7 @@ public class Transaction implements Serializable {
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
-            ", userID=" + getUserID() + "'" +
+            ", userID=" + getCreatedBy() + "'" +
             "}";
     }
 

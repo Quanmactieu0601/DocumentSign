@@ -6,6 +6,7 @@ import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,7 +31,7 @@ public class UserJWTController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TransactionService transactionService;
 
-    public UserJWTController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, TransactionService transactionService) {
+    public UserJWTController(TokenProvider tokenProvider , AuthenticationManagerBuilder authenticationManagerBuilder, TransactionService transactionService) {
         this.tokenProvider = tokenProvider;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.transactionService = transactionService;
@@ -41,7 +42,6 @@ public class UserJWTController {
         TransactionDTO transactionDTO = new TransactionDTO("/api/authenticate", TransactionType.SYSTEM , TransactionMethod.POST);
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
-
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
@@ -50,6 +50,7 @@ public class UserJWTController {
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
+        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
         transactionService.save(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }

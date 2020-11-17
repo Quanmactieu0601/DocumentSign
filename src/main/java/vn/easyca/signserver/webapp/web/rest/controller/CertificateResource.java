@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
-import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
@@ -112,6 +112,7 @@ public class CertificateResource {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -142,6 +143,7 @@ public class CertificateResource {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -251,6 +253,7 @@ public class CertificateResource {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }

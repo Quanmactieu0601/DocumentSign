@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionReportDTO;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
@@ -26,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-
-import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
 
 /**
  * REST controller for managing {@link vn.easyca.signserver.webapp.domain.Transaction}.
@@ -103,9 +100,9 @@ public class TransactionResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
     @GetMapping("/transactions/search")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type ,@RequestParam(required = false)  Long userID,@RequestParam(required = false)  String host,@RequestParam(required = false)  String method ) {
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type ,@RequestParam(required = false)  String host,@RequestParam(required = false)  String method ,@RequestParam(required = false) String createdBy) {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable , api,triggerTime,code,message,data,type,userID ,method, host);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable , api,triggerTime,code,message,data,type ,method, host ,createdBy);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

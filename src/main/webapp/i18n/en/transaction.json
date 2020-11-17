@@ -24,7 +24,7 @@
       "type": "Type",
       "host": "Host",
       "method": "Method",
-      "userID": "UserID"
+      "createdBy": "CreatedBy"
     }
   }
 }

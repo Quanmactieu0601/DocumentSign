@@ -24,6 +24,7 @@ import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.FileOIHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
@@ -90,6 +91,7 @@ public class SignController {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -116,6 +118,7 @@ public class SignController {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -142,6 +145,7 @@ public class SignController {
         } finally {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }

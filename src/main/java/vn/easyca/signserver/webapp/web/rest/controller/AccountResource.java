@@ -10,6 +10,7 @@ import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.*;
 import vn.easyca.signserver.webapp.web.rest.vm.KeyAndPasswordVM;
 import vn.easyca.signserver.webapp.web.rest.vm.ManagedUserVM;
@@ -75,7 +76,7 @@ public class AccountResource {
         if (!checkPasswordLength(managedUserVM.getPassword())) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Invalid Password");
-            transactionDTO.setData("InvalidPasswordException");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         } else {
@@ -83,6 +84,7 @@ public class AccountResource {
             mailService.sendActivationEmail(userEntity);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -100,12 +102,13 @@ public class AccountResource {
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("No user was found for this activation key");
-            transactionDTO.setData("AccountResourceException");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this activation key");
         } else {
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -150,6 +153,7 @@ public class AccountResource {
         if (existingUser.isPresent() && (!existingUser.get().getLogin().equalsIgnoreCase(userLogin))) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Email already Used");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
@@ -157,6 +161,7 @@ public class AccountResource {
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("User could not be found");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new AccountResourceException("User could not be found");
         } else {
@@ -164,6 +169,7 @@ public class AccountResource {
                 userDTO.getLangKey(), userDTO.getImageUrl());
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }
@@ -180,11 +186,13 @@ public class AccountResource {
         if (!checkPasswordLength(passwordChangeDto.getNewPassword())) {
             transactionDTO.setMessage("400");
             transactionDTO.setCode("Invalid Password");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         } else {
             transactionDTO.setMessage("200");
             transactionDTO.setCode("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             userApplicationService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
         }
@@ -211,6 +219,7 @@ public class AccountResource {
         }
         transactionDTO.setCode(code);
         transactionDTO.setMessage(message);
+        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
         transactionService.save(transactionDTO);
     }
 
@@ -227,7 +236,7 @@ public class AccountResource {
         if (!checkPasswordLength(keyAndPassword.getNewPassword())) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Invalid Password");
-            transactionDTO.setData("InvalidPasswordException");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new InvalidPasswordException();
         }
@@ -236,12 +245,13 @@ public class AccountResource {
         if (!user.isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("No user was found for this reset key");
-            transactionDTO.setData("AccountResourceException");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new AccountResourceException("No user was found for this reset key");
         } else {
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
         }
     }

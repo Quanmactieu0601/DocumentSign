@@ -56,12 +56,12 @@
                                 <input type="text" class="form-control" formControlName="host">
                             </div>
                         </div>
-                        <!-- <div class="col">
+                        <div class="col">
                             <div class="form-group">
-                                <label for="userID">UserID :</label>
-                                <input type="text" class="form-control" formControlName="userID">
+                                <label for="createdBy">Create By :</label>
+                                <input type="text" class="form-control" formControlName="createdBy">
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -114,7 +114,7 @@
                     <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th scope="col" jhiSortBy="userID"><span jhiTranslate="webappApp.transaction.userID">UserID</span>
+                    <th scope="col" jhiSortBy="createdBy"><span jhiTranslate="webappApp.transaction.createdBy">Created By</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
                     <!-- <th scope="col"></th> -->
@@ -131,8 +131,7 @@
                     <td>{{ transaction.type }}</td>
                     <td>{{ transaction.method }}</td>
                     <td>{{ transaction.host }}</td>
-                    <td>{{ transaction.userID }}</td>
-
+                    <td>{{ transaction.createdBy }}</td>
                 </tr>
             </tbody>
         </table>

@@ -11,6 +11,7 @@ import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
 import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
@@ -107,17 +108,20 @@ public class UserResource {
         if (userDTO.getId() != null) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("A new user cannot already have an ID");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Login Already Used ");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Email Already Used ");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         } else {
@@ -125,6 +129,7 @@ public class UserResource {
             mailService.sendCreationEmail(newUserEntity);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
@@ -150,6 +155,7 @@ public class UserResource {
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Email Already Used");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
@@ -157,12 +163,14 @@ public class UserResource {
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage(" Login Already Used ");
+            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
             transactionService.save(transactionDTO);
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
+        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
         transactionService.save(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
@@ -229,6 +237,7 @@ public class UserResource {
         userApplicationService.deleteUser(login);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
+        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
         transactionService.save(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }

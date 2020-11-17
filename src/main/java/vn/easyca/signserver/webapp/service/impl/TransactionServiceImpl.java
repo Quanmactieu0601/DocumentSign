@@ -36,6 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
+    
     private final TransactionMapper transactionMapper;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {
@@ -87,10 +88,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, Long userID , String host, String method) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime,code, message, data, type, userID  ,host ,method);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type , String host, String method ,String createdBy) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime,code, message, data, type,host ,method, createdBy);
         return page.map(TransactionDTO::new);
     }
+
     /**
      * Delete the transaction by id.
      *

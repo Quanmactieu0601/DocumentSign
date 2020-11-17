@@ -11,6 +11,7 @@ export interface ITransaction {
   host?: String;
   method?: String;
   userID?: number;
+  createdBy?: String;
 }
 
 export class Transaction implements ITransaction {
@@ -24,6 +25,7 @@ export class Transaction implements ITransaction {
     public type?: String,
     public host?: String,
     public method?: String,
-    public userID?: number
+    public userID?: number,
+    public createdBy?: String
   ) {}
 }
