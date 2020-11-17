@@ -75,13 +75,14 @@ public class CertificateService {
 
     @Transactional
     public void updateActiveStatus(long id) {
-        Certificate certificate = certificateRepository.getById(id);
+//        Certificate certificate = certificateRepository.getById(id);
+        CertificateEntity certificate = certificateJpaRepository.getOne(id);
         if (certificate.getActiveStatus() == 1) {
             certificate.setActiveStatus(0);
         } else {
             certificate.setActiveStatus(1);
         }
-        certificateRepository.save(certificate);
+        certificateJpaRepository.save(certificate);
     }
 
     @Transactional(readOnly = true)
