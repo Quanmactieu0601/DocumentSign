@@ -4,7 +4,10 @@
       "title": "Tài khoản",
       "createLabel": "Tạo tài khoản mới",
       "createOrEditLabel": "Tạo hoặc sửa tài khoản",
-      "notfound": "Không tìm thấy người dùng"
+      "uploadUser": "Tải tệp người dùng lên hệ thống",
+      "upload": "Tải lên",
+      "notfound": "Không tìm thấy người dùng",
+      "cancel": "Hủy"
     },
     "created": "Tạo tài khoản mới thành công",
     "updated": "Cập nhật tài khoản thành công",
@@ -16,6 +19,7 @@
     "detail": {
       "title": "Tài khoản"
     },
+    "downloadFileTemp": "Tải File Upload mẫu",
     "login": "Tên đăng nhập",
     "firstName": "Tên",
     "lastName": "Họ",

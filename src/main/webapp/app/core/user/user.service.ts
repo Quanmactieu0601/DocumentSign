@@ -5,11 +5,12 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
 import { IUser } from './user.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   public resourceUrl = SERVER_API_URL + 'api/users';
-
+  public listId: number[] = [];
   constructor(private http: HttpClient) {}
 
   create(user: IUser): Observable<IUser> {
@@ -55,5 +56,22 @@ export class UserService {
   }
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
+  }
+
+  setListId(listIdTrans: number[]): void {
+    this.listId = listIdTrans;
+  }
+
+  getListId(): any {
+    return this.listId;
+  }
+  downLoadTemplateFile(): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
+      map(response => {
+        return {
+          data: response,
+        };
+      })
+    );
   }
 }

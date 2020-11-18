@@ -79,10 +79,10 @@
       <fa-icon icon="file-excel"></fa-icon>
       Xuất Excel CSR
     </button>
-    <span jhiTranslate="userManagement.home.uploadUser">Upload User</span>
+
     <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(cancelModal)">
       <fa-icon icon="upload"></fa-icon>
-      Upload User
+      <span jhiTranslate="userManagement.home.uploadUser">Upload User</span>
     </button>
     <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">
       <fa-icon icon="plus"></fa-icon>
@@ -273,7 +273,7 @@
 <!-- Modal Upload User Excel File -->
 <ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">
   <div class="modal-header">
-    <h5 class="modal-title">Upload User</h5>
+    <h5 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser">Upload User</span></h5>
     <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -285,7 +285,7 @@
   </div>
   <div class="modal-footer">
     <div class="group-btn">
-      <button type="button" class="btn btn-sm" (click)="d('Close')">Hủy</button>
+      <button type="button" class="btn btn-sm" (click)="d('Close')" jhiTranslate="userManagement.home.cancel">Cancel</button>
     </div>
   </div>
 </ng-template>
