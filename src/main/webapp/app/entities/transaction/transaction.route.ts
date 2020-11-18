@@ -11,6 +11,7 @@ import { TransactionService } from './transaction.service';
 import { TransactionComponent } from './transaction.component';
 import { TransactionDetailComponent } from './transaction-detail.component';
 import { TransactionUpdateComponent } from './transaction-update.component';
+import { TransactionReportComponent } from 'app/entities/transaction-report/transaction-report.component';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionResolve implements Resolve<ITransaction> {
@@ -78,6 +79,26 @@ export const transactionRoute: Routes = [
     data: {
       authorities: [Authority.USER],
       pageTitle: 'webappApp.transaction.home.title',
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: ':id/edit',
+    component: TransactionUpdateComponent,
+    resolve: {
+      transaction: TransactionResolve,
+    },
+    data: {
+      authorities: [Authority.USER],
+      pageTitle: 'webappApp.transaction.home.title',
+    },
+    canActivate: [UserRouteAccessService],
+  },
+  {
+    path: 'report',
+    component: TransactionReportComponent,
+    resolve: {
+      transaction: TransactionResolve,
     },
     canActivate: [UserRouteAccessService],
   },

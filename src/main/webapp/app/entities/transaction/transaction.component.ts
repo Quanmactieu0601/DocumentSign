@@ -90,6 +90,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
+
   searchTransactions(): any {
     const data1 = {
       // id: this.searchForm.get(['id'])!.value,

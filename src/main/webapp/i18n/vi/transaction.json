@@ -17,11 +17,12 @@
         "title": "Transaction"
       },
       "api": "Api",
-      "triggerTime": "Trigger Time",
-      "code": "Code",
-      "message": "Message",
-      "data": "Data",
-      "type": "Type"
+      "triggerTime": "Thời gian kích hoạt",
+      "code": "Mã code",
+      "message": "Thông điệp",
+      "data": "Dữ liệu",
+      "type": "Kiểu",
+      "transactionReport": "Báo cáo thống kê"
     }
   }
 }

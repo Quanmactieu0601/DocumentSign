@@ -21,7 +21,8 @@
       "code": "Code",
       "message": "Message",
       "data": "Data",
-      "type": "Type"
+      "type": "Type",
+      "transactionReport": "Report Transaction"
     }
   }
 }

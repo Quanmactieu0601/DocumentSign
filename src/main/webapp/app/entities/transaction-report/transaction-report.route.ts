@@ -5,9 +5,4 @@ import { TransactionReportComponent } from 'app/entities/transaction-report/tran
 @Injectable({ providedIn: 'root' })
 export class TransactionReportRoute {}
 
-export const transactionReportRoute: Routes = [
-  {
-    path: '',
-    component: TransactionReportComponent,
-  },
-];
+export const transactionReportRoute: Routes = [];

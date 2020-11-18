@@ -17,7 +17,8 @@
             <div class="form-group">
                 <label for="cars">Kiểu</label>
                 <select class="form-control" name="cars" id="cars" formControlName="type">
-                    <option value="SYSTEM">SYSTEM</option>
+                    <option label="------ Select ------"></option>
+                    <option value="SYSTEM" > SYSTEM</option>
                     <option value="SIGNING">SIGNING</option>
                     <option value="IMPORT_CERT">IMPORT_CERT</option>
                 </select>
@@ -37,6 +38,10 @@
             </div>
 
         </div>
+
+
+
+      
     </div>
 
     <div class="charts">
@@ -51,7 +56,17 @@
                         [colors]="pieChartColors"
                         [legend]="pieChartLegend">
                 </canvas>
+                <div  [ngStyle]="{'margin-left': '200px','display': 'flex'}">
+                    <h4>Hình 1 :   </h4>
+                    <span [ngStyle]="{ 'margin-left': '20px', 'margin-top':'5px'}"> Biểu đồ thống kê số Request Transaction</span>
+                </div>
             </div>
         </div>
     </div>
+
 </form>
+<br/>
+<br/>
+<div class="col-md-2">
+    <button (click)="onSubmit()">ExportPDF</button>       
+</div>

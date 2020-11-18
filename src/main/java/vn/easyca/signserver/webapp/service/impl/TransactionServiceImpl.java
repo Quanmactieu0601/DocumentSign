@@ -85,6 +85,7 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionRepository.findById(id)
             .map(transactionMapper::toDto);
     }
+
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type) {

@@ -1,6 +1,15 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import com.itextpdf.text.DocumentException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.w3c.tidy.Tidy;
+import org.xhtmlrenderer.pdf.ITextRenderer;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionReportDTO;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
@@ -18,8 +27,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -39,6 +50,10 @@ public class TransactionResource {
     private final Logger log = LoggerFactory.getLogger(TransactionResource.class);
 
     private final String ENTITY_NAME = "transaction";
+    private static final String OUTPUT_FILE = "test.pdf";
+    private static final String UTF_8 = "UTF-8";
+    @Autowired
+    SpringTemplateEngine templateEngine;
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -151,7 +166,6 @@ public class TransactionResource {
     public ResponseEntity<TransactionReportDTO> getAllTransactionBetweenDate(@PathVariable("startDate") String startdate,
                                                              @PathVariable("endDate") String enddate,
                                                              @PathVariable("type") String type) throws ParseException {
-
         log.debug("REST request to get all Transactions beween date and type ");
         TransactionReportDTO transactionReportDTO = new TransactionReportDTO();
         int totalsuccess = 0;
@@ -172,4 +186,53 @@ public class TransactionResource {
         }
         return ResponseEntity.ok().body(transactionReportDTO);
     }
+
+
+    @GetMapping("/transactions/exportPDF")
+    public void  savePDF() throws IOException, DocumentException {
+        log.debug("REST request to export  PDF Transactions ");
+
+        List<TransactionDTO> listTranscation=new ArrayList<>(3000);
+        for (int i = 0; i < 3000; i++) {
+            TransactionDTO transactionDTO=new TransactionDTO();
+            transactionDTO.setApi("api"+i);
+            transactionDTO.setCode("code"+i);
+            transactionDTO.setData(" components "+i);
+            transactionDTO.setMessage("message  "+i);
+            transactionDTO.setTriggerTime(null);
+            transactionDTO.setType("SYSTEM");
+            listTranscation.add(transactionDTO);
+        }
+
+        Context context=new Context();
+        context.setVariable("listReport",listTranscation);
+
+        String renderdHtmlContext=templateEngine.process("template",context);
+        String xHtml=convertToXhtml(renderdHtmlContext);
+        ITextRenderer renderer=new ITextRenderer();
+
+        String baseUrl= FileSystems.getDefault()
+            .getPath("src","main","resources","templates")
+            .toUri()
+            .toURL()
+            .toString();
+        renderer.setDocumentFromString(xHtml,baseUrl);
+        renderer.layout();
+
+        OutputStream outputStream=new FileOutputStream("src//test17.pdf");
+        renderer.createPDF(outputStream);
+        outputStream.close();
+
+    }
+    private String convertToXhtml(String html) throws UnsupportedEncodingException {
+        Tidy tidy = new Tidy();
+        tidy.setInputEncoding(UTF_8);
+        tidy.setOutputEncoding(UTF_8);
+        tidy.setXHTML(true);
+        ByteArrayInputStream inputStream = new ByteArrayInputStream(html.getBytes(UTF_8));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        tidy.parseDOM(inputStream, outputStream);
+        return outputStream.toString(UTF_8);
+    }
+
 }

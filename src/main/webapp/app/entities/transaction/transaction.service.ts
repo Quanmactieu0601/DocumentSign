@@ -46,6 +46,10 @@ export class TransactionService {
     return this.http.get<any>(`${this.resourceUrl + '/report'}/${startDate}/${endDate}/${type}`, { observe: 'response' });
   }
 
+  exportPDF(): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl + '/exportPDF'}`, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http

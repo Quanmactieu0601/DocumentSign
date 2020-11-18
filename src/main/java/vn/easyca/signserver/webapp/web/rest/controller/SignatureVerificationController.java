@@ -21,11 +21,9 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 public class SignatureVerificationController {
     String code = null;
     String message = null;
-
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final SignatureVerificationService verificationService;
     private final TransactionService transactionService;
-
     public SignatureVerificationController(SignatureVerificationService verificationService, TransactionService transactionService) {
         this.verificationService = verificationService;
         this.transactionService = transactionService;
