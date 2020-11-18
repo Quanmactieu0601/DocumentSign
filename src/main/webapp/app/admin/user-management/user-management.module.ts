@@ -9,6 +9,7 @@ import { UserManagementDeleteDialogComponent } from './user-management-delete-di
 import { userManagementRoute } from './user-management.route';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { UploadUserComponent } from './upload-user/upload-user-component';
+import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(userManagementRoute)],
@@ -19,6 +20,7 @@ import { UploadUserComponent } from './upload-user/upload-user-component';
     UserManagementDeleteDialogComponent,
     UserManagementViewCertificateComponent,
     UploadUserComponent,
+    UserManagementKeyLengthComponent,
   ],
   entryComponents: [UserManagementDeleteDialogComponent],
 })

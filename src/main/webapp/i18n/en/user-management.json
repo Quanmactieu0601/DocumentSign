@@ -5,7 +5,9 @@
       "createLabel": "Create a new user",
       "createOrEditLabel": "Create or edit a user",
       "uploadUser": "Upload Users",
-      "notfound": "No User Found"
+      "upload": "Upload",
+      "notfound": "No User Found",
+      "cancel": "Cancel"
     },
     "created": "Create user success !",
     "updated": "Update user success !",
@@ -17,6 +19,7 @@
     "detail": {
       "title": "User"
     },
+    "downloadFileTemp": "Down load file template",
     "login": "Account",
     "firstName": "First name",
     "lastName": "Last name",
