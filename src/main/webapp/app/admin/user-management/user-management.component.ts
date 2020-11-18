@@ -10,14 +10,14 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { map } from 'rxjs/operators';
-import { IUser } from '../../core/user/user.model';
+import { IUser, User } from '../../core/user/user.model';
+import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -217,20 +217,22 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   createCSR(): void {
-    if (this.listId.length > 0) {
-      this.certificateService
-        .sendData({
-          userIds: this.listId,
-        })
-        .subscribe((response: any) => {
-          if (response.byteLength === 0) {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
-          } else {
-            this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
-            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
-          }
-        });
-    }
+    const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
+    this.userService.setListId(this.listId);
+    // if (this.listId.length > 0) {
+    //   this.certificateService
+    //     .sendData({
+    //       userIds: this.listId,
+    //     })
+    //     .subscribe((response: any) => {
+    //       if (response.byteLength === 0) {
+    //         this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
+    //       } else {
+    //         this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
+    //         saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+    //       }
+    //     });
+    // }
   }
 
   openModal(content: any): void {

@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   public resourceUrl = SERVER_API_URL + 'api/users';
-
+  public listId: number[] = [];
   constructor(private http: HttpClient) {}
 
   create(user: IUser): Observable<IUser> {
@@ -58,6 +58,13 @@ export class UserService {
     return this.http.get(`${this.resourceUrl}/files`);
   }
 
+  setListId(listIdTrans: number[]): void {
+    this.listId = listIdTrans;
+  }
+
+  getListId(): any {
+    return this.listId;
+  }
   downLoadTemplateFile(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
       map(response => {
