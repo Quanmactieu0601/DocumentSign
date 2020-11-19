@@ -1,9 +1,12 @@
 package vn.easyca.signserver.core.utils;
 
+import sun.misc.BASE64Decoder;
+
 import javax.imageio.ImageIO;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.ImageView;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -39,8 +42,10 @@ public class BASE64ImageView extends ImageView {
         BufferedImage newImage = null;
         ByteArrayInputStream bais = null;
         try {
+            BASE64Decoder decoder = new BASE64Decoder();
+            byte[] decodedBytes = decoder.decodeBuffer(b64);
             bais = new ByteArrayInputStream(
-                Base64.getDecoder().decode(b64.getBytes()));
+                decodedBytes);
             newImage = ImageIO.read(bais);
         } catch (Throwable ex) {
             ex.printStackTrace();
