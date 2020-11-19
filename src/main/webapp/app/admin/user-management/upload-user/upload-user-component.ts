@@ -49,28 +49,4 @@ export class UploadUserComponent {
     const element = event.target as HTMLInputElement;
     element.value = '';
   };
-
-  downLoadFileTemplate(): void {
-    this.userService.downLoadTemplateFile().subscribe(
-      res => {
-        const bindData = [];
-        bindData.push(res.data);
-        const url = window.URL.createObjectURL(
-          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        );
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display: none');
-        a.setAttribute('target', 'blank');
-        a.href = url;
-        a.download = 'templateFile';
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-      },
-      error => {
-        console.error(error);
-      }
-    );
-  }
 }
