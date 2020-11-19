@@ -20,9 +20,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException;
-import vn.easyca.signserver.webapp.service.error.InvalidPasswordException;
-import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
+import vn.easyca.signserver.webapp.service.error.*;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -97,46 +95,54 @@ public class UserApplicationService {
                 throw new UsernameAlreadyUsedException();
             }
         });
-
-        userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
-            boolean removed = removeNonActivatedUser(existingUser);
-            if (!removed) {
-                throw new EmailAlreadyUsedException();
-            }
-        });
-
-        UserEntity newUserEntity = new UserEntity();
-        String encryptedPassword = passwordEncoder.encode(password);
-        newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
-        // new user gets initially a generated password
-        newUserEntity.setPassword(encryptedPassword);
-        newUserEntity.setFirstName(userDTO.getFirstName());
-        newUserEntity.setLastName(userDTO.getLastName());
-        if (userDTO.getEmail() != null) {
-            newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
+        if (userDTO.getEmail().length() != 0) {
+            userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    throw new EmailAlreadyUsedException();
+                }
+            });
         }
-        newUserEntity.setOwnerId(userDTO.getOwnerId());
-        newUserEntity.setPhone(userDTO.getPhone());
-        newUserEntity.setCommonName(userDTO.getCommonName());
-        newUserEntity.setOrganizationName(userDTO.getOrganizationName());
-        newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
-        newUserEntity.setLocalityName(userDTO.getLocalityName());
-        newUserEntity.setStateName(userDTO.getStateName());
-        newUserEntity.setCountry(userDTO.getCountry());
-        newUserEntity.setImageUrl(userDTO.getImageUrl());
-        newUserEntity.setLangKey(userDTO.getLangKey());
-        // new user is not active
-        newUserEntity.setActivated(false);
-        // new user gets registration key
-        newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
-        Set<Authority> authorities = new HashSet<>();
-        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-        newUserEntity.setAuthorities(authorities);
-        userRepository.save(newUserEntity);
-        this.clearUserCaches(newUserEntity);
-        log.debug("Created Information for User: {}", newUserEntity);
-        return newUserEntity;
-    }
+            UserEntity newUserEntity = new UserEntity();
+            if (userDTO.getCountry().length() == 0 && userDTO.getCommonName().length() == 0 && userDTO.getOrganizationName().length() == 0 && userDTO.getOrganizationUnit().length() == 0 && userDTO.getLocalityName().length() == 0 && userDTO.getStateName().length() == 0) {
+                throw new InfoFromCNToCountryNotFoundException();
+            } else if (userDTO.getCountry().length() != 0 && (userDTO.getCountry().length() != 2)) {
+                System.out.println(userDTO.getCountry().length());
+                throw new InvalidCountryColumnLength();
+            }
+
+            String encryptedPassword = passwordEncoder.encode(password);
+            newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
+            // new user gets initially a generated password
+            newUserEntity.setPassword(encryptedPassword);
+            newUserEntity.setFirstName(userDTO.getFirstName());
+            newUserEntity.setLastName(userDTO.getLastName());
+            if (userDTO.getEmail().length() != 0) {
+                newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
+            }
+            newUserEntity.setOwnerId(userDTO.getOwnerId());
+            newUserEntity.setPhone(userDTO.getPhone());
+            newUserEntity.setCommonName(userDTO.getCommonName());
+            newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+            newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+            newUserEntity.setLocalityName(userDTO.getLocalityName());
+            newUserEntity.setStateName(userDTO.getStateName());
+            newUserEntity.setCountry(userDTO.getCountry());
+            newUserEntity.setImageUrl(userDTO.getImageUrl());
+            newUserEntity.setLangKey(userDTO.getLangKey());
+            // new user is not active
+            newUserEntity.setActivated(false);
+            // new user gets registration key
+            newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+            Set<Authority> authorities = new HashSet<>();
+            authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+            newUserEntity.setAuthorities(authorities);
+            userRepository.save(newUserEntity);
+            this.clearUserCaches(newUserEntity);
+            log.debug("Created Information for User: {}", newUserEntity);
+            return newUserEntity;
+        }
+
 
     private boolean removeNonActivatedUser(UserEntity existingUserEntity) {
         if (existingUserEntity.getActivated()) {
@@ -158,7 +164,7 @@ public class UserApplicationService {
             }
         });
 
-        if(userDTO.getEmail() != null) {
+        if (userDTO.getEmail() != null) {
             userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
                 boolean removed = removeNonActivatedUser(existingUser);
                 if (!removed) {
@@ -300,7 +306,7 @@ public class UserApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone ) {
+    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
         return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone).map(UserDTO::new);
     }
 
