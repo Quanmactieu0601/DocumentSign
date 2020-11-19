@@ -4,6 +4,7 @@ import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import io.swagger.annotations.Authorization;
 import liquibase.pro.packaged.F;
 import org.apache.http.HttpResponse;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.config.Constants;
@@ -47,10 +48,7 @@ import javax.persistence.Convert;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -153,25 +151,25 @@ public class UserResource {
 
     @PostMapping("users/uploadUser")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<BaseResponseVM> uploadUser(@RequestParam ("file") MultipartFile file){
-        try{
+    public ResponseEntity<BaseResponseVM> uploadUser(@RequestParam("file") MultipartFile file) {
+        try {
             List<UserDTO> userDTOList = ExcelUtils.convertExcelToUserDTO(file.getInputStream());
-            for(UserDTO userDTO: userDTOList){
+            for (UserDTO userDTO : userDTOList) {
                 userApplicationService.registerUser(userDTO, "Manhmin99");
             }
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
 
         } catch (IOException e) {
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
-        } catch (UsernameAlreadyUsedException usernameAlreadyUsedException){
-            return  ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
-        } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException){
-            return  ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
-        } catch (RequiredColumnNotFoundException requiredColumnNotFoundException){
+        } catch (UsernameAlreadyUsedException usernameAlreadyUsedException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
+        } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
+        } catch (RequiredColumnNotFoundException requiredColumnNotFoundException) {
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, requiredColumnNotFoundException.getMessage()));
-        } catch (InvalidCountryColumnLength invalidCountryColumnLength){
+        } catch (InvalidCountryColumnLength invalidCountryColumnLength) {
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, invalidCountryColumnLength.getMessage()));
-        } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException){
+        } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException) {
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, infoFromCNToCountryNotFoundException.getMessage()));
         }
 
@@ -228,27 +226,25 @@ public class UserResource {
 
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException{
-        String fileLocation =  "src/main/resources/templates/upload/UserUploadTemplate.xlsx";
-        File fileTemplate = new File(fileLocation);
-        byte[] isr = Files.readAllBytes(fileTemplate.toPath());
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(isr.length);
-        byteArrayOutputStream.write(isr, 0, isr.length);
-        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = new ClassPathResource("templates/upload/UserUploadTemplate.xlsx").getInputStream();
+            byte[] isr = new byte[inputStream.available()];
+            inputStream.read(isr);
+            response.setContentType("application/vnd.ms-excel");
 
-        OutputStream outputStream;
-        try{
-            outputStream = response.getOutputStream();
-            byteArrayOutputStream.writeTo(outputStream);
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException ioException){
-            ioException.printStackTrace();
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentLength(isr.length);
+            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
         }
-        HttpHeaders respHeaders = new HttpHeaders();
-        respHeaders.setContentLength(isr.length);
-        respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-        return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
+
 
     }
 

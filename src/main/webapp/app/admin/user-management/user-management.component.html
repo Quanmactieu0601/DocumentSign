@@ -284,7 +284,10 @@
     </div>
   </div>
   <div class="modal-footer">
-    <div class="group-btn">
+    <button class="btn btn-warning shadow rounded btn-sm" (click)="downLoadFileTemplate()">
+      <fa-icon icon="download"></fa-icon> <span jhiTranslate="userManagement.downloadFileTemp">Download file template</span>
+    </button>
+    <div class="group-btn float-right">
       <button type="button" class="btn btn-sm" (click)="d('Close')" jhiTranslate="userManagement.home.cancel">Cancel</button>
     </div>
   </div>
