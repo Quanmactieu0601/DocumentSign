@@ -29,7 +29,6 @@ export class UserManagementKeyLengthComponent {
 
   saveAndGenCSR(): void {
     this.listId = this.userService.getListId();
-    console.error(this.listId, this.model.options);
 
     if (this.listId.length > 0) {
       this.certificateService
