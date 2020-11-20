@@ -1,7 +1,5 @@
 package vn.easyca.signserver.webapp.service.impl;
 
-import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
-import vn.easyca.signserver.webapp.repository.impl.TransactionRepositoryImpl;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.repository.TransactionRepository;
@@ -15,11 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +29,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    
+
     private final TransactionMapper transactionMapper;
 
     public TransactionServiceImpl(TransactionRepository transactionRepository, TransactionMapper transactionMapper) {

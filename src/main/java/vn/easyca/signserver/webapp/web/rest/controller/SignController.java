@@ -6,8 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +22,8 @@ import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.FileOIHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -40,10 +37,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -57,11 +51,12 @@ public class SignController {
 
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
-    private final TransactionService transactionService;
+    private final AsyncTransaction asyncTransaction;
 
-    public SignController(SigningService signService, TransactionService transactionService) {
+    public SignController(SigningService signService , AsyncTransaction asyncTransaction) {
         this.signService = signService;
-        this.transactionService = transactionService;
+        this.asyncTransaction = asyncTransaction;
+
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -92,7 +87,7 @@ public class SignController {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 
@@ -119,7 +114,7 @@ public class SignController {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 
@@ -146,7 +141,7 @@ public class SignController {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 

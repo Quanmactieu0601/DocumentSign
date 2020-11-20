@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import org.springframework.scheduling.annotation.Async;
 import sun.rmi.runtime.Log;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
@@ -20,6 +21,7 @@ public interface TransactionService {
      * @param transactionDTO the entity to save.
      * @return the persisted entity.
      */
+
     TransactionDTO save(TransactionDTO transactionDTO);
 
     /**

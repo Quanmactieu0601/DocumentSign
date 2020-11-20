@@ -27,12 +27,12 @@ import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
-import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
@@ -58,15 +58,14 @@ public class CertificateResource {
 
     private final CertificateGenerateService p11GeneratorService;
     private final CertificateService certificateService;
-
+    private final AsyncTransaction asyncTransaction;
     private final P12ImportService p12ImportService;
-    private final TransactionService transactionService;
 
-    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, P12ImportService p12ImportService, TransactionService transactionService) {
+    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, AsyncTransaction asyncTransaction, P12ImportService p12ImportService) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
+        this.asyncTransaction = asyncTransaction;
         this.p12ImportService = p12ImportService;
-        this.transactionService = transactionService;
     }
 
     @GetMapping()
@@ -113,7 +112,7 @@ public class CertificateResource {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 
@@ -144,7 +143,7 @@ public class CertificateResource {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 
@@ -254,7 +253,7 @@ public class CertificateResource {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 

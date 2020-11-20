@@ -6,6 +6,7 @@ import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 
@@ -27,14 +28,13 @@ import javax.validation.Valid;
 public class UserJWTController {
 
     private final TokenProvider tokenProvider;
-
+    private final AsyncTransaction asyncTransaction;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final TransactionService transactionService;
 
-    public UserJWTController(TokenProvider tokenProvider , AuthenticationManagerBuilder authenticationManagerBuilder, TransactionService transactionService) {
+    public UserJWTController(TokenProvider tokenProvider, AsyncTransaction asyncTransaction, AuthenticationManagerBuilder authenticationManagerBuilder ) {
         this.tokenProvider = tokenProvider;
+        this.asyncTransaction = asyncTransaction;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.transactionService = transactionService;
     }
 
     @PostMapping("/authenticate")
@@ -51,7 +51,7 @@ public class UserJWTController {
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
         transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-        transactionService.save(transactionDTO);
+        asyncTransaction.newThread(transactionDTO);
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

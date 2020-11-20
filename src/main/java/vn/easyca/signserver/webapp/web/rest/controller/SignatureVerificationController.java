@@ -12,8 +12,8 @@ import vn.easyca.signserver.core.services.SignatureVerificationService;
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
 import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
-import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -26,11 +26,11 @@ public class SignatureVerificationController {
 
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final SignatureVerificationService verificationService;
-    private final TransactionService transactionService;
+    private final AsyncTransaction asyncTransaction;
 
-    public SignatureVerificationController(SignatureVerificationService verificationService, TransactionService transactionService) {
+    public SignatureVerificationController(SignatureVerificationService verificationService, AsyncTransaction asyncTransaction) {
         this.verificationService = verificationService;
-        this.transactionService = transactionService;
+        this.asyncTransaction = asyncTransaction;
     }
 
     @PostMapping(value = "/hash")
@@ -56,7 +56,7 @@ public class SignatureVerificationController {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 
@@ -83,7 +83,7 @@ public class SignatureVerificationController {
             transactionDTO.setCode(code);
             transactionDTO.setMessage(message);
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
         }
     }
 }

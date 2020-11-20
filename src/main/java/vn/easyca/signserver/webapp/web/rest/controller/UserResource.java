@@ -11,6 +11,7 @@ import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
@@ -31,9 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.apache.commons.lang3.RandomStringUtils;
 
-import javax.persistence.Convert;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -79,13 +78,13 @@ public class UserResource {
     private final UserRepository userRepository;
 
     private final MailService mailService;
-    private final TransactionService transactionService;
+    private final AsyncTransaction asyncTransaction;
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService, TransactionService transactionService) {
+    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService , AsyncTransaction asyncTransaction) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
         this.mailService = mailService;
-        this.transactionService = transactionService;
+        this.asyncTransaction = asyncTransaction;
     }
 
     /**
@@ -109,20 +108,20 @@ public class UserResource {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("A new user cannot already have an ID");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Login Already Used ");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Email Already Used ");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
@@ -130,7 +129,7 @@ public class UserResource {
             transactionDTO.setCode("200");
             transactionDTO.setMessage("OK");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
@@ -156,7 +155,7 @@ public class UserResource {
             transactionDTO.setCode("400");
             transactionDTO.setMessage("Email Already Used");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
@@ -164,14 +163,14 @@ public class UserResource {
             transactionDTO.setCode("400");
             transactionDTO.setMessage(" Login Already Used ");
             transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            transactionService.save(transactionDTO);
+            asyncTransaction.newThread(transactionDTO);
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
         transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-        transactionService.save(transactionDTO);
+        asyncTransaction.newThread(transactionDTO);
 
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
@@ -238,7 +237,7 @@ public class UserResource {
         transactionDTO.setCode("200");
         transactionDTO.setMessage("OK");
         transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-        transactionService.save(transactionDTO);
+        asyncTransaction.newThread(transactionDTO);
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import org.springframework.scheduling.annotation.Async;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.enm.TransactionMethod;
 import vn.easyca.signserver.webapp.enm.TransactionType;
@@ -10,6 +11,7 @@ import java.io.Serializable;
 /**
  * A DTO for the {@link vn.easyca.signserver.webapp.domain.Transaction} entity.
  */
+@Async
 public class TransactionDTO implements Serializable {
 
     private Long id;
