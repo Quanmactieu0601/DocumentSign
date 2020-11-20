@@ -5,6 +5,7 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { TransactionService } from 'app/entities/transaction/transaction.service';
 import { FormBuilder } from '@angular/forms';
+import { error } from '@angular/compiler/src/util';
 @Component({
   selector: 'jhi-transaction-report',
   templateUrl: './transaction-report.component.html',
@@ -47,11 +48,24 @@ export class TransactionReportComponent implements OnInit {
     this.transactionService.exportPDF().subscribe(
       (res: HttpResponse<any>) => {
         console.log(res.body);
-        console.log(' Export file PDF');
+        console.log(' Export file PDF success');
       },
       error => {
         console.log(error);
         console.log(' error to export file pdf');
+      }
+    );
+  }
+
+  onSubmit1(): void {
+    this.transactionService.exportPDFfromjasper().subscribe(
+      (res: HttpResponse<any>) => {
+        console.log(res.body);
+        console.log('success');
+      },
+      error => {
+        console.log(error);
+        console.log('failure');
       }
     );
   }

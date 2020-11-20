@@ -50,6 +50,10 @@ export class TransactionService {
     return this.http.get<any>(`${this.resourceUrl + '/exportPDF'}`, { observe: 'response' });
   }
 
+  exportPDFfromjasper(): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl + '/exportPDFJasper'}`, { observe: 'response' });
+  }
+
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
     return this.http

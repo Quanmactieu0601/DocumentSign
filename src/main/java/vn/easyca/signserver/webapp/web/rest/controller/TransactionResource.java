@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
 import com.itextpdf.text.DocumentException;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.thymeleaf.TemplateEngine;
@@ -33,10 +35,7 @@ import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
 
@@ -52,6 +51,11 @@ public class TransactionResource {
     private final String ENTITY_NAME = "transaction";
     private static final String OUTPUT_FILE = "test.pdf";
     private static final String UTF_8 = "UTF-8";
+
+
+
+    static final String fileName = "src/main/resources/JasperDesign.jrxml";
+    static final String outFile = "src/main/resources/Reports23.pdf";
     @Autowired
     SpringTemplateEngine templateEngine;
 
@@ -219,7 +223,7 @@ public class TransactionResource {
         renderer.setDocumentFromString(xHtml,baseUrl);
         renderer.layout();
 
-        OutputStream outputStream=new FileOutputStream("src//test17.pdf");
+        OutputStream outputStream=new FileOutputStream("src//test18.pdf");
         renderer.createPDF(outputStream);
         outputStream.close();
 
@@ -234,5 +238,44 @@ public class TransactionResource {
         tidy.parseDOM(inputStream, outputStream);
         return outputStream.toString(UTF_8);
     }
+
+
+
+
+    @GetMapping("/transactions/exportPDFJasper")
+    public void exportPDF() throws JRException, FileNotFoundException {
+
+
+        log.debug("REST request to export  PDF Transactions ");
+        Map<String, Object> parameter = new HashMap<String, Object>();
+        List<TransactionDTO> listTranscation=new ArrayList<>(1000000);
+        for (int i = 0; i < 10000; i++) {
+            TransactionDTO transactionDTO=new TransactionDTO();
+            transactionDTO.setApi("api"+i);
+            transactionDTO.setCode("code"+i);
+            transactionDTO.setData(" components "+i);
+            transactionDTO.setMessage("message  "+i);
+            transactionDTO.setType("SYSTEM");
+            listTranscation.add(transactionDTO);
+        }
+
+
+        System.out.println(listTranscation);
+
+        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTranscation);
+        parameter.put("transactionDataSource", TransactionCollectionDataSource);
+        parameter.put("title", new String("Hi, I am Title"));
+
+        JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
+        File file = new File(outFile);
+        OutputStream outputSteam = new FileOutputStream(file);
+        JasperExportManager.exportReportToPdfStream(jasperPrint, outputSteam);
+        System.out.println("Report Generated!");
+    }
+
+
+
+
 
 }

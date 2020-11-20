@@ -22,4 +22,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query(value = " FROM Transaction t WHERE t.triggerTime BETWEEN :startDate  AND :endDate  AND t.type = :type")
     List<Transaction> findAllTransactionTypeAndDate(@Param("startDate") Instant startDate,
                                                     @Param("endDate") Instant endDate, @Param("type") String type);
+
 }
