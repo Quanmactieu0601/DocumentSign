@@ -28,8 +28,7 @@ import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
-import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
+import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
@@ -56,13 +55,13 @@ public class CertificateResource {
 
     private final CertificateGenerateService p11GeneratorService;
     private final CertificateService certificateService;
-    private final AsyncTransaction asyncTransaction;
+    private final AsyncTransactionService asyncTransactionService;
     private final P12ImportService p12ImportService;
 
-    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, AsyncTransaction asyncTransaction, P12ImportService p12ImportService) {
+    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
-        this.asyncTransaction = asyncTransaction;
+        this.asyncTransactionService = asyncTransactionService;
         this.p12ImportService = p12ImportService;
     }
 
@@ -96,12 +95,12 @@ public class CertificateResource {
         try {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
-            asyncTransaction.newThread("/api/certificate/import/p12", TransactionType.IMPORT_CERT, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.IMPORT_CERT, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
-            asyncTransaction.newThread("/api/certificate/import/p12", TransactionType.IMPORT_CERT, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.IMPORT_CERT, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
@@ -116,17 +115,17 @@ public class CertificateResource {
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
-            asyncTransaction.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransaction.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransaction.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.IMPORT_CERT, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
@@ -220,17 +219,17 @@ public class CertificateResource {
     public ResponseEntity<BaseResponseVM> getBase64Cert(@RequestParam String serial) {
         try {
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
-            asyncTransaction.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
+            asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransaction.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
+            asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransaction.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
+            asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.IMPORT_CERT, Method.GET,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }

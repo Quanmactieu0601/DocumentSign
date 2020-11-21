@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.service.impl;
+package vn.easyca.signserver.webapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -12,7 +12,7 @@ import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import java.time.Instant;
 
 @Component
-public class AsyncTransaction {
+public class AsyncTransactionService {
     @Autowired
     TransactionService transactionService;
 

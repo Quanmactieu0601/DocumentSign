@@ -20,8 +20,7 @@ import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
+import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -29,7 +28,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,11 +39,11 @@ import java.util.List;
 public class SignController {
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
-    private final AsyncTransaction asyncTransaction;
+    private final AsyncTransactionService asyncTransactionService;
 
-    public SignController(SigningService signService, AsyncTransaction asyncTransaction) {
+    public SignController(SigningService signService, AsyncTransactionService asyncTransactionService) {
         this.signService = signService;
-        this.asyncTransaction = asyncTransaction;
+        this.asyncTransactionService = asyncTransactionService;
 
     }
 
@@ -57,7 +55,7 @@ public class SignController {
             signRequest.getSignElements().get(0).getContent().setFileData(fileData);
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
-            asyncTransaction.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
@@ -65,11 +63,11 @@ public class SignController {
                 .body(resource);
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransaction.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
-            asyncTransaction.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
@@ -80,17 +78,17 @@ public class SignController {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
-            asyncTransaction.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransaction.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransaction.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
@@ -101,17 +99,17 @@ public class SignController {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
-            asyncTransaction.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransaction.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransaction.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
