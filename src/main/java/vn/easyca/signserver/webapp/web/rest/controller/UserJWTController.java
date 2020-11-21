@@ -1,10 +1,11 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
-import vn.easyca.signserver.webapp.service.TransactionService;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,31 +26,27 @@ import javax.validation.Valid;
 public class UserJWTController {
 
     private final TokenProvider tokenProvider;
-
+    private final AsyncTransaction asyncTransaction;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final TransactionService transactionService;
 
-    public UserJWTController(TokenProvider tokenProvider, AuthenticationManagerBuilder authenticationManagerBuilder, TransactionService transactionService) {
+    public UserJWTController(TokenProvider tokenProvider, AsyncTransaction asyncTransaction, AuthenticationManagerBuilder authenticationManagerBuilder ) {
         this.tokenProvider = tokenProvider;
+        this.asyncTransaction = asyncTransaction;
         this.authenticationManagerBuilder = authenticationManagerBuilder;
-        this.transactionService = transactionService;
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/authenticate", TransactionType.SYSTEM);
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
-
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         boolean rememberMe = (loginVM.isRememberMe() == null) ? false : loginVM.isRememberMe();
         String jwt = tokenProvider.createToken(authentication, rememberMe);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("authorize successfully");
-        transactionService.save(transactionDTO);
+        asyncTransaction.newThread("/api/authenticate", TransactionType.SYSTEM, Method.POST,
+            "200", "OK", AccountUtils.getLoggedAccount());
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

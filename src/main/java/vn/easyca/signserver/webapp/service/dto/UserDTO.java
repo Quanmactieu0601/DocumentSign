@@ -131,7 +131,6 @@ public class UserDTO {
         this.login = login;
     }
 
-
     public String getFirstName() {
         return firstName;
     }

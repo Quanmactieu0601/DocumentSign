@@ -8,6 +8,10 @@ export interface ITransaction {
   message?: string;
   data?: string;
   type?: String;
+  host?: String;
+  method?: String;
+  userID?: number;
+  createdBy?: String;
 }
 
 export class Transaction implements ITransaction {
@@ -18,6 +22,10 @@ export class Transaction implements ITransaction {
     public code?: string,
     public message?: string,
     public data?: string,
-    public type?: String
+    public type?: String,
+    public host?: String,
+    public method?: String,
+    public userID?: number,
+    public createdBy?: String
   ) {}
 }
