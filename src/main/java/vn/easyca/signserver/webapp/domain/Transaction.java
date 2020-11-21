@@ -189,7 +189,7 @@ public class Transaction implements Serializable {
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
-            ", userID=" + getCreatedBy() + "'" +
+            ", createdBy=" + getCreatedBy() + "'" +
             "}";
     }
 

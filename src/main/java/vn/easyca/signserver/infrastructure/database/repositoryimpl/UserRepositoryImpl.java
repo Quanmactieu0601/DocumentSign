@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepositoryCustom;
 import vn.easyca.signserver.webapp.utils.CommonUntil;
 

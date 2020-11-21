@@ -3,13 +3,11 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
 import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
-import vn.easyca.signserver.webapp.enm.TransactionMethod;
+import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
-import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
@@ -65,9 +63,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class UserResource {
-    String code = null;
-    String message = null;
-
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     @Value("${jhipster.clientApp.name}")
@@ -80,7 +75,7 @@ public class UserResource {
     private final MailService mailService;
     private final AsyncTransaction asyncTransaction;
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService , AsyncTransaction asyncTransaction) {
+    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService, AsyncTransaction asyncTransaction) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
         this.mailService = mailService;
@@ -102,40 +97,30 @@ public class UserResource {
     @PostMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM , TransactionMethod.POST);
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("A new user cannot already have an ID");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
+                "400", "A New User Cannot Already Have An ID", AccountUtils.getLoggedAccount());
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Login Already Used ");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
+                "400", "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Email Already Used ");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
+                "400", "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
             mailService.sendCreationEmail(newUserEntity);
-            transactionDTO.setCode("200");
-            transactionDTO.setMessage("OK");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
+                "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
         }
     }
-
 
     /**
      * {@code PUT /users} : Updates an existing User.
@@ -148,30 +133,22 @@ public class UserResource {
     @PutMapping("/users")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users", TransactionType.SYSTEM ,TransactionMethod.UPDATE);
         log.debug("REST request to update User : {}", userDTO);
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage("Email Already Used");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
+                "400", "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            transactionDTO.setCode("400");
-            transactionDTO.setMessage(" Login Already Used ");
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
+            asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
+                "400", "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("OK");
-        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-        asyncTransaction.newThread(transactionDTO);
-
+        asyncTransaction.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
+            "200", "OK", AccountUtils.getLoggedAccount());
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
     }
@@ -221,7 +198,6 @@ public class UserResource {
                 .map(UserDTO::new));
     }
 
-
     /**
      * {@code DELETE /users/:login} : delete the "login" User.
      *
@@ -231,13 +207,10 @@ public class UserResource {
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/users/delete", TransactionType.SYSTEM ,TransactionMethod.DELETE);
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
-        transactionDTO.setCode("200");
-        transactionDTO.setMessage("OK");
-        transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-        asyncTransaction.newThread(transactionDTO);
+        asyncTransaction.newThread("/api/users/login", TransactionType.SYSTEM, Method.DELETE,
+            "200", "OK", AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

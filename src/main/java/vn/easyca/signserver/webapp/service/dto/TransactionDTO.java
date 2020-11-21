@@ -1,9 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
-import org.springframework.scheduling.annotation.Async;
 import vn.easyca.signserver.webapp.domain.Transaction;
-import vn.easyca.signserver.webapp.enm.TransactionMethod;
-import vn.easyca.signserver.webapp.enm.TransactionType;
 
 import java.time.Instant;
 import java.io.Serializable;
@@ -11,9 +8,7 @@ import java.io.Serializable;
 /**
  * A DTO for the {@link vn.easyca.signserver.webapp.domain.Transaction} entity.
  */
-@Async
 public class TransactionDTO implements Serializable {
-
     private Long id;
 
     private String api;
@@ -160,15 +155,8 @@ public class TransactionDTO implements Serializable {
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
-            ", userID=" + getCreatedBy() +
+            ", createdBy=" + getCreatedBy() +
             "}";
-    }
-
-    public TransactionDTO(String api, TransactionType type , TransactionMethod method) {
-        this.api = api;
-        this.type = type.toString();
-        this.triggerTime = Instant.now();
-        this.method = method.toString();
     }
 
     public TransactionDTO(Long id, String api, String code, String message, String data,
@@ -184,6 +172,4 @@ public class TransactionDTO implements Serializable {
         this.method = method;
         this.host = host;
     }
-
-
 }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SignatureVerificationService;
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
-import vn.easyca.signserver.webapp.enm.TransactionMethod;
+import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.impl.AsyncTransaction;
@@ -21,9 +21,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 @Controller
 @RequestMapping("/api/verification")
 public class SignatureVerificationController {
-    String code = null;
-    String message = null;
-
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final SignatureVerificationService verificationService;
     private final AsyncTransaction asyncTransaction;
@@ -35,55 +32,43 @@ public class SignatureVerificationController {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> verifyHash(@RequestBody SignatureVerificationVM signatureVerificationVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/hash", TransactionType.SYSTEM , TransactionMethod.POST);
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
-            code = "200";
-            message = "OK";
+            asyncTransaction.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+                "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            code = "400";
-            message = applicationException.getMessage();
+            asyncTransaction.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            code = "400";
-            message = e.getMessage();
+            asyncTransaction.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+                "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        } finally {
-            transactionDTO.setCode(code);
-            transactionDTO.setMessage(message);
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
         }
     }
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> verifyRaw(@RequestBody SignatureVerificationVM signatureVerificationVM) {
-        TransactionDTO transactionDTO = new TransactionDTO("/api/verification/raw", TransactionType.SYSTEM , TransactionMethod.POST);
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
-            code = "200";
-            message = "OK";
+            asyncTransaction.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+                "200", "OK", AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            code = "400";
-            message = applicationException.getMessage();
+            asyncTransaction.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            code = "400";
-            message = e.getMessage();
+            asyncTransaction.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+                "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        } finally {
-            transactionDTO.setCode(code);
-            transactionDTO.setMessage(message);
-            transactionDTO.setCreatedBy(AccountUtils.getLoggedAccount());
-            asyncTransaction.newThread(transactionDTO);
         }
     }
 }

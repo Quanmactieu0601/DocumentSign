@@ -76,7 +76,6 @@ public class TokenProvider {
         return Jwts.builder()
             .setSubject(authentication.getName())
             .claim(AUTHORITIES_KEY, authorities)
-            .claim("USER_ID", authentication.getDetails())
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)
             .compact();

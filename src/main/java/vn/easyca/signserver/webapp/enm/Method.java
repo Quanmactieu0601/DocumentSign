@@ -1,8 +1,8 @@
 package vn.easyca.signserver.webapp.enm;
 
-public enum TransactionMethod {
+public enum Method {
     POST,
     GET,
     DELETE,
-    UPDATE
+    PUT
 }

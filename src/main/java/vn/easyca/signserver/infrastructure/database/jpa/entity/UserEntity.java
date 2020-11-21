@@ -1,6 +1,5 @@
 package vn.easyca.signserver.infrastructure.database.jpa.entity;
 
-import io.swagger.models.auth.In;
 import vn.easyca.signserver.webapp.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
