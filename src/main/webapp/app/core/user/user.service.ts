@@ -13,6 +13,7 @@ export class UserService {
   public listId: number[] = [];
   constructor(private http: HttpClient) {}
 
+  //TODO : add password to request body
   create(user: IUser): Observable<IUser> {
     return this.http.post<IUser>(this.resourceUrl, user);
   }
@@ -47,7 +48,7 @@ export class UserService {
     const formData: FormData = new FormData();
 
     formData.append('file', file);
-
+    // formData.append('login', login);
     const req = new HttpRequest('POST', `${this.resourceUrl}/uploadUser`, formData, {
       reportProgress: true,
       responseType: 'json',

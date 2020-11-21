@@ -28,7 +28,7 @@ public class UserCreatorImpl implements UserCreator {
             Set<String> authorities = new HashSet<>();
             authorities.add(AuthoritiesConstants.USER);
             userDTO.setAuthorities(authorities);
-            userApplicationService.createUser(userDTO, password);
+            userApplicationService.createUser(userDTO);
             return UserCreator.RESULT_CREATED;
         } catch (Exception ex) {
             throw new UserCreatorException(ex);

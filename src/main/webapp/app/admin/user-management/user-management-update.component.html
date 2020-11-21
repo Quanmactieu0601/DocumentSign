@@ -2,15 +2,15 @@
   <div class="col-8">
     <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
       <h2 id="myUserLabel" jhiTranslate="userManagement.home.createOrEditLabel">
-        Create or edit a User
+        `Create `or edit a User
       </h2>
 
       <div *ngIf="user">
         <jhi-alert-error></jhi-alert-error>
         <div>
           <div class="row">
-            <div class="col">
-              <div class="form-group" [hidden]="!user.id">
+            <div class="col" [hidden]="!user.id">
+              <div class="form-group">
                 <label jhiTranslate="global.field.id" class="font-weight-bold">ID</label>
                 <input type="text" class="form-control" name="id" formControlName="id" readonly />
               </div>
@@ -52,6 +52,45 @@
                 </div>
               </div>
             </div>
+            <div class="col" [hidden]="user.id">
+              <div class="form-group">
+                <label class="form-control-label font-weight-bold">Password</label>
+                <input type="password" class="form-control" name="password" formControlName="password" required />
+
+                <div *ngIf="editForm.get('password')!.invalid && (editForm.get('password')!.dirty || editForm.get('password')!.touched)">
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('password')?.errors?.required"
+                    jhiTranslate="entity.validation.required"
+                  >
+                    This field is required.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="col" [hidden]="user.id">
+              <div class="form-group">
+                <label class="form-control-label font-weight-bold">Confirm Password</label>
+                <input type="password" class="form-control" name="confirmPassword" formControlName="confirmPassword" required />
+
+                <div
+                  *ngIf="
+                    editForm.get('confirmPassword')!.invalid &&
+                    (editForm.get('confirmPassword')!.dirty || editForm.get('confirmPassword')!.touched)
+                  "
+                >
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('confirmPassword')?.errors?.required"
+                    jhiTranslate="entity.validation.required"
+                  >
+                    This field is required.
+                  </small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
             <div class="col">
               <div class="form-group">
                 <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.firstName">First Name</label>
@@ -69,8 +108,6 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="row">
             <div class="col">
               <div class="form-group">
                 <label jhiTranslate="userManagement.lastName" class="font-weight-bold">Last Name</label>
@@ -84,48 +121,6 @@
                     [translateValues]="{ max: 50 }"
                   >
                     This field cannot be longer than 50 characters.
-                  </small>
-                </div>
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group">
-                <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.phone">Phone</label>
-                <input type="text" class="form-control" name="phone" formControlName="phone" />
-
-                <div *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('phone')?.errors?.required"
-                    jhiTranslate="entity.validation.required"
-                  >
-                    This field is required.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('phone')?.errors?.maxlength"
-                    jhiTranslate="entity.validation.maxlength"
-                    [translateValues]="{ max: 50 }"
-                  >
-                    This field cannot be longer than 50 characters.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('phone')?.errors?.minlength"
-                    jhiTranslate="entity.validation.minlength"
-                    [translateValues]="{ min: 5 }"
-                  >
-                    This field is required to be at least 5 characters.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('organizationName')?.errors?.email"
-                    jhiTranslate="global.messages.validate.phone.invalid"
-                  >
-                    Your phone Name is invalid.
                   </small>
                 </div>
               </div>
@@ -174,6 +169,48 @@
             </div>
           </div>
           <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.phone">Phone</label>
+                <input type="text" class="form-control" name="phone" formControlName="phone" />
+
+                <div *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('phone')?.errors?.required"
+                    jhiTranslate="entity.validation.required"
+                  >
+                    This field is required.
+                  </small>
+
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('phone')?.errors?.maxlength"
+                    jhiTranslate="entity.validation.maxlength"
+                    [translateValues]="{ max: 50 }"
+                  >
+                    This field cannot be longer than 50 characters.
+                  </small>
+
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('phone')?.errors?.minlength"
+                    jhiTranslate="entity.validation.minlength"
+                    [translateValues]="{ min: 5 }"
+                  >
+                    This field is required to be at least 5 characters.
+                  </small>
+
+                  <small
+                    class="form-text text-danger"
+                    *ngIf="editForm.get('organizationName')?.errors?.email"
+                    jhiTranslate="global.messages.validate.phone.invalid"
+                  >
+                    Your phone Name is invalid.
+                  </small>
+                </div>
+              </div>
+            </div>
             <div class="col">
               <div class="form-group">
                 <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.commonName">commonName</label>

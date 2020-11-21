@@ -22,10 +22,10 @@ public class UserDTO {
     @Size(min = 1, max = 50)
     private String login;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String firstName;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String lastName;
 
     @Size(max = 200)
@@ -58,7 +58,8 @@ public class UserDTO {
     @Size(max = 256)
     private String imageUrl;
 
-
+    @Size(max = 255)
+    private String password;
 
     private boolean activated = false;
 
@@ -85,6 +86,7 @@ public class UserDTO {
         this.firstName = userEntity.getFirstName();
         this.lastName = userEntity.getLastName();
         this.email = userEntity.getEmail();
+        this.password = userEntity.getPassword();
         this.activated = userEntity.getActivated();
         this.imageUrl = userEntity.getImageUrl();
         this.langKey = userEntity.getLangKey();
@@ -103,6 +105,14 @@ public class UserDTO {
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Long getId() {

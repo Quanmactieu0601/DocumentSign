@@ -16,7 +16,8 @@ export class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
   authorities: string[] = [];
   isSaving = false;
-
+  password: any;
+  confirmPassword: any;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -42,6 +43,8 @@ export class UserManagementUpdateComponent implements OnInit {
     activated: [],
     langKey: [],
     authorities: [],
+    password: [],
+    confirmPassword: [],
   });
 
   constructor(
@@ -90,10 +93,15 @@ export class UserManagementUpdateComponent implements OnInit {
         () => this.onSaveError()
       );
     } else {
-      this.userService.create(this.user).subscribe(
-        () => this.onSaveSuccess(),
-        () => this.onSaveError()
-      );
+      if (this.updatePass()) {
+        this.userService.create(this.user).subscribe(
+          () => this.onSaveSuccess(),
+          () => this.onSaveError()
+        );
+      } else {
+        this.toastrService.error(this.translateService.instant('register.messages.validate.login.notmatch'));
+        this.onSaveError();
+      }
     }
   }
 
@@ -118,6 +126,14 @@ export class UserManagementUpdateComponent implements OnInit {
     });
   }
 
+  private updatePass(): any {
+    this.password = this.editForm.get(['password'])!.value;
+    this.confirmPassword = this.editForm.get(['confirmPassword'])!.value;
+    if (this.password === this.confirmPassword) {
+      return true;
+    }
+    return false;
+  }
   private updateUser(user: User): void {
     user.login = this.editForm.get(['login'])!.value;
     user.firstName = this.editForm.get(['firstName'])!.value;
@@ -134,6 +150,7 @@ export class UserManagementUpdateComponent implements OnInit {
     user.authorities = this.editForm.get(['authorities'])!.value;
     user.ownerId = this.editForm.get(['ownerId'])!.value;
     user.phone = this.editForm.get(['phone'])!.value;
+    user.password = this.editForm.get(['password'])!.value;
   }
 
   private onSaveSuccess(): void {
