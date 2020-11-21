@@ -204,9 +204,7 @@ public class SignController {
             final Matcher matcher = pattern.matcher(contentInformation);
             String CN = null;
             while (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    CN = matcher.group(i);
-                }
+                    CN = matcher.group(1);
             }
 
             String[] signerAndAddress = CN.split(",");
