@@ -138,7 +138,7 @@ public class UserResource {
             transactionService.save(transactionDTO);
             throw new EmailAlreadyUsedException();
         } else {
-            UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
+            UserEntity newUserEntity = userApplicationService.createUser(userDTO);
             mailService.sendCreationEmail(newUserEntity);
             transactionDTO.setCode("200");
             transactionDTO.setMessage("Create User Successfully");
