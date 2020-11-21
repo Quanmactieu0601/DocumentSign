@@ -40,6 +40,38 @@ public class Transaction implements Serializable {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "host")
+    private String host;
+
+    @Column(name = "method")
+    private String method;
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getMethod() {
+        return method;
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -154,7 +186,10 @@ public class Transaction implements Serializable {
             ", code='" + getCode() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
-            ", type=" + getType() +
+            ", type=" + getType() + "'" +
+            ", host=" + getHost() + "'" +
+            ", method=" + getMethod() + "'" +
+            ", createdBy=" + getCreatedBy() + "'" +
             "}";
     }
 

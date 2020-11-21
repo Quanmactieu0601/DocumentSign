@@ -7,15 +7,17 @@ import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.interfaces.CryptoTokenConnector;
 import vn.easyca.signserver.core.interfaces.UserCreator;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.repository.CertificateRepository;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
+import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
+import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
@@ -39,6 +41,8 @@ public class CertificateGenerateService {
     final UserCreator userCreator;
     final CertificateRepository certificateRepository;
     private final UserRepository userRepository;
+    private final CertificateEncryptionHelper encryptionHelper = new CertificateEncryptionHelper();
+    private final CertificateMapper mapper = new CertificateMapper();
 
     public CertificateGenerateService(CryptoTokenConnector cryptoTokenConnector,
                                       CertificateRequester certificateRequester,
@@ -92,22 +96,22 @@ public class CertificateGenerateService {
             false,
             false);
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
-        Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
-        return new CertificateGenerateResult.Cert(certificate.getSerial(), certificate.getRawData());
+        CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
+        return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
-    private Certificate saveNewCertificate(RawCertificate rawCertificate,
-                                           String alias,
-                                           String subjectInfo,
-                                           CryptoToken cryptoToken) throws CryptoTokenException {
-        Certificate certificate = new Certificate();
-        certificate.setRawData(rawCertificate.getCert());
-        certificate.setSerial(rawCertificate.getSerial());
-        certificate.setSubjectInfo(subjectInfo);
-        certificate.setTokenType(Certificate.PKCS_11);
-        certificate.setAlias(alias);
-        certificate.setOwnerId(alias);
-        certificate.setModifiedDate(new Date());
+    private CertificateDTO saveNewCertificate(RawCertificate rawCertificate,
+                                              String alias,
+                                              String subjectInfo,
+                                              CryptoToken cryptoToken) throws CryptoTokenException {
+        CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.setRawData(rawCertificate.getCert());
+        certificateDTO.setSerial(rawCertificate.getSerial());
+        certificateDTO.setSubjectInfo(subjectInfo);
+        certificateDTO.setTokenType(CertificateDTO.PKCS_11);
+        certificateDTO.setAlias(alias);
+        certificateDTO.setOwnerId(alias);
+        certificateDTO.setModifiedDate(new Date());
         Config cfg = cryptoToken.getConfig();
         TokenInfo tokenInfo = new TokenInfo()
             .setName(cfg.getName());
@@ -117,9 +121,12 @@ public class CertificateGenerateService {
         tokenInfo.setLibrary(cfg.getLibrary());
         if (cfg.getAttributes() != null)
             tokenInfo.setP11Attrs(cfg.getAttributes());
-        certificate.setTokenInfo(tokenInfo);
-        certificateRepository.save(certificate);
-        return certificate;
+        certificateDTO.setTokenInfo(tokenInfo);
+
+        certificateDTO = encryptionHelper.encryptCert(certificateDTO);
+        vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
+        entity = certificateRepository.save(entity);
+        return certificateDTO;
     }
 
     private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws UserCreator.UserCreatorException {
@@ -193,8 +200,8 @@ public class CertificateGenerateService {
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenConnector.getToken();
         RawCertificate rawCertificate = dto.getRawCertificate();
-        Certificate certificate = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
-        return new CertificateGenerateResult.Cert(certificate.getSerial(), certificate.getRawData());
+        CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
+        return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
 

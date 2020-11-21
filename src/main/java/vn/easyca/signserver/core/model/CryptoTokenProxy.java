@@ -1,7 +1,8 @@
 package vn.easyca.signserver.core.model;
 
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
-import vn.easyca.signserver.core.domain.Certificate;
+
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
@@ -12,22 +13,22 @@ import vn.easyca.signserver.pki.cryptotoken.error.*;
 
 public class CryptoTokenProxy {
 
-    private final Certificate certificate;
+    private final CertificateDTO certificateDTO;
 
     private final CryptoToken cryptoToken;
 
-    public CryptoTokenProxy(CryptoToken cryptoToken, Certificate certificate) {
-        this.certificate = certificate;
+    public CryptoTokenProxy(CryptoToken cryptoToken, CertificateDTO certificateDTO) {
+        this.certificateDTO = certificateDTO;
         this.cryptoToken = cryptoToken;
     }
 
     public PrivateKey getPrivateKey() throws CryptoTokenException {
-        return cryptoToken.getPrivateKey(certificate.getAlias());
+        return cryptoToken.getPrivateKey(certificateDTO.getAlias());
     }
 
     public boolean isExpired(Date date) throws CertificateException {
         X509Certificate cert = null;
-        cert = certificate.getX509Certificate();
+        cert = certificateDTO.getX509Certificate();
         Date notAfter = cert.getNotAfter();
         Date notBefore = cert.getNotBefore();
         if (date == null) date = new Date();
@@ -35,18 +36,18 @@ public class CryptoTokenProxy {
     }
 
     public String getBase64Certificate() {
-        return certificate.getRawData();
+        return certificateDTO.getRawData();
     }
 
     public X509Certificate getX509Certificate() throws CertificateException {
-        return certificate.getX509Certificate();
+        return certificateDTO.getX509Certificate();
     }
 
     public PublicKey getPublicKey() throws CryptoTokenException {
-        return cryptoToken.getPublicKey(certificate.getAlias());
+        return cryptoToken.getPublicKey(certificateDTO.getAlias());
     }
 
-    public Certificate getCertificate() {
-        return certificate;
+    public CertificateDTO getCertificateDTO() {
+        return certificateDTO;
     }
 }

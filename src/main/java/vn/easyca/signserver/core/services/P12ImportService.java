@@ -4,17 +4,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.interfaces.UserCreator;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
-import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.core.domain.TokenInfo;
-import vn.easyca.signserver.core.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
@@ -26,19 +27,19 @@ import java.util.List;
 @Service
 public class P12ImportService {
 
-    private final CertificateRepository repository;
+    private final CertificateService certificateService;
 
     private final UserCreator userCreator;
 
     private final Log log = LogFactory.getLog(P12ImportService.class);
 
     @Autowired
-    public P12ImportService(CertificateRepository repository, UserCreator userCreator) {
-        this.repository = repository;
+    public P12ImportService(CertificateService certificateService, UserCreator userCreator) {
+        this.certificateService = certificateService;
         this.userCreator = userCreator;
     }
 
-    public Certificate insert(ImportP12FileDTO input) throws ApplicationException {
+    public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         Config config = new Config();
         byte[] fileContent = Base64.getDecoder().decode(input.getP12Base64());
@@ -68,16 +69,16 @@ public class P12ImportService {
         } catch (CertificateEncodingException e) {
             throw new CertificateAppException("certificate encoding exception", e);
         }
-        Certificate certificate = new Certificate();
-        certificate.setRawData(base64Cert);
-        certificate.setOwnerId(input.getOwnerId());
-        certificate.setSerial(serial);
-        certificate.setAlias(alias);
-        certificate.setTokenType(Certificate.PKCS_12);
+        CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.setRawData(base64Cert);
+        certificateDTO.setOwnerId(input.getOwnerId());
+        certificateDTO.setSerial(serial);
+        certificateDTO.setAlias(alias);
+        certificateDTO.setTokenType(CertificateDTO.PKCS_12);
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
-        certificate.setTokenInfo(tokenInfo);
-        Certificate result = repository.save(certificate);
+        certificateDTO.setTokenInfo(tokenInfo);
+        CertificateDTO result = certificateService.save(certificateDTO);
 
         try {
             userCreator.CreateUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());

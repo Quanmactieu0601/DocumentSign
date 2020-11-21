@@ -1,7 +1,5 @@
 package vn.easyca.signserver.webapp.service.impl;
 
-import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
-import vn.easyca.signserver.webapp.repository.impl.TransactionRepositoryImpl;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.repository.TransactionRepository;
@@ -15,11 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,6 +28,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     private final TransactionRepository transactionRepository;
+
 
     private final TransactionMapper transactionMapper;
 
@@ -87,10 +81,11 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime,code, message, data, type);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy) {
+        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy);
         return page.map(TransactionDTO::new);
     }
+
     /**
      * Delete the transaction by id.
      *

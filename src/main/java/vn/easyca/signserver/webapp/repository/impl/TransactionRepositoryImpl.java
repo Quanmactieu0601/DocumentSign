@@ -19,27 +19,25 @@ import java.util.Map;
 public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
+
     @Override
-    public Page<Transaction> findByFilter(Pageable pageable ,String api,String triggerTime ,String code, String message, String data, String type) {
+    public Page<Transaction> findByFilter(Pageable pageable ,String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy ) {
         Map<String, Object> params = new HashMap<>();
-        List<Transaction> transactionList = new ArrayList<>();
+        List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("FROM transaction a ");
-//        String sort = Common.addSort(pageable.getSort());
+        sqlBuilder.append("left join jhi_user b " +
+            "on a.created_by = b.login ");
+        sqlBuilder.append("WHERE 1 = 1 ");
 
-        sqlBuilder.append(" WHERE 1 = 1 ");
-//        if (!Strings.isNullOrEmpty(account)) {
-//            sqlBuilder.append("AND a.login like :login ");
-//            params.put("login", "%" + account + "%");
-//        }
         if (!CommonUtils.isNullOrEmptyProperty(api)) {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(triggerTime)) {
-            sqlBuilder.append("AND a.trigger_Time like :triggerTime ");
-            params.put("triggerTime", "%" + triggerTime + "%");
-        }
+//        if (!CommonUtils.isNullOrEmptyProperty(triggerTime)) {
+//            sqlBuilder.append("AND a.trigger_Time like :triggerTime ");
+//            params.put("triggerTime", "%" + triggerTime + "%");
+//        }
         if (!CommonUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");
             params.put("code", "%" + code + "%");
@@ -56,15 +54,27 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.type like :type ");
             params.put("type", "%" + type + "%");
         }
+        if (!CommonUtils.isNullOrEmptyProperty(host)) {
+            sqlBuilder.append("AND a.host like :host ");
+            params.put("host", "%" + host + "%");
+        }
+//        if (!CommonUtils.isNullOrEmptyProperty(method)) {
+//            sqlBuilder.append("AND a.method like :method ");
+//            params.put("method", "%" + method + "%");
+//        }
+        if (!CommonUtils.isNullOrEmptyProperty(createdBy)) {
+            sqlBuilder.append("AND CONCAT(b.last_name,' ',b.first_name) like :createdBy ");
+            params.put("createdBy", "%" + createdBy + "%");
+        }
+
         Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         CommonUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString(), Transaction.class);
+            Query query = entityManager.createNativeQuery("SELECT *  " + sqlBuilder.toString(), Transaction.class );
             CommonUtils.setParamsWithPageable(query, params, pageable, total);
             transactionList = query.getResultList();
         }
         return new PageImpl<>(transactionList, pageable, total.longValue());
-
     }
 }

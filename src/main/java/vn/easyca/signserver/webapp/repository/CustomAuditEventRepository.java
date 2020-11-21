@@ -1,8 +1,8 @@
-package vn.easyca.signserver.infrastructure.database.jpa.repository;
+package vn.easyca.signserver.webapp.repository;
 
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.config.audit.AuditEventConverter;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.PersistentAuditEvent;
+import vn.easyca.signserver.webapp.domain.PersistentAuditEvent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

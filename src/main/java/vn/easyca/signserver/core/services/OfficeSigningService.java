@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.services;
 
 import javafx.util.Pair;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
@@ -11,8 +12,8 @@ import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.model.CryptoTokenProxy;
 import vn.easyca.signserver.core.model.CryptoTokenProxyException;
 import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
-import vn.easyca.signserver.core.repository.CertificateRepository;
 import vn.easyca.signserver.pki.sign.integrated.office.OfficeSigner;
+import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.security.PrivateKey;
 import java.security.cert.CertificateException;
@@ -26,18 +27,18 @@ public class OfficeSigningService {
 
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
-    private final CertificateRepository certificateRepository;
+    private final CertificateService certificateService;
 
-    public OfficeSigningService(CertificateRepository certificateRepository) {
+    public OfficeSigningService(CertificateService certificateService) {
         this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
-        this.certificateRepository = certificateRepository;
+        this.certificateService = certificateService;
     }
 
     public SigningResponse sign(SigningRequest request) throws Exception {
         if (request == null)
             throw new BadServiceInputAppException("dont have element to sign", null);
         TokenInfoDTO tokenInfoDTO = request.getTokenInfo();
-        vn.easyca.signserver.core.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
+        CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;

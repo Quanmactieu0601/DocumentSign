@@ -11,9 +11,6 @@ import org.mapstruct.*;
  */
 @Mapper(componentModel = "spring", uses = {})
 public interface TransactionMapper extends EntityMapper<TransactionDTO, Transaction> {
-
-
-
     default Transaction fromId(Long id) {
         if (id == null) {
             return null;

@@ -1,10 +1,14 @@
 package vn.easyca.signserver.core.model;
 
 import vn.easyca.signserver.pki.cryptotoken.*;
-import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.pki.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.pki.sign.cache.AbstractCachedObject;
 import vn.easyca.signserver.pki.sign.cache.GuavaCache;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 
@@ -14,24 +18,24 @@ import java.util.Base64;
 // TODO: Init factory as service
 public class CryptoTokenProxyFactory {
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(Certificate certificate, String pin) throws CryptoTokenProxyException {
-        if (certificate == null)
+    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws CryptoTokenProxyException {
+        if (certificateDTO == null)
             throw new CryptoTokenProxyException("Certificate is not null");
         GuavaCache cache = GuavaCache.getInstance();
-        if (!cache.contain(certificate.getSerial())) {
+        if (!cache.contain(certificateDTO.getSerial())) {
             if (pin == null || pin.isEmpty())
-                pin = certificate.getTokenInfo().getPassword();
-            CryptoToken token = resolveToken(certificate.getTokenInfo(), certificate.getTokenType(), pin);
-            cache.set(certificate.getSerial(), new CacheElement(token, certificate.getTokenType()));
+                pin = certificateDTO.getTokenInfo().getPassword();
+            CryptoToken token = resolveToken(certificateDTO.getTokenInfo(), certificateDTO.getTokenType(), pin);
+            cache.set(certificateDTO.getSerial(), new CacheElement(token, certificateDTO.getTokenType()));
         }
-        return new CryptoTokenProxy(((CacheElement) cache.get(certificate.getSerial())).getCryptoToken(), certificate);
+        return new CryptoTokenProxy(((CacheElement) cache.get(certificateDTO.getSerial())).getCryptoToken(), certificateDTO);
     }
 
     private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws CryptoTokenProxyException {
         switch (type) {
-            case CertificateEntity.PKCS_11:
+            case Certificate.PKCS_11:
                 return resolveP11Token(tokenInfo);
-            case CertificateEntity.PKCS_12:
+            case Certificate.PKCS_12:
                 return resolveP12Token(tokenInfo, pin);
             default:
                 throw new CryptoTokenProxyException("Not found token type" + type);

@@ -1,7 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.domain.Transaction;
-import vn.easyca.signserver.webapp.enm.TransactionType;
 
 import java.time.Instant;
 import java.io.Serializable;
@@ -10,7 +9,6 @@ import java.io.Serializable;
  * A DTO for the {@link vn.easyca.signserver.webapp.domain.Transaction} entity.
  */
 public class TransactionDTO implements Serializable {
-
     private Long id;
 
     private String api;
@@ -25,7 +23,37 @@ public class TransactionDTO implements Serializable {
 
     private String type;
 
-    public TransactionDTO () {
+    private String createdBy;
+
+    private String host;
+
+    private String method;
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public TransactionDTO() {
     }
 
     public TransactionDTO(Transaction transaction) {
@@ -36,6 +64,9 @@ public class TransactionDTO implements Serializable {
         this.data = transaction.getData();
         this.type = transaction.getType();
         this.triggerTime = transaction.getTriggerTime();
+        this.createdBy = transaction.getCreatedBy();
+        this.host = transaction.getHost();
+        this.method = transaction.getMethod();
     }
 
     public Long getId() {
@@ -121,17 +152,15 @@ public class TransactionDTO implements Serializable {
             ", code='" + getCode() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
-            ", type=" + getType() +
+            ", type=" + getType() + "'" +
+            ", host=" + getHost() + "'" +
+            ", method=" + getMethod() + "'" +
+            ", createdBy=" + getCreatedBy() +
             "}";
     }
 
-    public TransactionDTO(String api, TransactionType type) {
-        this.api = api;
-        this.type = type.toString();
-        this.triggerTime = Instant.now();
-    }
-
-    public TransactionDTO(Long id, String api, String code, String message, String data, String type) {
+    public TransactionDTO(Long id, String api, String code, String message, String data,
+                          String type, String createdBy , String host, String method) {
         this.id = id;
         this.api = api;
         this.code = code;
@@ -139,7 +168,8 @@ public class TransactionDTO implements Serializable {
         this.data = data;
         this.type = type;
         this.triggerTime = Instant.now();
+        this.createdBy = createdBy;
+        this.method = method;
+        this.host = host;
     }
-
-
 }

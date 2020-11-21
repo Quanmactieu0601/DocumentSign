@@ -3,17 +3,16 @@ package vn.easyca.signserver.webapp.domain;
 import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
 import vn.easyca.signserver.webapp.web.rest.TestUtil;
 
-public class CertificateEntityTest {
+public class CertificateDTOTest {
 
     @Test
     public void equalsVerifier() throws Exception {
-        TestUtil.equalsVerifier(CertificateEntity.class);
-        CertificateEntity certificate1 = new CertificateEntity();
+        TestUtil.equalsVerifier(Certificate.class);
+        Certificate certificate1 = new Certificate();
         certificate1.setId(1L);
-        CertificateEntity certificate2 = new CertificateEntity();
+        Certificate certificate2 = new Certificate();
         certificate2.setId(certificate1.getId());
         assertThat(certificate1).isEqualTo(certificate2);
         certificate2.setId(2L);
