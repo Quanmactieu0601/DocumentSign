@@ -1,7 +1,7 @@
 package vn.easyca.signserver.core.services;
 
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.core.domain.Certificate;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
 import vn.easyca.signserver.core.dto.SignatureVerificationResponse;
@@ -9,6 +9,7 @@ import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.exception.VerifiedAppException;
 import vn.easyca.signserver.pki.sign.rawsign.SignatureValidator;
+import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -24,13 +25,13 @@ public class SignatureVerificationService {
 
     public Object verifyHash(SignatureVerificationRequest request) throws ApplicationException {
         SignatureVerificationResponse response = new SignatureVerificationResponse();
-        Certificate certificate = certificateService.getBySerial(request.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(request.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
         X509Certificate x509Certificate = null;
         try {
-            x509Certificate = certificate.getX509Certificate();
+            x509Certificate = certificateDTO.getX509Certificate();
         } catch (CertificateException e) {
             throw new CertificateAppException(e);
         }
@@ -44,7 +45,7 @@ public class SignatureVerificationService {
                 throw new VerifiedAppException(exception);
             }
         }
-        response.setCertificate(certificate.getRawData());
+        response.setCertificate(certificateDTO.getRawData());
         return response;
     }
 
@@ -52,13 +53,13 @@ public class SignatureVerificationService {
         if (request.getHashAlgorithm() == null)
             request.setHashAlgorithm("sha1");
         SignatureVerificationResponse response = new SignatureVerificationResponse();
-        Certificate certificate = certificateService.getBySerial(request.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(request.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        response.setCertificate(certificate.getRawData());
+        response.setCertificate(certificateDTO.getRawData());
         X509Certificate x509Certificate = null;
         try {
-            x509Certificate = certificate.getX509Certificate();
+            x509Certificate = certificateDTO.getX509Certificate();
         } catch (CertificateException e) {
             throw new CertificateAppException(e);
         }

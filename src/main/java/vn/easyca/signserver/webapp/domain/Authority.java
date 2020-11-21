@@ -1,4 +1,4 @@
-package vn.easyca.signserver.infrastructure.database.jpa.entity;
+package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;

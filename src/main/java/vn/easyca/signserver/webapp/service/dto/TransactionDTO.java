@@ -140,6 +140,4 @@ public class TransactionDTO implements Serializable {
         this.type = type;
         this.triggerTime = Instant.now();
     }
-
-
 }

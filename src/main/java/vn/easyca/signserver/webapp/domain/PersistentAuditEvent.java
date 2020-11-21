@@ -1,4 +1,4 @@
-package vn.easyca.signserver.infrastructure.database.jpa.entity;
+package vn.easyca.signserver.webapp.domain;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
