@@ -1,0 +1,23 @@
+{
+  "webappApp": {
+    "signatureTemplate": {
+      "home": {
+        "title": "Signature Templates",
+        "createLabel": "Create a new Signature Template",
+        "createOrEditLabel": "Create or edit a Signature Template",
+        "notFound": "No Signature Templates found"
+      },
+      "created": "A new Signature Template is created with identifier {{ param }}",
+      "updated": "A Signature Template is updated with identifier {{ param }}",
+      "deleted": "A Signature Template is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Signature Template {{ id }}?"
+      },
+      "detail": {
+        "title": "Signature Template"
+      },
+      "signatureImage": "Signature Image",
+      "userId": "User Id"
+    }
+  }
+}

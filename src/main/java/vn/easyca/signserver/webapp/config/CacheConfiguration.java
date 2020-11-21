@@ -54,6 +54,7 @@ public class CacheConfiguration {
             createCache(cm, UserEntity.class.getName() + ".authorities");
             createCache(cm, CertificateEntity.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.Transaction.class.getName());
+            createCache(cm, vn.easyca.signserver.webapp.domain.SignatureTemplate.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }
