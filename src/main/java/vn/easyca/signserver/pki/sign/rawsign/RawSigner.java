@@ -1,4 +1,5 @@
 package vn.easyca.signserver.pki.sign.rawsign;
+import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;
@@ -35,21 +36,22 @@ public class RawSigner {
         return signature.sign();
     }
 
+    // TODO: new SAFENETProvider() dang truyen them provider cho Nhi dong, can resolve theo tung crypto token
     public byte[] signData(byte[] data, PrivateKey privateKey, String hashAlgorithm) throws Exception {
         Signature signature = null;
         hashAlgorithm = hashAlgorithm.trim().toLowerCase();
         hashAlgorithm = hashAlgorithm.replace("-", "");
         switch (hashAlgorithm) {
             case "sha1":
-                signature = Signature.getInstance(DEFAULT_SIG_ALGO);
+                signature = Signature.getInstance(DEFAULT_SIG_ALGO, new SAFENETProvider());
                 signedAlgorithmName = "SHA1withRSA";
                 break;
             case "sha256":
-                signature = Signature.getInstance("SHA256withRSA");
+                signature = Signature.getInstance("SHA256withRSA", new SAFENETProvider());
                 signedAlgorithmName = "SHA256withRSA";
                 break;
             case "sha512":
-                signature = Signature.getInstance("SHA512withRSA");
+                signature = Signature.getInstance("SHA512withRSA", new SAFENETProvider());
                 signedAlgorithmName = "SHA512withRSA";
                 break;
             default:

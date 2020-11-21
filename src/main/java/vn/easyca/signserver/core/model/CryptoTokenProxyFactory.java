@@ -1,9 +1,6 @@
 package vn.easyca.signserver.core.model;
 
-import vn.easyca.signserver.pki.cryptotoken.Config;
-import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.*;
 import vn.easyca.signserver.core.domain.Certificate;
 import vn.easyca.signserver.pki.sign.cache.AbstractCachedObject;
 import vn.easyca.signserver.pki.sign.cache.GuavaCache;
@@ -54,7 +51,8 @@ public class CryptoTokenProxyFactory {
     }
 
     private CryptoToken resolveP11Token(TokenInfo tokenInfo) throws CryptoTokenProxyException {
-        P11CryptoToken p11CryptoToken = new P11CryptoToken();
+        // TODO: temporary hardcode to resolve p11 crypto token
+        P11ProtectServerCryptoToken p11CryptoToken = new P11ProtectServerCryptoToken();
         Config config = new Config();
         config = config.initPkcs11(tokenInfo.getName(), tokenInfo.getLibrary(), tokenInfo.getPassword());
         config = config.withSlot(tokenInfo.getSlot().toString());

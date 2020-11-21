@@ -23,17 +23,26 @@ public final class Constants {
     }
 
     public interface HSMConfig {
-        String NAME = "EasyCAToken";
-        String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-        String PIN = "12345678";
-        String SLOT = null;
-        String ATTRIBUTES = null;
+//        String NAME = "EasyCAToken";
+//        String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
+//        String PIN = "12345678";
+//        String SLOT = null;
+//        String ATTRIBUTES = null;
 
-//        String NAME = "nCipher";
-//        String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
-//        String PIN = "05111989";
-//        String SLOT = "761406615";
-//        String ATTRIBUTES = "compatibility";
+//        public static final String NAME = "nCipher";
+//        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
+//        public static final String PIN = "05111989";
+//        public static final String SLOT = "761406615";
+//        public static final String ATTRIBUTES = "compatibility";
+//
+//        public static final String NAME = "ND1_HSM2";
+        public static final String NAME = "ND1";
+        public static final String LIB = "/opt/safenet/protecttoolkit5/ptk/lib/libcryptoki.so";
+//        public static final String PIN = "Hanoi@202o";
+//        public static final String SLOT = "1"; //614352
+        public static final String PIN = "ND!202o";
+        public static final String SLOT = "0"; //614352
+        public static final String ATTRIBUTES = "compatibility";
     }
 
     private Constants() {

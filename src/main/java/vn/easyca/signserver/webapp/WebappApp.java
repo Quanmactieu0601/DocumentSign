@@ -88,8 +88,8 @@ public class WebappApp {
         HSMConnector.Init(hsmConnConfig);
 
         // init ra-service
-        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
-        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
+//        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
+//        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
 
     }
 

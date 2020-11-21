@@ -1,5 +1,6 @@
 package vn.easyca.signserver.pki.sign.rawsign;
 
+import au.com.safenet.crypto.provider.SAFENETProvider;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 
 import java.security.PublicKey;
@@ -13,8 +14,9 @@ public class SignatureValidator {
 
     private final String DEFAULT_SIG_ALGO = "SHA1withRSA";
 
+    // TODO: new SAFENETProvider() dang truyen them provider cho Nhi dong, can resolve theo tung crypto token
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey) throws Exception {
-        Signature signature = Signature.getInstance("NONEwithRSA");
+        Signature signature = Signature.getInstance("NONEwithRSA", new SAFENETProvider());
         signature.initVerify(publicKey);
         signature.update(origData);
         return signature.verify(sig);
@@ -24,6 +26,7 @@ public class SignatureValidator {
         return verify(origData, sig, cert.getPublicKey());
     }
 
+    // TODO: new SAFENETProvider() dang truyen them provider cho Nhi dong, can resolve theo tung crypto token
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey, String hashAlgo) throws Exception {
         Signature signature = null;
         hashAlgo = hashAlgo.trim().toLowerCase();
