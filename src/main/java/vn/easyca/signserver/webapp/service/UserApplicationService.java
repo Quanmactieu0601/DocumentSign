@@ -228,7 +228,7 @@ public class UserApplicationService {
     }
 
 
-    public UserEntity createUser(UserDTO userDTO, String password) {
+    public UserEntity createUser(UserDTO userDTO) {
 
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
             boolean removed = removeNonActivatedUser(existingUser);
@@ -247,7 +247,7 @@ public class UserApplicationService {
         }
 
         UserEntity newUserEntity = new UserEntity();
-        String encryptedPassword = passwordEncoder.encode(password);
+        String encryptedPassword = passwordEncoder.encode(userDTO.getPassword());
         newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
         // new user gets initially a generated password
         newUserEntity.setPassword(encryptedPassword);
