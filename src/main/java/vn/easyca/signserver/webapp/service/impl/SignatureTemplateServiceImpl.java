@@ -86,4 +86,10 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         log.debug("Request to delete SignatureTemplate : {}", id);
         signatureTemplateRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<SignatureTemplate> findOneWithUserId(Long userId) {
+        log.debug("Request to get SignatureImage with id : {}", userId);
+        return signatureTemplateRepository.findOneByUserId(userId);
+    }
 }

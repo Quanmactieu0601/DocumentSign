@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 
 import org.springframework.data.domain.Page;
@@ -43,4 +44,6 @@ public interface SignatureTemplateService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<SignatureTemplate> findOneWithUserId(Long id);
 }

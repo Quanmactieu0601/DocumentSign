@@ -27,9 +27,16 @@ import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.service.TransactionService;
+import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.utils.AccountUntils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -55,12 +62,18 @@ public class SignController {
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final TransactionService transactionService;
     private final CertificateService certificateService;
+    private final UserApplicationService userApplicationService;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
-    public SignController(SigningService signService, TransactionService transactionService, CertificateService certificateService) {
+    private final SignatureTemplateService signatureTemplateService;
+
+    public SignController(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
+                          SignatureTemplateService signatureTemplateService) {
         this.signService = signService;
         this.transactionService = transactionService;
         this.certificateService = certificateService;
         this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
+        this.userApplicationService = userApplicationService;
+        this.signatureTemplateService = signatureTemplateService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -183,7 +196,7 @@ public class SignController {
     }
 
     @PostMapping(path = "/getImageBase64")
-    public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin ) {
+    public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin) {
         try {
 
             Certificate certificate = certificateService.getBySerial(serial);
@@ -215,16 +228,21 @@ public class SignController {
 
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
             Calendar cal = Calendar.getInstance();
+            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
+            Long userId = Long.valueOf(2);
+            Optional<String> signImage = (signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage()));
+
 
             htmlContent = htmlContent
                 .replaceFirst("signer", signerAndAddress[0])
                 .replaceFirst("address", signerAndAddress[1])
+                .replaceFirst("signatureImage", signImage.orElse(""))
                 .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
 
             //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
             InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
             Tidy tidy = new Tidy();
-            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream,"UTF-8"), null);
+            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
 
             Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
             BufferedImage img = renderer.getImage();
