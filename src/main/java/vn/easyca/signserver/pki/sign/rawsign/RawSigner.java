@@ -20,6 +20,7 @@ public class RawSigner {
         return signature.sign();
     }
 
+    // TODO: truyen algorithm tu client
     public byte[] signHash(byte[] hash, PrivateKey privateKey) throws Exception {
         DigestCreator digestCreator = new DigestCreator();
         hash = digestCreator.digestWithSHAInfo("sha1", hash);
@@ -28,6 +29,7 @@ public class RawSigner {
         return cipher.doFinal(hash);
     }
 
+    // TODO: truyen algorithm tu client
     public byte[] signData(byte[] data, PrivateKey privateKey) throws Exception {
         this.signedAlgorithmName = DEFAULT_SIG_ALGO;
         Signature signature = Signature.getInstance(DEFAULT_SIG_ALGO);

@@ -11,6 +11,7 @@ import vn.easyca.signserver.pki.cryptotoken.error.*;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 
+// TODO: Init factory as service
 public class CryptoTokenProxyFactory {
 
     public CryptoTokenProxy resolveCryptoTokenProxy(Certificate certificate, String pin) throws CryptoTokenProxyException {

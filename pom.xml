@@ -109,11 +109,24 @@
 
     <dependencies>
 
+        <!-- mvn install:install-file -Dfile=libs/jprov_sfnt.jar -DgroupId=com.safenet -DartifactId=protect-server -Dversion=1.0 -Dpackaging=jar -->
         <dependency>
             <groupId>com.safenet</groupId>
             <artifactId>protect-server</artifactId>
             <version>1.0</version>
         </dependency>
+        <!-- mvn install:install-file -Dfile=libs/eid-applet-service-signer-1.0.2-SNAPSHOT.jar -DgroupId=eid.applet -DartifactId=service.signer -Dversion=1.0.2-SNAPSHOT -Dpackaging=jar -->
+<!--        <dependency>-->
+<!--            <groupId>eid.applet</groupId>-->
+<!--            <artifactId>service.signer</artifactId>-->
+<!--            <version>1.0.2-SNAPSHOT</version>-->
+<!--        </dependency>-->
+        <!-- mvn install:install-file -Dfile=libs/eid-applet-service-spi-1.0.2-SNAPSHOT.jar -DgroupId=eid.applet -DartifactId=service.spi -Dversion=1.0.2-SNAPSHOT -Dpackaging=jar -->
+<!--        <dependency>-->
+<!--            <groupId>eid.applet</groupId>-->
+<!--            <artifactId>service.spi</artifactId>-->
+<!--            <version>1.0.2-SNAPSHOT</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.xhtmlrenderer</groupId>
@@ -126,9 +139,6 @@
             <artifactId>jtidy</artifactId>
             <version>r938</version>
         </dependency>
-
-
-
         <dependency>
             <groupId>io.github.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>
@@ -137,7 +147,6 @@
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-cache</artifactId>
@@ -426,6 +435,21 @@
             <groupId>com.github.xuwei-k</groupId>
             <artifactId>html2image</artifactId>
             <version>0.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.santuario</groupId>
+            <artifactId>xmlsec</artifactId>
+            <version>1.4.3</version>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.4</version>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.1</version>
         </dependency>
     </dependencies>
 

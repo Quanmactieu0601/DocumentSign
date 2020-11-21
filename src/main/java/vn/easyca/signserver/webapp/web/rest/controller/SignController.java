@@ -15,7 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.swing.Java2DRenderer;
+import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
+import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
@@ -59,10 +62,12 @@ public class SignController {
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
     private final TransactionService transactionService;
+    private final OfficeSigningService officeSigningService;
 
-    public SignController(SigningService signService, TransactionService transactionService) {
+    public SignController(SigningService signService, TransactionService transactionService, OfficeSigningService officeSigningService) {
         this.signService = signService;
         this.transactionService = transactionService;
+        this.officeSigningService = officeSigningService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -216,6 +221,31 @@ public class SignController {
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
+        }
+    }
+
+    @PostMapping(value = "/office")
+    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningRequest signingRequest) {
+        TransactionDTO transactionDTO = new TransactionDTO("/api/sign/office", TransactionType.SIGNING);
+        try {
+            SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
+            code = "200";
+            message = "Sign Office Successfully";
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            code = "400";
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            code = "400";
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            transactionDTO.setCode(code);
+            transactionDTO.setMessage(message);
+            transactionService.save(transactionDTO);
         }
     }
 
