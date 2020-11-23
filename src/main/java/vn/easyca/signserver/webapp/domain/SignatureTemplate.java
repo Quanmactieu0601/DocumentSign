@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "signature_template")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class SignatureTemplate implements Serializable {
+public class SignatureTemplate extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

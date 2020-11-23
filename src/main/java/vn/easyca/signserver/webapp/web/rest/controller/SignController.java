@@ -16,6 +16,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
@@ -48,6 +49,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -186,60 +188,72 @@ public class SignController {
     }
 
     @PostMapping(path = "/getImageBase64")
-    public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin) {
+    public String getImageBase64(@RequestBody TokenVM tokenVM) {
         try {
-
-            CertificateDTO certificate = certificateService.getBySerial(serial);
-            CryptoTokenProxy cryptoTokenProxy = null;
-            try {
-                cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
-            } catch (CryptoTokenProxyException e) {
-                throw new CertificateAppException("Certificate has error", e);
-            }
-
-            String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
-            //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-            final String regex = "CN=\"([^\"]+)\"";
-            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-            final Matcher matcher = pattern.matcher(contentInformation);
-            String CN = null;
-            while (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++) {
-                    CN = matcher.group(i);
-                }
-            }
-
-            String[] signerAndAddress = CN.split(",");
-            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
-            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-            Calendar cal = Calendar.getInstance();
-            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
-            Long userId = userEntity.get().getId();
-            Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
-
-            htmlContent = htmlContent
-                .replaceFirst("signer", signerAndAddress[0])
-                .replaceFirst("address", signerAndAddress[1])
-                .replaceFirst("signatureImage", signImage.orElse(""))
-                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-
-            //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
-            InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
-            Tidy tidy = new Tidy();
-            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-
-            Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
-            BufferedImage img = renderer.getImage();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", os);
-            return Base64.getEncoder().encodeToString(os.toByteArray());
+            String CN = getSignInforBasedOnSerialAndPin(tokenVM.getSerial(), tokenVM.getPin());
+            String htmlContent = putSignInformationToHTMLTemplate(CN);
+            return convertHtmlContentToBase64(htmlContent);
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+
+    private String getSignInforBasedOnSerialAndPin(String serial, String pin) throws CertificateNotFoundAppException, CertificateAppException, CertificateException {
+        CertificateDTO certificate = certificateService.getBySerial(serial);
+
+        CryptoTokenProxy cryptoTokenProxy = null;
+        try {
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
+        } catch (CryptoTokenProxyException e) {
+            throw new CertificateAppException("Certificate has error", e);
+        }
+
+        String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
+        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
+        final String regex = "CN=\"([^\"]+)\"";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(contentInformation);
+        String CN = null;
+        while (matcher.find()) {
+                CN = matcher.group(1);
+        }
+        return CN;
+    }
+
+
+    private String putSignInformationToHTMLTemplate(String CN) throws IOException {
+        String[] signerAndAddress = CN.split(",");
+        InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
+        HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
+        String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
+        Calendar cal = Calendar.getInstance();
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
+        Long userId = userEntity.get().getId();
+        Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
+
+        htmlContent = htmlContent
+            .replaceFirst("signer", signerAndAddress[0])
+            .replaceFirst("address", signerAndAddress[1])
+            .replaceFirst("signatureImage", signImage.orElse(""))
+            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+        return htmlContent;
+    }
+
+    private String convertHtmlContentToBase64(String htmlContent) throws IOException {
+        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
+        InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+        Tidy tidy = new Tidy();
+        org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
+
+        Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
+        BufferedImage img = renderer.getImage();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(img, "png", os);
+        return Base64.getEncoder().encodeToString(os.toByteArray());
     }
 
     @PostMapping(value = "/office")
