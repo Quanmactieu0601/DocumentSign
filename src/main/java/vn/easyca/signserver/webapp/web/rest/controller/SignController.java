@@ -188,9 +188,9 @@ public class SignController {
     }
 
     @PostMapping(path = "/getImageBase64")
-    public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin) {
+    public String getImageBase64(@RequestBody TokenVM tokenVM) {
         try {
-            String CN = getSignInforBasedOnSerialAndPin(serial, pin);
+            String CN = getSignInforBasedOnSerialAndPin(tokenVM.getSerial(), tokenVM.getPin());
             String htmlContent = putSignInformationToHTMLTemplate(CN);
             return convertHtmlContentToBase64(htmlContent);
         } catch (Exception e) {
