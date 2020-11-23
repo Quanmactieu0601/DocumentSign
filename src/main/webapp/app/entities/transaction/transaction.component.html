@@ -58,8 +58,8 @@
                         </div>
                         <div class="col">
                             <div class="form-group">
-                                <label for="createdBy">Create By :</label>
-                                <input type="text" class="form-control" formControlName="createdBy">
+                                <label for="fullName">Full Name :</label>
+                                <input type="text" class="form-control" formControlName="fullName">
                             </div>
                         </div>
                     </div>
@@ -114,7 +114,7 @@
                     <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th scope="col" jhiSortBy="createdBy"><span jhiTranslate="webappApp.transaction.createdBy">Created By</span>
+                    <th scope="col" jhiSortBy="fullName"><span jhiTranslate="webappApp.transaction.fullName">Full Name</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
                     <!-- <th scope="col"></th> -->
@@ -131,7 +131,7 @@
                     <td>{{ transaction.type }}</td>
                     <td>{{ transaction.method }}</td>
                     <td>{{ transaction.host }}</td>
-                    <td>{{ transaction.createdBy }}</td>
+                    <td>{{ transaction.fullName }}</td>
                 </tr>
             </tbody>
         </table>

@@ -2,7 +2,6 @@ package vn.easyca.signserver.infrastructure.database.jpa.entity;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-import vn.easyca.signserver.webapp.config.DateTimeFormatConfiguration;
 
 import javax.persistence.*;
 

@@ -81,9 +81,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy);
-        return page.map(TransactionDTO::new);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName) {
+        Page<TransactionDTO> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName);
+        return page;
     }
 
     /**

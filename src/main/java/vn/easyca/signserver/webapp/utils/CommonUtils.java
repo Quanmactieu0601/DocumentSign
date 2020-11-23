@@ -2,9 +2,11 @@ package vn.easyca.signserver.webapp.utils;
 
 
 import org.springframework.data.domain.Pageable;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import javax.persistence.Query;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class CommonUtils {
         return string == null || string.isEmpty() || string.equals("null");
     }
 
-    public static void setParamsWithPageable(@NotNull Query query, Map<String, Object> params, @NotNull Pageable pageable, @NotNull Number total) {
+    public static void setParamsWithPageable(Query query, Map<String, Object> params, @NotNull Pageable pageable, @NotNull Number total) {
         if (params != null && !params.isEmpty()) {
             Set<Map.Entry<String, Object>> set = params.entrySet();
             for (Map.Entry<String, Object> obj : set) {

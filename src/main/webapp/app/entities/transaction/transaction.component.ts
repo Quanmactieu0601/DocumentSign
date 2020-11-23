@@ -26,7 +26,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     type: [],
     host: [],
     method: [],
-    createdBy: [],
+    fullName: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -122,8 +122,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (data1.method != null) {
       data1.method = data1.method.trim();
     }
-    if (data1.createdBy != null) {
-      data1.createdBy = data1.createdBy.trim();
+    if (data1.fullName != null) {
+      data1.fullName = data1.fullName.trim();
     }
 
     this.transactionService

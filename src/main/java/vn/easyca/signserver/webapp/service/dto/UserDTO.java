@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  * A DTO representing a user, with his authorities.
  */
 public class UserDTO {
-
     private Long id;
 
     @NotBlank
@@ -57,8 +56,6 @@ public class UserDTO {
 
     @Size(max = 256)
     private String imageUrl;
-
-
 
     private boolean activated = false;
 

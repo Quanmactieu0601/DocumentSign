@@ -7,11 +7,11 @@ export interface ITransaction {
   code?: string;
   message?: string;
   data?: string;
-  type?: String;
-  host?: String;
-  method?: String;
+  type?: string;
+  host?: string;
+  method?: string;
   userID?: number;
-  createdBy?: String;
+  fullName?: string;
 }
 
 export class Transaction implements ITransaction {
@@ -22,10 +22,10 @@ export class Transaction implements ITransaction {
     public code?: string,
     public message?: string,
     public data?: string,
-    public type?: String,
-    public host?: String,
-    public method?: String,
+    public type?: string,
+    public host?: string,
+    public method?: string,
     public userID?: number,
-    public createdBy?: String
+    public fullName?: string
   ) {}
 }
