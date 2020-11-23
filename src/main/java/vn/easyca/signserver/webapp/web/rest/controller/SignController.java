@@ -188,7 +188,6 @@ public class SignController {
     @PostMapping(path = "/getImageBase64")
     public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin) {
         try {
-
             CertificateDTO certificate = certificateService.getBySerial(serial);
             CryptoTokenProxy cryptoTokenProxy = null;
             try {
@@ -207,37 +206,46 @@ public class SignController {
                     CN = matcher.group(1);
             }
 
-            String[] signerAndAddress = CN.split(",");
-            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
-            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-            Calendar cal = Calendar.getInstance();
-            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
-            Long userId = userEntity.get().getId();
-            Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
-
-            htmlContent = htmlContent
-                .replaceFirst("signer", signerAndAddress[0])
-                .replaceFirst("address", signerAndAddress[1])
-                .replaceFirst("signatureImage", signImage.orElse(""))
-                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-
-            //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
-            InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
-            Tidy tidy = new Tidy();
-            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-
-            Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
-            BufferedImage img = renderer.getImage();
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            ImageIO.write(img, "png", os);
-            return Base64.getEncoder().encodeToString(os.toByteArray());
+            String htmlContent = putSignInformationToHTMLTemplate(CN);
+            return convertHtmlContentToBase64(htmlContent);
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+
+    private String putSignInformationToHTMLTemplate(String CN) throws IOException {
+        String[] signerAndAddress = CN.split(",");
+        InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
+        HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
+        String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
+        Calendar cal = Calendar.getInstance();
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
+        Long userId = userEntity.get().getId();
+        Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
+
+        htmlContent = htmlContent
+            .replaceFirst("signer", signerAndAddress[0])
+            .replaceFirst("address", signerAndAddress[1])
+            .replaceFirst("signatureImage", signImage.orElse(""))
+            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+        return htmlContent;
+    }
+
+    private String convertHtmlContentToBase64(String htmlContent) throws IOException {
+        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
+        InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+        Tidy tidy = new Tidy();
+        org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
+
+        Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
+        BufferedImage img = renderer.getImage();
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(img, "png", os);
+        return Base64.getEncoder().encodeToString(os.toByteArray());
     }
 
     @PostMapping(value = "/office")
