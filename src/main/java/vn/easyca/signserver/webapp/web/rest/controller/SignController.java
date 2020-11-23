@@ -16,6 +16,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
@@ -48,6 +49,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.security.cert.CertificateException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -188,30 +190,36 @@ public class SignController {
     @PostMapping(path = "/getImageBase64")
     public String getImageBase64(@RequestParam(required = false, name = "serial") String serial, @RequestParam(required = false, name = "pin") String pin) {
         try {
-            CertificateDTO certificate = certificateService.getBySerial(serial);
-            CryptoTokenProxy cryptoTokenProxy = null;
-            try {
-                cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
-            } catch (CryptoTokenProxyException e) {
-                throw new CertificateAppException("Certificate has error", e);
-            }
-
-            String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
-            //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-            final String regex = "CN=\"([^\"]+)\"";
-            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-            final Matcher matcher = pattern.matcher(contentInformation);
-            String CN = null;
-            while (matcher.find()) {
-                    CN = matcher.group(1);
-            }
-
+            String CN = getSignInforBasedOnSerialAndPin(serial, pin);
             String htmlContent = putSignInformationToHTMLTemplate(CN);
             return convertHtmlContentToBase64(htmlContent);
         } catch (Exception e) {
             log.error(e.getMessage());
             return null;
         }
+    }
+
+
+    private String getSignInforBasedOnSerialAndPin(String serial, String pin) throws CertificateNotFoundAppException, CertificateAppException, CertificateException {
+        CertificateDTO certificate = certificateService.getBySerial(serial);
+
+        CryptoTokenProxy cryptoTokenProxy = null;
+        try {
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
+        } catch (CryptoTokenProxyException e) {
+            throw new CertificateAppException("Certificate has error", e);
+        }
+
+        String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
+        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
+        final String regex = "CN=\"([^\"]+)\"";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(contentInformation);
+        String CN = null;
+        while (matcher.find()) {
+                CN = matcher.group(1);
+        }
+        return CN;
     }
 
 
