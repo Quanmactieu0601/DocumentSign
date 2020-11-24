@@ -231,6 +231,7 @@ public class SignController {
 
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
         Calendar cal = Calendar.getInstance();
+
         Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
         Long userId = userEntity.get().getId();
         Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());

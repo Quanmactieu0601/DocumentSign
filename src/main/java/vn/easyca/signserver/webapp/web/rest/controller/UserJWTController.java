@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
@@ -24,7 +26,7 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api")
 public class UserJWTController {
-
+    private final Logger log = LoggerFactory.getLogger(UserJWTController.class);
     private final TokenProvider tokenProvider;
     private final AsyncTransactionService asyncTransactionService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -37,6 +39,7 @@ public class UserJWTController {
 
     @PostMapping("/authenticate")
     public ResponseEntity<JWTToken> authorize(@Valid @RequestBody LoginVM loginVM) {
+        log.info("REST request to authorize : {}", loginVM.getUsername());
         UsernamePasswordAuthenticationToken authenticationToken =
             new UsernamePasswordAuthenticationToken(loginVM.getUsername(), loginVM.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
