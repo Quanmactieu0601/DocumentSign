@@ -196,8 +196,6 @@ public class SignController {
         try {
             CertificateDTO certificate = certificateService.getBySerial(tokenVM.getSerial());
 
-
-            String signImageData = "";
             Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
             Long userId = userEntity.get().getId();
 
@@ -206,25 +204,7 @@ public class SignController {
                 return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
             }
 
-            Long signImageId = certificate.getSignatureImageId();
-            if(signImageId != null) {
-                Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
-                signImageData = signatureImageDTO.get().getImgData();
-            }
-
-            String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
-            String[] signerInfor = certificate.getAlias().split(",");
-            String signerName = signerInfor[0];
-            String address = signerInfor[1];
-            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-            Calendar cal = Calendar.getInstance();
-
-            htmlContent = htmlContent
-                .replaceFirst("signer", signerName)
-                .replaceFirst("address", address)
-                .replaceFirst("signatureImage", signImageData)
-                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-
+            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO,tokenVM.getPin());
             String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
         } catch (Exception e) {
@@ -233,6 +213,48 @@ public class SignController {
         }
     }
 
+
+    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO, String pin) throws Exception {
+        String signImageData = "";
+        Long signImageId = certificate.getSignatureImageId();
+        if(signImageId != null) {
+            Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
+            signImageData = signatureImageDTO.get().getImgData();
+        }
+
+
+        CryptoTokenProxy cryptoTokenProxy = null;
+        try {
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
+        } catch (CryptoTokenProxyException e) {
+//                return ResponseEntity.ok(new BaseResponseVM(-1, null, e.toString()));
+            throw new Exception(e.getMessage());
+        }
+
+        String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
+        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
+        final String regex = "CN=\"([^\"]+)\"";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(contentInformation);
+        String CN = null;
+        while (matcher.find()) {
+            CN = matcher.group(1);
+        }
+
+        String[] signerInfor = CN.split(",");
+        String signerName = signerInfor[0];
+        String address = signerInfor[1];
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
+        Calendar cal = Calendar.getInstance();
+
+        String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
+        htmlContent = htmlContent
+            .replaceFirst("signer", signerName)
+            .replaceFirst("address", address)
+            .replaceFirst("signatureImage", signImageData)
+            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+        return htmlContent;
+    }
 
     private String convertHtmlContentToBase64(String htmlContent) throws IOException {
         //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
