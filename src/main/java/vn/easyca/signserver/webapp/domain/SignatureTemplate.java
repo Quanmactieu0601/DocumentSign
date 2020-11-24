@@ -21,9 +21,6 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "signature_image")
-    private String signatureImage;
-
     @Column(name = "user_id")
     private Long userId;
 
@@ -49,7 +46,6 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         this.htmlTemplate = htmlTemplate;
     }
 
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -59,18 +55,6 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         this.id = id;
     }
 
-    public String getSignatureImage() {
-        return signatureImage;
-    }
-
-    public SignatureTemplate signatureImage(String signatureImage) {
-        this.signatureImage = signatureImage;
-        return this;
-    }
-
-    public void setSignatureImage(String signatureImage) {
-        this.signatureImage = signatureImage;
-    }
 
     public Long getUserId() {
         return userId;
@@ -106,10 +90,10 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     public String toString() {
         return "SignatureTemplate{" +
             "id=" + id +
-            ", signatureImage='" + signatureImage + '\'' +
             ", userId=" + userId +
             ", type=" + type +
             ", htmlTemplate='" + htmlTemplate + '\'' +
             '}';
     }
+
 }

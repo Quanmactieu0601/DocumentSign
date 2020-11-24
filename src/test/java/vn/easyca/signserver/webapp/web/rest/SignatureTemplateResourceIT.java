@@ -63,7 +63,6 @@ public class SignatureTemplateResourceIT {
      */
     public static SignatureTemplate createEntity(EntityManager em) {
         SignatureTemplate signatureTemplate = new SignatureTemplate()
-            .signatureImage(DEFAULT_SIGNATURE_IMAGE)
             .userId(DEFAULT_USER_ID);
         return signatureTemplate;
     }
@@ -75,7 +74,6 @@ public class SignatureTemplateResourceIT {
      */
     public static SignatureTemplate createUpdatedEntity(EntityManager em) {
         SignatureTemplate signatureTemplate = new SignatureTemplate()
-            .signatureImage(UPDATED_SIGNATURE_IMAGE)
             .userId(UPDATED_USER_ID);
         return signatureTemplate;
     }
@@ -100,7 +98,6 @@ public class SignatureTemplateResourceIT {
         List<SignatureTemplate> signatureTemplateList = signatureTemplateRepository.findAll();
         assertThat(signatureTemplateList).hasSize(databaseSizeBeforeCreate + 1);
         SignatureTemplate testSignatureTemplate = signatureTemplateList.get(signatureTemplateList.size() - 1);
-        assertThat(testSignatureTemplate.getSignatureImage()).isEqualTo(DEFAULT_SIGNATURE_IMAGE);
         assertThat(testSignatureTemplate.getUserId()).isEqualTo(DEFAULT_USER_ID);
     }
 
@@ -139,7 +136,7 @@ public class SignatureTemplateResourceIT {
             .andExpect(jsonPath("$.[*].signatureImage").value(hasItem(DEFAULT_SIGNATURE_IMAGE)))
             .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getSignatureTemplate() throws Exception {
@@ -175,7 +172,6 @@ public class SignatureTemplateResourceIT {
         // Disconnect from session so that the updates on updatedSignatureTemplate are not directly saved in db
         em.detach(updatedSignatureTemplate);
         updatedSignatureTemplate
-            .signatureImage(UPDATED_SIGNATURE_IMAGE)
             .userId(UPDATED_USER_ID);
         SignatureTemplateDTO signatureTemplateDTO = signatureTemplateMapper.toDto(updatedSignatureTemplate);
 
@@ -188,7 +184,6 @@ public class SignatureTemplateResourceIT {
         List<SignatureTemplate> signatureTemplateList = signatureTemplateRepository.findAll();
         assertThat(signatureTemplateList).hasSize(databaseSizeBeforeUpdate);
         SignatureTemplate testSignatureTemplate = signatureTemplateList.get(signatureTemplateList.size() - 1);
-        assertThat(testSignatureTemplate.getSignatureImage()).isEqualTo(UPDATED_SIGNATURE_IMAGE);
         assertThat(testSignatureTemplate.getUserId()).isEqualTo(UPDATED_USER_ID);
     }
 
