@@ -6,16 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import vn.easyca.signserver.webapp.domain.Transaction;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.time.*;
+import java.util.*;
 
 @Repository
 public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
@@ -23,13 +21,10 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy, String fullName) {
+    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
-//        sqlBuilder.append("FROM transaction a ");
-//        sqlBuilder.append("left join jhi_user b ");
-//        sqlBuilder.append("on a.created_by = b.login ");
         sqlBuilder.append("from Transaction a ");
         sqlBuilder.append("left join UserEntity b ");
         sqlBuilder.append("on a.createdBy = b.login ");
@@ -39,10 +34,22 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-//        if (!CommonUtils.isNullOrEmptyProperty(triggerTime)) {
-//            sqlBuilder.append("AND a.trigger_Time like :triggerTime ");
-//            params.put("triggerTime", "%" + triggerTime + "%");
-//        }
+        if (!CommonUtils.isNullOrEmptyProperty(startDate)) {
+            LocalDate date = LocalDate.parse(startDate);
+            Instant instant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+            instant = instant.atZone(ZoneOffset.UTC)
+                .withHour(00).withMinute(00).withSecond(00).toInstant();
+            sqlBuilder.append("AND a.triggerTime >= :startDate ");
+            params.put("startDate", instant);
+        }
+        if (!CommonUtils.isNullOrEmptyProperty(endDate)) {
+            LocalDate date = LocalDate.parse(endDate);
+            Instant instant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+            instant = instant.atZone(ZoneOffset.UTC)
+                .withHour(23).withMinute(59).withSecond(59).toInstant();
+            sqlBuilder.append("AND a.triggerTime <= :endDate ");
+            params.put("endDate", instant);
+        }
         if (!CommonUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");
             params.put("code", "%" + code + "%");
@@ -78,7 +85,6 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         if (total.longValue() > 0) {
             Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api,a.triggerTime as triggerTime,a.code as code,a.message as message,a.data as data,a.type as type,a.method as method,a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString())
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
-//            Query query = entityManager.createNativeQuery("select a.id, a.api,a.trigger_time,a.code,a.message,a.data,a.type,a.method,a.host, CONCAT(last_name,' ',first_name) as created_by " + sqlBuilder.toString(), TransactionDTO.class );
             CommonUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();
         }

@@ -5,6 +5,7 @@ import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,7 +42,7 @@ public interface TransactionService {
     void delete(Long id);
 
      Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code,
-                                      String message, String data, String type, String createdBy, String host, String method, String fullName);
+                                      String message, String data, String type, String createdBy, String host, String method, String fullName, String startDate, String endDate) throws ParseException;
 
 
     /**

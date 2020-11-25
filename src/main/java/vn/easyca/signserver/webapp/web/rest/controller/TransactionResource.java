@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -97,9 +98,9 @@ public class TransactionResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
     @GetMapping("/transactions/search")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false)  String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName) {
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false)  String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) throws ParseException {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, method, host, createdBy, fullName);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, method, host, createdBy, fullName, startDate, endDate);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

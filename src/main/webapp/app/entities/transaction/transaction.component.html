@@ -37,8 +37,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label for="data">Data :</label>
-                                <input type="text" class="form-control" formControlName="data">
+                                <label for="startDate">Start Date :</label>
+                                <input type="date" class="form-control" formControlName="startDate">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group">
+                                <label for="endDate">End Date :</label>
+                                <input type="date" class="form-control" formControlName="endDate">
                             </div>
                         </div>
                         <div class="col">
@@ -124,7 +130,9 @@
                 <tr *ngFor="let transaction of transactions ;trackBy: trackId">
                     <!-- <td><a [routerLink]="['/transaction', transaction.id, 'view']">{{ transaction.id }}</a></td> -->
                     <td>{{ transaction.api }}</td>
-                    <td>{{ transaction.triggerTime | date:'medium' }}</td>
+                    <!-- <td>{{ transaction.startDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
+                    <td>{{ transaction.endDate | date:"MM/dd/yyyy hh:mm:ss" }}</td> -->
+                    <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                     <td>{{ transaction.code }}</td>
                     <td>{{ transaction.message }}</td>
                     <td>{{ transaction.data }}</td>

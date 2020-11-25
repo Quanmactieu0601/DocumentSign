@@ -9,6 +9,8 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
+import { Pipe, PipeTransform } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'jhi-transaction',
@@ -27,6 +29,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     host: [],
     method: [],
     fullName: [],
+    triggerTime: [],
+    startDate: [],
+    endDate: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -46,7 +51,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
     // this.transactionService
     //   .query({
     //     page: pageToLoad - 1,
@@ -125,7 +129,15 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (data1.fullName != null) {
       data1.fullName = data1.fullName.trim();
     }
-
+    if (data1.triggerTime != null) {
+      data1.triggerTime = data1.triggerTime.trim();
+    }
+    if (data1.startDate != null) {
+      data1.startDate = data1.startDate.trim();
+    }
+    if (data1.endDate != null) {
+      data1.endDate = data1.endDate.trim();
+    }
     this.transactionService
       .findByTransaction(data1)
       .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));

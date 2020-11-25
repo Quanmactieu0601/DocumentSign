@@ -4,7 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
+import java.text.ParseException;
+
 public interface TransactionRepositoryCustom {
 
-     Page<TransactionDTO> findByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName);
+     Page<TransactionDTO> findByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException;
 }
