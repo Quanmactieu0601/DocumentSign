@@ -19,12 +19,12 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 @Controller
 @RequestMapping("/api/verification")
-public class SignatureVerificationController {
-    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
+public class SignatureVerificationResource {
+    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationResource.class);
     private final SignatureVerificationService verificationService;
     private final AsyncTransactionService asyncTransactionService;
 
-    public SignatureVerificationController(SignatureVerificationService verificationService, AsyncTransactionService asyncTransactionService) {
+    public SignatureVerificationResource(SignatureVerificationService verificationService, AsyncTransactionService asyncTransactionService) {
         this.verificationService = verificationService;
         this.asyncTransactionService = asyncTransactionService;
     }

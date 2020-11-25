@@ -29,8 +29,8 @@ public class OfficeSigningService {
 
     private final CertificateService certificateService;
 
-    public OfficeSigningService(CertificateService certificateService) {
-        this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
+    public OfficeSigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
+        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.certificateService = certificateService;
     }
 
@@ -41,10 +41,9 @@ public class OfficeSigningService {
         CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = null;
         SigningResponse signingResponse = new SigningResponse();
         try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfo().getPin());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfo().getPin());
             PrivateKey privateKey = cryptoTokenProxy.getPrivateKey();
             OfficeSigner officeSigner = new OfficeSigner();
             List<X509Certificate> x509Certificates = Arrays.asList(cryptoTokenProxy.getX509Certificate());

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -226,8 +227,22 @@ public class UserApplicationService {
     }
 
 
-    public UserEntity createUser(UserDTO userDTO) {
+    public boolean createUser(String username, String password, String fullName) {
+        Optional<UserEntity> userEntity = this.getUserWithAuthoritiesByLogin(username);
+        if (userEntity.isPresent())
+            return false;
+        UserDTO userDTO = new UserDTO();
+        userDTO.setLogin(username);
+        userDTO.setFirstName(fullName);
+        userDTO.setPassword(password);
+        Set<String> authorities = new HashSet<>();
+        authorities.add(AuthoritiesConstants.USER);
+        userDTO.setAuthorities(authorities);
+        this.createUser(userDTO);
+        return true;
+    }
 
+    public UserEntity createUser(UserDTO userDTO) {
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
             boolean removed = removeNonActivatedUser(existingUser);
             if (!removed) {

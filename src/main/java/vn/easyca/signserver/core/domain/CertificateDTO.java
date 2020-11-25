@@ -37,6 +37,8 @@ public class CertificateDTO {
 
     private int activeStatus;
 
+    private String encryptedPin;
+
     private X509Certificate x509Certificate;
 
     public Long getId() {
@@ -133,6 +135,14 @@ public class CertificateDTO {
 
     public void setActiveStatus(int active_status) {
         this.activeStatus = active_status;
+    }
+
+    public String getEncryptedPin() {
+        return encryptedPin;
+    }
+
+    public void setEncryptedPin(String encryptedPin) {
+        this.encryptedPin = encryptedPin;
     }
 
     public X509Certificate getX509Certificate() throws CertificateException {

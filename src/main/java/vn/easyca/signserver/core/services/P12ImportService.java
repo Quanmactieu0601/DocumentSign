@@ -6,16 +6,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
-import vn.easyca.signserver.core.interfaces.UserCreator;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
-import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.UserApplicationService;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
@@ -26,17 +25,17 @@ import java.util.List;
 
 @Service
 public class P12ImportService {
-
-    private final CertificateService certificateService;
-
-    private final UserCreator userCreator;
-
     private final Log log = LogFactory.getLog(P12ImportService.class);
 
+    private final CertificateService certificateService;
+    private final UserApplicationService userApplicationService;
+    private final SymmetricService symmetricService;
+
     @Autowired
-    public P12ImportService(CertificateService certificateService, UserCreator userCreator) {
+    public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService, SymmetricService symmetricService) {
         this.certificateService = certificateService;
-        this.userCreator = userCreator;
+        this.userApplicationService = userApplicationService;
+        this.symmetricService = symmetricService;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -75,13 +74,15 @@ public class P12ImportService {
         certificateDTO.setSerial(serial);
         certificateDTO.setAlias(alias);
         certificateDTO.setTokenType(CertificateDTO.PKCS_12);
+        // Lưu thêm mã pin khi tạo cert
+        certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
         certificateDTO.setTokenInfo(tokenInfo);
         CertificateDTO result = certificateService.save(certificateDTO);
 
         try {
-            userCreator.CreateUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());
+            userApplicationService.createUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());
         } catch (Exception ignored) {
             log.error("Create user error" + input.getOwnerId(), ignored);
         }

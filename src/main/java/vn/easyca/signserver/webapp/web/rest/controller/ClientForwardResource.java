@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class ClientForwardController {
+public class ClientForwardResource {
 
     /**
      * Forwards any unmapped paths (except those containing a period) to the client {@code index.html}.

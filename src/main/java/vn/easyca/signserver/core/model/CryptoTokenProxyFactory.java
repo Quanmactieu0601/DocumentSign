@@ -1,10 +1,13 @@
 package vn.easyca.signserver.core.model;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.services.SymmetricService;
 import vn.easyca.signserver.pki.cryptotoken.*;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.pki.cryptotoken.Config;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.pki.sign.cache.AbstractCachedObject;
 import vn.easyca.signserver.pki.sign.cache.GuavaCache;
@@ -15,20 +18,39 @@ import vn.easyca.signserver.pki.cryptotoken.error.*;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 
-// TODO: Init factory as service
+@Component
 public class CryptoTokenProxyFactory {
+    private final SymmetricService symmetricService;
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws CryptoTokenProxyException {
+    public CryptoTokenProxyFactory(SymmetricService symmetricService) {
+        this.symmetricService = symmetricService;
+    }
+
+    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws CryptoTokenProxyException, ApplicationException {
         if (certificateDTO == null)
             throw new CryptoTokenProxyException("Certificate is not null");
+
+        String serial = certificateDTO.getSerial();
+        String encryptedPinFromDB = certificateDTO.getEncryptedPin();
+        String tokenType = certificateDTO.getTokenType();
+        String rawPin = null;
+        // Get pin from db instead from client if db pin has value
+        if (StringUtils.isNotEmpty(encryptedPinFromDB)) {
+            rawPin = symmetricService.decrypt(encryptedPinFromDB);
+            if (Certificate.PKCS_11.equals(tokenType) && !rawPin.equals(pin)) {
+                throw new CryptoTokenProxyException("Certificate pin not correct!");
+            }
+        } else if (!StringUtils.isNotEmpty(pin)) {
+            throw new CryptoTokenProxyException("Certificate pin not correct!");
+        } else
+            rawPin = pin;
+
         GuavaCache cache = GuavaCache.getInstance();
-        if (!cache.contain(certificateDTO.getSerial())) {
-            if (pin == null || pin.isEmpty())
-                pin = certificateDTO.getTokenInfo().getPassword();
-            CryptoToken token = resolveToken(certificateDTO.getTokenInfo(), certificateDTO.getTokenType(), pin);
-            cache.set(certificateDTO.getSerial(), new CacheElement(token, certificateDTO.getTokenType()));
+        if (!cache.contain(serial)) {
+            CryptoToken token = resolveToken(certificateDTO.getTokenInfo(), tokenType, rawPin);
+            cache.set(serial, new CacheElement(token, tokenType));
         }
-        return new CryptoTokenProxy(((CacheElement) cache.get(certificateDTO.getSerial())).getCryptoToken(), certificateDTO);
+        return new CryptoTokenProxy(((CacheElement) cache.get(serial)).getCryptoToken(), certificateDTO);
     }
 
     private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws CryptoTokenProxyException {
