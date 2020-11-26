@@ -25,13 +25,13 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api")
-public class UserJWTController {
-    private final Logger log = LoggerFactory.getLogger(UserJWTController.class);
+public class UserJWTResource {
+    private final Logger log = LoggerFactory.getLogger(UserJWTResource.class);
     private final TokenProvider tokenProvider;
     private final AsyncTransactionService asyncTransactionService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public UserJWTController(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder ) {
+    public UserJWTResource(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder ) {
         this.tokenProvider = tokenProvider;
         this.asyncTransactionService = asyncTransactionService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;

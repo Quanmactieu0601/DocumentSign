@@ -44,12 +44,12 @@ public class CertificateGenerateResult {
     public static class User {
         private String username;
         private String userPassword;
-        private int state;
+        private String state;
 
-        public User(String username, String userPassword, int state) {
+        public User(String username, String userPassword, boolean isSuccess) {
             this.username = username;
-            this.userPassword = userPassword;
-            this.state = state;
+            this.userPassword = isSuccess ?  userPassword : "";
+            this.state = isSuccess ? "OK" : "EXISTED";
         }
 
         public String getUsername() {
@@ -60,7 +60,7 @@ public class CertificateGenerateResult {
             return userPassword;
         }
 
-        public int getState() {
+        public String getState() {
             return state;
         }
     }

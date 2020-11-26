@@ -44,8 +44,8 @@ public class SigningService {
 
     private final CertificateService certificateService;
 
-    public SigningService(CertificateService certificateService) {
-        this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
+    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
+        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.certificateService = certificateService;
         File file = new File(TEM_DIR);
         if (!file.exists())

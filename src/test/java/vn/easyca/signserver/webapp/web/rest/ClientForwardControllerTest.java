@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import vn.easyca.signserver.webapp.web.rest.controller.ClientForwardController;
+import vn.easyca.signserver.webapp.web.rest.controller.ClientForwardResource;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Unit tests for the {@link ClientForwardController} REST controller.
+ * Unit tests for the {@link ClientForwardResource} REST controller.
  */
 public class ClientForwardControllerTest {
 
@@ -24,9 +24,9 @@ public class ClientForwardControllerTest {
 
     @BeforeEach
     public void setup() {
-        ClientForwardController clientForwardController = new ClientForwardController();
+        ClientForwardResource clientForwardResource = new ClientForwardResource();
         this.restMockMvc = MockMvcBuilders
-            .standaloneSetup(clientForwardController, new TestController())
+            .standaloneSetup(clientForwardResource, new TestController())
             .build();
     }
 

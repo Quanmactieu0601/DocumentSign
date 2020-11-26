@@ -18,7 +18,6 @@ import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
-import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.model.CryptoTokenProxy;
 import vn.easyca.signserver.core.model.CryptoTokenProxyException;
@@ -31,23 +30,16 @@ import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
-import vn.easyca.signserver.pki.sign.utils.StringUtils;
-import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
-import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.utils.AccountUntils;
 import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -64,9 +56,9 @@ import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/sign")
-public class SignController {
+public class SigningResource {
     private final SigningService signService;
-    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationController.class);
+    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationResource.class);
     private final TransactionService transactionService;
     private final OfficeSigningService officeSigningService;
     private final CertificateService certificateService;
@@ -75,13 +67,14 @@ public class SignController {
     private final SignatureTemplateService signatureTemplateService;
     private final AsyncTransactionService asyncTransactionService;
     private final SignatureImageService signatureImageService;
-    public SignController(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
-                          SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
-                          SignatureImageService signatureImageService) {
+
+    public SigningResource(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
+                           SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
+                           CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
         this.signService = signService;
         this.transactionService = transactionService;
         this.certificateService = certificateService;
-        this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
+        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.userApplicationService = userApplicationService;
         this.signatureTemplateService = signatureTemplateService;
         this.officeSigningService = officeSigningService;
@@ -182,6 +175,7 @@ public class SignController {
     }
 
 
+
     private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
         String signImageData = "";
         Long signImageId = certificate.getSignatureImageId();
@@ -189,6 +183,7 @@ public class SignController {
             Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
             signImageData = signatureImageDTO.get().getImgData();
         }
+
         X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
         String contentInformation = x509Certificate.getSubjectDN().getName();
         //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
@@ -229,7 +224,7 @@ public class SignController {
     }
 
     @PostMapping(value = "/office")
-    public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningRequest signingRequest) {
+    public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest signingRequest) {
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,

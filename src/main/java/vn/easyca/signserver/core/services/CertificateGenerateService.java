@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.interfaces.CryptoTokenConnector;
-import vn.easyca.signserver.core.interfaces.UserCreator;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -16,6 +15,7 @@ import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
+import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
@@ -38,7 +38,7 @@ public class CertificateGenerateService {
 
     final CryptoTokenConnector cryptoTokenConnector;
     final CertificateRequester certificateRequester;
-    final UserCreator userCreator;
+    final UserApplicationService userApplicationService;
     final CertificateRepository certificateRepository;
     private final UserRepository userRepository;
     private final CertificateEncryptionHelper encryptionHelper = new CertificateEncryptionHelper();
@@ -46,13 +46,13 @@ public class CertificateGenerateService {
 
     public CertificateGenerateService(CryptoTokenConnector cryptoTokenConnector,
                                       CertificateRequester certificateRequester,
-                                      UserCreator userCreator,
+                                      UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository
     ) {
         this.cryptoTokenConnector = cryptoTokenConnector;
         this.certificateRequester = certificateRequester;
-        this.userCreator = userCreator;
+        this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
         this.userRepository = userRepository;
     }
@@ -73,8 +73,8 @@ public class CertificateGenerateService {
         // create new user
         try {
             result.setUser(createUser(dto));
-        } catch (UserCreator.UserCreatorException e) {
-            log.error("Can not create user: cn is" + dto.getCn(), e);
+        } catch (Exception e) {
+            throw new ApplicationException(ApplicationException.APPLICATION_ERROR_CODE, "Create User fail");
         }
         return result;
     }
@@ -129,22 +129,19 @@ public class CertificateGenerateService {
         return certificateDTO;
     }
 
-    private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws UserCreator.UserCreatorException {
+    private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws ApplicationException {
         String username = dto.getOwnerId();
         String password = dto.getPassword();
         if (password == null || password.isEmpty())
             password = username; // TODO: change to random password
-        int createdUserResult = userCreator.CreateUser(username, password, dto.getOwnerName());
-        return createdUserResult == UserCreator.RESULT_CREATED ?
-            new CertificateGenerateResult.User(username, password, createdUserResult) :
-            new CertificateGenerateResult.User(username, null, createdUserResult);
+        boolean createdUserResult = userApplicationService.createUser(username, password, dto.getOwnerName());
+        return new CertificateGenerateResult.User(username, password, createdUserResult);
     }
 
     /**
      * Tạo CSR từ thông tin KH
      * Keypair được lưu vào HSM khi sinh CSR
      *
-     * @param dtoUserRepository
      * @return
      * @throws Exception
      */

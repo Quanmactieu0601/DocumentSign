@@ -123,4 +123,5 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  symmetric-key: ZG9udC10cnktdG8tc3RlYWwtbXkta2V5LXNkc0AyMDIwIyMj

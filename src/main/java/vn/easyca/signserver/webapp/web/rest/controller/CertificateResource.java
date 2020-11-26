@@ -51,8 +51,6 @@ import java.util.List;
 public class CertificateResource {
     private static final Logger log = LoggerFactory.getLogger(CertificateResource.class);
 
-    private static final String ENTITY_NAME = "certificate";
-
     private final CertificateGenerateService p11GeneratorService;
     private final CertificateService certificateService;
     private final AsyncTransactionService asyncTransactionService;

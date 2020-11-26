@@ -51,7 +51,6 @@ public class Certificate implements Serializable {
     @Column(name = "valid_date")
     private Instant validDate;
 
-
     @Column(name = "expired_date")
     private Instant expiredDate;
 
@@ -60,6 +59,11 @@ public class Certificate implements Serializable {
 
     @Column(name = "signature_image_id")
     private Long signatureImageId;
+
+
+    @Column(name = "encrypted_pin")
+    private String encryptedPin;
+
     public Long getSignatureImageId() {
         return signatureImageId;
     }
@@ -67,7 +71,6 @@ public class Certificate implements Serializable {
     public void setSignatureImageId(Long signatureImageId) {
         this.signatureImageId = signatureImageId;
     }
-
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -217,6 +220,14 @@ public class Certificate implements Serializable {
 
     public void setActiveStatus(Integer activeStatus) {
         this.activeStatus = activeStatus;
+    }
+
+    public String getEncryptedPin() {
+        return encryptedPin;
+    }
+
+    public void setEncryptedPin(String encryptedPin) {
+        this.encryptedPin = encryptedPin;
     }
 
     @Override
