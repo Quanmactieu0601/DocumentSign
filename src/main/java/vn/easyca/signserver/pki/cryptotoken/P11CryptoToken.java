@@ -213,7 +213,7 @@ public class P11CryptoToken implements CryptoToken {
             throw new ApplicationException(-1, "Hash algorithm cannot be null or empty");
 
         algorithm = algorithm.trim().toUpperCase().replace("-", "");
-        if (!Constants.HASH_ALGORITHM.contains(algorithm))
+        if (!Constants.HASH_ALGORITHMS.contains(algorithm))
             throw new ApplicationException(-1, "Hash algorithm not correct");
         try {
             return Signature.getInstance(algorithm + "withRSA", providerName);

@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class OfficeSigner extends AbstractOOXMLSignatureService {
     private ByteArrayOutputStream signedOOXMLOutputStream = new ByteArrayOutputStream();
     private byte[] ooxmlData;
 
-    public Pair signOOXMLFile(byte[] fileData, PrivateKey privateKey, List<X509Certificate> certificateChain, String hashAlgorithm)
+    public Pair signOOXMLFile(byte[] fileData, PrivateKey privateKey, List<X509Certificate> certificateChain, Signature signatureInstance)
             throws Exception {
         this.ooxmlData = fileData;
         DigestInfo digestInfo = preSign(null, null);
 
         RawSigner rawSigner = new RawSigner();
-        byte[] signatureValue =  rawSigner.signData(digestInfo.digestValue, privateKey);
+        byte[] signatureValue =  rawSigner.signData(digestInfo.digestValue, privateKey, signatureInstance);
 //        Signature sign = Signature.getInstance("SHA1withRSA");
 //        sign.initSign(privateKey);
 //        sign.update(digestInfo.digestValue);

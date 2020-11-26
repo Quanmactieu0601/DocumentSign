@@ -1,5 +1,8 @@
 package vn.easyca.signserver.core.dto;
 
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.config.Constants;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -7,7 +10,7 @@ import java.util.List;
 public class SignatureVerificationRequest {
 
     private String serial;
-    private String hashAlgorithm = "sha1";
+    private String hashAlgorithm;
     private List<Element> elements = new ArrayList<>();
 
     public String getSerial() {
@@ -23,7 +26,7 @@ public class SignatureVerificationRequest {
     }
 
     public String getHashAlgorithm() {
-        return hashAlgorithm;
+        return StringUtils.isNullOrEmpty(hashAlgorithm) ? Constants.HASH_ALGORITHM.DEFAULT_HASH_ALGORITHM : hashAlgorithm;
     }
 
     public void setHashAlgorithm(String hashAlgorithm) {

@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.dto.sign.request;
 
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.OptionalDTO;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,7 +21,7 @@ public class SignRequest<T> {
     }
 
     public OptionalDTO getOptional() {
-        return optional;
+        return optional == null ? new OptionalDTO() : optional;
     }
 
     public void setOptional(OptionalDTO optionalDTO) {
@@ -47,7 +48,7 @@ public class SignRequest<T> {
     public String getHashAlgorithm() {
         String result = getOptional().getHashAlgorithm();
         if (result == null || result.isEmpty())
-            result = "SHA1";
+            result = Constants.HASH_ALGORITHM.DEFAULT_HASH_ALGORITHM;
         return result;
     }
 

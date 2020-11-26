@@ -16,6 +16,7 @@ import vn.easyca.signserver.pki.sign.integrated.office.OfficeSigner;
 import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -50,9 +51,9 @@ public class OfficeSigningService {
             List<SigningResponseContent> responseContentList = new ArrayList<>();
             List<SigningRequestContent> dataList = request.getSigningRequestContents();
             SigningResponseContent responseContent = null;
+            Signature signatureInstance = cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getOptional().getHashAlgorithm());
             for (SigningRequestContent data : dataList) {
-                //TODO: pass hashAlgorithm
-                Pair<byte[], byte[]> pairResult = officeSigner.signOOXMLFile(data.getData(), privateKey, x509Certificates, null);
+                Pair<byte[], byte[]> pairResult = officeSigner.signOOXMLFile(data.getData(), privateKey, x509Certificates, signatureInstance);
                 responseContent = new SigningResponseContent(data.getDocumentName(), pairResult.getKey(), pairResult.getValue());
                 responseContentList.add(responseContent);
             }
