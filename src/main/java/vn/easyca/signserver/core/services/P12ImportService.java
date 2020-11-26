@@ -8,13 +8,14 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.pki.cryptotoken.Config;
+import vn.easyca.signserver.pki.cryptotoken.HsmConfig;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
@@ -29,10 +30,10 @@ public class P12ImportService {
 
     private final CertificateService certificateService;
     private final UserApplicationService userApplicationService;
-    private final SymmetricService symmetricService;
+    private final SymmetricEncryptors symmetricService;
 
     @Autowired
-    public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService, SymmetricService symmetricService) {
+    public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService, SymmetricEncryptors symmetricService) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
@@ -40,11 +41,8 @@ public class P12ImportService {
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
-        Config config = new Config();
-        byte[] fileContent = Base64.getDecoder().decode(input.getP12Base64());
-        config.initPkcs12(new ByteArrayInputStream(fileContent), input.getPin());
         try {
-            p12CryptoToken.init(config);
+            p12CryptoToken.initPkcs12(input.getP12Base64(), input.getPin());
         } catch (InitCryptoTokenException e) {
             throw new CertificateAppException(e);
         }

@@ -1,29 +1,45 @@
 package vn.easyca.signserver.pki.cryptotoken;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.config.Constants;
 
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class P12CryptoToken implements CryptoToken {
     private KeyStore ks = null;
-    private Config config = null;
+    private String modulePin = null;
 
-    public void init(Config config) throws InitCryptoTokenException {
-        if (config == null)
+    @Override
+    public void initPkcs11() {
+        throw new NotImplementedException();
+    }
+
+    public void initPkcs12(String p12Base64, String pin) throws InitCryptoTokenException {
+        if (p12Base64 == null)
             throw new InitCryptoTokenException("Config is null");
-        String modulePin = config.getModulePin();
-        InputStream is = config.getP12InputStream();
+        modulePin = pin;
+        byte[] fileContent = Base64.getDecoder().decode(p12Base64);
+        InputStream is = new ByteArrayInputStream(fileContent);
         if (modulePin == null || modulePin.isEmpty())
             throw new InitCryptoTokenException("Module pin is required");
         if (is == null)
             throw new InitCryptoTokenException("P12 input stream is required");
-        this.config = config;
 
         KeyStore keyStore = null;
         try {
@@ -49,7 +65,7 @@ public class P12CryptoToken implements CryptoToken {
             throw new CryptoTokenException("get alias occurs err", e);
         }
         try {
-            return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
+            return (PrivateKey) ks.getKey(alias, modulePin.toCharArray());
         } catch (Exception e) {
             throw new CryptoTokenException("get private key occurs err", e);
         }
@@ -107,10 +123,9 @@ public class P12CryptoToken implements CryptoToken {
         return aliases;
     }
 
-    public Config getConfig() throws CryptoTokenException {
-        if (this.ks == null)
-            throw new CryptoTokenException("cryptoToken is not initialized");
-        return this.config;
+    @Override
+    public Object getConfiguration() {
+       return modulePin;
     }
 
     @Override
@@ -121,5 +136,20 @@ public class P12CryptoToken implements CryptoToken {
     @Override
     public String getProviderName() throws CryptoTokenException {
         throw new CryptoTokenException("Method is not supported with PKCS12");
+    }
+
+    @Override
+    public Signature getSignatureInstance(String algorithm) throws ApplicationException {
+        if (StringUtils.isNullOrEmpty(algorithm))
+            throw new ApplicationException(-1, "Hash algorithm cannot be null or empty");
+
+        algorithm = algorithm.trim().toUpperCase().replace("-", "");
+        if (!Constants.HASH_ALGORITHM.contains(algorithm))
+            throw new ApplicationException(-1, "Hash algorithm not correct");
+        try {
+            return Signature.getInstance(algorithm + "withRSA");
+        } catch (NoSuchAlgorithmException e) {
+            throw new ApplicationException(-1, "Cannot get signature instance", e);
+        }
     }
 }

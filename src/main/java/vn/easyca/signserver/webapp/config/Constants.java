@@ -2,6 +2,9 @@ package vn.easyca.signserver.webapp.config;
 
 import vn.easyca.signserver.ra.lib.RAConfig;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Application constants.
  */
@@ -13,38 +16,12 @@ public final class Constants {
     public static final String SYSTEM_ACCOUNT = "system";
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String ANONYMOUS_USER = "anonymoususer";
-    public static final String KEY_ENCRYPTION = "abcdpoiuytrefghijklmop";
+    public static final List<String> HASH_ALGORITHM = Arrays.asList("SHA1", "SHA256", "SHA512");
 
 
     public interface RAConfig {
         String URL = "http://172.16.11.84:8787/api/";
         String UserName = "admin";
         String Password = "admin";
-    }
-
-    public interface HSMConfig {
-//        String NAME = "EasyCAToken";
-//        String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-//        String PIN = "12345678";
-//        String SLOT = null;
-//        String ATTRIBUTES = null;
-
-//        public static final String NAME = "nCipher";
-//        public static final String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
-//        public static final String PIN = "05111989";
-//        public static final String SLOT = "761406615";
-//        public static final String ATTRIBUTES = "compatibility";
-//
-//        public static final String NAME = "ND1_HSM2";
-        public static final String NAME = "ND1";
-        public static final String LIB = "/opt/safenet/protecttoolkit5/ptk/lib/libcryptoki.so";
-//        public static final String PIN = "Hanoi@202o";
-//        public static final String SLOT = "1"; //614352
-        public static final String PIN = "ND!202o";
-        public static final String SLOT = "0"; //614352
-        public static final String ATTRIBUTES = "compatibility";
-    }
-
-    private Constants() {
     }
 }

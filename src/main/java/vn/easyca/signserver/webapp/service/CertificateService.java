@@ -23,12 +23,13 @@ public class CertificateService {
     private List<Certificate> certificateList = new ArrayList<>();
     private final CertificateRepository certificateRepository;
     private final CertificateMapper mapper = new CertificateMapper();
-    private final CertificateEncryptionHelper encryptionHelper = new CertificateEncryptionHelper();
+    private final CertificateEncryptionHelper encryptionHelper;
 
     private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository,  UserRepository userRepository) {
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
+        this.encryptionHelper = encryptionHelper;
         this.userRepository = userRepository;
     }
 
