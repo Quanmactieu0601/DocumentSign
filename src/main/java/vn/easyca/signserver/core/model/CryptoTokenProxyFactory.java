@@ -83,7 +83,7 @@ public class CryptoTokenProxyFactory {
     }
 
     public CryptoToken resolveP11Token(TokenInfo tokenInfo) throws CryptoTokenProxyException {
-        // TODO: tokenInfo != null => resolve from DB (if needed)
+        // TODO: tokenInfo != null => resolve from DB (if needed | used for multiple hsm devices are running)
         CryptoToken cryptoToken = null;
         switch (hsmConfig.getType()) {
             case HsmTypeConstant.HSM_PROTECT_SERVER:

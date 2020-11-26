@@ -1,6 +1,7 @@
 package vn.easyca.signserver.pki.sign.integrated.pdf;
 
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
@@ -196,7 +197,7 @@ public class SignPDFDto {
      */
 
     public SignPDFDto withHashAlg(String hashAlg) {
-        instance.setHashAlg(StringUtils.isNullOrEmpty(hashAlg) ? "SHA1" : hashAlg);
+        instance.setHashAlg(StringUtils.isNullOrEmpty(hashAlg) ? Constants.HASH_ALGORITHM.SHA1 : hashAlg);
         return instance;
     }
 
