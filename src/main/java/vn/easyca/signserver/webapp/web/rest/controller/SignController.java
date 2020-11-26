@@ -29,6 +29,7 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
@@ -52,6 +53,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -155,46 +157,12 @@ public class SignController {
         }
     }
 
-    @PostMapping(path = "/getImage")
-    public byte[] getImage(@RequestParam(required = false, name = "serial") String serial) {
+
+
+    @GetMapping("/getImage")
+    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
         try {
-            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
-            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
-            Calendar cal = Calendar.getInstance();
-
-//            String signer = "BV Nhi Đồng 1";
-//            String address = "Quận 10, Thành phố Hồ Chí Minh";
-//            String organization = "BV Nhi Đồng 1";
-            htmlContent = htmlContent
-//                .replaceFirst("signer", signer)
-//                .replaceFirst("address", address)
-//                .replaceFirst("organization", organization)
-                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-
-            imageGenerator.loadHtml(htmlContent);
-            // convert Image to byte
-            BufferedImage originalImage = imageGenerator.getBufferedImage();
-            ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
-
-            ImageIO.write(originalImage, "png", imageBytes);
-            imageBytes.flush();
-
-            byte[] imageContentByte = imageBytes.toByteArray();
-            imageBytes.close();
-            return imageContentByte;
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    @PostMapping(path = "/getImageBase64")
-    public ResponseEntity<BaseResponseVM> getImageBase64(@RequestBody TokenVM tokenVM) {
-        try {
-            CertificateDTO certificate = certificateService.getBySerial(tokenVM.getSerial());
+            CertificateDTO certificate = certificateService.getBySerial(serial);
 
             Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
             Long userId = userEntity.get().getId();
@@ -204,7 +172,7 @@ public class SignController {
                 return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
             }
 
-            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO,tokenVM.getPin());
+            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO);
             String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
         } catch (Exception e) {
@@ -214,24 +182,15 @@ public class SignController {
     }
 
 
-    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO, String pin) throws Exception {
+    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
         String signImageData = "";
         Long signImageId = certificate.getSignatureImageId();
         if(signImageId != null) {
             Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
             signImageData = signatureImageDTO.get().getImgData();
         }
-
-
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
-        } catch (CryptoTokenProxyException e) {
-//                return ResponseEntity.ok(new BaseResponseVM(-1, null, e.toString()));
-            throw new Exception(e.getMessage());
-        }
-
-        String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
+        X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
+        String contentInformation = x509Certificate.getSubjectDN().getName();
         //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
         final String regex = "CN=\"([^\"]+)\"";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
