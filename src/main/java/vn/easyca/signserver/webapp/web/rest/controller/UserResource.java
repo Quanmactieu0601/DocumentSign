@@ -139,7 +139,8 @@ public class UserResource {
         try {
             List<UserDTO> userDTOList = ExcelUtils.convertExcelToUserDTO(file.getInputStream());
             for (UserDTO userDTO : userDTOList) {
-                userApplicationService.registerUser(userDTO, "Manhmin99");
+                // TODO: use other method instead of use registerUser
+                userApplicationService.registerUser(userDTO, userDTO.getLogin());
             }
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
 

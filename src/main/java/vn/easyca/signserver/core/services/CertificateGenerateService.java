@@ -19,6 +19,7 @@ import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
+import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
@@ -87,7 +88,7 @@ public class CertificateGenerateService {
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
         CSRGenerator.CSRGeneratorException, CryptoTokenProxyException {
-        String alias = dto.getOwnerId();
+        String alias = CommonUtils.genRandomAlias();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
@@ -148,7 +149,7 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CertificateGenerateDTO dto) throws Exception {
-        String alias = dto.getOwnerId();
+        String alias = CommonUtils.genRandomAlias();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
@@ -172,7 +173,7 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CryptoToken cryptoToken, CertificateGenerateDTO dto) throws Exception {
-        String alias = dto.getOwnerId();
+        String alias = CommonUtils.genRandomAlias();
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
             dto.getSubjectDN().toString(),
@@ -194,7 +195,7 @@ public class CertificateGenerateService {
      */
     private CertificateGenerateResult.Cert createCertFromCSR(CertificateGenerateDTO dto) throws
         CryptoTokenException, CryptoTokenProxyException {
-        String alias = dto.getOwnerId();
+        String alias = CommonUtils.genRandomAlias();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         RawCertificate rawCertificate = dto.getRawCertificate();
         CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
