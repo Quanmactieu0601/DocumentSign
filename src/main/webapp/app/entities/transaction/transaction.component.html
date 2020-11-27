@@ -6,61 +6,71 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="api">API :</label>
+                                <label for="api" ><span
+                                    jhiTranslate="webappApp.transaction.api">Api</span></label>
                                 <input type="text" class="form-control" formControlName="api">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="method">Method :</label>
+                                <label for="method"><span
+                                    jhiTranslate="webappApp.transaction.method">Method</span></label>
                                 <input type="text" class="form-control" formControlName="method">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="code">Code :</label>
+                                <label for="code"><span
+                                    jhiTranslate="webappApp.transaction.code">Code</span></label>
                                 <input type="text" class="form-control" formControlName="code">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="message">Message :</label>
+                                <label for="message"><span
+                                    jhiTranslate="webappApp.transaction.message">Message</span></label>
                                 <input type="text" class="form-control" formControlName="message">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="startDate">Start Date :</label>
+                                <label for="startDate"><span
+                                    jhiTranslate="webappApp.transaction.startDate">Start Date</span></label>
                                 <input type="date" class="form-control" formControlName="startDate">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="endDate">End Date :</label>
+                                <label for="endDate"><span
+                                    jhiTranslate="webappApp.transaction.endDate">End Date</span></label>
                                 <input type="date" class="form-control" formControlName="endDate">
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="type">Type :</label>
+                                <label for="type"><span
+                                    jhiTranslate="webappApp.transaction.type">Type</span></label>
                                 <input type="text" class="form-control" formControlName="type">
                             </div>
                         </div>
                         <div class="col-md-3">
                         <div class="form-group">
-                            <label for="host"> Host :</label>
+                            <label for="host"> <span
+                                jhiTranslate="webappApp.transaction.host">Host</span></label>
                             <input type="text" class="form-control" formControlName="host">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="fullName">Full Name :</label>
+                            <label for="fullName"><span
+                                jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
                             <input type="text" class="form-control" formControlName="fullName">
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                            <label for="data">Data :</label>
+                            <label for="data"><span
+                                jhiTranslate="webappApp.transaction.data">Date</span></label>
                             <input type="text" class="form-control" formControlName="data"/>
                         </div>
                     </div>
@@ -139,7 +149,10 @@
             </tbody>
         </table>
     </div>
-
+    <div *ngIf="transactions&& transactions.length > 0">
+        <div class="row justify-content-center">
+            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        </div>
     <div class="row justify-content-center">
         <ngb-pagination
             [collectionSize]="totalItems"
@@ -151,4 +164,5 @@
             (pageChange)="loadPage($event)"
         ></ngb-pagination>
     </div>
+</div>
 </div>
