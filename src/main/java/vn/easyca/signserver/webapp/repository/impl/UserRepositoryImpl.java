@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepositoryCustom;
-import vn.easyca.signserver.webapp.utils.CommonUtils;
+import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -27,40 +27,41 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 //        String sort = Common.addSort(pageable.getSort());
 
         sqlBuilder.append(" WHERE 1 = 1 ");
-        if (!CommonUtils.isNullOrEmptyProperty(account)) {
+        if (!QueryUtils.isNullOrEmptyProperty(account)) {
             sqlBuilder.append("AND a.login like :login ");
             params.put("login", "%" + account + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(name)) {
+        if (!QueryUtils.isNullOrEmptyProperty(name)) {
             sqlBuilder.append("AND a.last_name like :name ");
             params.put("name", "%" + name + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(email)) {
+        if (!QueryUtils.isNullOrEmptyProperty(email)) {
             sqlBuilder.append("AND a.email like :email ");
             params.put("email",  email );
         }
-        if (!CommonUtils.isNullOrEmptyProperty(ownerId)) {
+        if (!QueryUtils.isNullOrEmptyProperty(ownerId)) {
             sqlBuilder.append("AND a.owner_id like :ownerId ");
             params.put("ownerId", "%" + ownerId + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(commonName)) {
+        if (!QueryUtils.isNullOrEmptyProperty(commonName)) {
             sqlBuilder.append("AND a.common_name like :commonName ");
             params.put("commonName", "%" + commonName + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(country)) {
+        if (!QueryUtils.isNullOrEmptyProperty(country)) {
             sqlBuilder.append("AND a.country like :country ");
             params.put("country", "%" + country + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(phone)) {
+        if (!QueryUtils.isNullOrEmptyProperty(phone)) {
             sqlBuilder.append("AND a.phone like :phone ");
             params.put("phone", "%" + phone + "%");
         }
         Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());
-        CommonUtils.setParams(countQuery, params);
+        QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString(), UserEntity.class);
-            CommonUtils.setParamsWithPageable(query, params, pageable, total);
+            String sort = QueryUtils.addMultiSort(pageable.getSort());
+            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString() + sort, UserEntity.class);
+            QueryUtils.setParamsWithPageable(query, params, pageable, total);
             userEntityList = query.getResultList();
         }
         return new PageImpl<>(userEntityList, pageable, total.longValue());

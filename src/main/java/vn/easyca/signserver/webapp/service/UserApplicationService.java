@@ -92,78 +92,77 @@ public class UserApplicationService {
 
     public BaseResponseVM registerListUser(List<UserDTO> userDTOList, String password) {
         StringBuilder errorMes = new StringBuilder();
-        int row =1;
+        int row = 1;
         for (UserDTO userDTO : userDTOList) {
-            if(userDTO.getLogin().length() ==0){
-                errorMes.append("Check required field (*) as 'login' in row "+ row +"!");
+            if (userDTO.getLogin().length() == 0) {
+                errorMes.append("Check required field (*) as 'login' in row " + row + "!");
                 errorMes.append("<br />");
             }
-                userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
+            userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
+                boolean removed = removeNonActivatedUser(existingUser);
+                if (!removed) {
+                    errorMes.append("User name " + existingUser.getLogin() + "already exist !");
+                    errorMes.append("<br />");
+                }
+            });
+            if (userDTO.getEmail().length() != 0) {
+                userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
                     boolean removed = removeNonActivatedUser(existingUser);
                     if (!removed) {
-                        errorMes.append("User name " + existingUser.getLogin() + "already exist !");
+                        errorMes.append("Email " + existingUser.getEmail() + " already exist !");
                         errorMes.append("<br />");
                     }
                 });
+            }
+            if (userDTO.getCountry().length() == 0 && userDTO.getCommonName().length() == 0 && userDTO.getOrganizationName().length() == 0 && userDTO.getOrganizationUnit().length() == 0 && userDTO.getLocalityName().length() == 0 && userDTO.getStateName().length() == 0) {
+                errorMes.append(userDTO.getLogin() + " you must fill at least one value from Common Name to Country in excel table in row " + row + " !");
+                errorMes.append("<br />");
+            } else if (userDTO.getCountry().length() != 0 && (userDTO.getCountry().length() != 2)) {
+                errorMes.append(userDTO.getLogin() + " length of column Country must be 2 character in row " + row + " !");
+                errorMes.append("<br />");
+            }
+            if (errorMes.length() == 0) {
+                UserEntity newUserEntity = new UserEntity();
+                String encryptedPassword = passwordEncoder.encode(password);
+                newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
+                newUserEntity.setOwnerId(userDTO.getLogin());
+                newUserEntity.setPassword(encryptedPassword);
+                newUserEntity.setFirstName(userDTO.getFirstName());
+                newUserEntity.setLastName(userDTO.getLastName());
                 if (userDTO.getEmail().length() != 0) {
-                    userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
-                        boolean removed = removeNonActivatedUser(existingUser);
-                        if (!removed) {
-                            errorMes.append("Email " + existingUser.getEmail() + " already exist !");
-                            errorMes.append("<br />");
-                        }
-                    });
+                    newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
                 }
-                if (userDTO.getCountry().length() == 0 && userDTO.getCommonName().length() == 0 && userDTO.getOrganizationName().length() == 0 && userDTO.getOrganizationUnit().length() == 0 && userDTO.getLocalityName().length() == 0 && userDTO.getStateName().length() == 0) {
-                    errorMes.append( userDTO.getLogin() + " you must fill at least one value from Common Name to Country in excel table in row " + row +" !");
-                    errorMes.append("<br />");
-                } else if (userDTO.getCountry().length() != 0 && (userDTO.getCountry().length() != 2)) {
-                    errorMes.append(userDTO.getLogin() + " length of column Country must be 2 character in row " + row +" !");
-                    errorMes.append("<br />");
-                }
-                if (errorMes.length() == 0) {
-                    UserEntity newUserEntity = new UserEntity();
-                    String encryptedPassword = passwordEncoder.encode(password);
-                    newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
-                    newUserEntity.setOwnerId(userDTO.getLogin());
-                    newUserEntity.setPassword(encryptedPassword);
-                    newUserEntity.setFirstName(userDTO.getFirstName());
-                    newUserEntity.setLastName(userDTO.getLastName());
-                    if (userDTO.getEmail().length() != 0) {
-                        newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
-                    }
-                    newUserEntity.setOwnerId(userDTO.getLogin());
-                    newUserEntity.setPhone(userDTO.getPhone());
-                    newUserEntity.setCommonName(userDTO.getCommonName());
-                    newUserEntity.setOrganizationName(userDTO.getOrganizationName());
-                    newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
-                    newUserEntity.setLocalityName(userDTO.getLocalityName());
-                    newUserEntity.setStateName(userDTO.getStateName());
-                    newUserEntity.setCountry(userDTO.getCountry());
-                    newUserEntity.setImageUrl(userDTO.getImageUrl());
-                    newUserEntity.setLangKey(userDTO.getLangKey());
-                    // new user is not active
-                    newUserEntity.setActivated(false);
-                    // new user gets registration key
-                    newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
-                    Set<Authority> authorities = new HashSet<>();
-                    authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-                    newUserEntity.setAuthorities(authorities);
-                    userRepository.save(newUserEntity);
-                    this.clearUserCaches(newUserEntity);
-                }
+                newUserEntity.setOwnerId(userDTO.getLogin());
+                newUserEntity.setPhone(userDTO.getPhone());
+                newUserEntity.setCommonName(userDTO.getCommonName());
+                newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+                newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+                newUserEntity.setLocalityName(userDTO.getLocalityName());
+                newUserEntity.setStateName(userDTO.getStateName());
+                newUserEntity.setCountry(userDTO.getCountry());
+                newUserEntity.setImageUrl(userDTO.getImageUrl());
+                newUserEntity.setLangKey(userDTO.getLangKey());
+                // new user is not active
+                newUserEntity.setActivated(false);
+                // new user gets registration key
+                newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+                Set<Authority> authorities = new HashSet<>();
+                authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+                newUserEntity.setAuthorities(authorities);
+                userRepository.save(newUserEntity);
+                this.clearUserCaches(newUserEntity);
+            }
 
             row++;
         }
 
         if (errorMes.length() == 0) {
             return new BaseResponseVM(200, null, "Created List User!");
-        }else{
+        } else {
             System.out.println(errorMes.toString());
             return new BaseResponseVM(400, null, errorMes.toString());
         }
     }
-
 
 
     public UserEntity registerUser(UserDTO userDTO, String password) {
@@ -181,39 +180,39 @@ public class UserApplicationService {
                 }
             });
         }
-            UserEntity newUserEntity = new UserEntity();
+        UserEntity newUserEntity = new UserEntity();
 
-            String encryptedPassword = passwordEncoder.encode(password);
-            newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
-            // new user gets initially a generated password
-            newUserEntity.setPassword(encryptedPassword);
-            newUserEntity.setFirstName(userDTO.getFirstName());
-            newUserEntity.setLastName(userDTO.getLastName());
-            if (userDTO.getEmail() != null) {
-                newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
-            }
-            newUserEntity.setOwnerId(userDTO.getOwnerId());
-            newUserEntity.setPhone(userDTO.getPhone());
-            newUserEntity.setCommonName(userDTO.getCommonName());
-            newUserEntity.setOrganizationName(userDTO.getOrganizationName());
-            newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
-            newUserEntity.setLocalityName(userDTO.getLocalityName());
-            newUserEntity.setStateName(userDTO.getStateName());
-            newUserEntity.setCountry(userDTO.getCountry());
-            newUserEntity.setImageUrl(userDTO.getImageUrl());
-            newUserEntity.setLangKey(userDTO.getLangKey());
-            // new user is not active
-            newUserEntity.setActivated(false);
-            // new user gets registration key
-            newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
-            Set<Authority> authorities = new HashSet<>();
-            authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
-            newUserEntity.setAuthorities(authorities);
-            userRepository.save(newUserEntity);
-            this.clearUserCaches(newUserEntity);
-            log.debug("Created Information for User: {}", newUserEntity);
-            return newUserEntity;
+        String encryptedPassword = passwordEncoder.encode(password);
+        newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
+        // new user gets initially a generated password
+        newUserEntity.setPassword(encryptedPassword);
+        newUserEntity.setFirstName(userDTO.getFirstName());
+        newUserEntity.setLastName(userDTO.getLastName());
+        if (userDTO.getEmail() != null) {
+            newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
+        newUserEntity.setOwnerId(userDTO.getOwnerId());
+        newUserEntity.setPhone(userDTO.getPhone());
+        newUserEntity.setCommonName(userDTO.getCommonName());
+        newUserEntity.setOrganizationName(userDTO.getOrganizationName());
+        newUserEntity.setOrganizationUnit(userDTO.getOrganizationUnit());
+        newUserEntity.setLocalityName(userDTO.getLocalityName());
+        newUserEntity.setStateName(userDTO.getStateName());
+        newUserEntity.setCountry(userDTO.getCountry());
+        newUserEntity.setImageUrl(userDTO.getImageUrl());
+        newUserEntity.setLangKey(userDTO.getLangKey());
+        // new user is not active
+        newUserEntity.setActivated(false);
+        // new user gets registration key
+        newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+        Set<Authority> authorities = new HashSet<>();
+        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        newUserEntity.setAuthorities(authorities);
+        userRepository.save(newUserEntity);
+        this.clearUserCaches(newUserEntity);
+        log.debug("Created Information for User: {}", newUserEntity);
+        return newUserEntity;
+    }
 
 
     private boolean removeNonActivatedUser(UserEntity existingUserEntity) {
