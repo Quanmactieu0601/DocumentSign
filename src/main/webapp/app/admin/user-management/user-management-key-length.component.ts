@@ -5,6 +5,8 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { JhiEventManager } from 'ng-jhipster';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { saveAs } from 'file-saver';
+
 @Component({
   selector: 'jhi-user-mgmt-kl',
   templateUrl: './user-management-key-length.component.html',
