@@ -45,8 +45,6 @@ public class UserDTO {
     @Size(max = 200)
     private String country;
 
-    private String ownerId;
-
     @Size(max = 50)
     private String phone;
 
@@ -99,7 +97,6 @@ public class UserDTO {
         this.organizationUnit = userEntity.getOrganizationUnit();
         this.stateName = userEntity.getStateName();
         this.country = userEntity.getCountry();
-        this.ownerId = userEntity.getOwnerId();
         this.phone = userEntity.getPhone();
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
@@ -266,14 +263,6 @@ public class UserDTO {
         this.country = country;
     }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -304,7 +293,6 @@ public class UserDTO {
             ", localityName=" + localityName +
             ", stateName=" + stateName +
             ", country=" + country +
-            ", ownerId=" + ownerId +
             ", phone=" + phone +
             "}";
     }

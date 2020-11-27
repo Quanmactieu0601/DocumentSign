@@ -125,14 +125,12 @@ public class UserApplicationService {
                 UserEntity newUserEntity = new UserEntity();
                 String encryptedPassword = passwordEncoder.encode(password);
                 newUserEntity.setLogin(userDTO.getLogin().toLowerCase());
-                newUserEntity.setOwnerId(userDTO.getLogin());
                 newUserEntity.setPassword(encryptedPassword);
                 newUserEntity.setFirstName(userDTO.getFirstName());
                 newUserEntity.setLastName(userDTO.getLastName());
                 if (userDTO.getEmail().length() != 0) {
                     newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
                 }
-                newUserEntity.setOwnerId(userDTO.getLogin());
                 newUserEntity.setPhone(userDTO.getPhone());
                 newUserEntity.setCommonName(userDTO.getCommonName());
                 newUserEntity.setOrganizationName(userDTO.getOrganizationName());
@@ -191,7 +189,6 @@ public class UserApplicationService {
         if (userDTO.getEmail() != null) {
             newUserEntity.setEmail(userDTO.getEmail().toLowerCase());
         }
-        newUserEntity.setOwnerId(userDTO.getOwnerId());
         newUserEntity.setPhone(userDTO.getPhone());
         newUserEntity.setCommonName(userDTO.getCommonName());
         newUserEntity.setOrganizationName(userDTO.getOrganizationName());
@@ -265,7 +262,6 @@ public class UserApplicationService {
         newUserEntity.setPassword(encryptedPassword);
         newUserEntity.setFirstName(userDTO.getFirstName());
         newUserEntity.setLastName(userDTO.getLastName());
-        newUserEntity.setOwnerId(userDTO.getOwnerId());
         newUserEntity.setPhone(userDTO.getPhone());
         newUserEntity.setCommonName(userDTO.getCommonName());
         newUserEntity.setOrganizationName(userDTO.getOrganizationName());
@@ -316,7 +312,6 @@ public class UserApplicationService {
                 user.setLocalityName(userDTO.getLocalityName());
                 user.setStateName(userDTO.getStateName());
                 user.setCountry(userDTO.getCountry());
-                user.setOwnerId(userDTO.getOwnerId());
                 user.setPhone(userDTO.getPhone());
                 user.setImageUrl(userDTO.getImageUrl());
                 user.setActivated(userDTO.isActivated());

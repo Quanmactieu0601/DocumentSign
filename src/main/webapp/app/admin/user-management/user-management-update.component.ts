@@ -38,7 +38,6 @@ export class UserManagementUpdateComponent implements OnInit {
     localityName: ['', [Validators.maxLength(250)]],
     stateName: ['', [Validators.maxLength(250)]],
     country: ['', [Validators.minLength(2), Validators.maxLength(2)]],
-    ownerId: ['', [Validators.maxLength(50)]],
     phone: ['', [Validators.minLength(5), Validators.maxLength(50)]],
     activated: [],
     langKey: [],
@@ -112,7 +111,6 @@ export class UserManagementUpdateComponent implements OnInit {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      ownerId: user.ownerId,
       phone: user.phone,
       commonName: user.commonName,
       organizationUnit: user.organizationUnit,
@@ -148,7 +146,6 @@ export class UserManagementUpdateComponent implements OnInit {
     user.activated = this.editForm.get(['activated'])!.value;
     user.langKey = this.editForm.get(['langKey'])!.value;
     user.authorities = this.editForm.get(['authorities'])!.value;
-    user.ownerId = this.editForm.get(['ownerId'])!.value;
     user.phone = this.editForm.get(['phone'])!.value;
     user.password = this.editForm.get(['password'])!.value;
   }
