@@ -223,7 +223,7 @@ public class CertificateGenerateService {
         if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
             CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
-                user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getOwnerId(), dto.getKeyLen());
+                user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), dto.getKeyLen());
             result.setCsr(createCSR(certificateGenerateDTO));
 //            result.setUser(CertificateGenerateResult.User(user.getLogin(), null, UserCreator.RESULT_EXIST));
         }
@@ -249,12 +249,12 @@ public class CertificateGenerateService {
                 UserEntity user = userEntityOptional.get();
                 try {
                     CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
-                        user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getOwnerId(), keyLength);
+                        user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), keyLength);
                     crs = createCSR(cryptoToken, certificateGenerateDTO);
-                    certDto = new CertDTO(userId, user.getOwnerId(), crs, null);
+                    certDto = new CertDTO(userId, user.getLogin(), crs, null);
                     //TODO: update csr status of user here
                 } catch (Exception ex) {
-                    certDto = new CertDTO(userId, user.getOwnerId(), ex.getMessage());
+                    certDto = new CertDTO(userId, user.getLogin(), ex.getMessage());
                 }
             } else
                 certDto = new CertDTO(userId, null, "Tài khoản không tồn tại");
@@ -267,7 +267,7 @@ public class CertificateGenerateService {
     public void saveCerts(List<CertDTO> dtos) throws CryptoTokenException, CryptoTokenProxyException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         for (CertDTO dto : dtos) {
-            Optional<UserEntity> userEntityOptional = userRepository.findOneByOwnerId(dto.getOwnerId());
+            Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(dto.getOwnerId());
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
                 // TODO: viet lai ham luu cert

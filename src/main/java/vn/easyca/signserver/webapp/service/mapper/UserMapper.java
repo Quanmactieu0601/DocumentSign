@@ -52,7 +52,6 @@ public class UserMapper {
             userEntity.setLocalityName(userDTO.getLocalityName());
             userEntity.setStateName(userDTO.getStateName());
             userEntity.setCountry(userDTO.getCountry());
-            userEntity.setOwnerId(userDTO.getOwnerId());
             userEntity.setPhone(userDTO.getPhone());
             userEntity.setImageUrl(userDTO.getImageUrl());
             userEntity.setActivated(userDTO.isActivated());

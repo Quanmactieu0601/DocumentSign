@@ -439,48 +439,6 @@
                 </div>
               </div>
             </div>
-            <div class="col">
-              <div class="form-group">
-                <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.ownerId">ownerId</label>
-                <input type="text" class="form-control" name="ownerId" formControlName="ownerId" />
-
-                <div *ngIf="editForm.get('ownerId')!.invalid && (editForm.get('ownerId')!.dirty || editForm.get('ownerId')!.touched)">
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('ownerId')?.errors?.required"
-                    jhiTranslate="entity.validation.required"
-                  >
-                    This field is required.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('ownerId')?.errors?.maxlength"
-                    jhiTranslate="entity.validation.maxlength"
-                    [translateValues]="{ max: 100 }"
-                  >
-                    This field cannot be longer than 100 characters.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('ownerId')?.errors?.minlength"
-                    jhiTranslate="entity.validation.minlength"
-                    [translateValues]="{ min: 5 }"
-                  >
-                    This field is required to be at least 5 characters.
-                  </small>
-
-                  <small
-                    class="form-text text-danger"
-                    *ngIf="editForm.get('ownerId')?.errors?.ownerId"
-                    jhiTranslate="global.messages.validate.ownerId.invalid"
-                  >
-                    Your ownerId is invalid.
-                  </small>
-                </div>
-              </div>
-            </div>
           </div>
           <div class="row">
             <div class="col-2 pt-5">

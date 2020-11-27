@@ -29,7 +29,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     name: [],
     phone: [],
     email: [],
-    ownerId: [],
     commonName: [],
     country: [],
   });
@@ -119,9 +118,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
     if (data.email != null) {
       data.email = data.email.trim();
-    }
-    if (data.ownerId != null) {
-      data.ownerId = data.ownerId.trim();
     }
     if (data.commonName != null) {
       data.commonName = data.commonName.trim();
