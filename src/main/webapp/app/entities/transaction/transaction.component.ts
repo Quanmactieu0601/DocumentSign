@@ -9,8 +9,6 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
-import { Pipe, PipeTransform } from '@angular/core';
-import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'jhi-transaction',
@@ -99,47 +97,47 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
   searchTransactions(page?: number): any {
     const pageToLoad: number = page || this.page || 1;
-    const data1 = {
+    const fieldTransaction = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
       ...this.searchForm.value,
     };
-    if (data1.api != null) {
-      data1.api = data1.api.trim();
+    if (fieldTransaction.api != null) {
+      fieldTransaction.api = fieldTransaction.api.trim();
     }
-    if (data1.code != null) {
-      data1.code = data1.code.trim();
+    if (fieldTransaction.code != null) {
+      fieldTransaction.code = fieldTransaction.code.trim();
     }
-    if (data1.message != null) {
-      data1.message = data1.message.trim();
+    if (fieldTransaction.message != null) {
+      fieldTransaction.message = fieldTransaction.message.trim();
     }
-    if (data1.data != null) {
-      data1.data = data1.data.trim();
+    if (fieldTransaction.data != null) {
+      fieldTransaction.data = fieldTransaction.data.trim();
     }
-    if (data1.type != null) {
-      data1.type = data1.type.trim();
+    if (fieldTransaction.type != null) {
+      fieldTransaction.type = fieldTransaction.type.trim();
     }
-    if (data1.host != null) {
-      data1.host = data1.host.trim();
+    if (fieldTransaction.host != null) {
+      fieldTransaction.host = fieldTransaction.host.trim();
     }
-    if (data1.method != null) {
-      data1.method = data1.method.trim();
+    if (fieldTransaction.method != null) {
+      fieldTransaction.method = fieldTransaction.method.trim();
     }
-    if (data1.fullName != null) {
-      data1.fullName = data1.fullName.trim();
+    if (fieldTransaction.fullName != null) {
+      fieldTransaction.fullName = fieldTransaction.fullName.trim();
     }
-    if (data1.triggerTime != null) {
-      data1.triggerTime = data1.triggerTime.trim();
+    if (fieldTransaction.triggerTime != null) {
+      fieldTransaction.triggerTime = fieldTransaction.triggerTime.trim();
     }
-    if (data1.startDate != null) {
-      data1.startDate = data1.startDate.trim();
+    if (fieldTransaction.startDate != null) {
+      fieldTransaction.startDate = fieldTransaction.startDate.trim();
     }
-    if (data1.endDate != null) {
-      data1.endDate = data1.endDate.trim();
+    if (fieldTransaction.endDate != null) {
+      fieldTransaction.endDate = fieldTransaction.endDate.trim();
     }
     this.transactionService
-      .findByTransaction(data1)
+      .findByTransaction(fieldTransaction)
       .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
 

@@ -36,19 +36,19 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         }
         if (!CommonUtils.isNullOrEmptyProperty(startDate)) {
             LocalDate date = LocalDate.parse(startDate);
-            Instant instant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-            instant = instant.atZone(ZoneOffset.UTC)
-                .withHour(00).withMinute(00).withSecond(00).toInstant();
+            Instant startDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+            startDateInstant = startDateInstant.atZone(ZoneOffset.UTC)
+                .withHour(0).withMinute(0).withSecond(0).toInstant();
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
-            params.put("startDate", instant);
+            params.put("startDate", startDateInstant);
         }
         if (!CommonUtils.isNullOrEmptyProperty(endDate)) {
             LocalDate date = LocalDate.parse(endDate);
-            Instant instant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-            instant = instant.atZone(ZoneOffset.UTC)
+            Instant endDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+            endDateInstant = endDateInstant.atZone(ZoneOffset.UTC)
                 .withHour(23).withMinute(59).withSecond(59).toInstant();
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
-            params.put("endDate", instant);
+            params.put("endDate", endDateInstant);
         }
         if (!CommonUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");
@@ -78,6 +78,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
+        sqlBuilder.append("ORDER BY a.id DESC ");
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         CommonUtils.setParams(countQuery, params);
