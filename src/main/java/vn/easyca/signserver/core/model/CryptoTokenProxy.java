@@ -50,4 +50,8 @@ public class CryptoTokenProxy {
     public CertificateDTO getCertificateDTO() {
         return certificateDTO;
     }
+
+    public CryptoToken getCryptoToken() {
+        return cryptoToken;
+    }
 }

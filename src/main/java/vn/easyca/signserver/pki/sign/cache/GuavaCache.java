@@ -12,7 +12,7 @@ public class GuavaCache {
     private static GuavaCache instance = null;
 
     private final long MAX_RECORDS = 10000;
-    private final int TIME_OUT_IN_SECONDS = 30;
+    private final int TIME_OUT_IN_SECONDS = 60;
     private final int DEFAULT_CONCURRENCY_LEVEL = 4;
     private Cache<Object, AbstractCachedObject> cache = null;
 

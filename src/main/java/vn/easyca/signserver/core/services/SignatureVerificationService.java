@@ -9,6 +9,7 @@ import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.exception.VerifiedAppException;
 import vn.easyca.signserver.pki.sign.rawsign.SignatureValidator;
+import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.security.cert.CertificateException;
@@ -51,7 +52,7 @@ public class SignatureVerificationService {
 
     public SignatureVerificationResponse verifyRaw(SignatureVerificationRequest request) throws ApplicationException {
         if (request.getHashAlgorithm() == null)
-            request.setHashAlgorithm("sha1");
+            request.setHashAlgorithm(Constants.HASH_ALGORITHM.SHA1);
         SignatureVerificationResponse response = new SignatureVerificationResponse();
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getSerial());
         if (certificateDTO == null)

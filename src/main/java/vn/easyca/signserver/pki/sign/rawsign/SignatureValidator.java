@@ -2,6 +2,7 @@ package vn.easyca.signserver.pki.sign.rawsign;
 
 import au.com.safenet.crypto.provider.SAFENETProvider;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import java.security.PublicKey;
 import java.security.Signature;
@@ -32,13 +33,13 @@ public class SignatureValidator {
         hashAlgo = hashAlgo.trim().toLowerCase();
         hashAlgo = hashAlgo.replace("-", "");
         switch (hashAlgo) {
-            case "sha1":
+            case Constants.HASH_ALGORITHM.SHA1:
                 signature = Signature.getInstance(DEFAULT_SIG_ALGO);
                 break;
-            case "sha256":
+            case Constants.HASH_ALGORITHM.SHA256:
                 signature = Signature.getInstance("SHA256withRSA");
                 break;
-            case "sha512":
+            case Constants.HASH_ALGORITHM.SHA512:
                 signature = Signature.getInstance("SHA512withRSA");
                 break;
             default:

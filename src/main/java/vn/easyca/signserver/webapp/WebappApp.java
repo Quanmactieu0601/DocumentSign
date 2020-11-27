@@ -3,7 +3,6 @@ package vn.easyca.signserver.webapp;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import vn.easyca.signserver.infrastructure.cryptotoken.HSMConnector;
 import vn.easyca.signserver.infrastructure.ra.CertificateRequesterImpl;
 import vn.easyca.signserver.ra.lib.RAConfig;
 import vn.easyca.signserver.ra.lib.RAServiceFade;
@@ -32,10 +31,8 @@ import java.util.Collection;
 @EntityScan({"vn.easyca.signserver.infrastructure.database.jpa.entity", "vn.easyca.signserver.webapp.domain"})
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
-@EnableJpaRepositories(basePackages = {"vn.easyca.signserver.infrastructure.database.jpa.repository", "vn.easyca.signserver.webapp.repository"})
+@EnableJpaRepositories(basePackages = {"vn.easyca.signserver.webapp.repository"})
 public class WebappApp {
-
-
     private static final Logger log = LoggerFactory.getLogger(WebappApp.class);
 
     private final Environment env;
@@ -78,19 +75,10 @@ public class WebappApp {
     }
 
     private static void init() {
-
-        // init hsm connection
-        HSMConnector.HSMConnectorConfig hsmConnConfig = new HSMConnector.HSMConnectorConfig(Constants.HSMConfig.NAME,
-            Constants.HSMConfig.LIB,
-            Constants.HSMConfig.PIN,
-            Constants.HSMConfig.SLOT,
-            Constants.HSMConfig.ATTRIBUTES);
-        HSMConnector.Init(hsmConnConfig);
-
         // init ra-service
+        // TODO: Refactor this code
 //        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
 //        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
-
     }
 
     private static void logApplicationStartup(Environment env) {

@@ -1,30 +1,17 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import io.github.jhipster.web.util.HeaderUtil;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.services.SymmetricService;
-import vn.easyca.signserver.webapp.domain.UserEntity;
-import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.enm.TransactionType;
-import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
-import vn.easyca.signserver.webapp.service.dto.UserDTO;
-import vn.easyca.signserver.webapp.utils.AccountUtils;
-import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
-import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
-import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
+import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 @RestController
 @RequestMapping("/util")
 public class UtilityResource {
-    private final SymmetricService symmetricService;
-    public UtilityResource(SymmetricService symmetricService) {
+    private final SymmetricEncryptors symmetricService;
+    public UtilityResource(SymmetricEncryptors symmetricService) {
         this.symmetricService = symmetricService;
     }
 

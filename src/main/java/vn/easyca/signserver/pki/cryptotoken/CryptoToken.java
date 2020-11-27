@@ -5,10 +5,12 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 
 public interface CryptoToken {
-    void init(Config config) throws InitCryptoTokenException;
+    void initPkcs11() throws InitCryptoTokenException;
+    void initPkcs12(String p12Base64, String pin) throws InitCryptoTokenException;
 
     PrivateKey getPrivateKey(String alias) throws CryptoTokenException;
 
@@ -22,9 +24,12 @@ public interface CryptoToken {
 
     List<String> getAliases() throws CryptoTokenException;
 
-    Config getConfig() throws CryptoTokenException;
+    Object getConfiguration() throws CryptoTokenException;
 
     Certificate getCertificate(String alias) throws KeyStoreException;
 
     String getProviderName() throws CryptoTokenException;
+
+    Signature getSignatureInstance(String algorithm) throws ApplicationException;
+
 }

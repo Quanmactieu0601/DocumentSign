@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -120,12 +121,13 @@ public class SigningService {
         }
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
-        vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
+        RawSigner rawSigner = new RawSigner();
+        String hashAlgorithm = request.getOptional().getHashAlgorithm();
         for (SignElement<String> signElement : signElements) {
             byte[] hash = CommonUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
-                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey());
+                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }
@@ -168,7 +170,7 @@ public class SigningService {
             byte[] data = CommonUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
-                signature = rawSigner.signData(data, privateKey, request.getHashAlgorithm());
+                signature = rawSigner.signData(data, privateKey, cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getHashAlgorithm()));
             } catch (Exception exception) {
                 throw new SigningAppException("Sign data occurs error!", exception);
             }

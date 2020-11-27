@@ -32,7 +32,6 @@ import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.*;
-import vn.easyca.signserver.webapp.utils.AccountUntils;
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
@@ -228,7 +227,7 @@ public class SigningResource {
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
         Calendar cal = Calendar.getInstance();
 
-        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUntils.getLoggedAccount());
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
         Long userId = userEntity.get().getId();
         Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
 
