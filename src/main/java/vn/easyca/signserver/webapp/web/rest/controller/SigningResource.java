@@ -28,20 +28,23 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.*;
+import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -62,10 +65,11 @@ public class SigningResource {
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final SignatureTemplateService signatureTemplateService;
     private final AsyncTransactionService asyncTransactionService;
+    private final SignatureImageService signatureImageService;
 
     public SigningResource(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
                            SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
-                           CryptoTokenProxyFactory cryptoTokenProxyFactory) {
+                           CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
         this.signService = signService;
         this.transactionService = transactionService;
         this.certificateService = certificateService;
@@ -74,6 +78,7 @@ public class SigningResource {
         this.signatureTemplateService = signatureTemplateService;
         this.officeSigningService = officeSigningService;
         this.asyncTransactionService = asyncTransactionService;
+        this.signatureImageService = signatureImageService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -144,97 +149,62 @@ public class SigningResource {
         }
     }
 
-    @PostMapping(path = "/getImage")
-    public byte[] getImage(@RequestParam(required = false, name = "serial") String serial) {
+
+
+    @GetMapping("/getImage")
+    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
         try {
-            InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
-            HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-            String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            CertificateDTO certificate = certificateService.getBySerial(serial);
 
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss Z", Locale.getDefault());
-            Calendar cal = Calendar.getInstance();
+            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
+            Long userId = userEntity.get().getId();
 
-//            String signer = "BV Nhi Đồng 1";
-//            String address = "Quận 10, Thành phố Hồ Chí Minh";
-//            String organization = "BV Nhi Đồng 1";
-            htmlContent = htmlContent
-//                .replaceFirst("signer", signer)
-//                .replaceFirst("address", address)
-//                .replaceFirst("organization", organization)
-                .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+            Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateService.findOneWithUserId(userId);
+            if(! signatureTemplateDTO.isPresent()) {
+                return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
+            }
 
-            imageGenerator.loadHtml(htmlContent);
-            // convert Image to byte
-            BufferedImage originalImage = imageGenerator.getBufferedImage();
-            ByteArrayOutputStream imageBytes = new ByteArrayOutputStream();
-
-            ImageIO.write(originalImage, "png", imageBytes);
-            imageBytes.flush();
-
-            byte[] imageContentByte = imageBytes.toByteArray();
-            imageBytes.close();
-            return imageContentByte;
+            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO);
+            String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return null;
-        }
-    }
-
-    @PostMapping(path = "/getImageBase64")
-    public String getImageBase64(@RequestBody TokenVM tokenVM) {
-        try {
-            String CN = getSignInforBasedOnSerialAndPin(tokenVM.getSerial(), tokenVM.getPin());
-            String htmlContent = putSignInformationToHTMLTemplate(CN);
-            return convertHtmlContentToBase64(htmlContent);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 
 
-    private String getSignInforBasedOnSerialAndPin(String serial, String pin) throws CertificateNotFoundAppException, CertificateAppException, CertificateException {
-        CertificateDTO certificate = certificateService.getBySerial(serial);
 
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, pin);
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException("Certificate has error", e);
-        } catch (ApplicationException e) {
-            e.printStackTrace();
+    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
+        String signImageData = "";
+        Long signImageId = certificate.getSignatureImageId();
+        if(signImageId != null) {
+            Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
+            signImageData = signatureImageDTO.get().getImgData();
         }
 
-        String contentInformation = cryptoTokenProxy.getX509Certificate().getSubjectDN().getName();
+        X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
+        String contentInformation = x509Certificate.getSubjectDN().getName();
         //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
         final String regex = "CN=\"([^\"]+)\"";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(contentInformation);
         String CN = null;
         while (matcher.find()) {
-                CN = matcher.group(1);
+            CN = matcher.group(1);
         }
-        return CN;
-    }
 
-
-    private String putSignInformationToHTMLTemplate(String CN) throws IOException {
-        String[] signerAndAddress = CN.split(",");
-        InputStream inputStream = new ClassPathResource("templates/signature/signature.html").getInputStream();
-        HtmlImageGeneratorCustom imageGenerator = new HtmlImageGeneratorCustom();
-        String htmlContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-
+        String[] signerInfor = CN.split(",");
+        String signerName = signerInfor[0];
+        String address = signerInfor[1];
         DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
         Calendar cal = Calendar.getInstance();
 
-        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Long userId = userEntity.get().getId();
-        Optional<String> signImage = signatureTemplateService.findOneWithUserId(userId).map(sign -> sign.getSignatureImage());
-
+        String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
         htmlContent = htmlContent
-            .replaceFirst("signer", signerAndAddress[0])
-            .replaceFirst("address", signerAndAddress[1])
-            .replaceFirst("signatureImage", signImage.orElse(""))
+            .replaceFirst("signer", signerName)
+            .replaceFirst("address", address)
+            .replaceFirst("signatureImage", signImageData)
             .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
         return htmlContent;
     }

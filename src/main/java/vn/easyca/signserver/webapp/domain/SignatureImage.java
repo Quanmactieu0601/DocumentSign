@@ -8,12 +8,12 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * A SignatureTemplate.
+ * A SignatureImage.
  */
 @Entity
-@Table(name = "signature_template")
+@Table(name = "signature_image")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class SignatureTemplate extends AbstractAuditingEntity implements Serializable {
+public class SignatureImage extends AbstractAuditingEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,30 +21,11 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "img_data")
+    private String imgData;
+
     @Column(name = "user_id")
     private Long userId;
-
-    @Column(name = "type")
-    private Integer type;
-
-    @Column(name = "html_template")
-    private String htmlTemplate;
-
-    public Integer getType() {
-        return type;
-    }
-
-    public void setType(Integer type) {
-        this.type = type;
-    }
-
-    public String getHtmlTemplate() {
-        return htmlTemplate;
-    }
-
-    public void setHtmlTemplate(String htmlTemplate) {
-        this.htmlTemplate = htmlTemplate;
-    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -55,12 +36,24 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         this.id = id;
     }
 
+    public String getImgData() {
+        return imgData;
+    }
+
+    public SignatureImage imgData(String imgData) {
+        this.imgData = imgData;
+        return this;
+    }
+
+    public void setImgData(String imgData) {
+        this.imgData = imgData;
+    }
 
     public Long getUserId() {
         return userId;
     }
 
-    public SignatureTemplate userId(Long userId) {
+    public SignatureImage userId(Long userId) {
         this.userId = userId;
         return this;
     }
@@ -75,10 +68,10 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         if (this == o) {
             return true;
         }
-        if (!(o instanceof SignatureTemplate)) {
+        if (!(o instanceof SignatureImage)) {
             return false;
         }
-        return id != null && id.equals(((SignatureTemplate) o).id);
+        return id != null && id.equals(((SignatureImage) o).id);
     }
 
     @Override
@@ -86,14 +79,13 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         return 31;
     }
 
+    // prettier-ignore
     @Override
     public String toString() {
-        return "SignatureTemplate{" +
-            "id=" + id +
-            ", userId=" + userId +
-            ", type=" + type +
-            ", htmlTemplate='" + htmlTemplate + '\'' +
-            '}';
+        return "SignatureImage{" +
+            "id=" + getId() +
+            ", imgData='" + getImgData() + "'" +
+            ", userId=" + getUserId() +
+            "}";
     }
-
 }

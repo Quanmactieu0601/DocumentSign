@@ -57,8 +57,20 @@ public class Certificate implements Serializable {
     @Column(name = "active_status")
     private Integer activeStatus;
 
+    @Column(name = "signature_image_id")
+    private Long signatureImageId;
+
+
     @Column(name = "encrypted_pin")
     private String encryptedPin;
+
+    public Long getSignatureImageId() {
+        return signatureImageId;
+    }
+
+    public void setSignatureImageId(Long signatureImageId) {
+        this.signatureImageId = signatureImageId;
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -225,7 +237,7 @@ public class Certificate implements Serializable {
 
     @Override
     public String toString() {
-        return "CertificateEntity{" +
+        return "Certificate{" +
             "id=" + id +
             ", lastUpdate='" + lastUpdate + '\'' +
             ", tokenType='" + tokenType + '\'' +
@@ -238,6 +250,7 @@ public class Certificate implements Serializable {
             ", validDate=" + validDate +
             ", expiredDate=" + expiredDate +
             ", activeStatus=" + activeStatus +
+            ", signatureImageId=" + signatureImageId +
             '}';
     }
 }

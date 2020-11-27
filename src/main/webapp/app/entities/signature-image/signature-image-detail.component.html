@@ -1,0 +1,34 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="signatureImage">
+            <h2><span jhiTranslate="webappApp.signatureImage.detail.title">Signature Image</span> {{ signatureImage.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="webappApp.signatureImage.imgData">Img Data</span></dt>
+                <dd>
+                    <span>{{ signatureImage.imgData }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.signatureImage.userId">User Id</span></dt>
+                <dd>
+                    <span>{{ signatureImage.userId }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/signature-image', signatureImage.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

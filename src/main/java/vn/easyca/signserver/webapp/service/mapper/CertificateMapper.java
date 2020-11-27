@@ -21,6 +21,7 @@ public class CertificateMapper {
         certificateDTO.setValidDate(entity.getValidDate());
         certificateDTO.setExpiredDate(entity.getExpiredDate());
         certificateDTO.setActiveStatus(entity.getActiveStatus());
+        certificateDTO.setSignatureImageId(entity.getSignatureImageId());
         certificateDTO.setEncryptedPin(entity.getEncryptedPin());
         return certificateDTO;
     }
@@ -41,6 +42,7 @@ public class CertificateMapper {
         entity.setValidDate(certificateDTO.getValidDate());
         entity.setExpiredDate(certificateDTO.getExpiredDate());
         entity.setActiveStatus(certificateDTO.getActiveStatus());
+        certificateDTO.setSignatureImageId(entity.getSignatureImageId());
         entity.setEncryptedPin(certificateDTO.getEncryptedPin());
         return entity;
     }
