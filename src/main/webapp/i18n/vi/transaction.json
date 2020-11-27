@@ -17,14 +17,14 @@
         "title": "Transaction"
       },
       "api": "Api",
-      "triggerTime": "Trigger Time",
-      "code": "Code",
-      "message": "Message",
-      "data": "Data",
-      "type": "Type",
+      "triggerTime": "Thời gian kích hoạt",
+      "code": "Mã",
+      "message": "Thông điệp",
+      "data": "Dữ liệu",
+      "type": "Kiểu",
       "host": "Host",
-      "method": "Method",
-      "fullName": "FullName"
+      "method": "Phương thức",
+      "fullName": "Họ và tên"
     }
   }
 }

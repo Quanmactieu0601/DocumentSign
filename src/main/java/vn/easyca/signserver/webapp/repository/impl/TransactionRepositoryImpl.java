@@ -84,7 +84,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         CommonUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api,a.triggerTime as triggerTime,a.code as code,a.message as message,a.data as data,a.type as type,a.method as method,a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString())
+            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.code as code, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString())
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
             CommonUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();
