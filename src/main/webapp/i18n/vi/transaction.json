@@ -24,7 +24,7 @@
       "type": "Type",
       "host": "Host",
       "method": "Method",
-      "createdBy": "CreatedBy"
+      "fullName": "FullName"
     }
   }
 }

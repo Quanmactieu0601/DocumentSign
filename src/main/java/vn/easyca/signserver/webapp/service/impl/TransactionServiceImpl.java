@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +25,7 @@ import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
  */
 @Service
 @Transactional
-public class TransactionServiceImpl implements TransactionService {
+public class TransactionServiceImpl implements TransactionService  {
 
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
@@ -81,9 +83,9 @@ public class TransactionServiceImpl implements TransactionService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy) {
-        Page<Transaction> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy);
-        return page.map(TransactionDTO::new);
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
+        Page<TransactionDTO> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName, startDate, endDate);
+        return page;
     }
 
     /**

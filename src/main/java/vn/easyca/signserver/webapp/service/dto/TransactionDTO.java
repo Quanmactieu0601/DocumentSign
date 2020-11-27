@@ -29,6 +29,16 @@ public class TransactionDTO implements Serializable {
 
     private String method;
 
+    private String fullName;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
     public String getCreatedBy() {
         return createdBy;
     }
@@ -157,19 +167,5 @@ public class TransactionDTO implements Serializable {
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() +
             "}";
-    }
-
-    public TransactionDTO(Long id, String api, String code, String message, String data,
-                          String type, String createdBy , String host, String method) {
-        this.id = id;
-        this.api = api;
-        this.code = code;
-        this.message = message;
-        this.data = data;
-        this.type = type;
-        this.triggerTime = Instant.now();
-        this.createdBy = createdBy;
-        this.method = method;
-        this.host = host;
     }
 }

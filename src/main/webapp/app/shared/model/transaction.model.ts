@@ -1,31 +1,30 @@
+import * as moment from 'moment';
 import { Moment } from 'moment';
 
 export interface ITransaction {
   id?: number;
   api?: string;
-  triggerTime?: Moment;
   code?: string;
   message?: string;
   data?: string;
-  type?: String;
-  host?: String;
-  method?: String;
-  userID?: number;
-  createdBy?: String;
+  type?: string;
+  host?: string;
+  method?: string;
+  fullName?: string;
+  triggerTime?: Moment;
 }
 
 export class Transaction implements ITransaction {
   constructor(
     public id?: number,
     public api?: string,
-    public triggerTime?: Moment,
     public code?: string,
     public message?: string,
     public data?: string,
-    public type?: String,
-    public host?: String,
-    public method?: String,
-    public userID?: number,
-    public createdBy?: String
+    public type?: string,
+    public host?: string,
+    public method?: string,
+    public fullName?: string,
+    public triggerTime?: Moment
   ) {}
 }

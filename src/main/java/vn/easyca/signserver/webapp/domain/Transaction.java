@@ -107,7 +107,6 @@ public class Transaction implements Serializable {
     public void setTriggerTime(Instant triggerTime) {
         this.triggerTime = triggerTime;
     }
-
     public String getCode() {
         return code;
     }
