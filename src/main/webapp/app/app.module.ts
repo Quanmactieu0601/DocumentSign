@@ -1,4 +1,6 @@
 import { NgModule } from '@angular/core';
+import { LoadingBarHttpClientModule } from '@ngx-loading-bar/http-client';
+import { LoadingBarModule } from '@ngx-loading-bar/core';
 import { BrowserModule } from '@angular/platform-browser';
 import './vendor';
 import { WebappSharedModule } from 'app/shared/shared.module';
@@ -23,6 +25,8 @@ import { ToastrModule } from 'ngx-toastr';
     WebappSharedModule,
     WebappCoreModule,
     WebappHomeModule,
+    LoadingBarHttpClientModule,
+    LoadingBarModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     WebappEntityModule,
     WebappAppRoutingModule,

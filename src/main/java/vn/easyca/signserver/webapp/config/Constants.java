@@ -2,6 +2,9 @@ package vn.easyca.signserver.webapp.config;
 
 import vn.easyca.signserver.ra.lib.RAConfig;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Application constants.
  */
@@ -13,7 +16,6 @@ public final class Constants {
     public static final String SYSTEM_ACCOUNT = "system";
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String ANONYMOUS_USER = "anonymoususer";
-    public static final String KEY_ENCRYPTION = "abcdpoiuytrefghijklmop";
 
 
     public interface RAConfig {
@@ -22,20 +24,12 @@ public final class Constants {
         String Password = "admin";
     }
 
-    public interface HSMConfig {
-        String NAME = "EasyCAToken";
-        String LIB = "C:\\Windows\\System32\\easyca_csp11_v1.dll";
-        String PIN = "12345678";
-        String SLOT = null;
-        String ATTRIBUTES = null;
-
-//        String NAME = "nCipher";
-//        String LIB = "/opt/nfast/toolkits/pkcs11/libcknfast.so";
-//        String PIN = "05111989";
-//        String SLOT = "761406615";
-//        String ATTRIBUTES = "compatibility";
+    public interface HASH_ALGORITHM {
+        String SHA1 = "SHA1";
+        String SHA256 = "SHA256";
+        String SHA512 = "SHA512";
+        String DEFAULT_HASH_ALGORITHM = SHA1;
     }
 
-    private Constants() {
-    }
+    public static final List<String> HASH_ALGORITHMS = Arrays.asList(HASH_ALGORITHM.SHA1, HASH_ALGORITHM.SHA256, HASH_ALGORITHM.SHA512);
 }

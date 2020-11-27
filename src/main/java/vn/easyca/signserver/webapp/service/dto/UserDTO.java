@@ -2,8 +2,8 @@ package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.config.Constants;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
@@ -21,10 +21,10 @@ public class UserDTO {
     @Size(min = 1, max = 50)
     private String login;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String firstName;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String lastName;
 
     @Size(max = 200)
@@ -51,11 +51,14 @@ public class UserDTO {
     private String phone;
 
     @Email
-    @Size(min = 5, max = 254)
+    @Size( max = 254)
     private String email;
 
     @Size(max = 256)
     private String imageUrl;
+
+    @Size(max = 255)
+    private String password;
 
     private boolean activated = false;
 
@@ -82,6 +85,7 @@ public class UserDTO {
         this.firstName = userEntity.getFirstName();
         this.lastName = userEntity.getLastName();
         this.email = userEntity.getEmail();
+        this.password = userEntity.getPassword();
         this.activated = userEntity.getActivated();
         this.imageUrl = userEntity.getImageUrl();
         this.langKey = userEntity.getLangKey();
@@ -100,6 +104,14 @@ public class UserDTO {
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Long getId() {

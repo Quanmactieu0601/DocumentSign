@@ -3,10 +3,15 @@
     "home": {
       "title": "Users",
       "createLabel": "Create a new user",
-      "createOrEditLabel": "Create or edit a user"
+      "createOrEditLabel": "Create or edit a user",
+      "uploadUser": "Upload Users",
+      "upload": "Upload",
+      "notfound": "No User Found",
+      "cancel": "Cancel"
     },
-    "created": "A new user is created with identifier {{ param }}",
-    "updated": "A user is updated with identifier {{ param }}",
+    "created": "Create user success !",
+    "updated": "Update user success !",
+    "updated-err": "You must add at least one value from Common Name to Country !",
     "deleted": "A user is deleted with identifier {{ param }}",
     "delete": {
       "question": "Are you sure you want to delete user {{ login }}?"
@@ -14,6 +19,7 @@
     "detail": {
       "title": "User"
     },
+    "downloadFileTemp": "Sample file",
     "login": "Account",
     "firstName": "First name",
     "lastName": "Last name",
@@ -42,7 +48,8 @@
       },
       "fail": {
         "csrExported": "Export CSR failure",
-        "uploaded": "Upload User file failure"
+        "uploaded": "Upload User file failure",
+        "sizeErr": "File size need smaller than 1 MB"
       }
     }
   }

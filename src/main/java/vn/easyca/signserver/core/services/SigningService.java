@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.services;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.request.SignElement;
 import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
@@ -14,7 +15,7 @@ import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.model.CryptoTokenProxyException;
 import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.sign.integrated.pdf.PartyMode;
 import vn.easyca.signserver.pki.sign.integrated.pdf.SignPDFDto;
@@ -24,11 +25,13 @@ import vn.easyca.signserver.pki.sign.integrated.xml.SignXMLLib;
 import vn.easyca.signserver.pki.sign.rawsign.RawSigner;
 import vn.easyca.signserver.pki.sign.utils.UniqueID;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
@@ -40,11 +43,11 @@ public class SigningService {
 
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
-    private final CertificateRepository certificateRepository;
+    private final CertificateService certificateService;
 
-    public SigningService(CertificateRepository certificateRepository) {
-        this.cryptoTokenProxyFactory = new CryptoTokenProxyFactory();
-        this.certificateRepository = certificateRepository;
+    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
+        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
+        this.certificateService = certificateService;
         File file = new File(TEM_DIR);
         if (!file.exists())
             file.mkdir();
@@ -56,12 +59,12 @@ public class SigningService {
             throw new BadServiceInputAppException("have not element to sign", null);
 
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
-        vn.easyca.signserver.core.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfoDTO().getPin());
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
         } catch (CryptoTokenProxyException e) {
             throw new CertificateAppException("Certificate has error", e);
         }
@@ -107,23 +110,24 @@ public class SigningService {
 
     public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
-        vn.easyca.signserver.core.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfoDTO().getPin());
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
         } catch (CryptoTokenProxyException e) {
             throw new CertificateAppException("Certificate has error!please check serial and pin", e);
         }
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
-        vn.easyca.signserver.pki.sign.rawsign.RawSigner rawSigner = new vn.easyca.signserver.pki.sign.rawsign.RawSigner();
+        RawSigner rawSigner = new RawSigner();
+        String hashAlgorithm = request.getOptional().getHashAlgorithm();
         for (SignElement<String> signElement : signElements) {
             byte[] hash = CommonUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
-                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey());
+                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }
@@ -142,13 +146,13 @@ public class SigningService {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         if (tokenInfoDTO == null)
             throw new BadServiceInputAppException("have not token info");
-        vn.easyca.signserver.core.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfoDTO().getPin());
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
         } catch (CryptoTokenProxyException e) {
             throw new CertificateAppException(e);
         }
@@ -166,7 +170,7 @@ public class SigningService {
             byte[] data = CommonUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
-                signature = rawSigner.signData(data, privateKey, request.getHashAlgorithm());
+                signature = rawSigner.signData(data, privateKey, cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getHashAlgorithm()));
             } catch (Exception exception) {
                 throw new SigningAppException("Sign data occurs error!", exception);
             }
@@ -179,12 +183,12 @@ public class SigningService {
 
     public SignDataResponse<String> signXML(SignRequest<XMLSignContent> request) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
-        vn.easyca.signserver.core.domain.Certificate certificate = certificateRepository.getBySerial(tokenInfoDTO.getSerial());
-        if (certificate == null)
+        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
+        if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = null;
         try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfoDTO().getPin());
+            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
         } catch (CryptoTokenProxyException e) {
             throw new CertificateAppException(e);
         }

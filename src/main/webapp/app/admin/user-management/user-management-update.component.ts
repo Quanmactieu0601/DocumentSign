@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-
+import { ToastrService } from 'ngx-toastr';
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-user-mgmt-update',
@@ -15,7 +16,8 @@ export class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
   authorities: string[] = [];
   isSaving = false;
-
+  password: any;
+  confirmPassword: any;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -29,21 +31,29 @@ export class UserManagementUpdateComponent implements OnInit {
     ],
     firstName: ['', [Validators.maxLength(50)]],
     lastName: ['', [Validators.maxLength(50)]],
-    email: ['', [Validators.minLength(5), Validators.maxLength(254), Validators.email]],
-    commonName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
-    organizationName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
-    organizationUnit: ['', [Validators.minLength(5), Validators.maxLength(250)]],
-    localityName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
-    stateName: ['', [Validators.minLength(5), Validators.maxLength(250)]],
-    country: ['', [Validators.minLength(5), Validators.maxLength(250)]],
+    email: ['', [Validators.maxLength(254), Validators.email]],
+    commonName: ['', [Validators.maxLength(250)]],
+    organizationName: ['', [Validators.maxLength(250)]],
+    organizationUnit: ['', [Validators.maxLength(250)]],
+    localityName: ['', [Validators.maxLength(250)]],
+    stateName: ['', [Validators.maxLength(250)]],
+    country: ['', [Validators.minLength(2), Validators.maxLength(2)]],
     ownerId: ['', [Validators.maxLength(50)]],
     phone: ['', [Validators.minLength(5), Validators.maxLength(50)]],
     activated: [],
     langKey: [],
     authorities: [],
+    password: [],
+    confirmPassword: [],
   });
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private toastrService: ToastrService,
+    private translateService: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.route.data.subscribe(({ user }) => {
@@ -67,16 +77,31 @@ export class UserManagementUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     this.updateUser(this.user);
-    if (this.user.id !== undefined) {
+    if (
+      this.user.commonName === '' &&
+      this.user.organizationName === '' &&
+      this.user.organizationUnit === '' &&
+      this.user.stateName === '' &&
+      this.user.localityName === '' &&
+      this.user.country === ''
+    ) {
+      this.toastrService.error(this.translateService.instant('userManagement.updated-err'));
+      this.onSaveError();
+    } else if (this.user.id !== undefined) {
       this.userService.update(this.user).subscribe(
         () => this.onSaveSuccess(),
         () => this.onSaveError()
       );
     } else {
-      this.userService.create(this.user).subscribe(
-        () => this.onSaveSuccess(),
-        () => this.onSaveError()
-      );
+      if (this.updatePass()) {
+        this.userService.create(this.user).subscribe(
+          () => this.onSaveSuccess(),
+          () => this.onSaveError()
+        );
+      } else {
+        this.toastrService.error(this.translateService.instant('register.messages.validate.login.notmatch'));
+        this.onSaveError();
+      }
     }
   }
 
@@ -101,6 +126,14 @@ export class UserManagementUpdateComponent implements OnInit {
     });
   }
 
+  private updatePass(): any {
+    this.password = this.editForm.get(['password'])!.value;
+    this.confirmPassword = this.editForm.get(['confirmPassword'])!.value;
+    if (this.password === this.confirmPassword) {
+      return true;
+    }
+    return false;
+  }
   private updateUser(user: User): void {
     user.login = this.editForm.get(['login'])!.value;
     user.firstName = this.editForm.get(['firstName'])!.value;
@@ -117,10 +150,12 @@ export class UserManagementUpdateComponent implements OnInit {
     user.authorities = this.editForm.get(['authorities'])!.value;
     user.ownerId = this.editForm.get(['ownerId'])!.value;
     user.phone = this.editForm.get(['phone'])!.value;
+    user.password = this.editForm.get(['password'])!.value;
   }
 
   private onSaveSuccess(): void {
     this.isSaving = false;
+    this.toastrService.success(this.translateService.instant('userManagement.updated'));
     this.previousState();
   }
 

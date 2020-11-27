@@ -2,7 +2,7 @@ import { Component, OnInit, RendererFactory2, Renderer2 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, ActivatedRouteSnapshot, NavigationEnd, NavigationError } from '@angular/router';
 import { TranslateService, LangChangeEvent } from '@ngx-translate/core';
-
+import { LoadingBarService } from '@ngx-loading-bar/core';
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
@@ -17,6 +17,7 @@ export class MainComponent implements OnInit {
     private titleService: Title,
     private router: Router,
     private translateService: TranslateService,
+    private loadingBar: LoadingBarService,
     rootRenderer: RendererFactory2
   ) {
     this.renderer = rootRenderer.createRenderer(document.querySelector('html'), null);
@@ -40,6 +41,14 @@ export class MainComponent implements OnInit {
 
       this.renderer.setAttribute(document.querySelector('html'), 'lang', langChangeEvent.lang);
     });
+  }
+
+  startLoading(): void {
+    this.loadingBar.start();
+  }
+
+  stopLoading(): void {
+    this.loadingBar.complete();
   }
 
   private getPageTitle(routeSnapshot: ActivatedRouteSnapshot): string {

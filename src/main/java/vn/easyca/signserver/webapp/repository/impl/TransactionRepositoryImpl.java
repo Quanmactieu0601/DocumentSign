@@ -7,8 +7,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
+import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-import vn.easyca.signserver.webapp.utils.CommonUtils;
 
 import javax.persistence.*;
 import java.text.ParseException;
@@ -30,11 +30,11 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         sqlBuilder.append("on a.createdBy = b.login ");
         sqlBuilder.append("WHERE 1 = 1 ");
 
-        if (!CommonUtils.isNullOrEmptyProperty(api)) {
+        if (!QueryUtils.isNullOrEmptyProperty(api)) {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(startDate)) {
+        if (!QueryUtils.isNullOrEmptyProperty(startDate)) {
             LocalDate date = LocalDate.parse(startDate);
             Instant startDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
             startDateInstant = startDateInstant.atZone(ZoneOffset.UTC)
@@ -42,7 +42,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
             params.put("startDate", startDateInstant);
         }
-        if (!CommonUtils.isNullOrEmptyProperty(endDate)) {
+        if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
             LocalDate date = LocalDate.parse(endDate);
             Instant endDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
             endDateInstant = endDateInstant.atZone(ZoneOffset.UTC)
@@ -50,43 +50,43 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateInstant);
         }
-        if (!CommonUtils.isNullOrEmptyProperty(code)) {
+        if (!QueryUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");
             params.put("code", "%" + code + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(message)) {
+        if (!QueryUtils.isNullOrEmptyProperty(message)) {
             sqlBuilder.append("AND a.message like :message ");
             params.put("message", "%" + message + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(data)) {
+        if (!QueryUtils.isNullOrEmptyProperty(data)) {
             sqlBuilder.append("AND a.data like :data ");
             params.put("data", "%" + data + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(type)) {
+        if (!QueryUtils.isNullOrEmptyProperty(type)) {
             sqlBuilder.append("AND a.type like :type ");
             params.put("type", "%" + type + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(host)) {
+        if (!QueryUtils.isNullOrEmptyProperty(host)) {
             sqlBuilder.append("AND a.host like :host ");
             params.put("host", "%" + host + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(method)) {
+        if (!QueryUtils.isNullOrEmptyProperty(method)) {
             sqlBuilder.append("AND a.method like :method ");
             params.put("method", "%" + method + "%");
         }
-        if (!CommonUtils.isNullOrEmptyProperty(fullName)) {
+        if (!QueryUtils.isNullOrEmptyProperty(fullName)) {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
         sqlBuilder.append("ORDER BY a.id DESC ");
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
-        CommonUtils.setParams(countQuery, params);
+        QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.code as code, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString())
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
-            CommonUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
+            QueryUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();
         }
         return new PageImpl<>(transactionList, pageable, total.longValue());

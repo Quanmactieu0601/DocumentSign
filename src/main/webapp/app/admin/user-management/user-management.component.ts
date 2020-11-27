@@ -10,13 +10,14 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.model';
 import { UserManagementDeleteDialogComponent } from './user-management-delete-dialog.component';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { map } from 'rxjs/operators';
+import { IUser, User } from '../../core/user/user.model';
+import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -33,6 +34,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     country: [],
   });
 
+  modalRef: NgbModalRef | undefined;
+
   currentAccount: Account | null = null;
   users: User[] | null = null;
   userListSubscription?: Subscription;
@@ -42,7 +45,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   listId: number[] = [];
-
+  ngbPaginationPage = 1;
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -71,6 +74,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     }
   }
 
+  protected onError(): void {
+    this.ngbPaginationPage = this.page ?? 1;
+  }
+
   setActive(user: User, isActivated: boolean): void {
     this.userService.update({ ...user, activated: isActivated }).subscribe(() => this.loadAll());
   }
@@ -89,14 +96,14 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
-  searchUser(): any {
+  searchUser(page?: number): any {
     const data = {
       ...this.userSearch.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-
+    const pageToLoad: number = page || this.page || 1;
     // const jsonData = JSON.stringify(data);
     // for (let i = 0; i < jsonData.length; i++){
     //   if (jsonData[i] != null) {
@@ -172,7 +179,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   private onSuccess(users: User[] | null, headers: HttpHeaders): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
-    this.users = users;
+
+    this.users = users || [];
   }
 
   // check or unckeck all elements of checkbox
@@ -208,19 +216,69 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   createCSR(): void {
-    if (this.listId.length > 0) {
-      this.certificateService
-        .sendData({
-          userIds: this.listId,
-        })
-        .subscribe((response: any) => {
-          if (response.byteLength === 0) {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
-          } else {
-            this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
-            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
-          }
-        });
+    const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
+    this.userService.setListId(this.listId);
+    // if (this.listId.length > 0) {
+    //   this.certificateService
+    //     .sendData({
+    //       userIds: this.listId,
+    //     })
+    //     .subscribe((response: any) => {
+    //       if (response.byteLength === 0) {
+    //         this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
+    //       } else {
+    //         this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
+    //         saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
+    //       }
+    //     });
+    // }
+  }
+
+  downLoadFileTemplate(): void {
+    this.userService.downLoadTemplateFile().subscribe(
+      res => {
+        const bindData = [];
+        bindData.push(res.data);
+        const url = window.URL.createObjectURL(
+          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        );
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.setAttribute('target', 'blank');
+        a.href = url;
+        a.download = 'templateFile';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'md' });
+  }
+  isUploadedSucessfully(agreed: boolean): void {
+    if (agreed) {
+      this.modalRef?.close();
+      this.loadLastestRecord();
     }
+  }
+  loadLastestRecord(): void {
+    const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
+
+    this.userService
+      .query({
+        page: lastPage - 1,
+        size: this.itemsPerPage,
+        sort: this.sort(),
+      })
+      .subscribe(
+        (res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers),
+        () => this.onError()
+      );
   }
 }

@@ -1,8 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.PersistentAuditEvent;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.PersistenceAuditEventRepository;
+import vn.easyca.signserver.webapp.domain.PersistentAuditEvent;
+import vn.easyca.signserver.webapp.repository.PersistenceAuditEventRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 
 import org.junit.jupiter.api.BeforeEach;

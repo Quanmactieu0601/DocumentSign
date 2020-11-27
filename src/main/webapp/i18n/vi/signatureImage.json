@@ -1,0 +1,23 @@
+{
+  "webappApp": {
+    "signatureImage": {
+      "home": {
+        "title": "Signature Images",
+        "createLabel": "Thêm mới một Signature Image",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Signature Image",
+        "notFound": "No Signature Images found"
+      },
+      "created": "Một Signature Image mới được tạo với định danh {{ param }}",
+      "updated": "Một Signature Image cập nhật với định danh {{ param }}",
+      "deleted": "Một Signature Image đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Signature Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Signature Image"
+      },
+      "imgData": "Img Data",
+      "userId": "User Id"
+    }
+  }
+}

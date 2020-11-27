@@ -1,0 +1,82 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpResponse } from '@angular/common/http';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+
+import { ISignatureTemplate, SignatureTemplate } from 'app/shared/model/signature-template.model';
+import { SignatureTemplateService } from './signature-template.service';
+
+@Component({
+  selector: 'jhi-signature-template-update',
+  templateUrl: './signature-template-update.component.html',
+})
+export class SignatureTemplateUpdateComponent implements OnInit {
+  isSaving = false;
+
+  editForm = this.fb.group({
+    id: [],
+    signatureImage: [],
+    userId: [],
+  });
+
+  constructor(
+    protected signatureTemplateService: SignatureTemplateService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder
+  ) {}
+
+  ngOnInit(): void {
+    this.activatedRoute.data.subscribe(({ signatureTemplate }) => {
+      this.updateForm(signatureTemplate);
+    });
+  }
+
+  updateForm(signatureTemplate: ISignatureTemplate): void {
+    this.editForm.patchValue({
+      id: signatureTemplate.id,
+      signatureImage: signatureTemplate.signatureImage,
+      userId: signatureTemplate.userId,
+    });
+  }
+
+  previousState(): void {
+    window.history.back();
+  }
+
+  save(): void {
+    this.isSaving = true;
+    const signatureTemplate = this.createFromForm();
+    if (signatureTemplate.id !== undefined) {
+      this.subscribeToSaveResponse(this.signatureTemplateService.update(signatureTemplate));
+    } else {
+      this.subscribeToSaveResponse(this.signatureTemplateService.create(signatureTemplate));
+    }
+  }
+
+  private createFromForm(): ISignatureTemplate {
+    return {
+      ...new SignatureTemplate(),
+      id: this.editForm.get(['id'])!.value,
+      signatureImage: this.editForm.get(['signatureImage'])!.value,
+      userId: this.editForm.get(['userId'])!.value,
+    };
+  }
+
+  protected subscribeToSaveResponse(result: Observable<HttpResponse<ISignatureTemplate>>): void {
+    result.subscribe(
+      () => this.onSaveSuccess(),
+      () => this.onSaveError()
+    );
+  }
+
+  protected onSaveSuccess(): void {
+    this.isSaving = false;
+    this.previousState();
+  }
+
+  protected onSaveError(): void {
+    this.isSaving = false;
+  }
+}

@@ -1,9 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
-import vn.easyca.signserver.webapp.web.rest.controller.UserJWTController;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.web.rest.controller.UserJWTResource;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 /**
- * Integration tests for the {@link UserJWTController} REST controller.
+ * Integration tests for the {@link UserJWTResource} REST controller.
  */
 @AutoConfigureMockMvc
 @SpringBootTest(classes = WebappApp.class)

@@ -1,14 +1,22 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
+
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.error.InfoFromCNToCountryNotFoundException;
+import vn.easyca.signserver.webapp.service.error.InvalidCountryColumnLength;
+import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
+import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
@@ -30,8 +38,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -112,7 +123,7 @@ public class UserResource {
                 "400", "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         } else {
-            UserEntity newUserEntity = userApplicationService.createUser(userDTO, null);
+            UserEntity newUserEntity = userApplicationService.createUser(userDTO);
             mailService.sendCreationEmail(newUserEntity);
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
                 "200", "OK", AccountUtils.getLoggedAccount());
@@ -120,6 +131,33 @@ public class UserResource {
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
         }
+    }
+
+    @PostMapping("users/uploadUser")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> uploadUser(@RequestParam("file") MultipartFile file) {
+        try {
+            List<UserDTO> userDTOList = ExcelUtils.convertExcelToUserDTO(file.getInputStream());
+            for (UserDTO userDTO : userDTOList) {
+                // TODO: use other method instead of use registerUser
+                userApplicationService.registerUser(userDTO, userDTO.getLogin());
+            }
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
+
+        } catch (IOException e) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
+        } catch (UsernameAlreadyUsedException usernameAlreadyUsedException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
+        } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
+        } catch (RequiredColumnNotFoundException requiredColumnNotFoundException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, requiredColumnNotFoundException.getMessage()));
+        } catch (InvalidCountryColumnLength invalidCountryColumnLength) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, invalidCountryColumnLength.getMessage()));
+        } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException) {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, infoFromCNToCountryNotFoundException.getMessage()));
+        }
+
     }
 
     /**
@@ -165,6 +203,29 @@ public class UserResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    @GetMapping("users/templateFile")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException {
+        InputStream inputStream = null;
+        try {
+            inputStream = new ClassPathResource("templates/upload/UserUploadTemplate.xlsx").getInputStream();
+            byte[] isr = new byte[inputStream.available()];
+            inputStream.read(isr);
+            response.setContentType("application/vnd.ms-excel");
+
+            HttpHeaders respHeaders = new HttpHeaders();
+            respHeaders.setContentLength(isr.length);
+            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
+
+            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
+
 
     @GetMapping("/users/search")
     public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone) {

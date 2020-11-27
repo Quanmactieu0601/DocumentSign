@@ -1,0 +1,23 @@
+{
+  "webappApp": {
+    "signatureTemplate": {
+      "home": {
+        "title": "Signature Templates",
+        "createLabel": "Thêm mới một Signature Template",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Signature Template",
+        "notFound": "No Signature Templates found"
+      },
+      "created": "Một Signature Template mới được tạo với định danh {{ param }}",
+      "updated": "Một Signature Template cập nhật với định danh {{ param }}",
+      "deleted": "Một Signature Template đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Signature Template {{ id }}?"
+      },
+      "detail": {
+        "title": "Signature Template"
+      },
+      "signatureImage": "Signature Image",
+      "userId": "User Id"
+    }
+  }
+}
