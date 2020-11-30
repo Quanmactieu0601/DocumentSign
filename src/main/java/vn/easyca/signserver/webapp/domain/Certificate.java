@@ -6,7 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * A Certificate.
@@ -49,10 +49,10 @@ public class Certificate implements Serializable {
     private String rawData;
 
     @Column(name = "valid_date")
-    private Instant validDate;
+    private LocalDateTime validDate;
 
     @Column(name = "expired_date")
-    private Instant expiredDate;
+    private LocalDateTime expiredDate;
 
     @Column(name = "active_status")
     private Integer activeStatus;
@@ -103,7 +103,7 @@ public class Certificate implements Serializable {
         return this;
     }
 
-    public Certificate validDate(Instant validDate){
+    public Certificate validDate(LocalDateTime validDate){
         this.validDate = validDate;
         return this;
     }
@@ -197,20 +197,20 @@ public class Certificate implements Serializable {
         return id != null && id.equals(((Certificate) o).id);
     }
 
-    public void setValidDate(Instant validDate) {
+    public void setValidDate(LocalDateTime validDate) {
         this.validDate = validDate;
     }
 
-    public Instant getValidDate() {
+    public LocalDateTime getValidDate() {
         return validDate;
     }
 
 
-    public Instant getExpiredDate() {
+    public LocalDateTime getExpiredDate() {
         return expiredDate;
     }
 
-    public void setExpiredDate(Instant expiredDate) {
+    public void setExpiredDate(LocalDateTime expiredDate) {
         this.expiredDate = expiredDate;
     }
 

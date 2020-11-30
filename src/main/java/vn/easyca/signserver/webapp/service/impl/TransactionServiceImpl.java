@@ -18,7 +18,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
-import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
+import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToLocalDateTime;
 
 /**
  * Service Implementation for managing {@link Transaction}.
@@ -104,7 +104,7 @@ public class TransactionServiceImpl implements TransactionService  {
      */
     @Override
     public List<TransactionDTO> findTransactionType(String startDate, String endDate, String type) {
-        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToInstant(startDate), convertToInstant(endDate), type);
+        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
         return transactionMapper.toDto(listTransaction);
     }
 }
