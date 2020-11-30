@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.repository.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity_;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -63,7 +64,8 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString(), Certificate.class);
+            String sort = QueryUtils.addMultiSort(pageable.getSort());
+            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString() + sort, Certificate.class);
             QueryUtils.setParamsWithPageable(query, params, pageable, total);
             certificateList = query.getResultList();
         }
