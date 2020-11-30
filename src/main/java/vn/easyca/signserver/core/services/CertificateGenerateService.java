@@ -88,7 +88,8 @@ public class CertificateGenerateService {
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
         CSRGenerator.CSRGeneratorException, CryptoTokenProxyException {
-        String alias = CommonUtils.genRandomAlias();
+//        String alias = CommonUtils.genRandomAlias();
+        String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
@@ -149,7 +150,8 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CertificateGenerateDTO dto) throws Exception {
-        String alias = CommonUtils.genRandomAlias();
+//        String alias = CommonUtils.genRandomAlias();
+        String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
@@ -173,7 +175,8 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CryptoToken cryptoToken, CertificateGenerateDTO dto) throws Exception {
-        String alias = CommonUtils.genRandomAlias();
+//        String alias = CommonUtils.genRandomAlias();
+        String alias = dto.getOwnerId();
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
             dto.getSubjectDN().toString(),
@@ -195,7 +198,8 @@ public class CertificateGenerateService {
      */
     private CertificateGenerateResult.Cert createCertFromCSR(CertificateGenerateDTO dto) throws
         CryptoTokenException, CryptoTokenProxyException {
-        String alias = CommonUtils.genRandomAlias();
+//        String alias = CommonUtils.genRandomAlias();
+        String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         RawCertificate rawCertificate = dto.getRawCertificate();
         CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
