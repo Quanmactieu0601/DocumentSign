@@ -23,7 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -717,7 +717,7 @@ public class AccountResourceIT {
         userEntity.setPassword(RandomStringUtils.random(60));
         userEntity.setLogin("finish-password-reset");
         userEntity.setEmail("finish-password-reset@example.com");
-        userEntity.setResetDate(Instant.now().plusSeconds(60));
+        userEntity.setResetDate(LocalDateTime.now().plusSeconds(60));
         userEntity.setResetKey("reset key");
         userRepository.saveAndFlush(userEntity);
 
@@ -742,7 +742,7 @@ public class AccountResourceIT {
         userEntity.setPassword(RandomStringUtils.random(60));
         userEntity.setLogin("finish-password-reset-too-small");
         userEntity.setEmail("finish-password-reset-too-small@example.com");
-        userEntity.setResetDate(Instant.now().plusSeconds(60));
+        userEntity.setResetDate(LocalDateTime.now().plusSeconds(60));
         userEntity.setResetKey("reset key too small");
         userRepository.saveAndFlush(userEntity);
 

@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
@@ -35,20 +36,14 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("api", "%" + api + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(startDate)) {
-            LocalDate date = LocalDate.parse(startDate);
-            Instant startDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-            startDateInstant = startDateInstant.atZone(ZoneOffset.UTC)
-                .withHour(0).withMinute(0).withSecond(0).toInstant();
+            LocalDateTime startDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
-            params.put("startDate", startDateInstant);
+            params.put("startDate", startDateConverted);
         }
         if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
-            LocalDate date = LocalDate.parse(endDate);
-            Instant endDateInstant = date.atStartOfDay(ZoneOffset.UTC).toInstant();
-            endDateInstant = endDateInstant.atZone(ZoneOffset.UTC)
-                .withHour(23).withMinute(59).withSecond(59).toInstant();
+            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
-            params.put("endDate", endDateInstant);
+            params.put("endDate", endDateConverted);
         }
         if (!QueryUtils.isNullOrEmptyProperty(code)) {
             sqlBuilder.append("AND a.code like :code ");

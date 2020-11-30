@@ -5,7 +5,7 @@ import vn.easyca.signserver.core.utils.CommonUtils;
 import javax.persistence.Column;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class CertificateDTO {
@@ -32,9 +32,9 @@ public class CertificateDTO {
 
     private TokenInfo tokenInfo;
 
-    private Instant validDate;
+    private LocalDateTime validDate;
 
-    private Instant expiredDate;
+    private LocalDateTime expiredDate;
 
     private int activeStatus;
 
@@ -116,19 +116,19 @@ public class CertificateDTO {
         this.tokenInfo = tokenInfo;
     }
 
-    public Instant getValidDate() {
+    public LocalDateTime getValidDate() {
         return validDate;
     }
 
-    public void setValidDate(Instant validDate) {
+    public void setValidDate(LocalDateTime validDate) {
         this.validDate = validDate;
     }
 
-    public Instant getExpiredDate() {
+    public LocalDateTime getExpiredDate() {
         return expiredDate;
     }
 
-    public void setExpiredDate(Instant expiredDate) {
+    public void setExpiredDate(LocalDateTime expiredDate) {
         this.expiredDate = expiredDate;
     }
 

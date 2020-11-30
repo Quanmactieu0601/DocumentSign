@@ -24,7 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.error.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public class UserApplicationService {
     public Optional<UserEntity> completePasswordReset(String newPassword, String key) {
         log.debug("Reset user password for reset key {}", key);
         return userRepository.findOneByResetKey(key)
-            .filter(user -> user.getResetDate().isAfter(Instant.now().minusSeconds(86400)))
+            .filter(user -> user.getResetDate().isAfter(LocalDateTime.now().minusSeconds(86400)))
             .map(user -> {
                 user.setPassword(passwordEncoder.encode(newPassword));
                 user.setResetKey(null);
@@ -84,7 +85,7 @@ public class UserApplicationService {
             .filter(UserEntity::getActivated)
             .map(user -> {
                 user.setResetKey(RandomUtil.generateResetKey());
-                user.setResetDate(Instant.now());
+                user.setResetDate(LocalDateTime.now());
                 this.clearUserCaches(user);
                 return user;
             });
@@ -408,7 +409,7 @@ public class UserApplicationService {
     @Scheduled(cron = "0 0 1 * * ?")
     public void removeNotActivatedUsers() {
         userRepository
-            .findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
+            .findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(LocalDateTime.now().minus(3, ChronoUnit.DAYS))
             .forEach(user -> {
                 log.debug("Deleting not activated user {}", user.getLogin());
                 userRepository.delete(user);
