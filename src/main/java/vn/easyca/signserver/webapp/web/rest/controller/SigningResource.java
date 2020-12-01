@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -33,6 +34,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -148,7 +150,6 @@ public class SigningResource {
     }
 
 
-
     @GetMapping("/getImage")
     public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
         log.info(" --- getImage --- serial: {} ", serial);
@@ -159,11 +160,11 @@ public class SigningResource {
             Long userId = userEntity.get().getId();
 
             Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateService.findOneWithUserId(userId);
-            if(! signatureTemplateDTO.isPresent()) {
+            if (!signatureTemplateDTO.isPresent()) {
                 return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
             }
 
-            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO);
+            String htmlContent = getHtmlTemplateAndSignData(certificate, signatureTemplateDTO);
             String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
         } catch (Exception e) {
@@ -173,11 +174,10 @@ public class SigningResource {
     }
 
 
-
     private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
         String signImageData = "";
         Long signImageId = certificate.getSignatureImageId();
-        if(signImageId != null) {
+        if (signImageId != null) {
             Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
             signImageData = signatureImageDTO.get().getImgData();
         }
@@ -185,14 +185,10 @@ public class SigningResource {
         X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
         String contentInformation = x509Certificate.getSubjectDN().getName();
         //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-        final String regex = "CN=\"([^\"]+)\"";
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(contentInformation);
-        String CN = null;
-        while (matcher.find()) {
-            CN = matcher.group(1);
-        }
-
+        final String regexCN = "CN=\"([^\"]+)\"";
+        final String regexT = ", T=([^,]+)";
+        String CN = getElementContentNameInCertificate(contentInformation, regexCN);
+        String T = getElementContentNameInCertificate(contentInformation, regexT);
         String[] signerInfor = CN.split(",");
         String signerName = signerInfor[0];
         String address = signerInfor[1];
@@ -202,10 +198,23 @@ public class SigningResource {
         String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
         htmlContent = htmlContent
             .replaceFirst("signer", signerName)
+            .replaceFirst("position", T)
             .replaceFirst("address", address)
             .replaceFirst("signatureImage", signImageData)
             .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
         return htmlContent;
+    }
+
+    @Nullable
+    private String getElementContentNameInCertificate(String contentInformation, String regex) {
+
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(contentInformation);
+        String CN = null;
+        while (matcher.find()) {
+            CN = matcher.group(1);
+        }
+        return CN;
     }
 
     private String convertHtmlContentToBase64(String htmlContent) throws IOException {
