@@ -41,6 +41,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -152,7 +153,6 @@ public class SigningResource {
     }
 
 
-
     @GetMapping("/getImage")
     public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
         try {
@@ -162,11 +162,11 @@ public class SigningResource {
             Long userId = userEntity.get().getId();
 
             Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateService.findOneWithUserId(userId);
-            if(! signatureTemplateDTO.isPresent()) {
+            if (!signatureTemplateDTO.isPresent()) {
                 return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
             }
 
-            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO);
+            String htmlContent = getHtmlTemplateAndSignData(certificate, signatureTemplateDTO);
             String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
         } catch (Exception e) {
@@ -176,11 +176,10 @@ public class SigningResource {
     }
 
 
-
     private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
         String signImageData = "";
         Long signImageId = certificate.getSignatureImageId();
-        if(signImageId != null) {
+        if (signImageId != null) {
             Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
             signImageData = signatureImageDTO.get().getImgData();
         }
