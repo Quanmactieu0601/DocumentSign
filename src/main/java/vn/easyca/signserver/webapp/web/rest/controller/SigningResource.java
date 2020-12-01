@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/sign")
 public class SigningResource {
     private final SigningService signService;
-    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationResource.class);
+    private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
     private final TransactionService transactionService;
     private final OfficeSigningService officeSigningService;
     private final XMLSigningService xmlSigningService;
@@ -77,6 +77,7 @@ public class SigningResource {
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
+        log.info(" --- signPDF --- {}", signingVM);
         try {
             byte[] fileData = file.getBytes();
             SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
@@ -95,6 +96,7 @@ public class SigningResource {
                 "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
@@ -103,6 +105,7 @@ public class SigningResource {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
+        log.info(" --- signHash --- {}", signingVM);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
@@ -124,6 +127,7 @@ public class SigningResource {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
+        log.info(" --- signRaw --- {}", signingVM);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
@@ -147,6 +151,7 @@ public class SigningResource {
 
     @GetMapping("/getImage")
     public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
+        log.info(" --- getImage --- serial: {} ", serial);
         try {
             CertificateDTO certificate = certificateService.getBySerial(serial);
 
@@ -218,6 +223,7 @@ public class SigningResource {
 
     @PostMapping(value = "/office")
     public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- signOffice --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
@@ -238,6 +244,7 @@ public class SigningResource {
 
     @PostMapping(value = "/xml")
     public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- signXML --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,

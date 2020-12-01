@@ -38,4 +38,13 @@ public class SigningVM<T> {
         SignVMMapper<D, T> signVMMapper = new SignVMMapper<>();
         return signVMMapper.map(this, classContent);
     }
+
+    @Override
+    public String toString() {
+        return "SigningVM{" +
+            "tokenInfo=" + tokenInfo +
+            ", optional=" + optional +
+            ", elements=" + elements +
+            '}';
+    }
 }

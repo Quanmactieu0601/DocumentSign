@@ -32,4 +32,13 @@ public class OptionalDTO {
     public boolean isReturnInputData() {
         return returnInputData;
     }
+
+    @Override
+    public String toString() {
+        return "OptionalDTO{" +
+            "hashAlgorithm='" + hashAlgorithm + '\'' +
+            ", signatureAlgorithm='" + signatureAlgorithm + '\'' +
+            ", returnInputData=" + returnInputData +
+            '}';
+    }
 }

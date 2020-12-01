@@ -31,4 +31,13 @@ public class P12ImportVM {
     public void setPin(String pin) {
         this.pin = pin;
     }
+
+    @Override
+    public String toString() {
+        return "P12ImportVM{" +
+            "p12Base64='" + p12Base64 + '\'' +
+            ", ownerId='" + ownerId + '\'' +
+            ", pin='" + pin + '\'' +
+            '}';
+    }
 }
