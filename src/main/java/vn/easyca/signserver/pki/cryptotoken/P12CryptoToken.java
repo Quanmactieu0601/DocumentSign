@@ -134,8 +134,8 @@ public class P12CryptoToken implements CryptoToken {
     }
 
     @Override
-    public String getProviderName() throws CryptoTokenException {
-        throw new CryptoTokenException("Method is not supported with PKCS12");
+    public String getProviderName() {
+        return null;
     }
 
     @Override

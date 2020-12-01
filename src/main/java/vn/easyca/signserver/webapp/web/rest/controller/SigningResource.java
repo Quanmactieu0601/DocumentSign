@@ -1,10 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +14,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
-import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
 import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
@@ -28,8 +22,8 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
+import vn.easyca.signserver.core.services.XMLSigningService;
 import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
@@ -42,8 +36,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -60,6 +52,7 @@ public class SigningResource {
     private static final Logger log = LoggerFactory.getLogger(SignatureVerificationResource.class);
     private final TransactionService transactionService;
     private final OfficeSigningService officeSigningService;
+    private final XMLSigningService xmlSigningService;
     private final CertificateService certificateService;
     private final UserApplicationService userApplicationService;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
@@ -67,11 +60,12 @@ public class SigningResource {
     private final AsyncTransactionService asyncTransactionService;
     private final SignatureImageService signatureImageService;
 
-    public SigningResource(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
+    public SigningResource(SigningService signService, TransactionService transactionService, XMLSigningService xmlSigningService, CertificateService certificateService, UserApplicationService userApplicationService,
                            SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
                            CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
         this.signService = signService;
         this.transactionService = transactionService;
+        this.xmlSigningService = xmlSigningService;
         this.certificateService = certificateService;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.userApplicationService = userApplicationService;
@@ -237,6 +231,26 @@ public class SigningResource {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
+                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @PostMapping(value = "/xml")
+    public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest signingRequest) {
+        try {
+            SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
+                "200", "OK", AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
+                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }

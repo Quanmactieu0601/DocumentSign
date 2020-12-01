@@ -181,33 +181,5 @@ public class SigningService {
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 
-    public SignDataResponse<String> signXML(SignRequest<XMLSignContent> request) throws ApplicationException {
-        TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
-        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
-        if (certificateDTO == null)
-            throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException(e);
-        }
-        SignXMLLib lib = new SignXMLLib();
-        SignElement<XMLSignContent> signElement = request.getSignElements().get(0);
-        SignXMLDto signXMLDto = null;
-        try {
-            signXMLDto = new SignXMLDto(signElement.getContent().getXml(),
-                cryptoTokenProxy.getPrivateKey(),
-                cryptoTokenProxy.getPublicKey(),
-                cryptoTokenProxy.getX509Certificate());
-        } catch (CryptoTokenException | CertificateException e) {
-            throw new CertificateAppException(e);
-        }
-        try {
-            String xml = lib.generateXMLDigitalSignature(signXMLDto);
-            return new SignDataResponse<>(xml, cryptoTokenProxy.getBase64Certificate());
-        } catch (Exception ex) {
-            throw new SigningAppException("Sign Xml hash error", ex);
-        }
-    }
+
 }

@@ -54,4 +54,8 @@ public class CryptoTokenProxy {
     public CryptoToken getCryptoToken() {
         return cryptoToken;
     }
+
+    public String getProviderName() throws CryptoTokenException {
+        return cryptoToken.getProviderName();
+    }
 }
