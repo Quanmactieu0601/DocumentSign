@@ -13,6 +13,8 @@ import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
@@ -23,6 +25,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class P12ImportService {
@@ -31,12 +34,15 @@ public class P12ImportService {
     private final CertificateService certificateService;
     private final UserApplicationService userApplicationService;
     private final SymmetricEncryptors symmetricService;
+    private final CertificateRepository certificateRepository;
 
     @Autowired
-    public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService, SymmetricEncryptors symmetricService) {
+    public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
+        this.certificateRepository = certificateRepository;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -60,6 +66,9 @@ public class P12ImportService {
             throw new CertificateAppException("certificate has error", e);
         }
         String serial = x509Certificate.getSerialNumber().toString(16);
+        Optional<Certificate> certBySerial = certificateRepository.findOneBySerial(serial);
+        if (certBySerial.isPresent())
+            throw new ApplicationException(-1, "Certificate is already exist");
         String base64Cert = null;
         try {
             base64Cert = CommonUtils.encodeBase64X509(x509Certificate);
