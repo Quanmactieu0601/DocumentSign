@@ -2,7 +2,7 @@ package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.domain.Transaction;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.io.Serializable;
 
 /**
@@ -13,7 +13,7 @@ public class TransactionDTO implements Serializable {
 
     private String api;
 
-    private Instant triggerTime;
+    private LocalDateTime triggerTime;
 
     private String code;
 
@@ -95,11 +95,11 @@ public class TransactionDTO implements Serializable {
         this.api = api;
     }
 
-    public Instant getTriggerTime() {
+    public LocalDateTime getTriggerTime() {
         return triggerTime;
     }
 
-    public void setTriggerTime(Instant triggerTime) {
+    public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
 

@@ -6,7 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * A Transaction.
@@ -26,7 +26,7 @@ public class Transaction implements Serializable {
     private String api;
 
     @Column(name = "trigger_time")
-    private Instant triggerTime;
+    private LocalDateTime triggerTime;
 
     @Column(name = "code")
     private String code;
@@ -95,16 +95,16 @@ public class Transaction implements Serializable {
         this.api = api;
     }
 
-    public Instant getTriggerTime() {
+    public LocalDateTime getTriggerTime() {
         return triggerTime;
     }
 
-    public Transaction triggerTime(Instant triggerTime) {
+    public Transaction triggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
         return this;
     }
 
-    public void setTriggerTime(Instant triggerTime) {
+    public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
     public String getCode() {

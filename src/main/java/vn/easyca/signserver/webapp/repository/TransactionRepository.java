@@ -4,7 +4,7 @@ import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.Transaction;
 import org.springframework.data.jpa.repository.*;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,6 +13,6 @@ import java.util.List;
 @SuppressWarnings({"unused", "JpaQlInspection"})
 public interface TransactionRepository extends JpaRepository<Transaction, Long> , TransactionRepositoryCustom {
     @Query(value = " FROM Transaction t WHERE t.triggerTime BETWEEN :startDate  AND :endDate  AND t.type = :type")
-    List<Transaction> findAllTransactionTypeAndDate(@Param("startDate") Instant startDate,
-                                                    @Param("endDate") Instant endDate, @Param("type") String type);
+    List<Transaction> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
+                                                    @Param("endDate") LocalDateTime endDate, @Param("type") String type);
 }

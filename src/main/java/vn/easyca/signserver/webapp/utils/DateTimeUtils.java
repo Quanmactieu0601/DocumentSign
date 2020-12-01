@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -47,5 +48,10 @@ public class DateTimeUtils {
             e.printStackTrace();
         }
         return dates.toInstant();
+    }
+
+    public static LocalDateTime convertToLocalDateTime(String dateTime)  {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(dateTime, formatter);
     }
 }

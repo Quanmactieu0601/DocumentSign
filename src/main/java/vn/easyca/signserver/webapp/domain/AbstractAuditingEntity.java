@@ -8,7 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -32,7 +32,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     @CreatedDate
     @Column(name = "created_date", updatable = false)
     @JsonIgnore
-    private Instant createdDate = Instant.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @LastModifiedBy
     @Column(name = "last_modified_by", length = 50)
@@ -42,7 +42,7 @@ public abstract class AbstractAuditingEntity implements Serializable {
     @LastModifiedDate
     @Column(name = "last_modified_date")
     @JsonIgnore
-    private Instant lastModifiedDate = Instant.now();
+    private LocalDateTime lastModifiedDate = LocalDateTime.now();
 
     public String getCreatedBy() {
         return createdBy;
@@ -52,11 +52,11 @@ public abstract class AbstractAuditingEntity implements Serializable {
         this.createdBy = createdBy;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -68,11 +68,11 @@ public abstract class AbstractAuditingEntity implements Serializable {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Instant getLastModifiedDate() {
+    public LocalDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Instant lastModifiedDate) {
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 }

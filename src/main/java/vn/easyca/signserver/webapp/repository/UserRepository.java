@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * Spring Data JPA repository for the {@link UserEntity} entity.
@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
 
     Optional<UserEntity> findOneByActivationKey(String activationKey);
 
-    List<UserEntity> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(Instant dateTime);
+    List<UserEntity> findAllByActivatedIsFalseAndActivationKeyIsNotNullAndCreatedDateBefore(LocalDateTime dateTime);
 
     Optional<UserEntity> findOneByResetKey(String resetKey);
 

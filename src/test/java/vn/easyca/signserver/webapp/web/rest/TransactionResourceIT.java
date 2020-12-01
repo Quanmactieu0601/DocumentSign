@@ -20,6 +20,7 @@ import vn.easyca.signserver.webapp.web.rest.controller.TransactionResource;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -39,8 +40,8 @@ public class TransactionResourceIT {
     private static final String DEFAULT_API = "AAAAAAAAAA";
     private static final String UPDATED_API = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_TRIGGER_TIME = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_TRIGGER_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final LocalDateTime DEFAULT_TRIGGER_TIME = LocalDateTime.now();
+    private static final LocalDateTime UPDATED_TRIGGER_TIME = LocalDateTime.now();
 
     private static final String DEFAULT_CODE = "AAAAAAAAAA";
     private static final String UPDATED_CODE = "BBBBBBBBBB";

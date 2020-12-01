@@ -8,7 +8,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Component
 public class AsyncTransactionService {
@@ -24,7 +24,7 @@ public class AsyncTransactionService {
         transactionDTO.setCode(code);
         transactionDTO.setMessage(message);
         transactionDTO.setCreatedBy(createdBy);
-        transactionDTO.setTriggerTime(Instant.now());
+        transactionDTO.setTriggerTime(LocalDateTime.now());
         transactionService.save(transactionDTO);
     }
 }
