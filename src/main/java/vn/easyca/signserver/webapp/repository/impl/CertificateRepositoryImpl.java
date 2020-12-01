@@ -3,7 +3,6 @@ package vn.easyca.signserver.webapp.repository.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity_;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepositoryCustom;
 import org.springframework.data.domain.Page;

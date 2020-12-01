@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.apache.commons.io.IOUtils;
+import org.aspectj.apache.bcel.classfile.Module;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -186,14 +188,10 @@ public class SigningResource {
         X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
         String contentInformation = x509Certificate.getSubjectDN().getName();
         //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-        final String regex = "CN=\"([^\"]+)\"";
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(contentInformation);
-        String CN = null;
-        while (matcher.find()) {
-            CN = matcher.group(1);
-        }
-
+        final String regexCN = "CN=\"([^\"]+)\"";
+        final String regexT = ", T=([^,]+)";
+        String CN = getElementContentNameInCertificate(contentInformation, regexCN);
+        String T = getElementContentNameInCertificate(contentInformation, regexT);
         String[] signerInfor = CN.split(",");
         String signerName = signerInfor[0];
         String address = signerInfor[1];
@@ -203,10 +201,23 @@ public class SigningResource {
         String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
         htmlContent = htmlContent
             .replaceFirst("signer", signerName)
+            .replaceFirst("position", T)
             .replaceFirst("address", address)
             .replaceFirst("signatureImage", signImageData)
             .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
         return htmlContent;
+    }
+
+    @Nullable
+    private String getElementContentNameInCertificate(String contentInformation, String regex) {
+
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(contentInformation);
+        String CN = null;
+        while (matcher.find()) {
+            CN = matcher.group(1);
+        }
+        return CN;
     }
 
     private String convertHtmlContentToBase64(String htmlContent) throws IOException {
