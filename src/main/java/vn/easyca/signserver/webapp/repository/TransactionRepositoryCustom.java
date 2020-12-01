@@ -2,10 +2,11 @@ package vn.easyca.signserver.webapp.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
-import java.time.Instant;
+import java.text.ParseException;
 
 public interface TransactionRepositoryCustom {
-     Page<Transaction> findByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type);
+
+     Page<TransactionDTO> findByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException;
 }

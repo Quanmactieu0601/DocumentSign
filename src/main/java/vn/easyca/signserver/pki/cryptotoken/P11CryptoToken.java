@@ -1,65 +1,77 @@
 package vn.easyca.signserver.pki.cryptotoken;
 
 
+import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
-import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.config.Constants;
 
+@Component
 public class P11CryptoToken implements CryptoToken {
     private KeyStore ks = null;
-    private Config config = null;
+    private final HsmConfig hsmConfig;
     private String providerName;
 
-    public void init(Config config) throws InitCryptoTokenException {
-        if (config == null)
-            throw new InitCryptoTokenException("Config is null");
-        String pkcs11Config = config.getPkcs11Config();
-        String modulePin = config.getModulePin();
-        if (pkcs11Config.isEmpty())
-            throw new InitCryptoTokenException("Config is empty");
-        if (modulePin.isEmpty())
-            throw new InitCryptoTokenException("modulePin is required");
-        this.config = config;
+    public P11CryptoToken(HsmConfig hsmConfig) {
+        this.hsmConfig = hsmConfig;
+    }
 
-        // init provider
-        ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11Config.getBytes());
-        Provider prov = new sun.security.pkcs11.SunPKCS11(confStream);
-        Security.addProvider(prov);
-        this.providerName = prov.getName();
+    public void initPkcs11() throws InitCryptoTokenException {
+        if (ks == null) {
+            String pkcs11Config = hsmConfig.getPkcs11Config();
+            String modulePin = hsmConfig.getModulePin();
+            if (pkcs11Config.isEmpty())
+                throw new InitCryptoTokenException("Config is empty");
+            if (modulePin.isEmpty())
+                throw new InitCryptoTokenException("modulePin is required");
 
-        // load keystore
-        char[] passphrase = modulePin.toCharArray();
-        KeyStore ks = null;
-        try {
-            ks = KeyStore.getInstance("PKCS11", prov);
-        } catch (KeyStoreException e) {
-            throw new InitCryptoTokenException("Create KeyStore instance has error", e);
+            // init provider
+            ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11Config.getBytes());
+            Provider prov = new sun.security.pkcs11.SunPKCS11(confStream);
+            Security.addProvider(prov);
+            this.providerName = prov.getName();
+
+            // load keystore
+            char[] passphrase = modulePin.toCharArray();
+            KeyStore ks = null;
+            try {
+                ks = KeyStore.getInstance("PKCS11", prov);
+            } catch (KeyStoreException e) {
+                throw new InitCryptoTokenException("Create KeyStore instance has error", e);
+            }
+            KeyStore.PasswordProtection pp = new KeyStore.PasswordProtection(passphrase);
+            try {
+                ks.load(null, pp.getPassword());
+            } catch (Exception e) {
+                throw new InitCryptoTokenException("loading keystore has error", e);
+            }
+
+            this.ks = ks;
         }
-        KeyStore.PasswordProtection pp = new KeyStore.PasswordProtection(passphrase);
-        try {
-            ks.load(null, pp.getPassword());
-        } catch (Exception e) {
-            throw new InitCryptoTokenException("loading keystore has error", e);
-        }
+    }
 
-        this.ks = ks;
+    @Override
+    public void initPkcs12(String p12Base64, String pin) {
+        throw new NotImplementedException();
     }
 
     public String getProviderName() {
@@ -76,7 +88,7 @@ public class P11CryptoToken implements CryptoToken {
             throw new CryptoTokenException("KeyStore Exception", e);
         }
         try {
-            return (PrivateKey) ks.getKey(alias, config.getModulePin().toCharArray());
+            return (PrivateKey) ks.getKey(alias, hsmConfig.getModulePin().toCharArray());
         } catch (Exception e) {
             throw new CryptoTokenException("load private key has error", e);
         }
@@ -165,10 +177,11 @@ public class P11CryptoToken implements CryptoToken {
         return aliases;
     }
 
-    public Config getConfig() throws CryptoTokenException {
+    @Override
+    public Object getConfiguration() throws CryptoTokenException {
         if (this.ks == null)
             throw new CryptoTokenException("cryptoToken is not initialized");
-        return this.config;
+        return hsmConfig;
     }
 
     @Override
@@ -192,5 +205,20 @@ public class P11CryptoToken implements CryptoToken {
         X509CertificateHolder cert = cb.build(signer);
         CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
         return (X509Certificate) certFactory.generateCertificate(new ByteArrayInputStream(cert.getEncoded()));
+    }
+
+    @Override
+    public Signature getSignatureInstance(String algorithm) throws ApplicationException {
+        if (StringUtils.isNullOrEmpty(algorithm))
+            throw new ApplicationException(-1, "Hash algorithm cannot be null or empty");
+
+        algorithm = algorithm.trim().toUpperCase().replace("-", "");
+        if (!Constants.HASH_ALGORITHMS.contains(algorithm))
+            throw new ApplicationException(-1, "Hash algorithm not correct");
+        try {
+            return Signature.getInstance(algorithm + "withRSA", providerName);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+            throw new ApplicationException(-1, "Cannot get signature instance", e);
+        }
     }
 }

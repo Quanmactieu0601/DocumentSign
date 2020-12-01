@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.security;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

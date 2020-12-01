@@ -17,10 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import io.github.jhipster.config.cache.PrefixedKeyGenerator;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.*;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.CertificateEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 
 @Configuration
 @EnableCaching
@@ -52,8 +52,10 @@ public class CacheConfiguration {
             createCache(cm, UserEntity.class.getName());
             createCache(cm, Authority.class.getName());
             createCache(cm, UserEntity.class.getName() + ".authorities");
-            createCache(cm, CertificateEntity.class.getName());
+            createCache(cm, Certificate.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.Transaction.class.getName());
+            createCache(cm, vn.easyca.signserver.webapp.domain.SignatureTemplate.class.getName());
+            createCache(cm, vn.easyca.signserver.webapp.domain.SignatureImage.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

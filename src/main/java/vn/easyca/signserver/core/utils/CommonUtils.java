@@ -1,11 +1,24 @@
 package vn.easyca.signserver.core.utils;
 
+import gui.ava.html.image.generator.HtmlImageGenerator;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.text.*;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLEditorKit;
+import javax.swing.text.html.ImageView;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.net.URL;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Base64;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 public class CommonUtils {
 
@@ -58,3 +71,4 @@ public class CommonUtils {
 //        cert = cert.replace("\n","");
 //    }
 }
+

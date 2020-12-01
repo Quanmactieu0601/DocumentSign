@@ -2,9 +2,9 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.AuthorityRepository;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.AuthorityRepository;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;
@@ -23,7 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -89,7 +89,7 @@ public class AccountResourceIT {
         user.setImageUrl("http://placehold.it/50x50");
         user.setLangKey("en");
         user.setAuthorities(authorities);
-        userApplicationService.createUser(user,null);
+        userApplicationService.createUser(user);
 
         restAccountMockMvc.perform(get("/api/account")
             .accept(MediaType.APPLICATION_JSON))
@@ -717,7 +717,7 @@ public class AccountResourceIT {
         userEntity.setPassword(RandomStringUtils.random(60));
         userEntity.setLogin("finish-password-reset");
         userEntity.setEmail("finish-password-reset@example.com");
-        userEntity.setResetDate(Instant.now().plusSeconds(60));
+        userEntity.setResetDate(LocalDateTime.now().plusSeconds(60));
         userEntity.setResetKey("reset key");
         userRepository.saveAndFlush(userEntity);
 
@@ -742,7 +742,7 @@ public class AccountResourceIT {
         userEntity.setPassword(RandomStringUtils.random(60));
         userEntity.setLogin("finish-password-reset-too-small");
         userEntity.setEmail("finish-password-reset-too-small@example.com");
-        userEntity.setResetDate(Instant.now().plusSeconds(60));
+        userEntity.setResetDate(LocalDateTime.now().plusSeconds(60));
         userEntity.setResetKey("reset key too small");
         userRepository.saveAndFlush(userEntity);
 

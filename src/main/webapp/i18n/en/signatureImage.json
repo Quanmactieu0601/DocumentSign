@@ -1,0 +1,23 @@
+{
+  "webappApp": {
+    "signatureImage": {
+      "home": {
+        "title": "Signature Images",
+        "createLabel": "Create a new Signature Image",
+        "createOrEditLabel": "Create or edit a Signature Image",
+        "notFound": "No Signature Images found"
+      },
+      "created": "A new Signature Image is created with identifier {{ param }}",
+      "updated": "A Signature Image is updated with identifier {{ param }}",
+      "deleted": "A Signature Image is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Signature Image {{ id }}?"
+      },
+      "detail": {
+        "title": "Signature Image"
+      },
+      "imgData": "Img Data",
+      "userId": "User Id"
+    }
+  }
+}

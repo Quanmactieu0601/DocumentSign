@@ -36,8 +36,10 @@ import java.nio.file.FileSystems;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.*;
-
-import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToInstant;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * REST controller for managing {@link vn.easyca.signserver.webapp.domain.Transaction}.
@@ -53,7 +55,6 @@ public class TransactionResource {
     private static final String UTF_8 = "UTF-8";
 
 
-
     static final String fileName = "src/main/resources/JasperDesign.jrxml";
     static final String outFile = "src/main/resources/Reports23.pdf";
     @Autowired
@@ -63,7 +64,7 @@ public class TransactionResource {
     private String applicationName;
     private final TransactionService transactionService;
 
-    public TransactionResource( TransactionService transactionService) {
+    public TransactionResource(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
@@ -74,7 +75,6 @@ public class TransactionResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new transactionDTO, or with status {@code 400 (Bad Request)} if the transaction has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-
     @PostMapping("/transactions")
     public ResponseEntity<TransactionDTO> createTransaction(@RequestBody TransactionDTO transactionDTO) throws URISyntaxException {
         log.debug("REST request to save Transaction : {}", transactionDTO);
@@ -121,21 +121,21 @@ public class TransactionResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
     @GetMapping("/transactions/search")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type ) {
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false) String host, @RequestParam(required = false) String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) throws ParseException {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable , api,triggerTime,code,message,data,type);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, method, host, createdBy, fullName, startDate, endDate);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
     /**
      * {@code GET  /transactions/:id} : get the "id" transaction.
      *
      * @param id the id of the transactionDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the transactionDTO, or with status {@code 404 (Not Found)}.
      */
-
-
     @GetMapping("/transactions/{id}")
     public ResponseEntity<TransactionDTO> getTransaction(@PathVariable Long id) {
         log.debug("REST request to get Transaction : {}", id);
@@ -149,8 +149,6 @@ public class TransactionResource {
      * @param id the id of the transactionDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-
-
     @DeleteMapping("/transactions/{id}")
     public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
         log.debug("REST request to delete Transaction : {}", id);
@@ -164,12 +162,10 @@ public class TransactionResource {
      * @param startdate, enddate, type from transaction
      * @return the total request success and totals request fail .
      */
-
-
     @GetMapping("/transactions/report/{startDate}/{endDate}/{type}")
     public ResponseEntity<TransactionReportDTO> getAllTransactionBetweenDate(@PathVariable("startDate") String startdate,
-                                                             @PathVariable("endDate") String enddate,
-                                                             @PathVariable("type") String type) throws ParseException {
+                                                                             @PathVariable("endDate") String enddate,
+                                                                             @PathVariable("type") String type) throws ParseException {
         log.debug("REST request to get all Transactions beween date and type ");
         TransactionReportDTO transactionReportDTO = new TransactionReportDTO();
         int totalsuccess = 0;
@@ -191,55 +187,54 @@ public class TransactionResource {
         return ResponseEntity.ok().body(transactionReportDTO);
     }
 
-
-    @GetMapping("/transactions/exportPDF")
-    public void  savePDF() throws IOException, DocumentException {
-        log.debug("REST request to export  PDF Transactions ");
-
-        List<TransactionDTO> listTranscation=new ArrayList<>(3000);
-        for (int i = 0; i < 3000; i++) {
-            TransactionDTO transactionDTO=new TransactionDTO();
-            transactionDTO.setApi("api"+i);
-            transactionDTO.setCode("code"+i);
-            transactionDTO.setData(" components "+i);
-            transactionDTO.setMessage("message  "+i);
-            transactionDTO.setTriggerTime(null);
-            transactionDTO.setType("SYSTEM");
-            listTranscation.add(transactionDTO);
-        }
-
-        Context context=new Context();
-        context.setVariable("listReport",listTranscation);
-
-        String renderdHtmlContext=templateEngine.process("template",context);
-        String xHtml=convertToXhtml(renderdHtmlContext);
-        ITextRenderer renderer=new ITextRenderer();
-
-        String baseUrl= FileSystems.getDefault()
-            .getPath("src","main","resources","templates")
-            .toUri()
-            .toURL()
-            .toString();
-        renderer.setDocumentFromString(xHtml,baseUrl);
-        renderer.layout();
-
-        OutputStream outputStream=new FileOutputStream("src//test18.pdf");
-        renderer.createPDF(outputStream);
-        outputStream.close();
-
-    }
-    private String convertToXhtml(String html) throws UnsupportedEncodingException {
-        Tidy tidy = new Tidy();
-        tidy.setInputEncoding(UTF_8);
-        tidy.setOutputEncoding(UTF_8);
-        tidy.setXHTML(true);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(html.getBytes(UTF_8));
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        tidy.parseDOM(inputStream, outputStream);
-        return outputStream.toString(UTF_8);
-    }
-
-
+//
+//    @GetMapping("/transactions/exportPDF")
+//    public void savePDF() throws IOException, DocumentException, com.lowagie.text.DocumentException {
+//        log.debug("REST request to export  PDF Transactions ");
+//
+//        List<TransactionDTO> listTranscation = new ArrayList<>(3000);
+//        for (int i = 0; i < 3000; i++) {
+//            TransactionDTO transactionDTO = new TransactionDTO();
+//            transactionDTO.setApi("api" + i);
+//            transactionDTO.setCode("code" + i);
+//            transactionDTO.setData(" components " + i);
+//            transactionDTO.setMessage("message  " + i);
+//            transactionDTO.setTriggerTime(null);
+//            transactionDTO.setType("SYSTEM");
+//            listTranscation.add(transactionDTO);
+//        }
+//
+//        Context context = new Context();
+//        context.setVariable("listReport", listTranscation);
+//
+//        String renderdHtmlContext = templateEngine.process("template", context);
+//        String xHtml = convertToXhtml(renderdHtmlContext);
+//        ITextRenderer renderer = new ITextRenderer();
+//
+//        String baseUrl = FileSystems.getDefault()
+//            .getPath("src", "main", "resources", "templates")
+//            .toUri()
+//            .toURL()
+//            .toString();
+//        renderer.setDocumentFromString(xHtml, baseUrl);
+//        renderer.layout();
+//
+//        OutputStream outputStream = new FileOutputStream("src//test18.pdf");
+//        renderer.createPDF(outputStream);
+//        outputStream.close();
+//
+//    }
+//
+//    private String convertToXhtml(String html) throws UnsupportedEncodingException {
+//        Tidy tidy = new Tidy();
+//        tidy.setInputEncoding(UTF_8);
+//        tidy.setOutputEncoding(UTF_8);
+//        tidy.setXHTML(true);
+//        ByteArrayInputStream inputStream = new ByteArrayInputStream(html.getBytes(UTF_8));
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        tidy.parseDOM(inputStream, outputStream);
+//        return outputStream.toString(UTF_8);
+//    }
 
 
     @GetMapping("/transactions/exportPDFJasper")
@@ -248,13 +243,13 @@ public class TransactionResource {
 
         log.debug("REST request to export  PDF Transactions ");
         Map<String, Object> parameter = new HashMap<String, Object>();
-        List<TransactionDTO> listTranscation=new ArrayList<>(1000000);
+        List<TransactionDTO> listTranscation = new ArrayList<>(1000000);
         for (int i = 0; i < 10000; i++) {
-            TransactionDTO transactionDTO=new TransactionDTO();
-            transactionDTO.setApi("api"+i);
-            transactionDTO.setCode("code"+i);
-            transactionDTO.setData(" components "+i);
-            transactionDTO.setMessage("message  "+i);
+            TransactionDTO transactionDTO = new TransactionDTO();
+            transactionDTO.setApi("api" + i);
+            transactionDTO.setCode("code" + i);
+            transactionDTO.setData(" components " + i);
+            transactionDTO.setMessage("message  " + i);
             transactionDTO.setType("SYSTEM");
             listTranscation.add(transactionDTO);
         }
@@ -273,9 +268,6 @@ public class TransactionResource {
         JasperExportManager.exportReportToPdfStream(jasperPrint, outputSteam);
         System.out.println("Report Generated!");
     }
-
-
-
 
 
 }

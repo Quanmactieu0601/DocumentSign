@@ -1,17 +1,19 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
 import { IUser } from './user.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   public resourceUrl = SERVER_API_URL + 'api/users';
-
+  public listId: number[] = [];
   constructor(private http: HttpClient) {}
 
+  //TODO : add password to request body
   create(user: IUser): Observable<IUser> {
     return this.http.post<IUser>(this.resourceUrl, user);
   }
@@ -40,5 +42,37 @@ export class UserService {
 
   authorities(): Observable<string[]> {
     return this.http.get<string[]>(SERVER_API_URL + 'api/users/authorities');
+  }
+
+  upload(file: File): Observable<HttpEvent<any>> {
+    const formData: FormData = new FormData();
+
+    formData.append('file', file);
+    // formData.append('login', login);
+    const req = new HttpRequest('POST', `${this.resourceUrl}/uploadUser`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+    });
+    return this.http.request(req);
+  }
+  getFiles(): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/files`);
+  }
+
+  setListId(listIdTrans: number[]): void {
+    this.listId = listIdTrans;
+  }
+
+  getListId(): any {
+    return this.listId;
+  }
+  downLoadTemplateFile(): Observable<any> {
+    return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
+      map(response => {
+        return {
+          data: response,
+        };
+      })
+    );
   }
 }

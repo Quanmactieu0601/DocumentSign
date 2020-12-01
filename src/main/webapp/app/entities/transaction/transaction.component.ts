@@ -24,6 +24,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
     message: [],
     data: [],
     type: [],
+    host: [],
+    method: [],
+    fullName: [],
+    triggerTime: [],
+    startDate: [],
+    endDate: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -43,17 +49,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
-    this.transactionService
-      .query({
-        page: pageToLoad - 1,
-        size: this.itemsPerPage,
-        sort: this.sort(),
-      })
-      .subscribe(
-        (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-        () => this.onError()
-      );
+    // this.transactionService
+    //   .query({
+    //     page: pageToLoad - 1,
+    //     size: this.itemsPerPage,
+    //     sort: this.sort(),
+    //   })
+    //   .subscribe(
+    //     (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
+    //     () => this.onError()
+    //   );
+    this.searchTransactions(page);
   }
 
   ngOnInit(): void {
@@ -72,7 +78,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
         this.predicate = predicate;
         this.ascending = ascending;
         this.searchTransactions();
-        // this.loadPage(pageNumber, true);
       }
     }).subscribe();
   }
@@ -91,20 +96,50 @@ export class TransactionComponent implements OnInit, OnDestroy {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
 
-  searchTransactions(): any {
-    const data1 = {
-      // id: this.searchForm.get(['id'])!.value,
-      api: this.searchForm.get(['api'])!.value,
-      code: this.searchForm.get(['code'])!.value,
-      message: this.searchForm.get(['message'])!.value,
-      data: this.searchForm.get(['data'])!.value,
-      type: this.searchForm.get(['type'])!.value,
-      page: this.page - 1,
+  searchTransactions(page?: number): any {
+    const pageToLoad: number = page || this.page || 1;
+    const fieldTransaction = {
+      page: pageToLoad - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
+      ...this.searchForm.value,
     };
-    // console.error(data1.code);
-    this.transactionService.findByTransaction(data1).subscribe((res: HttpResponse<any>) => this.onSuccessTwo(res.body, res.headers));
+    if (fieldTransaction.api != null) {
+      fieldTransaction.api = fieldTransaction.api.trim();
+    }
+    if (fieldTransaction.code != null) {
+      fieldTransaction.code = fieldTransaction.code.trim();
+    }
+    if (fieldTransaction.message != null) {
+      fieldTransaction.message = fieldTransaction.message.trim();
+    }
+    if (fieldTransaction.data != null) {
+      fieldTransaction.data = fieldTransaction.data.trim();
+    }
+    if (fieldTransaction.type != null) {
+      fieldTransaction.type = fieldTransaction.type.trim();
+    }
+    if (fieldTransaction.host != null) {
+      fieldTransaction.host = fieldTransaction.host.trim();
+    }
+    if (fieldTransaction.method != null) {
+      fieldTransaction.method = fieldTransaction.method.trim();
+    }
+    if (fieldTransaction.fullName != null) {
+      fieldTransaction.fullName = fieldTransaction.fullName.trim();
+    }
+    if (fieldTransaction.triggerTime != null) {
+      fieldTransaction.triggerTime = fieldTransaction.triggerTime.trim();
+    }
+    if (fieldTransaction.startDate != null) {
+      fieldTransaction.startDate = fieldTransaction.startDate.trim();
+    }
+    if (fieldTransaction.endDate != null) {
+      fieldTransaction.endDate = fieldTransaction.endDate.trim();
+    }
+    this.transactionService
+      .findByTransaction(fieldTransaction)
+      .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
 
   delete(transaction: ITransaction): void {
@@ -138,9 +173,5 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
-  }
-  protected onSuccessTwo(transaction: any | null, headers: HttpHeaders): void {
-    this.totalItems = Number(headers.get('X-Total-Count'));
-    this.transactions = transaction;
   }
 }

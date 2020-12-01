@@ -1,0 +1,25 @@
+<form (ngSubmit)="saveAndGenCSR()">
+  <div class="modal-header">
+    <h4 class="modal-title" jhiTranslate="entity.action.keyLength">Choose Key</h4>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
+    <label *ngFor="let item of radioItems">
+      <div class="mx-3">
+        <input type="radio" name="options" (click)="model.options = item" [checked]="item === model.options" />
+        {{ item }}
+      </div>
+    </label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+      <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+    </button>
+
+    <button type="submit" class="btn btn-primary">
+      <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+    </button>
+  </div>
+</form>

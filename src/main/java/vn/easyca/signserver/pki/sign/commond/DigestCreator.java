@@ -5,6 +5,7 @@ import org.bouncycastle.asn1.DERObjectIdentifier;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.DigestInfo;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import vn.easyca.signserver.webapp.config.Constants;
 
 import java.security.MessageDigest;
 import java.security.Security;
@@ -35,12 +36,12 @@ public class DigestCreator {
     public byte[] digestWithSHAInfo(String hashAlgo, byte[] digest) throws Exception {
         ASN1ObjectIdentifier sha1oid_ = null;
         if (hashAlgo == null || hashAlgo.isEmpty())
-            hashAlgo = "sha1";
-        if (hashAlgo.equalsIgnoreCase("sha1"))
+            hashAlgo = Constants.HASH_ALGORITHM.SHA1;
+        if (hashAlgo.equalsIgnoreCase(Constants.HASH_ALGORITHM.SHA1))
             sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA1.getOid());
-        else if (hashAlgo.equalsIgnoreCase("sha256"))
+        else if (hashAlgo.equalsIgnoreCase(Constants.HASH_ALGORITHM.SHA256))
             sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA256.getOid());
-        else if (hashAlgo.equalsIgnoreCase("sha512"))
+        else if (hashAlgo.equalsIgnoreCase(Constants.HASH_ALGORITHM.SHA512))
             sha1oid_ = new ASN1ObjectIdentifier(DigestAlgorithm.SHA512.getOid());
         if (sha1oid_ == null)
             throw new Exception("Not support hash Algorithm");

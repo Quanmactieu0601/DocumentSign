@@ -4,6 +4,7 @@ import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
+import vn.easyca.signserver.pki.sign.rawsign.RawSigner;
 import vn.easyca.signserver.pki.sign.utils.Base64Utils;
 import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.pki.sign.utils.UniqueID;
@@ -44,7 +45,7 @@ public class SignPDFPlugin {
         //add info to hash
         hash = new DigestCreator().digestWithSHA1Info(hash);
         RawSigner rawSigner = new RawSigner();
-        byte[] sig = rawSigner.signHash(hash, dto.getKey());
+        byte[] sig = rawSigner.signHashPdf(hash, dto.getKey());
         insertSignature(sessionKey, sig, dto.getSignField(), dto.getOutPath());
     }
 

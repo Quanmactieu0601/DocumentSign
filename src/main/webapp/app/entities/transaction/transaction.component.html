@@ -4,133 +4,166 @@
             <div class="row my-3">
                 <div class="col">
                     <div class="row">
-                        <!-- <div class="col">
-                            <div class="form-group">
-                                <label for="id">ID :</label>
-                                <input type="text" class="form-control" formControlName="id" >
-                            </div>
-                        </div> -->
-                        <div class="col">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="api">API :</label>
                                 <input type="text" class="form-control" formControlName="api">
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="method">Method :</label>
+                                <input type="text" class="form-control" formControlName="method">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="code">Code :</label>
                                 <input type="text" class="form-control" formControlName="code">
                             </div>
                         </div>
-                        <div class="col">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="message">Message :</label>
                                 <input type="text" class="form-control" formControlName="message">
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label for="data">Data :</label>
-                        <input type="text" class="form-control" formControlName="data">
-                    </div>
-                    <div class="row">
-                        <div class="col">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="startDate">Start Date :</label>
+                                <input type="date" class="form-control" formControlName="startDate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="endDate">End Date :</label>
+                                <input type="date" class="form-control" formControlName="endDate">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label for="type">Type :</label>
                                 <input type="text" class="form-control" formControlName="type">
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="host"> Host :</label>
+                                <input type="text" class="form-control" formControlName="host">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="fullName">Full Name :</label>
+                                <input type="text" class="form-control" formControlName="fullName">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="data">Data :</label>
+                                <input type="text" class="form-control" formControlName="data"/>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary ">
-                    <fa-icon icon="search" ></fa-icon> Search
-                </button>
-            </div>
+        </div>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">
+                <fa-icon icon="search"></fa-icon>
+                Search
+            </button>
         </div>
     </form>
 </div>
 
 
-
 <!-- abcd ----------------------------------------------------->
 <div>
-    <div >
+    <div>
         <h2 id="page-heading">
             <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>
         </h2>
 
-            <button type="submit" class="btn btn-primary "  [routerLink]="['./report']"
-                    [ngStyle]="{  'float': 'right',
+        <button type="submit" class="btn btn-primary " [routerLink]="['./report']"
+                [ngStyle]="{  'float': 'right',
                              'margin-right': '40px',
                              'margin-bottom':'15px'}"
-            >   <fa-icon icon="file-excel"></fa-icon> Report Transaction</button>
-
+        >
+            <fa-icon icon="file-excel"></fa-icon>
+            Report Transaction
+        </button>
 
 
     </div>
     <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
         <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
     </div>
-
     <div class="table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
-                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
-                    <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="triggerTime"><span
-                            jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="code"><span jhiTranslate="webappApp.transaction.code">Code</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="message"><span
-                            jhiTranslate="webappApp.transaction.message">Message</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="data"><span jhiTranslate="webappApp.transaction.data">Data</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="type"><span jhiTranslate="webappApp.transaction.type">Type</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col"></th>
-                </tr>
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
+                <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="triggerTime"><span
+                    jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="code"><span jhiTranslate="webappApp.transaction.code">Code</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="message"><span
+                    jhiTranslate="webappApp.transaction.message">Message</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="data"><span jhiTranslate="webappApp.transaction.data">Data</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="type"><span jhiTranslate="webappApp.transaction.type">Type</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="method"><span jhiTranslate="webappApp.transaction.method">Method</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="fullName"><span
+                    jhiTranslate="webappApp.transaction.fullName">Full Name</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <!-- <th scope="col"></th> -->
+            </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let transaction of transactions ;trackBy: trackId">
-                    <!-- <td><a [routerLink]="['/transaction', transaction.id, 'view']">{{ transaction.id }}</a></td> -->
-                    <td>{{ transaction.api }}</td>
-                    <td>{{ transaction.triggerTime | date:'medium' }}</td>
-                    <td>{{ transaction.code }}</td>
-                    <td>{{ transaction.message }}</td>
-                    <td>{{ transaction.data }}</td>
-                    <td>{{ transaction.type }}</td>
-
-                </tr>
+            <tr *ngFor="let transaction of transactions ;trackBy: trackId">
+                <!-- <td><a [routerLink]="['/transaction', transaction.id, 'view']">{{ transaction.id }}</a></td> -->
+                <td>{{ transaction.api }}</td>
+                <!-- <td>{{ transaction.startDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
+                <td>{{ transaction.endDate | date:"MM/dd/yyyy hh:mm:ss" }}</td> -->
+                <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
+                <td>{{ transaction.code }}</td>
+                <td>{{ transaction.message }}</td>
+                <td>{{ transaction.data }}</td>
+                <td>{{ transaction.type }}</td>
+                <td>{{ transaction.method }}</td>
+                <td>{{ transaction.host }}</td>
+                <td>{{ transaction.fullName }}</td>
+            </tr>
             </tbody>
         </table>
     </div>
-
-    <div *ngIf="transactions && transactions.length > 0">
         <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
-        </div>
-
-
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage"
-                [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
-        </div>
+            <ngb-pagination
+                [collectionSize]="totalItems"
+                [(page)]="ngbPaginationPage"
+                [pageSize]="itemsPerPage"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                (pageChange)="loadPage($event)"
+            ></ngb-pagination>
     </div>
 </div>

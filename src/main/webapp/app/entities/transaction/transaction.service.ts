@@ -56,6 +56,7 @@ export class TransactionService {
 
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);
+    // const options1 = JSON.stringify(req);
     return this.http
       .get<ITransaction[]>(this.resourceUrl, { params: options, observe: 'response' })
       .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));

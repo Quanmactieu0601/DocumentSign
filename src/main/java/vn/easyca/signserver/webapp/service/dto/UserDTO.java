@@ -2,11 +2,11 @@ package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.config.Constants;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 
 import javax.validation.constraints.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
  * A DTO representing a user, with his authorities.
  */
 public class UserDTO {
-
     private Long id;
 
     @NotBlank
@@ -22,10 +21,10 @@ public class UserDTO {
     @Size(min = 1, max = 50)
     private String login;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String firstName;
 
-    @Size(max = 50)
+    @Size(max = 200)
     private String lastName;
 
     @Size(max = 200)
@@ -46,19 +45,18 @@ public class UserDTO {
     @Size(max = 200)
     private String country;
 
-    private String ownerId;
-
     @Size(max = 50)
     private String phone;
 
     @Email
-    @Size(min = 5, max = 254)
+    @Size( max = 254)
     private String email;
 
     @Size(max = 256)
     private String imageUrl;
 
-
+    @Size(max = 255)
+    private String password;
 
     private boolean activated = false;
 
@@ -67,11 +65,11 @@ public class UserDTO {
 
     private String createdBy;
 
-    private Instant createdDate;
+    private LocalDateTime createdDate;
 
     private String lastModifiedBy;
 
-    private Instant lastModifiedDate;
+    private LocalDateTime lastModifiedDate;
 
     private Set<String> authorities;
 
@@ -85,6 +83,7 @@ public class UserDTO {
         this.firstName = userEntity.getFirstName();
         this.lastName = userEntity.getLastName();
         this.email = userEntity.getEmail();
+        this.password = userEntity.getPassword();
         this.activated = userEntity.getActivated();
         this.imageUrl = userEntity.getImageUrl();
         this.langKey = userEntity.getLangKey();
@@ -98,11 +97,18 @@ public class UserDTO {
         this.organizationUnit = userEntity.getOrganizationUnit();
         this.stateName = userEntity.getStateName();
         this.country = userEntity.getCountry();
-        this.ownerId = userEntity.getOwnerId();
         this.phone = userEntity.getPhone();
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Long getId() {
@@ -120,7 +126,6 @@ public class UserDTO {
     public void setLogin(String login) {
         this.login = login;
     }
-
 
     public String getFirstName() {
         return firstName;
@@ -178,11 +183,11 @@ public class UserDTO {
         this.createdBy = createdBy;
     }
 
-    public Instant getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(Instant createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -194,11 +199,11 @@ public class UserDTO {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Instant getLastModifiedDate() {
+    public LocalDateTime getLastModifiedDate() {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Instant lastModifiedDate) {
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
@@ -258,14 +263,6 @@ public class UserDTO {
         this.country = country;
     }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -296,7 +293,6 @@ public class UserDTO {
             ", localityName=" + localityName +
             ", stateName=" + stateName +
             ", country=" + country +
-            ", ownerId=" + ownerId +
             ", phone=" + phone +
             "}";
     }

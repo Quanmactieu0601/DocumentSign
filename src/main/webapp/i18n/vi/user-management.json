@@ -3,10 +3,15 @@
     "home": {
       "title": "Tài khoản",
       "createLabel": "Tạo tài khoản mới",
-      "createOrEditLabel": "Tạo hoặc sửa tài khoản"
+      "createOrEditLabel": "Tạo hoặc sửa tài khoản",
+      "uploadUser": "Tải tệp người dùng lên hệ thống",
+      "upload": "Tải lên",
+      "notfound": "Không tìm thấy người dùng",
+      "cancel": "Hủy"
     },
-    "created": "Một tài khoản mới đã được tạo với định danh {{ param }}",
-    "updated": "Một tài khoản đã được cập nhật với định danh {{ param }}",
+    "created": "Tạo tài khoản mới thành công",
+    "updated": "Cập nhật tài khoản thành công",
+    "updated-err": "Bạn cần thêm ít nhất một giá trị từ trường Tên Chung đến trường Quốc Gia",
     "deleted": "Một tài khoản đã bị xóa với định danh {{ param }}",
     "delete": {
       "question": "Bạn có chắc chắn muốn xóa tài khoản {{ login }}?"
@@ -14,6 +19,7 @@
     "detail": {
       "title": "Tài khoản"
     },
+    "downloadFileTemp": "Tải File Upload mẫu",
     "login": "Tên đăng nhập",
     "firstName": "Tên",
     "lastName": "Họ",
@@ -42,7 +48,8 @@
       },
       "fail": {
         "csrExported": "Tạo tệp CSR thất bại",
-        "uploaded": "Tải lên tệp người dùng thất bại"
+        "uploaded": "Tải lên tệp người dùng thất bại",
+        "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
     }
   }

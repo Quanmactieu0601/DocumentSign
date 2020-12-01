@@ -22,7 +22,10 @@
       "message": "Thông điệp",
       "data": "Dữ liệu",
       "type": "Kiểu",
-      "transactionReport": "Báo cáo thống kê"
+      "transactionReport": "Báo cáo thống kê",
+      "host": "Host",
+      "method": "Method",
+      "fullName": "FullName"
     }
   }
 }

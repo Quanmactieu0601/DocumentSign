@@ -1,14 +1,15 @@
 package vn.easyca.signserver.core.exception;
 
 public class ApplicationException extends Exception {
-    protected static final int SERVER_INTERNAL_ERROR_CODE = 5;
-    protected static final int CRYPTO_TOKEN_ERROR_CODE = 6;
-    protected static final int GEN_CSR_ERROR_CODE = 7;
-    protected static final int BAD_INPUT_ERROR_CODE = 8;
-    protected static final int CERTIFICATE_ERROR_CODE = 9;
-    protected static final int SIGN_ERROR_CODE = 10;
-    protected static final int CERTIFICATE_NOT_FOUND = 11;
-    protected static final int VERIFIED_EXCEPTION = 12;
+    public static final int APPLICATION_ERROR_CODE = -1;
+    public static final int SERVER_INTERNAL_ERROR_CODE = 5;
+    public static final int CRYPTO_TOKEN_ERROR_CODE = 6;
+    public static final int GEN_CSR_ERROR_CODE = 7;
+    public static final int BAD_INPUT_ERROR_CODE = 8;
+    public static final int CERTIFICATE_ERROR_CODE = 9;
+    public static final int SIGN_ERROR_CODE = 10;
+    public static final int CERTIFICATE_NOT_FOUND = 11;
+    public static final int VERIFIED_EXCEPTION = 12;
 
     private int code;
 

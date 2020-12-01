@@ -6,7 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * A Transaction.
@@ -26,7 +26,7 @@ public class Transaction implements Serializable {
     private String api;
 
     @Column(name = "trigger_time")
-    private Instant triggerTime;
+    private LocalDateTime triggerTime;
 
     @Column(name = "code")
     private String code;
@@ -40,6 +40,38 @@ public class Transaction implements Serializable {
     @Column(name = "type")
     private String type;
 
+    @Column(name = "created_by")
+    private String createdBy;
+
+    @Column(name = "host")
+    private String host;
+
+    @Column(name = "method")
+    private String method;
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public String getMethod() {
+        return method;
+    }
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -63,19 +95,18 @@ public class Transaction implements Serializable {
         this.api = api;
     }
 
-    public Instant getTriggerTime() {
+    public LocalDateTime getTriggerTime() {
         return triggerTime;
     }
 
-    public Transaction triggerTime(Instant triggerTime) {
+    public Transaction triggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
         return this;
     }
 
-    public void setTriggerTime(Instant triggerTime) {
+    public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
-
     public String getCode() {
         return code;
     }
@@ -154,7 +185,10 @@ public class Transaction implements Serializable {
             ", code='" + getCode() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
-            ", type=" + getType() +
+            ", type=" + getType() + "'" +
+            ", host=" + getHost() + "'" +
+            ", method=" + getMethod() + "'" +
+            ", createdBy=" + getCreatedBy() + "'" +
             "}";
     }
 

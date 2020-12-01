@@ -4,6 +4,8 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import vn.easyca.signserver.core.dto.CertDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -65,5 +67,38 @@ public class ExcelUtils {
             }
         }
         return dtos;
+    }
+
+    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws IOException, RequiredColumnNotFoundException{
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        int rows = sheet.getPhysicalNumberOfRows();
+        List<UserDTO> userDTOList = new ArrayList<>();
+        UserDTO userDTO = null;
+        for(int i = 1; i< rows; i++){
+            Row row = sheet.getRow(i);
+            if( row!= null){
+                userDTO = new UserDTO();
+                if(row.getCell(1)!= null ) {
+                    userDTO.setLogin(row.getCell(1).getStringCellValue());
+                }else {
+                    userDTO.setLogin(row.getCell(1, org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                }
+
+                userDTO.setFirstName(row.getCell(2,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setLastName(row.getCell(3,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setEmail(row.getCell(4,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setPhone(row.getCell(5,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setCommonName(row.getCell(6,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setOrganizationName(row.getCell(7,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setOrganizationUnit(row.getCell(8,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setLocalityName(row.getCell(9,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setStateName(row.getCell(10,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setCountry(row.getCell(11,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTO.setLangKey(row.getCell(12,  org.apache.poi.ss.usermodel.Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+                userDTOList.add(userDTO);
+            }
+        }
+        return userDTOList;
     }
 }

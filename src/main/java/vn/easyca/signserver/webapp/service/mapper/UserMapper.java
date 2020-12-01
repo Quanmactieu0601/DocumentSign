@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.service.mapper;
 
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import org.springframework.stereotype.Service;
@@ -52,7 +52,6 @@ public class UserMapper {
             userEntity.setLocalityName(userDTO.getLocalityName());
             userEntity.setStateName(userDTO.getStateName());
             userEntity.setCountry(userDTO.getCountry());
-            userEntity.setOwnerId(userDTO.getOwnerId());
             userEntity.setPhone(userDTO.getPhone());
             userEntity.setImageUrl(userDTO.getImageUrl());
             userEntity.setActivated(userDTO.isActivated());

@@ -1,9 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.WebappApp;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.Authority;
-import vn.easyca.signserver.infrastructure.database.jpa.entity.UserEntity;
-import vn.easyca.signserver.infrastructure.database.jpa.repository.UserRepository;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.service.mapper.UserMapper;
@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -528,9 +529,9 @@ public class UserEntityResourceIT {
     public void testUserToUserDTO() {
         userEntity.setId(DEFAULT_ID);
         userEntity.setCreatedBy(DEFAULT_LOGIN);
-        userEntity.setCreatedDate(Instant.now());
+        userEntity.setCreatedDate(LocalDateTime.now());
         userEntity.setLastModifiedBy(DEFAULT_LOGIN);
-        userEntity.setLastModifiedDate(Instant.now());
+        userEntity.setLastModifiedDate(LocalDateTime.now());
         Set<Authority> authorities = new HashSet<>();
         Authority authority = new Authority();
         authority.setName(AuthoritiesConstants.USER);

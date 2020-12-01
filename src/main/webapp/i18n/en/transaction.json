@@ -22,7 +22,10 @@
       "message": "Message",
       "data": "Data",
       "type": "Type",
-      "transactionReport": "Report Transaction"
+      "transactionReport": "Report Transaction",
+      "host": "Host",
+      "method": "Method",
+      "fullName": "FullName"
     }
   }
 }

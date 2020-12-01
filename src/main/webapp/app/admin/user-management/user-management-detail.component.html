@@ -2,23 +2,104 @@
     <div class="col-8">
         <div *ngIf="user">
             <h2>
-                <span jhiTranslate="userManagement.detail.title">User</span> [<b>{{ user.login }}</b>]
+                <span>User Details</span>
             </h2>
 
-            <dl class="row-md jh-entity-details">
-                <dt><span jhiTranslate="userManagement.login">Login</span></dt>
-                <dd>
-                    <span>{{ user.login }}</span>
-                    <jhi-boolean
-                        [value]="user.activated ? true : false"
-                        [textTrue]="'userManagement.activated' | translate"
-                        [textFalse]="'userManagement.deactivated' | translate">
-                    </jhi-boolean>
-                </dd>
+            <div class="row-md jh-entity-details">
 
-                <dt><span jhiTranslate="userManagement.firstName">First Name</span></dt>
-                <dd>{{ user.firstName }}</dd>
 
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="font-weight-bold">
+                            <span jhiTranslate="userManagement.login">Login</span>
+                        </td>
+                        <td>
+                            <span>{{ user.login }}</span>
+                            <jhi-boolean
+                                [value]="user.activated ? true : false"
+                                [textTrue]="'userManagement.activated' | translate"
+                                [textFalse]="'userManagement.deactivated' | translate"
+                            >
+                            </jhi-boolean>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.firstName">First Name</td>
+                        <td>{{ user.firstName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.lastName">Last Name</td>
+                        <td>{{ user.lastName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.email">Email</td>
+                        <td>{{ user.email }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.commonName">CommonName</td>
+                        <td>{{ user.commonName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.organizationName">OrganizationName
+                        </td>
+                        <td>{{ user.organizationName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.organizationUnit">OrganizationUnit
+                        </td>
+                        <td>{{ user.organizationUnit }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.localityName">LocalityName</td>
+                        <td>{{ user.localityName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.stateName">StateName</td>
+                        <td>{{ user.stateName }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.country">Country</td>
+                        <td>{{ user.country }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.langKey">Lang Key</td>
+                        <td>{{ user.langKey }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.createdBy">Created By</td>
+                        <td>{{ user.createdBy }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.createdDate">Created Date</td>
+                        <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.lastModifiedBy">Last Modified By</td>
+                        <td>{{ user.lastModifiedBy }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.lastModifiedDate">Last Modified Date
+                        </td>
+                        <td>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="font-weight-bold" jhiTranslate="userManagement.profiles">Profiles</td>
+                        <td>
+                            <div *ngFor="let authority of user.authorities">
+                                <span class="badge badge-info">{{ authority }}</span>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--
                 <dt><span jhiTranslate="userManagement.lastName">Last Name</span></dt>
                 <dd>{{ user.lastName }}</dd>
 
@@ -50,27 +131,28 @@
                 <dd>{{ user.createdBy }}</dd>
 
                 <dt><span jhiTranslate="userManagement.createdDate">Created Date</span></dt>
-                <dd>{{ user.createdDate | date:'dd/MM/yy HH:mm' }}</dd>
+                <dd>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</dd>
 
                 <dt><span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span></dt>
                 <dd>{{ user.lastModifiedBy }}</dd>
 
                 <dt><span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span></dt>
-                <dd>{{ user.lastModifiedDate | date:'dd/MM/yy HH:mm' }}</dd>
+                <dd>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</dd>
 
                 <dt><span jhiTranslate="userManagement.profiles">Profiles</span></dt>
                 <dd>
-                    <ul class="list-unstyled">
-                        <li *ngFor="let authority of user.authorities">
-                            <span class="badge badge-info">{{ authority }}</span>
-                        </li>
-                    </ul>
+                  <ul class="list-unstyled">
+                    <li *ngFor="let authority of user.authorities">
+                      <span class="badge badge-info">{{ authority }}</span>
+                    </li>
+                  </ul>
                 </dd>
-            </dl>
+              </dl> -->
 
-            <button type="submit" routerLink="../../" class="btn btn-info">
-                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
-            </button>
+                <button type="submit" routerLink="../../" class="btn btn-info">
+                    <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
