@@ -27,7 +27,6 @@ public class DateTimeUtils {
         }
     }
 
-
     public static String serialize(Date date) {
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
         return formatter.format(date);
@@ -51,7 +50,7 @@ public class DateTimeUtils {
     }
 
     public static LocalDateTime convertToLocalDateTime(String dateTime)  {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         return LocalDateTime.parse(dateTime, formatter);
     }
 }
