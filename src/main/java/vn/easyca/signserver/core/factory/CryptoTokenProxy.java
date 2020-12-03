@@ -1,4 +1,4 @@
-package vn.easyca.signserver.core.model;
+package vn.easyca.signserver.core.factory;
 
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;

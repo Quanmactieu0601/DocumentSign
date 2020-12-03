@@ -9,9 +9,9 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
 import vn.easyca.signserver.core.exception.*;
-import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.factory.CryptoTokenProxy;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.pki.sign.integrated.office.OfficeSigner;
 import vn.easyca.signserver.webapp.service.CertificateService;
 

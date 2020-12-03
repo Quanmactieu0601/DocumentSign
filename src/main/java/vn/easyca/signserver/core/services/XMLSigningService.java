@@ -1,6 +1,5 @@
 package vn.easyca.signserver.core.services;
 
-import javafx.util.Pair;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
@@ -8,26 +7,16 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
-import vn.easyca.signserver.core.dto.sign.request.SignElement;
-import vn.easyca.signserver.core.dto.sign.request.SignRequest;
-import vn.easyca.signserver.core.dto.sign.request.content.XMLSignContent;
-import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.exception.*;
-import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
-import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
-import vn.easyca.signserver.pki.sign.integrated.office.OfficeSigner;
-import vn.easyca.signserver.pki.sign.integrated.xml.SignXMLDto;
+import vn.easyca.signserver.core.factory.CryptoTokenProxy;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.pki.sign.integrated.xml.SignXMLLib;
 import vn.easyca.signserver.webapp.service.CertificateService;
 
 import java.security.PrivateKey;
-import java.security.Signature;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service

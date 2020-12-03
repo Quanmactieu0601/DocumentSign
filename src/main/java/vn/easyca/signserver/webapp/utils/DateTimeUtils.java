@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
@@ -53,5 +54,11 @@ public class DateTimeUtils {
     public static LocalDateTime convertToLocalDateTime(String dateTime)  {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(dateTime, formatter);
+    }
+
+    public static LocalDateTime convertToLocalDateTime(Date date) {
+        return Instant.ofEpochMilli(date.getTime())
+            .atZone(ZoneId.systemDefault() )
+            .toLocalDateTime();
     }
 }

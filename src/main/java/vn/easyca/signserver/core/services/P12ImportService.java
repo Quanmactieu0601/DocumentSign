@@ -17,6 +17,7 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import java.io.ByteArrayInputStream;
@@ -86,6 +87,10 @@ public class P12ImportService {
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
         certificateDTO.setTokenInfo(tokenInfo);
+        certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
+        certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
+        certificateDTO.setActiveStatus(1);
+
         CertificateDTO result = certificateService.save(certificateDTO);
 
         try {

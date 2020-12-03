@@ -1,4 +1,4 @@
-package vn.easyca.signserver.core.model;
+package vn.easyca.signserver.core.factory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;

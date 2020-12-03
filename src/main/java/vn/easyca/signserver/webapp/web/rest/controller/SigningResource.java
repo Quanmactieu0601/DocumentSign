@@ -16,7 +16,7 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.PDFSigningService;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;

@@ -52,14 +52,8 @@ public class Signature implements SignatureInterface {
             CMSProcessableInputStream msg = new CMSProcessableInputStream(content);
             CMSSignedData signedData = gen.generate(msg, false);
 
-            //add timestamp if TSA is available
-            if (Strings.isNotBlank(this.tsaUrl)) {
-                TimeStampManager timeStampManager = new TimeStampManager(this.tsaUrl);
-                signedData = timeStampManager.addSignedTimeStamp(signedData);
-            }
-
             return signedData.getEncoded();
-        } catch (GeneralSecurityException | CMSException | OperatorCreationException | TSPException e) {
+        } catch (GeneralSecurityException | CMSException | OperatorCreationException e) {
             //throw new IOException cause a SignatureInterface, but keep the stacktrace
             throw new IOException(e);
         }

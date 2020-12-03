@@ -10,9 +10,9 @@ import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
 import vn.easyca.signserver.core.exception.BadServiceInputAppException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
-import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.factory.CryptoTokenProxy;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.pki.sign.integrated.pdf.invisible.InvisiblePDFSigning;
 import vn.easyca.signserver.webapp.service.CertificateService;
 

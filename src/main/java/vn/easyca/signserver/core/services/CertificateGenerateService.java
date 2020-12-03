@@ -5,8 +5,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -19,11 +20,13 @@ import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
-import vn.easyca.signserver.webapp.utils.CommonUtils;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
 import java.security.KeyPair;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -87,7 +90,7 @@ public class CertificateGenerateService {
     private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
-        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException {
+        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException {
 //        String alias = CommonUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
@@ -108,29 +111,43 @@ public class CertificateGenerateService {
     private CertificateDTO saveNewCertificate(RawCertificate rawCertificate,
                                               String alias,
                                               String subjectInfo,
-                                              CryptoToken cryptoToken) throws CryptoTokenException {
-        CertificateDTO certificateDTO = new CertificateDTO();
-        certificateDTO.setRawData(rawCertificate.getCert());
-        certificateDTO.setSerial(rawCertificate.getSerial());
-        certificateDTO.setSubjectInfo(subjectInfo);
-        certificateDTO.setTokenType(CertificateDTO.PKCS_11);
-        certificateDTO.setAlias(alias);
-        certificateDTO.setOwnerId(alias);
-        certificateDTO.setModifiedDate(new Date());
-        TokenInfo tokenInfo = new TokenInfo()
-            .setName(hsmConfig.getName());
-        if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
-            tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
-        tokenInfo.setPassword(hsmConfig.getModulePin());
-        tokenInfo.setLibrary(hsmConfig.getLibrary());
-        if (hsmConfig.getAttributes() != null)
-            tokenInfo.setP11Attrs(hsmConfig.getAttributes());
-        certificateDTO.setTokenInfo(tokenInfo);
+                                              CryptoToken cryptoToken) throws ApplicationException {
 
-        certificateDTO = encryptionHelper.encryptCert(certificateDTO);
-        vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
-        entity = certificateRepository.save(entity);
-        return certificateDTO;
+        String certB64 = rawCertificate.getCert();
+        String serial = rawCertificate.getSerial();
+        X509Certificate x509Certificate = null;
+        try {
+            x509Certificate = CommonUtils.decodeBase64X509(certB64);
+            if (x509Certificate == null)
+                throw new ApplicationException("Cannot init X509Certificate from cert with serial: " + serial);
+            CertificateDTO certificateDTO = new CertificateDTO();
+            certificateDTO.setRawData(certB64);
+            certificateDTO.setSerial(serial);
+            certificateDTO.setSubjectInfo(subjectInfo);
+            certificateDTO.setTokenType(CertificateDTO.PKCS_11);
+            certificateDTO.setAlias(alias);
+            certificateDTO.setOwnerId(alias);
+            certificateDTO.setModifiedDate(new Date());
+            certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
+            certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
+            certificateDTO.setActiveStatus(1);
+            TokenInfo tokenInfo = new TokenInfo()
+                .setName(hsmConfig.getName());
+            if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
+                tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
+            tokenInfo.setPassword(hsmConfig.getModulePin());
+            tokenInfo.setLibrary(hsmConfig.getLibrary());
+            if (hsmConfig.getAttributes() != null)
+                tokenInfo.setP11Attrs(hsmConfig.getAttributes());
+            certificateDTO.setTokenInfo(tokenInfo);
+
+            certificateDTO = encryptionHelper.encryptCert(certificateDTO);
+            vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
+            entity = certificateRepository.save(entity);
+            return certificateDTO;
+        } catch (CertificateException e) {
+            throw new ApplicationException("Certificate Exception", e);
+        }
     }
 
     private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws ApplicationException {
@@ -197,7 +214,7 @@ public class CertificateGenerateService {
      * @throws CryptoTokenException
      */
     private CertificateGenerateResult.Cert createCertFromCSR(CertificateGenerateDTO dto) throws
-        CryptoTokenException, CryptoTokenProxyException {
+        CryptoTokenException, CryptoTokenProxyException, ApplicationException {
 //        String alias = CommonUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
@@ -268,7 +285,7 @@ public class CertificateGenerateService {
     }
 
 
-    public void saveCerts(List<CertDTO> dtos) throws CryptoTokenException, CryptoTokenProxyException {
+    public void saveCerts(List<CertDTO> dtos) throws CryptoTokenException, CryptoTokenProxyException, ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         for (CertDTO dto : dtos) {
             Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(dto.getOwnerId());
