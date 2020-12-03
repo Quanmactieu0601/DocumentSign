@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ChartType, ChartOptions, ChartLegendLabelOptions } from 'chart.js';
+import { ChartType, ChartOptions } from 'chart.js';
 import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { TransactionService } from 'app/entities/transaction/transaction.service';
 import { FormBuilder } from '@angular/forms';
-import { error } from '@angular/compiler/src/util';
+
 @Component({
   selector: 'jhi-transaction-report',
   templateUrl: './transaction-report.component.html',
@@ -58,14 +58,24 @@ export class TransactionReportComponent implements OnInit {
   }
 
   onSubmit1(): void {
-    this.transactionService.exportPDFfromjasper().subscribe(
-      (res: HttpResponse<any>) => {
-        console.log(res.body);
-        console.log('success');
+    const dataExport = {
+      startDate: this.userSearch.get(['startDate'])!.value,
+      endDate: this.userSearch.get(['endDate'])!.value,
+      type: this.userSearch.get(['type'])!.value,
+    };
+    this.transactionService.exportPDFfromjasper(dataExport.startDate, dataExport.endDate, dataExport.type).subscribe(
+      res => {
+        const blob = new Blob([res], { type: 'application/pdf' });
+        const downloadURL = window.URL.createObjectURL(res);
+        const link = document.createElement('a');
+        link.href = downloadURL;
+        link.download = 'Report.pdf';
+        link.click();
+        console.log('Export file success');
       },
       error => {
         console.log(error);
-        console.log('failure');
+        console.log(' Export file failure');
       }
     );
   }

@@ -23,5 +23,6 @@ import { RouterModule } from '@angular/router';
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],
+  declarations: [],
 })
 export class WebappEntityModule {}

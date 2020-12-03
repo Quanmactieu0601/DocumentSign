@@ -1,49 +1,40 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import com.itextpdf.text.DocumentException;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-import vn.easyca.signserver.webapp.service.TransactionService;
-import vn.easyca.signserver.webapp.service.dto.TransactionReportDTO;
-import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import vn.easyca.signserver.webapp.service.TransactionService;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.dto.TransactionReportDTO;
+import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 
-import java.io.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.*;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
 
 /**
  * REST controller for managing {@link vn.easyca.signserver.webapp.domain.Transaction}.
  */
+
+
 @RestController
 @RequestMapping("/api")
 public class TransactionResource {
@@ -51,12 +42,10 @@ public class TransactionResource {
     private final Logger log = LoggerFactory.getLogger(TransactionResource.class);
 
     private final String ENTITY_NAME = "transaction";
-    private static final String OUTPUT_FILE = "test.pdf";
-    private static final String UTF_8 = "UTF-8";
 
 
     static final String fileName = "src/main/resources/JasperDesign.jrxml";
-    static final String outFile = "src/main/resources/Reports23.pdf";
+
     @Autowired
     SpringTemplateEngine templateEngine;
 
@@ -162,6 +151,8 @@ public class TransactionResource {
      * @param startdate, enddate, type from transaction
      * @return the total request success and totals request fail .
      */
+
+
     @GetMapping("/transactions/report/{startDate}/{endDate}/{type}")
     public ResponseEntity<TransactionReportDTO> getAllTransactionBetweenDate(@PathVariable("startDate") String startdate,
                                                                              @PathVariable("endDate") String enddate,
@@ -179,6 +170,7 @@ public class TransactionResource {
                 totalfalse += 1;
             }
         }
+
         if (totalfalse != 0 || totalsuccess != 0) {
             transactionReportDTO.setTotalfail(totalfalse);
             transactionReportDTO.setTotalsuccess(totalsuccess);
@@ -187,86 +179,36 @@ public class TransactionResource {
         return ResponseEntity.ok().body(transactionReportDTO);
     }
 
-//
-//    @GetMapping("/transactions/exportPDF")
-//    public void savePDF() throws IOException, DocumentException, com.lowagie.text.DocumentException {
-//        log.debug("REST request to export  PDF Transactions ");
-//
-//        List<TransactionDTO> listTranscation = new ArrayList<>(3000);
-//        for (int i = 0; i < 3000; i++) {
-//            TransactionDTO transactionDTO = new TransactionDTO();
-//            transactionDTO.setApi("api" + i);
-//            transactionDTO.setCode("code" + i);
-//            transactionDTO.setData(" components " + i);
-//            transactionDTO.setMessage("message  " + i);
-//            transactionDTO.setTriggerTime(null);
-//            transactionDTO.setType("SYSTEM");
-//            listTranscation.add(transactionDTO);
-//        }
-//
-//        Context context = new Context();
-//        context.setVariable("listReport", listTranscation);
-//
-//        String renderdHtmlContext = templateEngine.process("template", context);
-//        String xHtml = convertToXhtml(renderdHtmlContext);
-//        ITextRenderer renderer = new ITextRenderer();
-//
-//        String baseUrl = FileSystems.getDefault()
-//            .getPath("src", "main", "resources", "templates")
-//            .toUri()
-//            .toURL()
-//            .toString();
-//        renderer.setDocumentFromString(xHtml, baseUrl);
-//        renderer.layout();
-//
-//        OutputStream outputStream = new FileOutputStream("src//test18.pdf");
-//        renderer.createPDF(outputStream);
-//        outputStream.close();
-//
-//    }
-//
-//    private String convertToXhtml(String html) throws UnsupportedEncodingException {
-//        Tidy tidy = new Tidy();
-//        tidy.setInputEncoding(UTF_8);
-//        tidy.setOutputEncoding(UTF_8);
-//        tidy.setXHTML(true);
-//        ByteArrayInputStream inputStream = new ByteArrayInputStream(html.getBytes(UTF_8));
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        tidy.parseDOM(inputStream, outputStream);
-//        return outputStream.toString(UTF_8);
-//    }
+/*
+*@code export file pdf transaction report
+* * @param startdate, enddate, type from transaction
+ * @return the file pdf transaction report
+ */
 
 
-    @GetMapping("/transactions/exportPDFJasper")
-    public void exportPDF() throws JRException, FileNotFoundException {
+
+    @GetMapping("/transactions/exportPDFJasper/{startDate}/{endDate}/{type}")
+    public void exportPDF(@PathVariable("startDate") String startdate,
+                          @PathVariable("endDate") String enddate,
+                          @PathVariable("type") String type, HttpServletResponse response) throws JRException, IOException {
 
 
         log.debug("REST request to export  PDF Transactions ");
         Map<String, Object> parameter = new HashMap<String, Object>();
-        List<TransactionDTO> listTranscation = new ArrayList<>(1000000);
-        for (int i = 0; i < 10000; i++) {
-            TransactionDTO transactionDTO = new TransactionDTO();
-            transactionDTO.setApi("api" + i);
-            transactionDTO.setCode("code" + i);
-            transactionDTO.setData(" components " + i);
-            transactionDTO.setMessage("message  " + i);
-            transactionDTO.setType("SYSTEM");
-            listTranscation.add(transactionDTO);
-        }
-
-
-        System.out.println(listTranscation);
-
+        List<TransactionDTO> listTranscation = new ArrayList<>();
+        listTranscation = transactionService.findTransactionType(startdate, enddate, type);
         JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTranscation);
         parameter.put("transactionDataSource", TransactionCollectionDataSource);
-        parameter.put("title", new String("Hi, I am Title"));
-
+        parameter.put("title", new String("Transaction Report"));
         JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
-        File file = new File(outFile);
-        OutputStream outputSteam = new FileOutputStream(file);
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputSteam);
-        System.out.println("Report Generated!");
+        OutputStream out = response.getOutputStream();
+        JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+        response.setContentType("application/pdf");
+        response.addHeader("Content-Disposition", "inline; filename=report.pdf;");
+        log.debug("Export file transaction report.pdf success !");
+
+
     }
 
 

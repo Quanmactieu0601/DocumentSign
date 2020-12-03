@@ -41,7 +41,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("startDate", startDateConverted);
         }
         if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
-            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }

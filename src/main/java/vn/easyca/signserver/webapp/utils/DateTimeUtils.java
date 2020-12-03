@@ -50,8 +50,9 @@ public class DateTimeUtils {
         return dates.toInstant();
     }
 
+
     public static LocalDateTime convertToLocalDateTime(String dateTime)  {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         return LocalDateTime.parse(dateTime, formatter);
     }
 }

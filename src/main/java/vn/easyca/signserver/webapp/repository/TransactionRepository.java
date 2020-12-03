@@ -13,7 +13,6 @@ import java.util.List;
 @SuppressWarnings({"unused", "JpaQlInspection"})
 public interface TransactionRepository extends JpaRepository<Transaction, Long> , TransactionRepositoryCustom {
     @Query(value = " FROM Transaction t WHERE t.triggerTime BETWEEN :startDate  AND :endDate  AND t.type = :type")
-
     List<Transaction> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
                                                     @Param("endDate") LocalDateTime endDate, @Param("type") String type);
 }
