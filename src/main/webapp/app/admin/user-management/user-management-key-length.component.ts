@@ -48,5 +48,6 @@ export class UserManagementKeyLengthComponent {
         });
       console.error(this.listId, this.keyLength);
     }
+    this.cancel();
   }
 }

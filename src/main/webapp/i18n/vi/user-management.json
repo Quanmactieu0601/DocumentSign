@@ -2,12 +2,13 @@
   "userManagement": {
     "home": {
       "title": "Tài khoản",
-      "createLabel": "Tạo tài khoản mới",
+      "createLabel": "Tạo mới",
       "createOrEditLabel": "Tạo hoặc sửa tài khoản",
-      "uploadUser": "Tải tệp người dùng lên hệ thống",
+      "uploadUser": "Nhập DS TK",
       "upload": "Tải lên",
       "notfound": "Không tìm thấy người dùng",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "exportCSR": "Tạo tệp CSR"
     },
     "created": "Tạo tài khoản mới thành công",
     "updated": "Cập nhật tài khoản thành công",
