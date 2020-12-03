@@ -17,6 +17,7 @@ import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.services.PDFSigningService;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
@@ -54,6 +55,7 @@ public class SigningResource {
     private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
     private final TransactionService transactionService;
     private final OfficeSigningService officeSigningService;
+    private final PDFSigningService pdfSigningService;
     private final XMLSigningService xmlSigningService;
     private final CertificateService certificateService;
     private final UserApplicationService userApplicationService;
@@ -62,11 +64,12 @@ public class SigningResource {
     private final AsyncTransactionService asyncTransactionService;
     private final SignatureImageService signatureImageService;
 
-    public SigningResource(SigningService signService, TransactionService transactionService, XMLSigningService xmlSigningService, CertificateService certificateService, UserApplicationService userApplicationService,
+    public SigningResource(SigningService signService, TransactionService transactionService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService, CertificateService certificateService, UserApplicationService userApplicationService,
                            SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
                            CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
         this.signService = signService;
         this.transactionService = transactionService;
+        this.pdfSigningService = pdfSigningService;
         this.xmlSigningService = xmlSigningService;
         this.certificateService = certificateService;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
@@ -267,6 +270,27 @@ public class SigningResource {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
+                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @PostMapping(value = "/invisiblePdf")
+    public ResponseEntity<BaseResponseVM> invisibleSignPdf(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- invisiblePdf --- {} ", signingRequest);
+        try {
+            SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
+                "200", "OK", AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
+                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }

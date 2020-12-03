@@ -5,7 +5,7 @@ import vn.easyca.signserver.webapp.config.Constants;
 
 public class OptionalDTO {
     private String hashAlgorithm = Constants.HASH_ALGORITHM.DEFAULT_HASH_ALGORITHM;
-    private String signatureAlgorithm = "SHA1WithRSA";
+    private String signatureAlgorithm = "SHA1withRSA";
 
     private boolean returnInputData;
 
@@ -18,7 +18,10 @@ public class OptionalDTO {
     }
 
     public String getSignatureAlgorithm() {
-        return signatureAlgorithm;
+        if (!StringUtils.isNullOrEmpty(signatureAlgorithm))
+            return signatureAlgorithm;
+        String hashAlgorithm = getHashAlgorithm();
+        return hashAlgorithm + "withRSA";
     }
 
     public void setSignatureAlgorithm(String signatureAlgorithm) {

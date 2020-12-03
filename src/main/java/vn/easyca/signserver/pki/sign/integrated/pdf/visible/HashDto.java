@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.sign.integrated.pdf;
+package vn.easyca.signserver.pki.sign.integrated.pdf.visible;
 
 /**
  * Created by chen on 7/26/17.
