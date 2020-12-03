@@ -100,7 +100,7 @@ public class TransactionResource {
     @GetMapping("/transactions/search")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false)  String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) throws ParseException {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, method, host, createdBy, fullName, startDate, endDate);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName, startDate, endDate);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

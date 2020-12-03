@@ -83,7 +83,7 @@ public class TransactionServiceImpl implements TransactionService  {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
         Page<TransactionDTO> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName, startDate, endDate);
         return page;
     }

@@ -41,7 +41,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("startDate", startDateConverted);
         }
         if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
-            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
@@ -73,13 +73,13 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
-        sqlBuilder.append("ORDER BY a.id DESC ");
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api,a.triggerTime as triggerTime,a.code as code,a.message as message,a.data as data,a.type as type,a.method as method,a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString())
+            String sort = QueryUtils.addMultiSort(pageable.getSort());
+            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.code as code, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
             QueryUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();

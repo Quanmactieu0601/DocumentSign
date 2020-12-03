@@ -24,7 +24,9 @@
       "type": "Type",
       "host": "Host",
       "method": "Method",
-      "fullName": "FullName"
+      "fullName": "Full Name",
+      "startDate": "Start Date",
+      "endDate": "End Date"
     }
   }
 }

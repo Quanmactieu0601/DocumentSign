@@ -14,17 +14,19 @@
         "question": "Bạn có chắc là muốn xóa Transaction {{ id }}?"
       },
       "detail": {
-        "title": "Transaction"
+        "title": "Lịch sử giao dịch"
       },
-      "api": "Api",
-      "triggerTime": "Trigger Time",
-      "code": "Code",
-      "message": "Message",
-      "data": "Data",
-      "type": "Type",
+      "Api": "Api",
+      "triggerTime": "Thời gian kích hoạt",
+      "code": "Mã",
+      "message": "Thông điệp",
+      "data": "Dữ liệu",
+      "type": "Kiểu",
       "host": "Host",
-      "method": "Method",
-      "fullName": "FullName"
+      "method": "Phương thức",
+      "fullName": "Họ và tên",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc"
     }
   }
 }
