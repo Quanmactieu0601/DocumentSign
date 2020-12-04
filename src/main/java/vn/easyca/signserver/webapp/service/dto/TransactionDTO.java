@@ -15,7 +15,7 @@ public class TransactionDTO implements Serializable {
 
     private LocalDateTime triggerTime;
 
-    private int status;
+    private boolean status;
 
     private String message;
 
@@ -113,11 +113,11 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = triggerTime;
     }
 
-    public int getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 

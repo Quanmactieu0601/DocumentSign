@@ -17,6 +17,7 @@ import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
+import vn.easyca.signserver.webapp.enm.Status;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
@@ -90,16 +91,16 @@ public class CertificateResource {
     @PostMapping("/import/p12")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
-        try {
+        try { //
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.CERTIFICATE, Method.POST,
-                1, null, AccountUtils.getLoggedAccount());
+                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.CERTIFICATE, Method.POST,
-                0, e.getMessage(), AccountUtils.getLoggedAccount());
+                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
@@ -114,17 +115,17 @@ public class CertificateResource {
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.CERTIFICATE, Method.POST,
-                1, null, AccountUtils.getLoggedAccount());
+                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.CERTIFICATE, Method.POST,
-                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.CERTIFICATE, Method.POST,
-                0, e.getMessage(), AccountUtils.getLoggedAccount());
+                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -218,17 +219,17 @@ public class CertificateResource {
         try {
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.CERTIFICATE, Method.GET,
-                1, null, AccountUtils.getLoggedAccount());
+                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.CERTIFICATE, Method.GET,
-                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.CERTIFICATE, Method.GET,
-                0, e.getMessage(), AccountUtils.getLoggedAccount());
+                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

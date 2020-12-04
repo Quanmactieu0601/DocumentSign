@@ -82,7 +82,7 @@ public class TransactionResourceIT {
         Transaction transaction = new Transaction()
             .api(DEFAULT_API)
             .triggerTime(DEFAULT_TRIGGER_TIME)
-            .status(Integer.parseInt((DEFAULT_STATUS)))
+            .status(Boolean.valueOf(DEFAULT_STATUS))
             .message(DEFAULT_MESSAGE)
             .data(DEFAULT_DATA)
             .type(DEFAULT_TYPE);
@@ -98,7 +98,7 @@ public class TransactionResourceIT {
         Transaction transaction = new Transaction()
             .api(UPDATED_API)
             .triggerTime(UPDATED_TRIGGER_TIME)
-            .status(Integer.parseInt((DEFAULT_STATUS)))
+            .status(Boolean.valueOf(DEFAULT_STATUS))
             .message(UPDATED_MESSAGE)
             .data(UPDATED_DATA)
             .type(UPDATED_TYPE);
@@ -214,7 +214,7 @@ public class TransactionResourceIT {
         updatedTransaction
             .api(UPDATED_API)
             .triggerTime(UPDATED_TRIGGER_TIME)
-            .status(Integer.parseInt((DEFAULT_STATUS)))
+            .status(Boolean.valueOf(DEFAULT_STATUS))
             .message(UPDATED_MESSAGE)
             .data(UPDATED_DATA)
             .type(UPDATED_TYPE);

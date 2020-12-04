@@ -139,8 +139,8 @@
                 <td>{{ transaction.api }}</td>
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                 <td>
-                    <div *ngIf="transaction.status == 1; else elseBlock">SUCCESS</div>
-                    <ng-template #elseBlock>FAIL</ng-template>
+                    <div *ngIf="transaction.status == true; else elseBlock">Thành Công</div>
+                    <ng-template #elseBlock>Thất bại</ng-template>
                 </td>
                 <td>{{ transaction.message }}</td>
                 <td>{{ transaction.data }}</td>

@@ -29,7 +29,7 @@ public class Transaction implements Serializable {
     private LocalDateTime triggerTime;
 
     @Column(name = "status")
-    private int status;
+    private boolean status;
 
     @Column(name = "message")
     private String message;
@@ -121,15 +121,15 @@ public class Transaction implements Serializable {
     public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
-    public int getStatus() {
+    public boolean getStatus() {
         return status;
     }
 
-    public Transaction status(int status) {
+    public Transaction status(boolean status) {
         this.status = status;
         return this;
     }
-    public void setStatus(int status) {
+    public void setStatus(boolean status) {
         this.status = status;
     }
 
