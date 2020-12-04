@@ -111,22 +111,22 @@ public class UserResource {
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
-                "400", "A New User Cannot Already Have An ID", AccountUtils.getLoggedAccount());
+                0, "A New User Cannot Already Have An ID", AccountUtils.getLoggedAccount());
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
-                "400", "Login Already Used", AccountUtils.getLoggedAccount());
+                0, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
-                "400", "Email Already Used", AccountUtils.getLoggedAccount());
+                0, "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO);
             mailService.sendCreationEmail(newUserEntity);
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
@@ -175,18 +175,18 @@ public class UserResource {
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
-                "400", "Email Already Used", AccountUtils.getLoggedAccount());
+                0, "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
-                "400", "Login Already Used", AccountUtils.getLoggedAccount());
+                0, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Method.PUT,
-            "200", "OK", AccountUtils.getLoggedAccount());
+            1, null, AccountUtils.getLoggedAccount());
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
     }
@@ -271,7 +271,7 @@ public class UserResource {
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
         asyncTransactionService.newThread("/api/users/login", TransactionType.SYSTEM, Method.DELETE,
-            "200", "OK", AccountUtils.getLoggedAccount());
+            1, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

@@ -49,7 +49,7 @@ public class UserJWTResource {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
         asyncTransactionService.newThread("/api/authenticate", TransactionType.SYSTEM, Method.POST,
-            "200", "OK", AccountUtils.getLoggedAccount());
+            1, null, AccountUtils.getLoggedAccount());
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

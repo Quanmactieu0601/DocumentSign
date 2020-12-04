@@ -1,10 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +14,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
-import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.core.model.CryptoTokenProxy;
-import vn.easyca.signserver.core.model.CryptoTokenProxyException;
 import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
@@ -29,7 +23,6 @@ import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.core.utils.HtmlImageGeneratorCustom;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.TransactionType;
@@ -42,8 +35,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -90,7 +81,7 @@ public class SigningResource {
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
             asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
                 .contentLength(resource.contentLength()) //
@@ -98,11 +89,11 @@ public class SigningResource {
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -113,17 +104,17 @@ public class SigningResource {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
             asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -134,17 +125,17 @@ public class SigningResource {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -227,17 +218,17 @@ public class SigningResource {
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                0, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

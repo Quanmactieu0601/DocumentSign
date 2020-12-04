@@ -35,17 +35,17 @@ public class SignatureVerificationResource {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
             asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+               1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -56,17 +56,17 @@ public class SignatureVerificationResource {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
             asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+                1, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                0, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+                0, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

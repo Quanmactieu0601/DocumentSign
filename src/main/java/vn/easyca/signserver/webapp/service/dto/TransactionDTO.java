@@ -15,7 +15,7 @@ public class TransactionDTO implements Serializable {
 
     private LocalDateTime triggerTime;
 
-    private String code;
+    private int status;
 
     private String message;
 
@@ -30,6 +30,16 @@ public class TransactionDTO implements Serializable {
     private String method;
 
     private String fullName;
+
+    private String action;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public String getFullName() {
         return fullName;
@@ -69,7 +79,7 @@ public class TransactionDTO implements Serializable {
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.api = transaction.getApi();
-        this.code = transaction.getCode();
+        this.status = transaction.getStatus();
         this.message = transaction.getMessage();
         this.data = transaction.getData();
         this.type = transaction.getType();
@@ -103,12 +113,12 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = triggerTime;
     }
 
-    public String getCode() {
-        return code;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -159,13 +169,15 @@ public class TransactionDTO implements Serializable {
             "id=" + getId() +
             ", api='" + getApi() + "'" +
             ", triggerTime='" + getTriggerTime() + "'" +
-            ", code='" + getCode() + "'" +
+            ", code='" + getStatus() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() +
+            ", createdBy=" + getAction() +
             "}";
     }
+
 }

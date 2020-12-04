@@ -43,8 +43,8 @@ public class TransactionResourceIT {
     private static final LocalDateTime DEFAULT_TRIGGER_TIME = LocalDateTime.now();
     private static final LocalDateTime UPDATED_TRIGGER_TIME = LocalDateTime.now();
 
-    private static final String DEFAULT_CODE = "AAAAAAAAAA";
-    private static final String UPDATED_CODE = "BBBBBBBBBB";
+    private static final String DEFAULT_STATUS = "AAAAAAAAAA";
+    private static final String UPDATE_STATUS = "BBBBBBBBBB";
 
     private static final String DEFAULT_MESSAGE = "AAAAAAAAAA";
     private static final String UPDATED_MESSAGE = "BBBBBBBBBB";
@@ -82,7 +82,7 @@ public class TransactionResourceIT {
         Transaction transaction = new Transaction()
             .api(DEFAULT_API)
             .triggerTime(DEFAULT_TRIGGER_TIME)
-            .code(DEFAULT_CODE)
+            .status(Integer.parseInt((DEFAULT_STATUS)))
             .message(DEFAULT_MESSAGE)
             .data(DEFAULT_DATA)
             .type(DEFAULT_TYPE);
@@ -98,7 +98,7 @@ public class TransactionResourceIT {
         Transaction transaction = new Transaction()
             .api(UPDATED_API)
             .triggerTime(UPDATED_TRIGGER_TIME)
-            .code(UPDATED_CODE)
+            .status(Integer.parseInt((DEFAULT_STATUS)))
             .message(UPDATED_MESSAGE)
             .data(UPDATED_DATA)
             .type(UPDATED_TYPE);
@@ -127,7 +127,7 @@ public class TransactionResourceIT {
         Transaction testTransaction = transactionList.get(transactionList.size() - 1);
         assertThat(testTransaction.getApi()).isEqualTo(DEFAULT_API);
         assertThat(testTransaction.getTriggerTime()).isEqualTo(DEFAULT_TRIGGER_TIME);
-        assertThat(testTransaction.getCode()).isEqualTo(DEFAULT_CODE);
+        assertThat(testTransaction.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testTransaction.getMessage()).isEqualTo(DEFAULT_MESSAGE);
         assertThat(testTransaction.getData()).isEqualTo(DEFAULT_DATA);
         assertThat(testTransaction.getType()).isEqualTo(DEFAULT_TYPE);
@@ -167,7 +167,7 @@ public class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(transaction.getId().intValue())))
             .andExpect(jsonPath("$.[*].api").value(hasItem(DEFAULT_API)))
             .andExpect(jsonPath("$.[*].triggerTime").value(hasItem(DEFAULT_TRIGGER_TIME.toString())))
-            .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_CODE)))
+            .andExpect(jsonPath("$.[*].code").value(hasItem(DEFAULT_STATUS)))
             .andExpect(jsonPath("$.[*].message").value(hasItem(DEFAULT_MESSAGE)))
             .andExpect(jsonPath("$.[*].data").value(hasItem(DEFAULT_DATA)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)));
@@ -186,7 +186,7 @@ public class TransactionResourceIT {
             .andExpect(jsonPath("$.id").value(transaction.getId().intValue()))
             .andExpect(jsonPath("$.api").value(DEFAULT_API))
             .andExpect(jsonPath("$.triggerTime").value(DEFAULT_TRIGGER_TIME.toString()))
-            .andExpect(jsonPath("$.code").value(DEFAULT_CODE))
+            .andExpect(jsonPath("$.code").value(DEFAULT_STATUS))
             .andExpect(jsonPath("$.message").value(DEFAULT_MESSAGE))
             .andExpect(jsonPath("$.data").value(DEFAULT_DATA))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE));
@@ -214,7 +214,7 @@ public class TransactionResourceIT {
         updatedTransaction
             .api(UPDATED_API)
             .triggerTime(UPDATED_TRIGGER_TIME)
-            .code(UPDATED_CODE)
+            .status(Integer.parseInt((DEFAULT_STATUS)))
             .message(UPDATED_MESSAGE)
             .data(UPDATED_DATA)
             .type(UPDATED_TYPE);
@@ -231,7 +231,7 @@ public class TransactionResourceIT {
         Transaction testTransaction = transactionList.get(transactionList.size() - 1);
         assertThat(testTransaction.getApi()).isEqualTo(UPDATED_API);
         assertThat(testTransaction.getTriggerTime()).isEqualTo(UPDATED_TRIGGER_TIME);
-        assertThat(testTransaction.getCode()).isEqualTo(UPDATED_CODE);
+        assertThat(testTransaction.getStatus()).isEqualTo(DEFAULT_STATUS);
         assertThat(testTransaction.getMessage()).isEqualTo(UPDATED_MESSAGE);
         assertThat(testTransaction.getData()).isEqualTo(UPDATED_DATA);
         assertThat(testTransaction.getType()).isEqualTo(UPDATED_TYPE);

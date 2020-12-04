@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -98,9 +97,9 @@ public class TransactionResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
     @GetMapping("/transactions/search")
-    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String code, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false)  String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) throws ParseException {
+    public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String status, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false)  String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate, @RequestParam(required = false) String action) throws ParseException {
         log.debug("REST request to get a page of Transactions");
-        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName, startDate, endDate);
+        Page<TransactionDTO> page = transactionService.getByFilter(pageable, api, triggerTime, status, message, data, type, host, method, createdBy, fullName, startDate, endDate, action);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -149,11 +148,11 @@ public class TransactionResource {
         List<TransactionDTO> transactionDTOList = new ArrayList<>();
         transactionDTOList = transactionService.findTransactionType(startdate, enddate, type);
         for (TransactionDTO item : transactionDTOList) {
-            if (item.getCode().equals("200")) {
-                totalsuccess += 1;
-            } else {
-                totalfalse += 1;
-            }
+//            if (item.getStatus().equals("SUCCESS")) {
+//                totalsuccess += 1;
+//            } else {
+//                totalfalse += 1;
+//            }
         }
         if (totalfalse != 0 || totalsuccess != 0) {
             transactionReportDTO.setTotalfail(totalfalse);

@@ -22,7 +22,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
+    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action) throws ParseException {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -45,9 +45,9 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(code)) {
-            sqlBuilder.append("AND a.code like :code ");
-            params.put("code", "%" + code + "%");
+        if (!QueryUtils.isNullOrEmptyProperty(status)) {
+            sqlBuilder.append("AND a.status like :status ");
+            params.put("status", "%" + status + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(message)) {
             sqlBuilder.append("AND a.message like :message ");
@@ -73,13 +73,17 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
+        if (!QueryUtils.isNullOrEmptyProperty(action)) {
+            sqlBuilder.append("AND a.action like :action ");
+            params.put("action", "%" + action + "%");
+        }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.code as code, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
+            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
             QueryUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();

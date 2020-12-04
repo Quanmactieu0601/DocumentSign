@@ -20,7 +20,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
   searchForm = this.fb.group({
     // id: [],
     api: [],
-    code: [],
+    status: [],
     message: [],
     data: [],
     type: [],
@@ -30,6 +30,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     triggerTime: [],
     startDate: [],
     endDate: [],
+    action: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -49,16 +50,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-    // this.transactionService
-    //   .query({
-    //     page: pageToLoad - 1,
-    //     size: this.itemsPerPage,
-    //     sort: this.sort(),
-    //   })
-    //   .subscribe(
-    //     (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-    //     () => this.onError()
-    //   );
     this.searchTransactions(page);
   }
 
@@ -106,8 +97,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (fieldTransaction.api != null) {
       fieldTransaction.api = fieldTransaction.api.trim();
     }
-    if (fieldTransaction.code != null) {
-      fieldTransaction.code = fieldTransaction.code.trim();
+    if (fieldTransaction.status != null) {
+      fieldTransaction.status = fieldTransaction.status.trim();
     }
     if (fieldTransaction.message != null) {
       fieldTransaction.message = fieldTransaction.message.trim();
@@ -127,14 +118,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (fieldTransaction.fullName != null) {
       fieldTransaction.fullName = fieldTransaction.fullName.trim();
     }
-    if (fieldTransaction.triggerTime != null) {
-      fieldTransaction.triggerTime = fieldTransaction.triggerTime.trim();
-    }
-    if (fieldTransaction.startDate != null) {
-      fieldTransaction.startDate = fieldTransaction.startDate.trim();
-    }
-    if (fieldTransaction.endDate != null) {
-      fieldTransaction.endDate = fieldTransaction.endDate.trim();
+    if (fieldTransaction.action != null) {
+      fieldTransaction.action = fieldTransaction.action.trim();
     }
     this.transactionService
       .findByTransaction(fieldTransaction)

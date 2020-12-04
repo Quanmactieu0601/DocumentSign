@@ -8,5 +8,5 @@ import java.text.ParseException;
 
 public interface TransactionRepositoryCustom {
 
-     Page<TransactionDTO> findByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException;
+     Page<TransactionDTO> findByFilter(Pageable pageable, String triggerTime, String api, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action) throws ParseException;
 }

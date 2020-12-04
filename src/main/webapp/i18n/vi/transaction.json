@@ -18,7 +18,7 @@
       },
       "Api": "Api",
       "triggerTime": "Thời gian kích hoạt",
-      "code": "Mã",
+      "status": "Trạng Thái",
       "message": "Thông điệp",
       "data": "Dữ liệu",
       "type": "Kiểu",
@@ -26,7 +26,8 @@
       "method": "Phương thức",
       "fullName": "Họ và tên",
       "startDate": "Ngày bắt đầu",
-      "endDate": "Ngày kết thúc"
+      "endDate": "Ngày kết thúc",
+      "action": "Hành động"
     }
   }
 }

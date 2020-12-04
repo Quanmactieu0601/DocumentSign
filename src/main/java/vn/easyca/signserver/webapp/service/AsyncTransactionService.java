@@ -16,12 +16,12 @@ public class AsyncTransactionService {
     TransactionService transactionService;
 
     @Async
-    public void newThread(String api, TransactionType type, Method method, String code, String message, String createdBy) {
+    public void newThread(String api, TransactionType type, Method method, int status, String message, String createdBy) {
         TransactionDTO transactionDTO = new TransactionDTO();
         transactionDTO.setApi(api);
         transactionDTO.setType(String.valueOf(type));
         transactionDTO.setMethod(String.valueOf(method));
-        transactionDTO.setCode(code);
+        transactionDTO.setStatus(status);
         transactionDTO.setMessage(message);
         transactionDTO.setCreatedBy(createdBy);
         transactionDTO.setTriggerTime(LocalDateTime.now());

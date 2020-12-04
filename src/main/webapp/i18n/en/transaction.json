@@ -18,7 +18,7 @@
       },
       "api": "Api",
       "triggerTime": "Trigger Time",
-      "code": "Code",
+      "status": "Status",
       "message": "Message",
       "data": "Data",
       "type": "Type",
@@ -26,7 +26,8 @@
       "method": "Method",
       "fullName": "Full Name",
       "startDate": "Start Date",
-      "endDate": "End Date"
+      "endDate": "End Date",
+      "action": "Action"
     }
   }
 }

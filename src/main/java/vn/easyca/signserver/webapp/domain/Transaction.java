@@ -28,8 +28,8 @@ public class Transaction implements Serializable {
     @Column(name = "trigger_time")
     private LocalDateTime triggerTime;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "status")
+    private int status;
 
     @Column(name = "message")
     private String message;
@@ -48,6 +48,20 @@ public class Transaction implements Serializable {
 
     @Column(name = "method")
     private String method;
+
+    @Column(name = "action")
+    private String action;
+
+    public String getAction() {
+        return action;
+    }
+    public Transaction action(String action) {
+        this.action = action;
+        return this;
+    }
+    public void setAction(String action) {
+        this.action = action;
+    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -107,16 +121,16 @@ public class Transaction implements Serializable {
     public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
-    public String getCode() {
-        return code;
+    public int getStatus() {
+        return status;
     }
 
-    public Transaction code(String code) {
-        this.code = code;
+    public Transaction status(int status) {
+        this.status = status;
         return this;
     }
-    public void setCode(String code) {
-        this.code = code;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -182,13 +196,14 @@ public class Transaction implements Serializable {
             "id=" + getId() +
             ", api='" + getApi() + "'" +
             ", triggerTime='" + getTriggerTime() + "'" +
-            ", code='" + getCode() + "'" +
+            ", code='" + getStatus() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() + "'" +
+            ", createdBy=" + getAction() + "'" +
             "}";
     }
 
