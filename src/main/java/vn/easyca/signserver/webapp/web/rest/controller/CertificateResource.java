@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
+import com.google.gson.Gson;
 import io.github.jhipster.web.util.PaginationUtil;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.InputStreamResource;
@@ -13,26 +14,21 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.core.domain.CertificateDTO;
-import vn.easyca.signserver.core.dto.CertDTO;
+import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
-import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.service.*;
-import vn.easyca.signserver.core.dto.CertificateGenerateResult;
-import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
+import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
+import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
@@ -44,13 +40,10 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResu
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/certificate")
@@ -123,6 +116,82 @@ public class CertificateResource {
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
+
+
+    @PostMapping("/importResource")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public void importResource(){
+        final File folder = new File("C:\\Users\\ADMIN\\Desktop\\certificates");
+        String CMND = "";
+        String PIN = "";
+        List<CertImportSuccessDTO> importSuccessList = new ArrayList<>();
+        List<CertImportErrorDTO> importErrorList = new ArrayList<>();
+        for (final File fileEntry : folder.listFiles()) {
+            try {
+                CMND = fileEntry.getName().split(".p12")[0].split("_")[0];
+                PIN = fileEntry.getName().split(".p12")[0].split("_")[1];
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+//                CertImportErrorDTO.c(fileEntry.getName() + "-" + e.getMessage()); continue;
+                importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage()));
+            }
+
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                String base64Certificate = encodeCertificateToBase64(fileEntry);
+
+                Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
+                ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
+                p12ImportVM.setOwnerId(userId.get().getLogin());
+                p12ImportVM.setPin(PIN);
+                p12ImportVM.setP12Base64(base64Certificate);
+
+                try {
+                    Long idCertificate = p12ImportService.insert(p12ImportVM).getId();
+                    importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
+                } catch (ApplicationException e) {
+                    log.error(e.getMessage(), e);
+                    importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage())); continue;
+                }
+            }
+        }
+        try {
+//            FileOIHelper.writeFileLine(listCMND_ID,"D://outSuccess.txt");
+//            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
+            Gson gson = new Gson();
+            String jsonSuccerss = gson.toJson(importSuccessList);
+                        FileOIHelper.writeFileLine(jsonSuccerss,"D://outSuccess.txt");
+
+            String jsonError = gson.toJson(importSuccessList);
+            FileOIHelper.writeFileLine(jsonSuccerss,"D://outError.txt");
+//            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
+        }catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    public void listFilesForFolder(final File folder) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                System.out.println(fileEntry.getName());
+            }
+        }
+    }
+
+    private static String encodeCertificateToBase64(File file) {
+        try {
+            byte[] fileContent = Files.readAllBytes(file.toPath());
+            return Base64.getEncoder().encodeToString(fileContent);
+        } catch (IOException e) {
+            throw new IllegalStateException("could not read file " + file, e);
+        }
+    }
+
+
+
 
     @PostMapping("/gen/p11")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
