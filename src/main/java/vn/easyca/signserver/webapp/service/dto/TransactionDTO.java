@@ -15,7 +15,7 @@ public class TransactionDTO implements Serializable {
 
     private LocalDateTime triggerTime;
 
-    private boolean status;
+    private Boolean status;
 
     private String message;
 
@@ -32,6 +32,16 @@ public class TransactionDTO implements Serializable {
     private String fullName;
 
     private String action;
+
+    private String extension;
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
 
     public String getAction() {
         return action;
@@ -113,11 +123,11 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = triggerTime;
     }
 
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
@@ -169,14 +179,15 @@ public class TransactionDTO implements Serializable {
             "id=" + getId() +
             ", api='" + getApi() + "'" +
             ", triggerTime='" + getTriggerTime() + "'" +
-            ", code='" + getStatus() + "'" +
+            ", status='" + getStatus() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() +
-            ", createdBy=" + getAction() +
+            ", action=" + getAction() +
+            ", extension=" + getExtension() +
             "}";
     }
 

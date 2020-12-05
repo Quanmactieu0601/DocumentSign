@@ -31,6 +31,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     startDate: [],
     endDate: [],
     action: [],
+    extension: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -120,6 +121,9 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
     if (fieldTransaction.action != null) {
       fieldTransaction.action = fieldTransaction.action.trim();
+    }
+    if (fieldTransaction.extension != null) {
+      fieldTransaction.extension = fieldTransaction.extension.trim();
     }
     this.transactionService
       .findByTransaction(fieldTransaction)

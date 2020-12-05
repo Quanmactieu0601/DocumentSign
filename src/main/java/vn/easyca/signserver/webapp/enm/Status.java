@@ -9,7 +9,7 @@ public enum Status {
         this.success = success;
     }
 
-    public boolean isSucess() {
+    public boolean isSuccess() {
         return success;
     }
 }

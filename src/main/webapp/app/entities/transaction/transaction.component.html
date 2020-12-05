@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="api" ><span
+                                <label for="api"><span
                                     jhiTranslate="webappApp.transaction.api">Api</span></label>
                                 <input type="text" class="form-control" formControlName="api">
                             </div>
@@ -22,7 +22,10 @@
                             <div class="form-group">
                                 <label for="status"><span
                                     jhiTranslate="webappApp.transaction.status">status</span></label>
-                                <input type="text" class="form-control" formControlName="status">
+                                <select class="form-control" formControlName="status">
+                                    <option>Thành Công</option>
+                                    <option>Thất Bại</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -36,7 +39,8 @@
                             <div class="form-group">
                                 <label for="startDate"><span
                                     jhiTranslate="webappApp.transaction.startDate">Start Date</span></label>
-                                <input type="datetime-local" name="date" class="form-control" formControlName="startDate">
+                                <input type="datetime-local" name="date" class="form-control"
+                                       formControlName="startDate">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -54,35 +58,49 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="host"> <span
-                                jhiTranslate="webappApp.transaction.host">Host</span></label>
-                            <input type="text" class="form-control" formControlName="host">
+                            <div class="form-group">
+                                <label for="host"> <span
+                                    jhiTranslate="webappApp.transaction.host">Host</span></label>
+                                <input type="text" class="form-control" formControlName="host">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="fullName"><span
-                                jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
-                            <input type="text" class="form-control" formControlName="fullName">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="fullName"><span
+                                    jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
+                                <input type="text" class="form-control" formControlName="fullName">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="data"><span
-                                jhiTranslate="webappApp.transaction.data">Date</span></label>
-                            <input type="text" class="form-control" formControlName="data"/>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="data"><span
+                                    jhiTranslate="webappApp.transaction.data">Date</span></label>
+                                <input type="text" class="form-control" formControlName="data"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="action"><span
+                                    jhiTranslate="webappApp.transaction.action">Action</span></label>
+                                <input type="text" class="form-control" formControlName="action"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="extension"><span
+                                    jhiTranslate="webappApp.transaction.extension">Extension</span></label>
+                                <input type="text" class="form-control" formControlName="extension"/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">
-                <fa-icon icon="search"></fa-icon>
-                Search
-            </button>
-        </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    <fa-icon icon="search"></fa-icon>
+                    Search
+                </button>
+            </div>
     </form>
 </div>
 <!-- abcd ----------------------------------------------------->
@@ -98,18 +116,22 @@
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
                 <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
+                <th scope="col" jhiSortBy="action"><span jhiTranslate="webappApp.transaction.action">Action</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="extension"><span jhiTranslate="webappApp.transaction.extension">Extension</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
                 <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="triggerTime"><span
-                    jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
+                <th scope="col" jhiSortBy="triggerTime"><span jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="status"><span jhiTranslate="webappApp.transaction.status">Status</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="message"><span
-                    jhiTranslate="webappApp.transaction.message">Message</span>
+                <th scope="col" jhiSortBy="message"><span jhiTranslate="webappApp.transaction.message">Message</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="data"><span jhiTranslate="webappApp.transaction.data">Data</span>
@@ -118,17 +140,13 @@
                 <th scope="col" jhiSortBy="type"><span jhiTranslate="webappApp.transaction.type">Type</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="action"><span jhiTranslate="webappApp.transaction.action">Action</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
                 <th scope="col" jhiSortBy="method"><span jhiTranslate="webappApp.transaction.method">Method</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="fullName"><span
-                    jhiTranslate="webappApp.transaction.fullName">Full Name</span>
+                <th scope="col" jhiSortBy="fullName"><span jhiTranslate="webappApp.transaction.fullName">Full Name</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <!-- <th scope="col"></th> -->
@@ -136,6 +154,8 @@
             </thead>
             <tbody>
             <tr *ngFor="let transaction of transactions ;trackBy: trackId">
+                <td>{{ transaction.action}}</td>
+                <td>{{ transaction.extension}}</td>
                 <td>{{ transaction.api }}</td>
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                 <td>
@@ -145,7 +165,6 @@
                 <td>{{ transaction.message }}</td>
                 <td>{{ transaction.data }}</td>
                 <td>{{ transaction.type }}</td>
-                <td>{{ transaction.action}}</td>
                 <td>{{ transaction.method }}</td>
                 <td>{{ transaction.host }}</td>
                 <td>{{ transaction.fullName }}</td>
@@ -157,16 +176,16 @@
         <div class="row justify-content-center">
             <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
-    <div class="row justify-content-center">
-        <ngb-pagination
-            [collectionSize]="totalItems"
-            [(page)]="ngbPaginationPage"
-            [pageSize]="itemsPerPage"
-            [maxSize]="5"
-            [rotate]="true"
-            [boundaryLinks]="true"
-            (pageChange)="loadPage($event)"
-        ></ngb-pagination>
+        <div class="row justify-content-center">
+            <ngb-pagination
+                [collectionSize]="totalItems"
+                [(page)]="ngbPaginationPage"
+                [pageSize]="itemsPerPage"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                (pageChange)="loadPage($event)"
+            ></ngb-pagination>
+        </div>
     </div>
-</div>
 </div>

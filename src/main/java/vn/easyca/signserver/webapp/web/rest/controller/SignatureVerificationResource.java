@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SignatureVerificationService;
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
-import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.enm.Status;
-import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
@@ -35,17 +33,17 @@ public class SignatureVerificationResource {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Action.VERIFY, Extension.HASH, Method.POST,
                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Action.VERIFY, Extension.HASH, Method.POST,
                 Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.SYSTEM, Action.VERIFY, Extension.HASH, Method.POST,
                 Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
@@ -56,17 +54,17 @@ public class SignatureVerificationResource {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Action.VERIFY, Extension.RAW, Method.POST,
                 Status.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Action.VERIFY, Extension.RAW, Method.POST,
                 Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.SYSTEM, Action.VERIFY, Extension.RAW, Method.POST,
                 Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }

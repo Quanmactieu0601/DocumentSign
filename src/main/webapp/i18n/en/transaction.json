@@ -27,7 +27,8 @@
       "fullName": "Full Name",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "action": "Action"
+      "action": "Action",
+      "extension": "Extension"
     }
   }
 }

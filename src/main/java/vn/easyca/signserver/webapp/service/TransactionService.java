@@ -42,7 +42,7 @@ public interface TransactionService {
     void delete(Long id);
 
      Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String status,
-                                      String message, String data, String type, String createdBy, String host, String method, String fullName, String startDate, String endDate, String action) throws ParseException;
+                                      String message, String data, String type, String createdBy, String host, String method, String fullName, String startDate, String endDate, String action, String extension) throws ParseException;
 
 
     /**

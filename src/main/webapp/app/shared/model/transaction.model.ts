@@ -12,6 +12,7 @@ export interface ITransaction {
   fullName?: string;
   triggerTime?: Moment;
   action?: string;
+  extension?: string;
 }
 
 export class Transaction implements ITransaction {
@@ -26,6 +27,7 @@ export class Transaction implements ITransaction {
     public method?: string,
     public fullName?: string,
     public triggerTime?: Moment,
-    public action?: string
+    public action?: string,
+    public extension?: string
   ) {}
 }

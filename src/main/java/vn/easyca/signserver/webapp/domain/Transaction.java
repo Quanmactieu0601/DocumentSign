@@ -52,6 +52,17 @@ public class Transaction implements Serializable {
     @Column(name = "action")
     private String action;
 
+    @Column(name = "extension")
+    private String extension;
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
+
     public String getAction() {
         return action;
     }
@@ -121,15 +132,15 @@ public class Transaction implements Serializable {
     public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
-    public boolean getStatus() {
+    public Boolean getStatus() {
         return status;
     }
 
-    public Transaction status(boolean status) {
+    public Transaction status(Boolean status) {
         this.status = status;
         return this;
     }
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
@@ -203,7 +214,7 @@ public class Transaction implements Serializable {
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() + "'" +
-            ", createdBy=" + getAction() + "'" +
+            ", action=" + getAction() + "'" +
             "}";
     }
 

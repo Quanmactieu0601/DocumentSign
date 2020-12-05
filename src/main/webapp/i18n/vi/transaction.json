@@ -27,7 +27,8 @@
       "fullName": "Họ và tên",
       "startDate": "Ngày bắt đầu",
       "endDate": "Ngày kết thúc",
-      "action": "Hành động"
+      "action": "Hành động",
+      "extension": "Mở rộng"
     }
   }
 }

@@ -2,6 +2,5 @@ package vn.easyca.signserver.webapp.enm;
 
 public enum TransactionType {
     SYSTEM,
-    SIGNING,
-    CERTIFICATE
+    BUSINESS
 }
