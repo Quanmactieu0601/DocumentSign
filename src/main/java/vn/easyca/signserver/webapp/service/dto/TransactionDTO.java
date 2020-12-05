@@ -83,22 +83,6 @@ public class TransactionDTO implements Serializable {
         return method;
     }
 
-    public TransactionDTO() {
-    }
-
-    public TransactionDTO(Transaction transaction) {
-        this.id = transaction.getId();
-        this.api = transaction.getApi();
-        this.status = transaction.getStatus();
-        this.message = transaction.getMessage();
-        this.data = transaction.getData();
-        this.type = transaction.getType();
-        this.triggerTime = transaction.getTriggerTime();
-        this.createdBy = transaction.getCreatedBy();
-        this.host = transaction.getHost();
-        this.method = transaction.getMethod();
-    }
-
     public Long getId() {
         return id;
     }
@@ -153,6 +137,22 @@ public class TransactionDTO implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();
+        this.api = transaction.getApi();
+        this.status = transaction.getStatus();
+        this.message = transaction.getMessage();
+        this.data = transaction.getData();
+        this.type = transaction.getType();
+        this.triggerTime = transaction.getTriggerTime();
+        this.createdBy = transaction.getCreatedBy();
+        this.host = transaction.getHost();
+        this.method = transaction.getMethod();
+    }
+
+    public TransactionDTO() {
     }
 
     @Override

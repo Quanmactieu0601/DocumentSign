@@ -66,10 +66,12 @@ public class Transaction implements Serializable {
     public String getAction() {
         return action;
     }
+
     public Transaction action(String action) {
         this.action = action;
         return this;
     }
+
     public void setAction(String action) {
         this.action = action;
     }
@@ -132,6 +134,7 @@ public class Transaction implements Serializable {
     public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
+
     public Boolean getStatus() {
         return status;
     }
@@ -140,6 +143,7 @@ public class Transaction implements Serializable {
         this.status = status;
         return this;
     }
+
     public void setStatus(Boolean status) {
         this.status = status;
     }
@@ -215,6 +219,7 @@ public class Transaction implements Serializable {
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() + "'" +
             ", action=" + getAction() + "'" +
+            ", extension=" + getExtension() + "'" +
             "}";
     }
 
