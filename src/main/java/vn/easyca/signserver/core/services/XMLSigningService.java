@@ -9,7 +9,6 @@ import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
 import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
-import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.pki.sign.integrated.xml.SignXMLLib;
 import vn.easyca.signserver.webapp.service.CertificateService;
@@ -36,12 +35,7 @@ public class XMLSigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin());
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException(e);
-        }
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin());
         SignXMLLib lib = new SignXMLLib();
         SigningResponse signingResponse = new SigningResponse();
         try {

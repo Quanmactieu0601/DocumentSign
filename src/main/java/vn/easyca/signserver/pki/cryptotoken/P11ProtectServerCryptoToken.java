@@ -228,4 +228,17 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
             throw new ApplicationException(-1, "Cannot get signature instance", e);
         }
     }
+
+    @Override
+    public boolean isInitialized() throws ApplicationException {
+        try {
+            if (ks != null) {
+                ks.aliases();
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            throw new ApplicationException("Keystore is not initialized, please check PIN number");
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.domain;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.utils.CommonUtils;
 
 import javax.persistence.Column;
@@ -148,7 +149,7 @@ public class CertificateDTO {
         this.encryptedPin = encryptedPin;
     }
 
-    public X509Certificate getX509Certificate() throws CertificateException {
+    public X509Certificate getX509Certificate() throws ApplicationException {
         if (x509Certificate != null)
             return x509Certificate;
         return x509Certificate = CommonUtils.decodeBase64X509(rawData);

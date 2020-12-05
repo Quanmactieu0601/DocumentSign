@@ -53,31 +53,18 @@ import java.util.regex.Pattern;
 public class SigningResource {
     private final SigningService signService;
     private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
-    private final TransactionService transactionService;
     private final OfficeSigningService officeSigningService;
     private final PDFSigningService pdfSigningService;
     private final XMLSigningService xmlSigningService;
-    private final CertificateService certificateService;
-    private final UserApplicationService userApplicationService;
-    private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
-    private final SignatureTemplateService signatureTemplateService;
     private final AsyncTransactionService asyncTransactionService;
-    private final SignatureImageService signatureImageService;
 
-    public SigningResource(SigningService signService, TransactionService transactionService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService, CertificateService certificateService, UserApplicationService userApplicationService,
-                           SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
-                           CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
+    public SigningResource(SigningService signService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService,
+                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService) {
         this.signService = signService;
-        this.transactionService = transactionService;
         this.pdfSigningService = pdfSigningService;
         this.xmlSigningService = xmlSigningService;
-        this.certificateService = certificateService;
-        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
-        this.userApplicationService = userApplicationService;
-        this.signatureTemplateService = signatureTemplateService;
         this.officeSigningService = officeSigningService;
         this.asyncTransactionService = asyncTransactionService;
-        this.signatureImageService = signatureImageService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -150,87 +137,6 @@ public class SigningResource {
                 "400", e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
-    }
-
-
-    @GetMapping("/getImage")
-    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
-        log.info(" --- getImage --- serial: {} ", serial);
-        try {
-            CertificateDTO certificate = certificateService.getBySerial(serial);
-
-            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-            Long userId = userEntity.get().getId();
-
-            Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateService.findOneWithUserId(userId);
-            if (!signatureTemplateDTO.isPresent()) {
-                return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
-            }
-
-            String htmlContent = getHtmlTemplateAndSignData(certificate, signatureTemplateDTO);
-            String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }
-    }
-
-
-    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
-        String signImageData = "";
-        Long signImageId = certificate.getSignatureImageId();
-        if (signImageId != null) {
-            Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
-            signImageData = signatureImageDTO.get().getImgData();
-        }
-
-        X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
-        String contentInformation = x509Certificate.getSubjectDN().getName();
-        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-        final String regexCN = "CN=\"([^\"]+)\"";
-        final String regexT = ", T=([^,]+)";
-        String CN = getElementContentNameInCertificate(contentInformation, regexCN);
-        String T = getElementContentNameInCertificate(contentInformation, regexT);
-        String[] signerInfor = CN.split(",");
-        String signerName = signerInfor[0];
-        String address = signerInfor[1];
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-        Calendar cal = Calendar.getInstance();
-
-        String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
-        htmlContent = htmlContent
-            .replaceFirst("signer", signerName)
-            .replaceFirst("position", T)
-            .replaceFirst("address", address)
-            .replaceFirst("signatureImage", signImageData)
-            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-        return htmlContent;
-    }
-
-    @Nullable
-    private String getElementContentNameInCertificate(String contentInformation, String regex) {
-
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(contentInformation);
-        String CN = null;
-        while (matcher.find()) {
-            CN = matcher.group(1);
-        }
-        return CN;
-    }
-
-    private String convertHtmlContentToBase64(String htmlContent) throws IOException {
-        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
-        InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
-        Tidy tidy = new Tidy();
-        org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-
-        Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
-        BufferedImage img = renderer.getImage();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(img, "png", os);
-        return Base64.getEncoder().encodeToString(os.toByteArray());
     }
 
     @PostMapping(value = "/office")

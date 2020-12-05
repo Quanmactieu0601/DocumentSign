@@ -60,7 +60,6 @@ public class Certificate implements Serializable {
     @Column(name = "signature_image_id")
     private Long signatureImageId;
 
-
     @Column(name = "encrypted_pin")
     private String encryptedPin;
 

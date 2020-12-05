@@ -1,6 +1,7 @@
 package vn.easyca.signserver.core.utils;
 
 import gui.ava.html.image.generator.HtmlImageGenerator;
+import vn.easyca.signserver.core.exception.ApplicationException;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,12 +26,16 @@ public class CommonUtils {
     public static String encodeBase64X509(X509Certificate certificate) throws CertificateEncodingException {
         return Base64.getEncoder().encodeToString(certificate.getEncoded());
     }
-    public static X509Certificate decodeBase64X509(String base64) throws CertificateException {
-        base64 = base64.replace("\n","");
-        byte[] encodedCert = Base64.getDecoder().decode(base64);
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(encodedCert);
-        CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
-        return (X509Certificate) certFactory.generateCertificate(inputStream);
+    public static X509Certificate decodeBase64X509(String base64) throws ApplicationException {
+        try {
+            base64 = base64.replace("\n","");
+            byte[] encodedCert = Base64.getDecoder().decode(base64);
+            ByteArrayInputStream inputStream = new ByteArrayInputStream(encodedCert);
+            CertificateFactory certFactory = CertificateFactory.getInstance("X.509");
+            return (X509Certificate) certFactory.generateCertificate(inputStream);
+        } catch (CertificateException e) {
+            throw new ApplicationException("Could not init X509 Certificate from certificate base64 data", e);
+        }
     }
 
     public static byte[] decodeBase64(String source){

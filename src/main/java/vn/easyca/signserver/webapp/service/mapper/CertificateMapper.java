@@ -1,10 +1,19 @@
 package vn.easyca.signserver.webapp.service.mapper;
+import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 
 // TODO: chuyển mapper về chuẩn
+@Component
 public class CertificateMapper {
+
+    private final CertificateEncryptionHelper encryptionHelper;
+
+    public CertificateMapper(CertificateEncryptionHelper encryptionHelper) {
+        this.encryptionHelper = encryptionHelper;
+    }
 
     public CertificateDTO map(Certificate entity) {
         if (entity == null)
@@ -23,6 +32,9 @@ public class CertificateMapper {
         certificateDTO.setActiveStatus(entity.getActiveStatus());
         certificateDTO.setSignatureImageId(entity.getSignatureImageId());
         certificateDTO.setEncryptedPin(entity.getEncryptedPin());
+
+        //TODO: update decrypt
+        certificateDTO = encryptionHelper.decryptCert(certificateDTO);
         return certificateDTO;
     }
 
@@ -30,6 +42,10 @@ public class CertificateMapper {
     public Certificate map(CertificateDTO certificateDTO) {
         if (certificateDTO == null)
             return null;
+
+        //TODO: update decrypt
+        certificateDTO = encryptionHelper.encryptCert(certificateDTO);
+
         Certificate entity = new Certificate();
         entity.setAlias(certificateDTO.getAlias());
         entity.setId(certificateDTO.getId());
@@ -42,10 +58,9 @@ public class CertificateMapper {
         entity.setValidDate(certificateDTO.getValidDate());
         entity.setExpiredDate(certificateDTO.getExpiredDate());
         entity.setActiveStatus(certificateDTO.getActiveStatus());
-        certificateDTO.setSignatureImageId(entity.getSignatureImageId());
+        entity.setSignatureImageId(certificateDTO.getSignatureImageId());
         entity.setEncryptedPin(certificateDTO.getEncryptedPin());
         return entity;
     }
-
 
 }

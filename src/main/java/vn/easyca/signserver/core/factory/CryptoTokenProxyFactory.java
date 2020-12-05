@@ -34,9 +34,9 @@ public class CryptoTokenProxyFactory {
         this.hsmConfig = hsmConfig;
     }
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws CryptoTokenProxyException, ApplicationException {
+    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws ApplicationException {
         if (certificateDTO == null)
-            throw new CryptoTokenProxyException("Certificate is not null");
+            throw new ApplicationException("Certificate is not null");
         String serial = certificateDTO.getSerial();
         String encryptedPinFromDB = certificateDTO.getEncryptedPin();
         String tokenType = certificateDTO.getTokenType();
@@ -44,11 +44,12 @@ public class CryptoTokenProxyFactory {
         // Get pin from db instead from client if db pin has value
         if (StringUtils.isNotEmpty(encryptedPinFromDB)) {
             rawPin = symmetricService.decrypt(encryptedPinFromDB);
+            // require: compare input PIN vs DB PIN if token is HSM
             if (Certificate.PKCS_11.equals(tokenType) && !rawPin.equals(pin)) {
-                throw new CryptoTokenProxyException("Certificate pin not correct!");
+                throw new ApplicationException("Certificate pin not correct!");
             }
         } else if (!StringUtils.isNotEmpty(pin)) {
-            throw new CryptoTokenProxyException("Certificate pin not correct!");
+            throw new ApplicationException("Certificate pin is empty!");
         } else
             rawPin = pin;
 
@@ -61,28 +62,28 @@ public class CryptoTokenProxyFactory {
         return new CryptoTokenProxy(((CacheElement) cache.get(cachedKey)).getCryptoToken(), certificateDTO);
     }
 
-    private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws CryptoTokenProxyException {
+    private CryptoToken resolveToken(TokenInfo tokenInfo, String type, String pin) throws ApplicationException {
         switch (type) {
             case Certificate.PKCS_11:
                 return resolveP11Token(tokenInfo);
             case Certificate.PKCS_12:
                 return resolveP12Token(tokenInfo, pin);
             default:
-                throw new CryptoTokenProxyException("Not found token type" + type);
+                throw new ApplicationException("Not found token type" + type);
         }
     }
 
-    public CryptoToken resolveP12Token(TokenInfo tokenInfo, String pin) throws CryptoTokenProxyException {
+    public CryptoToken resolveP12Token(TokenInfo tokenInfo, String pin) throws ApplicationException {
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         try {
             p12CryptoToken.initPkcs12(tokenInfo.getData(), pin);
         } catch (InitCryptoTokenException e) {
-            throw new CryptoTokenProxyException("init token has error", e);
+            throw new ApplicationException("init token has error", e);
         }
         return p12CryptoToken;
     }
 
-    public CryptoToken resolveP11Token(TokenInfo tokenInfo) throws CryptoTokenProxyException {
+    public CryptoToken resolveP11Token(TokenInfo tokenInfo) throws ApplicationException {
         // TODO: tokenInfo != null => resolve from DB (if needed | used for multiple hsm devices are running)
         CryptoToken cryptoToken = null;
         switch (hsmConfig.getType()) {
@@ -94,7 +95,7 @@ public class CryptoTokenProxyFactory {
         try {
             cryptoToken.initPkcs11();
         } catch (Exception exception) {
-            throw new CryptoTokenProxyException("Can not resolve CryptoToken.Please check information Serial and pin", exception);
+            throw new ApplicationException("Can not resolve CryptoToken.Please check information Serial and pin", exception);
         }
         return cryptoToken;
     }

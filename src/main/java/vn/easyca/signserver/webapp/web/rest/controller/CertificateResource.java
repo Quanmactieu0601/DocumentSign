@@ -15,9 +15,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
-import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
+import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.core.dto.CertificateGenerateResult;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import org.slf4j.Logger;
@@ -28,13 +32,10 @@ import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.service.AsyncTransactionService;
-import vn.easyca.signserver.webapp.utils.AccountUtils;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.ExcelUtils;
+import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
+import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
-import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
@@ -43,7 +44,13 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResu
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/certificate")
@@ -55,12 +62,21 @@ public class CertificateResource {
     private final CertificateService certificateService;
     private final AsyncTransactionService asyncTransactionService;
     private final P12ImportService p12ImportService;
+    private final SignatureImageService signatureImageService;
+    private final UserApplicationService userApplicationService;
+    private final SignatureTemplateService signatureTemplateService;
 
-    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService, AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService) {
+    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
+                               AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
+                               SignatureImageService signatureImageService, UserApplicationService userApplicationService,
+                               SignatureTemplateService signatureTemplateService) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
         this.p12ImportService = p12ImportService;
+        this.signatureImageService = signatureImageService;
+        this.userApplicationService = userApplicationService;
+        this.signatureTemplateService = signatureTemplateService;
     }
 
     @GetMapping()
@@ -251,6 +267,18 @@ public class CertificateResource {
             certificateService.updateActiveStatus(id);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(null));
         } catch (Exception e) {
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getImage")
+    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial, @RequestParam String pin) {
+        log.info(" --- getImage --- serial: {}", serial);
+        try {
+            String base64Image = certificateService.getSignatureImage(serial, pin);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

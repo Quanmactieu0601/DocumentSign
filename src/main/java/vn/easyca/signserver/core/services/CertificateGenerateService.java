@@ -25,7 +25,6 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
 import java.security.KeyPair;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -46,21 +45,21 @@ public class CertificateGenerateService {
     private final UserRepository userRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final HsmConfig hsmConfig;
-    private final CertificateEncryptionHelper encryptionHelper;
-    private final CertificateMapper mapper = new CertificateMapper();
+    private final CertificateMapper mapper;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
-                                      CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig, CertificateEncryptionHelper encryptionHelper) {
+                                      CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
+                                      CertificateMapper mapper) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
         this.userRepository = userRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.hsmConfig = hsmConfig;
-        this.encryptionHelper = encryptionHelper;
+        this.mapper = mapper;
     }
 
 
@@ -116,38 +115,33 @@ public class CertificateGenerateService {
         String certB64 = rawCertificate.getCert();
         String serial = rawCertificate.getSerial();
         X509Certificate x509Certificate = null;
-        try {
-            x509Certificate = CommonUtils.decodeBase64X509(certB64);
-            if (x509Certificate == null)
-                throw new ApplicationException("Cannot init X509Certificate from cert with serial: " + serial);
-            CertificateDTO certificateDTO = new CertificateDTO();
-            certificateDTO.setRawData(certB64);
-            certificateDTO.setSerial(serial);
-            certificateDTO.setSubjectInfo(subjectInfo);
-            certificateDTO.setTokenType(CertificateDTO.PKCS_11);
-            certificateDTO.setAlias(alias);
-            certificateDTO.setOwnerId(alias);
-            certificateDTO.setModifiedDate(new Date());
-            certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
-            certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
-            certificateDTO.setActiveStatus(1);
-            TokenInfo tokenInfo = new TokenInfo()
-                .setName(hsmConfig.getName());
-            if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
-                tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
-            tokenInfo.setPassword(hsmConfig.getModulePin());
-            tokenInfo.setLibrary(hsmConfig.getLibrary());
-            if (hsmConfig.getAttributes() != null)
-                tokenInfo.setP11Attrs(hsmConfig.getAttributes());
-            certificateDTO.setTokenInfo(tokenInfo);
+        x509Certificate = CommonUtils.decodeBase64X509(certB64);
+        if (x509Certificate == null)
+            throw new ApplicationException("Cannot init X509Certificate from cert with serial: " + serial);
+        CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.setRawData(certB64);
+        certificateDTO.setSerial(serial);
+        certificateDTO.setSubjectInfo(subjectInfo);
+        certificateDTO.setTokenType(CertificateDTO.PKCS_11);
+        certificateDTO.setAlias(alias);
+        certificateDTO.setOwnerId(alias);
+        certificateDTO.setModifiedDate(new Date());
+        certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
+        certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
+        certificateDTO.setActiveStatus(1);
+        TokenInfo tokenInfo = new TokenInfo()
+            .setName(hsmConfig.getName());
+        if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
+            tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
+        tokenInfo.setPassword(hsmConfig.getModulePin());
+        tokenInfo.setLibrary(hsmConfig.getLibrary());
+        if (hsmConfig.getAttributes() != null)
+            tokenInfo.setP11Attrs(hsmConfig.getAttributes());
+        certificateDTO.setTokenInfo(tokenInfo);
 
-            certificateDTO = encryptionHelper.encryptCert(certificateDTO);
-            vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
-            entity = certificateRepository.save(entity);
-            return certificateDTO;
-        } catch (CertificateException e) {
-            throw new ApplicationException("Certificate Exception", e);
-        }
+        vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
+        entity = certificateRepository.save(entity);
+        return certificateDTO;
     }
 
     private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws ApplicationException {

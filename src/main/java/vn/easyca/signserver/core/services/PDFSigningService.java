@@ -7,6 +7,7 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.BadServiceInputAppException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
@@ -61,8 +62,8 @@ public class PDFSigningService {
             signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
             signingResponse.setResponseContentList(responseContentList);
             return signingResponse;
-        } catch (CryptoTokenProxyException | CertificateException e) {
-            throw new CertificateAppException("Certificate has error", e);
+        } catch (ApplicationException e) {
+            throw new ApplicationException("Certificate has error", e);
         }
     }
 }

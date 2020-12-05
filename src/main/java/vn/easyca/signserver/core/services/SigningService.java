@@ -57,12 +57,7 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException("Certificate has error", e);
-        }
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
 
         String temFilePath = TEM_DIR + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
@@ -83,7 +78,7 @@ public class SigningService {
                 new Certificate[]{cryptoTokenProxy.getX509Certificate()},
                 temFilePath
             );
-        } catch (CryptoTokenException | CertificateException e) {
+        } catch (CryptoTokenException e) {
             throw new CertificateAppException("Certificate has error", e);
         }
         signPDFDto.setSignField(element.getSigner());
@@ -108,12 +103,8 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException("Certificate has error!please check serial and pin", e);
-        }
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
+
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
         RawSigner rawSigner = new RawSigner();
@@ -145,18 +136,13 @@ public class SigningService {
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
-        CryptoTokenProxy cryptoTokenProxy = null;
-        try {
-            cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
-        } catch (CryptoTokenProxyException e) {
-            throw new CertificateAppException(e);
-        }
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
 
         PrivateKey privateKey = null;
         try {
             privateKey = cryptoTokenProxy.getPrivateKey();
         } catch (CryptoTokenException e) {
-            throw new SigningAppException("Sign has occurs error", e);
+            throw new SigningAppException("Sign has occurs error, please check PIN number", e);
         }
 
         List<SignResultElement> resultElements = new ArrayList<>();
