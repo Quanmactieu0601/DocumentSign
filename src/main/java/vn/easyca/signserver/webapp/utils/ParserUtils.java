@@ -33,6 +33,8 @@ public class ParserUtils {
         return CN;
     }
 
+
+
     public static String convertHtmlContentToBase64(String htmlContent) throws ApplicationException {
         //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
         try {

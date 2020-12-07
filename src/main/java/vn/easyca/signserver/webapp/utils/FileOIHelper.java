@@ -8,26 +8,28 @@ import java.util.List;
 
 public class FileOIHelper {
     public static String readFile(String fileName)
-        throws IOException
-    {
+        throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(fileName));
         return new String(encoded, StandardCharsets.UTF_8);
     }
 
-    public static void writeFileLine(String content,String filePath) throws IOException {
+    public static void writeFile(String content, String filePath) throws IOException {
         File fout = new File(filePath);
         FileOutputStream fos = new FileOutputStream(fout);
-
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        bw.write(content);
+        bw.newLine();
+        bw.close();
+    }
 
-//        for (int i = 0; i < listCMND_ID.size(); i++) {
-//            bw.write(listCMND_ID.get(i));
-//            bw.newLine();
-//        }
-
-            bw.write(content);
+    public static void writeFileLine(List<String> contents, String filePath) throws IOException {
+        File fout = new File(filePath);
+        FileOutputStream fos = new FileOutputStream(fout);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+        for (int i = 0; i < contents.size(); i++) {
+            bw.write(contents.get(i));
             bw.newLine();
-
+        }
         bw.close();
     }
 }
