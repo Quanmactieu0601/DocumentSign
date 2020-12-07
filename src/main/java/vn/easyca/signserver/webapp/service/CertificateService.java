@@ -135,4 +135,13 @@ public class CertificateService {
         String htmlContent = ParserUtils.getHtmlTemplateAndSignData(subjectDN, signatureTemplate, signatureImageData);
         return ParserUtils.convertHtmlContentToBase64(htmlContent);
     }
+
+    public Optional<Certificate> findOne(Long id) {
+        return certificateRepository.findById(id);
+    }
+
+    @Transactional
+    public void saveOrUpdate(Certificate certificate) {
+        certificateRepository.save(certificate);
+    }
 }

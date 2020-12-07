@@ -33,12 +33,27 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
+
+    # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
     #    username: postgres
     #    password: 123
-    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: signserver
-    password: Hddt@202o
+
+    # SDS - Cau hinh Test
+    #    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: signserver
+    #    password: Hddt@202o
+
+    # BV Q11 - cau hinh db master
+    #    url: jdbc:mariadb://172.16.99.18:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: root
+    #    password: DbQ1!@202o
+
+    # BV Q11 - cau hinh db slave
+    url: jdbc:mariadb://172.16.99.17:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: replicatedb
+    password: DbSlave@202o
+
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -146,3 +161,4 @@ jhipster:
 
 application:
   symmetric-key: c2RzQHNpZ24yMDIw
+  save-p12-pin: false

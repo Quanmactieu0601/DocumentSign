@@ -125,3 +125,4 @@ jhipster:
 
 application:
   symmetric-key: c2RzQHNpZ24yMDIw
+  save-p12-pin: false

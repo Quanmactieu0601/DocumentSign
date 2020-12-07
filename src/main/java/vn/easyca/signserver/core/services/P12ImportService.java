@@ -8,11 +8,11 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.pki.cryptotoken.HsmConfig;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.config.ApplicationProperties;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.CertificateService;
@@ -20,11 +20,9 @@ import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
-import java.io.ByteArrayInputStream;
 import java.security.KeyStoreException;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,14 +34,16 @@ public class P12ImportService {
     private final UserApplicationService userApplicationService;
     private final SymmetricEncryptors symmetricService;
     private final CertificateRepository certificateRepository;
+    private final ApplicationProperties properties;
 
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
-                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository) {
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, ApplicationProperties properties) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
+        this.properties = properties;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -83,7 +83,8 @@ public class P12ImportService {
         certificateDTO.setAlias(alias);
         certificateDTO.setTokenType(CertificateDTO.PKCS_12);
         // Lưu thêm mã pin khi tạo cert
-        certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
+        if (properties.getSaveP12Pin())
+            certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
         certificateDTO.setTokenInfo(tokenInfo);

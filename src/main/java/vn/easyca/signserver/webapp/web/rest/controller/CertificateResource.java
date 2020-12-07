@@ -18,6 +18,7 @@ import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
+import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.service.*;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
+import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
+import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
@@ -43,6 +46,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 @RestController
@@ -58,11 +62,12 @@ public class CertificateResource {
     private final SignatureImageService signatureImageService;
     private final UserApplicationService userApplicationService;
     private final SignatureTemplateService signatureTemplateService;
+    private final SignatureImageMapper signatureImageMapper;
 
     public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
-                               SignatureTemplateService signatureTemplateService) {
+                               SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
@@ -70,6 +75,7 @@ public class CertificateResource {
         this.signatureImageService = signatureImageService;
         this.userApplicationService = userApplicationService;
         this.signatureTemplateService = signatureTemplateService;
+        this.signatureImageMapper = signatureImageMapper;
     }
 
     @GetMapping()
@@ -120,7 +126,7 @@ public class CertificateResource {
 
     @PostMapping("/importResource")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public void importResource(){
+    public void importResource() {
         final File folder = new File("C:\\Users\\ADMIN\\Desktop\\certificates");
         String CMND = "";
         String PIN = "";
@@ -152,7 +158,8 @@ public class CertificateResource {
                     importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
                 } catch (ApplicationException e) {
                     log.error(e.getMessage(), e);
-                    importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage())); continue;
+                    importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage()));
+                    continue;
                 }
             }
         }
@@ -161,12 +168,75 @@ public class CertificateResource {
 //            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
             Gson gson = new Gson();
             String jsonSuccerss = gson.toJson(importSuccessList);
-                        FileOIHelper.writeFileLine(jsonSuccerss,"D://outSuccess.txt");
+            FileOIHelper.writeFileLine(jsonSuccerss, "D://outSuccess.txt");
 
             String jsonError = gson.toJson(importSuccessList);
-            FileOIHelper.writeFileLine(jsonSuccerss,"D://outError.txt");
+            FileOIHelper.writeFileLine(jsonSuccerss, "D://outError.txt");
 //            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
-        }catch (IOException e) {
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @PostMapping("/importImage")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public void importImage() {
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
+        Long userId = userEntity.get().getId();
+        List<CertImportErrorDTO> importErrors = new ArrayList<>();
+        Gson gson = new Gson();
+        String certFilePath = "C:\\Users\\ThanhLD\\Downloads\\outSuccess.txt";
+        String imgFolderPath = "E:\\Document\\EasyCA\\SignServer\\BVQ11_Data\\ImageSignature\\Mix";
+        File imgFolder = new File(imgFolderPath);
+        String jsonCertSuccessMapping = null;
+        try {
+            jsonCertSuccessMapping = new String(Files.readAllBytes(Paths.get(certFilePath)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CertImportSuccessDTO[] importSuccessList = gson.fromJson(jsonCertSuccessMapping, CertImportSuccessDTO[].class);
+        Map<String, String> mapImage = new HashMap<>();
+        for (File fileEntry : imgFolder.listFiles()) {
+            String filePath = fileEntry.getPath();
+            String fileName = fileEntry.getName().substring(0, fileEntry.getName().indexOf(".")).trim();
+            try {
+                String b64Image = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(filePath)));
+                mapImage.put(fileName, b64Image);
+            } catch (IOException e) {
+                importErrors.add(new CertImportErrorDTO(fileName, "Khong get duoc base64"));
+            }
+
+        }
+        for (CertImportSuccessDTO cert : importSuccessList) {
+            if (mapImage.containsKey(cert.getPersonIdentity().trim())) {
+                try {
+                    Optional<Certificate> certificateOptional = certificateService.findOne(Long.parseLong(cert.getCertId()));
+                    if (certificateOptional.isPresent()) {
+                        Certificate certificate = certificateOptional.get();
+                        if (certificate.getSignatureImageId() == null) {
+                            String b64Img = mapImage.get(cert.getPersonIdentity().trim());
+                            SignatureImage signatureImage = new SignatureImage();
+                            signatureImage.setImgData(b64Img);
+                            signatureImage.setUserId(userId);
+                            SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
+                            dto = signatureImageService.save(dto);
+
+                            certificate.setSignatureImageId(dto.getId());
+                            certificateService.saveOrUpdate(certificate);
+                        }
+
+                    }
+                } catch (Exception e) {
+                    importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Loi khi luu anh va cert"));
+                }
+            } else {
+                importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Khong ton tai anh"));
+            }
+        }
+        try {
+            String jsonError = gson.toJson(importErrors);
+            FileOIHelper.writeFileLine(jsonError, "D://outError.txt");
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -189,8 +259,6 @@ public class CertificateResource {
             throw new IllegalStateException("could not read file " + file, e);
         }
     }
-
-
 
 
     @PostMapping("/gen/p11")
