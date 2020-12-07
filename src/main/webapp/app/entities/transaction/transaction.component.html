@@ -15,16 +15,23 @@
                             <div class="form-group">
                                 <label for="method"><span
                                     jhiTranslate="webappApp.transaction.method">Method</span></label>
-                                <input type="text" class="form-control" formControlName="method">
+                                <select class="form-control" formControlName="method">
+                                    <option>POST</option>
+                                    <option>PUT</option>
+                                    <option>UPDATE</option>
+                                    <option>GET</option>
+                                    <option></option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="status"><span
-                                    jhiTranslate="webappApp.transaction.status">status</span></label>
+                                    jhiTranslate="webappApp.transaction.status">Status</span></label>
                                 <select class="form-control" formControlName="status">
-                                    <option>Thành Công</option>
-                                    <option>Thất Bại</option>
+                                    <option value="SUCCESS">Thành Công</option>
+                                    <option value="FAIL">Thất Bại</option>
+                                    <option></option>
                                 </select>
                             </div>
                         </div>
@@ -54,7 +61,11 @@
                             <div class="form-group">
                                 <label for="type"><span
                                     jhiTranslate="webappApp.transaction.type">Type</span></label>
-                                <input type="text" class="form-control" formControlName="type">
+                                <select class="form-control" formControlName="type">
+                                    <option>SYSTEM</option>
+                                    <option>BUSINESS</option>
+                                    <option></option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -82,14 +93,36 @@
                             <div class="form-group">
                                 <label for="action"><span
                                     jhiTranslate="webappApp.transaction.action">Action</span></label>
-                                <input type="text" class="form-control" formControlName="action"/>
+                                <select class="form-control" formControlName="action">
+                                    <option>SIGN</option>
+                                    <option>HASH</option>
+                                    <option>VERIFY</option>
+                                    <option>CREATE</option>
+                                    <option>DELETE</option>
+                                    <option>GET_INFO</option>
+                                    <option>LOGIN</option>
+                                    <option>UPDATE</option>
+                                    <option>MODIFY</option>
+                                    <option></option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="extension"><span
                                     jhiTranslate="webappApp.transaction.extension">Extension</span></label>
-                                <input type="text" class="form-control" formControlName="extension"/>
+                                <select class="form-control" formControlName="extension">
+                                    <option>PDF</option>
+                                    <option>HASH</option>
+                                    <option>CERT</option>
+                                    <option>P11</option>
+                                    <option>P12</option>
+                                    <option>CSR</option>
+                                    <option>RAW</option>
+                                    <option>OOXML</option>
+                                    <option>XML</option>
+                                    <option></option>
+                                </select>
                             </div>
                         </div>
                     </div>

@@ -93,12 +93,12 @@ public class CertificateResource {
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.P12, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.P12, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
     }
@@ -113,17 +113,17 @@ public class CertificateResource {
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
-                Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -144,17 +144,17 @@ public class CertificateResource {
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/createCSRAndUser", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/createCSRAndUser", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/createCSRAndUser", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -173,12 +173,12 @@ public class CertificateResource {
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/createCSR", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/createCSR", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -198,7 +198,7 @@ public class CertificateResource {
             byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
             asyncTransactionService.newThread("/api/certificate/exportCsr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
@@ -206,7 +206,7 @@ public class CertificateResource {
         } catch (Exception e) {
             log.error(e.getMessage());
             asyncTransactionService.newThread("/api/certificate/exportCsr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return null;
         }
     }
@@ -220,12 +220,12 @@ public class CertificateResource {
             //TODO: hien tai moi chi luu chu chua dua ra thong bao loi chi tiet tung cert (neu xay ra loi)
 //            return ResponseEntity.status(HttpStatus.OK).body(BaseResponseVM.CreateNewSuccessResponse(null));
             asyncTransactionService.newThread("/api/certificate/uploadCert", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
         } catch (Exception e) {
 //            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new BaseResponseVM(-1, null, e.getMessage()));
             asyncTransactionService.newThread("/api/certificate/uploadCert", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
         }
     }
@@ -235,17 +235,17 @@ public class CertificateResource {
         try {
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.BUSINESS, Action.GET_INFO, Extension.CERT, Method.GET,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.BUSINESS, Action.GET_INFO, Extension.CERT, Method.GET,
-                Status.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.BUSINESS, Action.GET_INFO, Extension.CERT, Method.GET,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -256,11 +256,11 @@ public class CertificateResource {
         try {
             certificateService.updateActiveStatus(id);
             asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.UPDATE, null, Method.PUT,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(null));
         } catch (Exception e) {
             asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.UPDATE, null, Method.PUT,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }

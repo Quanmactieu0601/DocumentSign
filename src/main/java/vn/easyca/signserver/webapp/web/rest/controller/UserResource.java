@@ -109,23 +109,23 @@ public class UserResource {
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, "A New User Cannot Already Have An ID", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, "A New User Cannot Already Have An ID", AccountUtils.getLoggedAccount());
             throw new BadRequestAlertException("A new user cannot already have an ID", "userManagement", "idexists");
             // Lowercase the user login before comparing with database
         } else if (userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).isPresent()) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO);
             mailService.sendCreationEmail(newUserEntity);
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.created(new URI("/api/users/" + newUserEntity.getLogin()))
                 .headers(HeaderUtil.createAlert(applicationName, "userManagement.created", newUserEntity.getLogin()))
                 .body(newUserEntity);
@@ -141,32 +141,32 @@ public class UserResource {
                 // TODO: use other method instead of use registerUser
                 userApplicationService.registerUser(userDTO, userDTO.getLogin());
             }
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
         } catch (IOException e) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
         } catch (UsernameAlreadyUsedException usernameAlreadyUsedException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, usernameAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, usernameAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
         } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, emailAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, emailAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
         } catch (RequiredColumnNotFoundException requiredColumnNotFoundException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, requiredColumnNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, requiredColumnNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, requiredColumnNotFoundException.getMessage()));
         } catch (InvalidCountryColumnLength invalidCountryColumnLength) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, invalidCountryColumnLength.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, invalidCountryColumnLength.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, invalidCountryColumnLength.getMessage()));
         } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, null, Method.POST,
-                Status.FAIL, infoFromCNToCountryNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, infoFromCNToCountryNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, infoFromCNToCountryNotFoundException.getMessage()));
         }
     }
@@ -185,19 +185,19 @@ public class UserResource {
         log.debug("REST request to update User : {}", userDTO);
         Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.PUT,
-                Status.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         }
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.PUT,
-                Status.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
-        asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, null, Method.PUT,
-            Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+        asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseUtil.wrapOrNotFound(updatedUser,
             HeaderUtil.createAlert(applicationName, "userManagement.updated", userDTO.getLogin()));
     }
@@ -280,8 +280,8 @@ public class UserResource {
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
-        asyncTransactionService.newThread("/api/users/login", TransactionType.SYSTEM, Action.DELETE, null, Method.DELETE,
-            Status.SUCCESS, null, AccountUtils.getLoggedAccount());
+        asyncTransactionService.newThread("/api/users/login", TransactionType.SYSTEM, Action.DELETE, Extension.NONE, Method.DELETE,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createAlert(applicationName, "userManagement.deleted", login)).build();
     }
 }

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import org.springframework.data.domain.Page;

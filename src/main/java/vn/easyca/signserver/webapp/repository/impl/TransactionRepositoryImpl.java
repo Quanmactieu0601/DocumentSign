@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import javax.persistence.*;
-import java.text.ParseException;
 import java.time.*;
 import java.util.*;
 
@@ -22,7 +22,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action, String extension) throws ParseException {
+    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, TransactionStatus statusEnum, String message, String data, TransactionType typeEnum, String host, Method methodEnum, String createdBy, String fullName, String startDate, String endDate, Action actionEnum, Extension extensionEnum) {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -45,15 +45,9 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(status)) {
-            Boolean a = null;
-            if (status.equals("Thành Công")){
-                a = true;
-            }else if ((status.equals("Thất Bại"))){
-                a = false;
-            }
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(statusEnum))) {
             sqlBuilder.append("AND a.status =: status ");
-            params.put("status", a);
+            params.put("status", statusEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(message)) {
             sqlBuilder.append("AND a.message like :message ");
@@ -63,29 +57,29 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.data like :data ");
             params.put("data", "%" + data + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(type)) {
-            sqlBuilder.append("AND a.type like :type ");
-            params.put("type", "%" + type + "%");
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(typeEnum))) {
+            sqlBuilder.append("AND a.type = :type ");
+            params.put("type", typeEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(host)) {
             sqlBuilder.append("AND a.host like :host ");
             params.put("host", "%" + host + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(method)) {
-            sqlBuilder.append("AND a.method like :method ");
-            params.put("method", "%" + method + "%");
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(methodEnum))) {
+            sqlBuilder.append("AND a.method = :method ");
+            params.put("method", methodEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(fullName)) {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(action)) {
-            sqlBuilder.append("AND a.action like :action ");
-            params.put("action", "%" + action + "%");
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(actionEnum))) {
+            sqlBuilder.append("AND a.action = :action ");
+            params.put("action", actionEnum);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(extension)) {
-            sqlBuilder.append("AND a.extension like :extension ");
-            params.put("extension", "%" + extension + "%");
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(extensionEnum))) {
+            sqlBuilder.append("AND a.extension = :extension ");
+            params.put("extension", extensionEnum);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());

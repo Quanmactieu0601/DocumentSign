@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.enm.*;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -15,39 +16,39 @@ public class TransactionDTO implements Serializable {
 
     private LocalDateTime triggerTime;
 
-    private Boolean status;
+    private TransactionStatus status;
 
     private String message;
 
     private String data;
 
-    private String type;
+    private TransactionType type;
 
     private String createdBy;
 
     private String host;
 
-    private String method;
+    private Method method;
 
     private String fullName;
 
-    private String action;
+    private Action action;
 
-    private String extension;
+    private Extension extension;
 
-    public String getExtension() {
+    public Extension getExtension() {
         return extension;
     }
 
-    public void setExtension(String extension) {
+    public void setExtension(Extension extension) {
         this.extension = extension;
     }
 
-    public String getAction() {
+    public Action getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(Action action) {
         this.action = action;
     }
 
@@ -71,7 +72,7 @@ public class TransactionDTO implements Serializable {
         this.host = host;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(Method method) {
         this.method = method;
     }
 
@@ -79,7 +80,7 @@ public class TransactionDTO implements Serializable {
         return host;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 
@@ -107,11 +108,11 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = triggerTime;
     }
 
-    public Boolean getStatus() {
+    public TransactionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(TransactionStatus status) {
         this.status = status;
     }
 
@@ -131,11 +132,11 @@ public class TransactionDTO implements Serializable {
         this.data = data;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
 
@@ -191,4 +192,8 @@ public class TransactionDTO implements Serializable {
             "}";
     }
 
+
+
+    public void setStatus(boolean success) {
+    }
 }

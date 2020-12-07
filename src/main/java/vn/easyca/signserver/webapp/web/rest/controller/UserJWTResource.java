@@ -47,8 +47,8 @@ public class UserJWTResource {
         String jwt = tokenProvider.createToken(authentication, rememberMe);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        asyncTransactionService.newThread("/api/authenticate", TransactionType.SYSTEM, Action.LOGIN, null, Method.POST,
-            Status.SUCCESS, " ", AccountUtils.getLoggedAccount());
+        asyncTransactionService.newThread("/api/authenticate", TransactionType.SYSTEM, Action.LOGIN, Extension.NONE, Method.POST,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

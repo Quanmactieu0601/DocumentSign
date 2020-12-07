@@ -1,5 +1,14 @@
 package vn.easyca.signserver.webapp.enm;
 
+import vn.easyca.signserver.webapp.utils.QueryUtils;
+
 public enum Action {
-    SIGNING, HASH, VERIFY, CREATE, MODIFY, DELETE, GET_INFO, LOGIN, UPDATE
+    SIGN, HASH, VERIFY, CREATE, MODIFY, DELETE, GET_INFO, LOGIN, UPDATE;
+
+    public static Action from(String action) {
+        if (QueryUtils.isNullOrEmptyProperty(action)) {
+            return null;
+        }
+        return Action.valueOf(action);
+    }
 }
