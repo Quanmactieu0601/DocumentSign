@@ -44,6 +44,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/certificate")
@@ -120,7 +122,7 @@ public class CertificateResource {
 
     @PostMapping("/importResource")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public void importResource(){
+    public void importResource() {
         final File folder = new File("C:\\Users\\ADMIN\\Desktop\\certificates");
         String CMND = "";
         String PIN = "";
@@ -128,8 +130,20 @@ public class CertificateResource {
         List<CertImportErrorDTO> importErrorList = new ArrayList<>();
         for (final File fileEntry : folder.listFiles()) {
             try {
-                CMND = fileEntry.getName().split(".p12")[0].split("_")[0];
-                PIN = fileEntry.getName().split(".p12")[0].split("_")[1];
+//                CMND = fileEntry.getName().split(".p12")[0].split("_")[0];
+//                PIN = fileEntry.getName().split(".p12")[0].split("_")[1];
+                final String regex = "([^._]+)_([^._]+)";
+                final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                final Matcher matcher = pattern.matcher(fileEntry.getName());
+                String[] infor = new String[3];
+
+                while (matcher.find()) {
+                    for (int i = 0; i <= matcher.groupCount(); i++) {
+                        infor[i] = matcher.group(i);
+                    }
+                }
+                CMND = infor[1];
+                PIN = infor[2];
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
 //                CertImportErrorDTO.c(fileEntry.getName() + "-" + e.getMessage()); continue;
@@ -152,21 +166,19 @@ public class CertificateResource {
                     importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
                 } catch (ApplicationException e) {
                     log.error(e.getMessage(), e);
-                    importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage())); continue;
+                    importErrorList.add(new CertImportErrorDTO(fileEntry.getName(), e.getMessage()));
+                    continue;
                 }
             }
         }
         try {
-//            FileOIHelper.writeFileLine(listCMND_ID,"D://outSuccess.txt");
-//            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
             Gson gson = new Gson();
             String jsonSuccerss = gson.toJson(importSuccessList);
-                        FileOIHelper.writeFileLine(jsonSuccerss,"D://outSuccess.txt");
+            FileOIHelper.writeFileLine(jsonSuccerss, "D://outSuccess.txt");
 
-            String jsonError = gson.toJson(importSuccessList);
-            FileOIHelper.writeFileLine(jsonSuccerss,"D://outError.txt");
-//            FileOIHelper.writeFileLine(listCMND_ID_Error,"D://outError.txt");
-        }catch (IOException e) {
+            String jsonError = gson.toJson(importErrorList);
+            FileOIHelper.writeFileLine(jsonSuccerss, "D://outError.txt");
+        } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
     }
@@ -189,8 +201,6 @@ public class CertificateResource {
             throw new IllegalStateException("could not read file " + file, e);
         }
     }
-
-
 
 
     @PostMapping("/gen/p11")
