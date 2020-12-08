@@ -11,6 +11,7 @@ import java.util.Date;
 public class DateTimeUtils {
 
     public final static String DEFAULT_FORMAT = "yyyy-MM-dd";
+    public final static String HHmmss_ddMMyyyy = "HH:mm:ss dd/MM/yyyy";
 
     public static Date parse(String strDate) throws ParseException {
 
@@ -35,6 +36,10 @@ public class DateTimeUtils {
 
     public static String getCurrentTimeStamp() {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+    }
+
+    public static String getCurrentTimeStampWithFormat(String format) {
+        return new SimpleDateFormat(format).format(new Date());
     }
 
 

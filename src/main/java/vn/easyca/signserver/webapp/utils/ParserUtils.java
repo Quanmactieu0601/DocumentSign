@@ -14,10 +14,7 @@ import java.io.*;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -63,8 +60,6 @@ public class ParserUtils {
         String[] signerInfor = CN.split(",");
         String signerName = signerInfor[0];
         String address = signerInfor[1];
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-        Calendar cal = Calendar.getInstance();
 
         String htmlContent = signatureTemplate;
         htmlContent = htmlContent
@@ -72,7 +67,7 @@ public class ParserUtils {
             .replaceFirst("position", T)
             .replaceFirst("address", address)
             .replaceFirst("signatureImage", signatureImage)
-            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
+            .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
         return htmlContent;
     }
 }
