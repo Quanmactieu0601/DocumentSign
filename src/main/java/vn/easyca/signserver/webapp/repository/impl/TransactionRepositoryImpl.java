@@ -22,7 +22,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, TransactionStatus statusEnum, String message, String data, TransactionType typeEnum, String host, Method methodEnum, String createdBy, String fullName, String startDate, String endDate, Action actionEnum, Extension extensionEnum) {
+    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, TransactionStatus statusEnum, String message, String data, TransactionType typeEnum, String host, Method methodEnum, String createdBy, String fullName, LocalDateTime startDateConverted, LocalDateTime endDateConverted, Action actionEnum, Extension extensionEnum) {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -35,13 +35,11 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(startDate)) {
-            LocalDateTime startDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(startDateConverted))) {
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
             params.put("startDate", startDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
-            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
+        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(endDateConverted))) {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }

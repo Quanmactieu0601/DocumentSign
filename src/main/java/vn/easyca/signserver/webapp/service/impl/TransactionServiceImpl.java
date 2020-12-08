@@ -13,9 +13,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,12 +87,14 @@ public class TransactionServiceImpl implements TransactionService  {
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action, String extension) throws ParseException {
+        LocalDateTime startDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+        LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
         Method methodEnum = Method.from(method);
         Action actionEnum = Action.from(action);
         Extension extensionEnum = Extension.from(extension);
         TransactionStatus statusEnum = TransactionStatus.from(status);
         TransactionType typeEnum = TransactionType.from(type);
-        return transactionRepository.findByFilter(pageable, api, triggerTime, statusEnum, message, data, typeEnum, host, methodEnum, createdBy, fullName, startDate, endDate, actionEnum, extensionEnum);
+        return transactionRepository.findByFilter(pageable, api, triggerTime, statusEnum, message, data, typeEnum, host, methodEnum, createdBy, fullName, startDateConverted, endDateConverted, actionEnum, extensionEnum);
     }
 
     /**

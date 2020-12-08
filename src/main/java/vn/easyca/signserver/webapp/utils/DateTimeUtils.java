@@ -50,6 +50,9 @@ public class DateTimeUtils {
     }
 
     public static LocalDateTime convertToLocalDateTime(String dateTime)  {
+        if (QueryUtils.isNullOrEmptyProperty(dateTime)) {
+            return null;
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         return LocalDateTime.parse(dateTime, formatter);
     }
