@@ -35,15 +35,15 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(startDateConverted))) {
+        if (startDateConverted != null) {
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
             params.put("startDate", startDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(endDateConverted))) {
+        if (endDateConverted != null) {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(statusEnum))) {
+        if (statusEnum != null) {
             sqlBuilder.append("AND a.status =: status ");
             params.put("status", statusEnum);
         }
@@ -55,7 +55,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.data like :data ");
             params.put("data", "%" + data + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(typeEnum))) {
+        if (typeEnum != null) {
             sqlBuilder.append("AND a.type = :type ");
             params.put("type", typeEnum);
         }
@@ -63,7 +63,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.host like :host ");
             params.put("host", "%" + host + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(methodEnum))) {
+        if (methodEnum != null) {
             sqlBuilder.append("AND a.method = :method ");
             params.put("method", methodEnum);
         }
@@ -71,11 +71,11 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(actionEnum))) {
+        if (actionEnum != null) {
             sqlBuilder.append("AND a.action = :action ");
             params.put("action", actionEnum);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(String.valueOf(extensionEnum))) {
+        if (extensionEnum != null) {
             sqlBuilder.append("AND a.extension = :extension ");
             params.put("extension", extensionEnum);
         }

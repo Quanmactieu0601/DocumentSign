@@ -191,9 +191,4 @@ public class TransactionDTO implements Serializable {
             ", extension=" + getExtension() +
             "}";
     }
-
-
-
-    public void setStatus(boolean success) {
-    }
 }

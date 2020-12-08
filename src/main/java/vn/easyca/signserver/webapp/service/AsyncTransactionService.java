@@ -20,7 +20,7 @@ public class AsyncTransactionService {
         transactionDTO.setApi(api);
         transactionDTO.setType(type);
         transactionDTO.setMethod(method);
-        transactionDTO.setStatus(status.isSuccess());
+        transactionDTO.setStatus(status);
         transactionDTO.setMessage(message);
         transactionDTO.setCreatedBy(createdBy);
         transactionDTO.setTriggerTime(LocalDateTime.now());

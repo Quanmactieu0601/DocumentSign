@@ -3,7 +3,7 @@ import { Moment } from 'moment';
 export interface ITransaction {
   id?: number;
   api?: string;
-  status?: boolean;
+  status?: string;
   message?: string;
   data?: string;
   type?: string;
@@ -19,7 +19,7 @@ export class Transaction implements ITransaction {
   constructor(
     public id?: number,
     public api?: string,
-    public status?: boolean,
+    public status?: string,
     public message?: string,
     public data?: string,
     public type?: string,
