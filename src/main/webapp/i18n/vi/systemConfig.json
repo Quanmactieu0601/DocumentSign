@@ -1,0 +1,27 @@
+{
+  "webappApp": {
+    "systemConfig": {
+      "home": {
+        "title": "System Configs",
+        "createLabel": "Thêm mới một System Config",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật System Config",
+        "notFound": "No System Configs found"
+      },
+      "created": "Một System Config mới được tạo với định danh {{ param }}",
+      "updated": "Một System Config cập nhật với định danh {{ param }}",
+      "deleted": "Một System Config đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa System Config {{ id }}?"
+      },
+      "detail": {
+        "title": "System Config"
+      },
+      "comId": "Com Id",
+      "key": "Key",
+      "value": "Value",
+      "description": "Description",
+      "dataType": "Data Type",
+      "activated": "Activated"
+    }
+  }
+}
