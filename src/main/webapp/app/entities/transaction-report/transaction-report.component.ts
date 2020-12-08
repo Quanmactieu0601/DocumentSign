@@ -69,7 +69,7 @@ export class TransactionReportComponent implements OnInit {
         const downloadURL = window.URL.createObjectURL(res);
         const link = document.createElement('a');
         link.href = downloadURL;
-        link.download = 'Report.pdf';
+        link.download = 'Transaction Report-' + new Date().toLocaleDateString() + '.pdf';
         link.click();
         console.log('Export file success');
       },
@@ -86,7 +86,6 @@ export class TransactionReportComponent implements OnInit {
       endDate: this.userSearch.get(['endDate'])!.value,
       type: this.userSearch.get(['type'])!.value,
     };
-
     this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe(
       (res: HttpResponse<any>) => {
         console.log(res.body);
