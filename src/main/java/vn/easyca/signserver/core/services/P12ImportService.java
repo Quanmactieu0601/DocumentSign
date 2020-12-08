@@ -20,9 +20,14 @@ import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
-import java.security.KeyStoreException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.security.*;
 import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
@@ -109,5 +114,33 @@ public class P12ImportService {
         if (aliases != null && aliases.size() > 0)
             return aliases.get(0);
         throw new CryptoTokenException("Can not found alias in crypto token");
+    }
+
+    // TODO: Call this function to change P12 password
+    public byte[] changePKCS12KeyPassword(byte[] privateKeyData, String oldPassword, String newPassword) {
+        try {
+            KeyStore newKs = KeyStore.getInstance("PKCS12");
+            newKs.load(null, null);
+
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            ks.load(new ByteArrayInputStream(privateKeyData), oldPassword.toCharArray());
+            Enumeration<String> aliases = ks.aliases();
+
+            while (aliases.hasMoreElements()) {
+                String alias = aliases.nextElement();
+                Key privateKey = ks.getKey(alias, oldPassword.toCharArray());
+                java.security.cert.Certificate[] certificateChain = ks.getCertificateChain(alias);
+                newKs.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certificateChain);
+            }
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            newKs.store(baos, newPassword.toCharArray());
+            return baos.toByteArray();
+        } catch (KeyStoreException
+            | CertificateException
+            | NoSuchAlgorithmException
+            | UnrecoverableKeyException
+            | IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
