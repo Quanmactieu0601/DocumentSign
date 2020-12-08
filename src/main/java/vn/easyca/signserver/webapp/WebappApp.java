@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.Collection;
 
-@ComponentScan(basePackages = "vn.easyca.signserver")
+@ComponentScan({"vn.easyca.signserver", "vn.easyca.signserver.core.services"})
 @EntityScan({"vn.easyca.signserver.infrastructure.database.jpa.entity", "vn.easyca.signserver.webapp.domain"})
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})

@@ -44,15 +44,20 @@ spring:
     #    username: signserver
     #    password: Hddt@202o
 
+    # BV Q11 - cau hinh db IP VIP
+    url: jdbc:mariadb://172.16.99.16:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: DbQ1!@202o
+
     # BV Q11 - cau hinh db master
     #    url: jdbc:mariadb://172.16.99.18:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: root
     #    password: DbQ1!@202o
 
     # BV Q11 - cau hinh db slave
-    url: jdbc:mariadb://172.16.99.17:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: replicatedb
-    password: DbSlave@202o
+    #    url: jdbc:mariadb://172.16.99.17:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: replicatedb
+    #    password: DbSlave@202o
 
     hikari:
       poolName: Hikari
