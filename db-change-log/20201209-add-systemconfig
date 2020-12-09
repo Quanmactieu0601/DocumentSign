@@ -9,7 +9,7 @@ create table system_config
     data_type    varchar(10)   null,
     constraint system_config_id_uindex
         unique (id)
-);
+) charset = utf8mb4;
 
 alter table system_config
     add primary key (id);
