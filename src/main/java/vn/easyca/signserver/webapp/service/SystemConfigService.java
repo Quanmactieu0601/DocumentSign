@@ -5,6 +5,7 @@ import vn.easyca.signserver.webapp.service.dto.SystemConfigDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -27,6 +28,9 @@ public interface SystemConfigService {
      * @return the list of entities.
      */
     Page<SystemConfigDTO> findAll(Pageable pageable);
+
+
+    List<SystemConfigDTO> findAllByActivatedIsTrue();
 
 
     /**

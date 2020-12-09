@@ -13,7 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service Implementation for managing {@link SystemConfig}.
@@ -85,5 +87,12 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     public void delete(Long id) {
         log.debug("Request to delete SystemConfig : {}", id);
         systemConfigRepository.deleteById(id);
+    }
+
+    @Override
+    public List<SystemConfigDTO> findAllByActivatedIsTrue() {
+        return systemConfigRepository.findAllByActivatedIsTrue().stream()
+            .map(systemConfigMapper::toDto)
+            .collect(Collectors.toList());
     }
 }

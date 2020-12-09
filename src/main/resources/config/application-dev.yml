@@ -37,8 +37,11 @@ spring:
       indent-output: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mariadb://10.100.110.7:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: root
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: root
+    #    password: Hddt@202o
+    url: jdbc:mariadb://10.100.110.7:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: signserver
     password: Hddt@202o
     hikari:
       poolName: Hikari
@@ -124,5 +127,3 @@ jhipster:
 # ===================================================================
 
 application:
-  symmetric-key: c2RzQHNpZ24yMDIw
-  save-p12-pin: false

@@ -21,6 +21,7 @@ import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 
 @Configuration
 @EnableCaching
@@ -57,6 +58,7 @@ public class CacheConfiguration {
             createCache(cm, vn.easyca.signserver.webapp.domain.SignatureTemplate.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.SignatureImage.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.SystemConfig.class.getName());
+            createCache(cm, SystemConfigCachingService.SYSTEM_CONFIG_CACHE);
             // jhipster-needle-ehcache-add-entry
         };
     }

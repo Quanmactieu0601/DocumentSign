@@ -1,27 +1,30 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import vn.easyca.signserver.webapp.enm.SystemConfigKey;
+import vn.easyca.signserver.webapp.enm.SystemConfigType;
+
 import java.io.Serializable;
 
 /**
  * A DTO for the {@link vn.easyca.signserver.webapp.domain.SystemConfig} entity.
  */
 public class SystemConfigDTO implements Serializable {
-    
+
     private Long id;
 
     private Long comId;
 
-    private String key;
+    private SystemConfigKey key;
 
     private String value;
 
     private String description;
 
-    private String dataType;
+    private SystemConfigType dataType;
 
     private Boolean activated;
 
-    
+
     public Long getId() {
         return id;
     }
@@ -38,11 +41,11 @@ public class SystemConfigDTO implements Serializable {
         this.comId = comId;
     }
 
-    public String getKey() {
+    public SystemConfigKey getKey() {
         return key;
     }
 
-    public void setKey(String key) {
+    public void setKey(SystemConfigKey key) {
         this.key = key;
     }
 
@@ -62,11 +65,11 @@ public class SystemConfigDTO implements Serializable {
         this.description = description;
     }
 
-    public String getDataType() {
+    public SystemConfigType getDataType() {
         return dataType;
     }
 
-    public void setDataType(String dataType) {
+    public void setDataType(SystemConfigType dataType) {
         this.dataType = dataType;
     }
 

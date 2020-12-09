@@ -2,6 +2,8 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import vn.easyca.signserver.webapp.enm.SystemConfigKey;
+import vn.easyca.signserver.webapp.enm.SystemConfigType;
 
 import javax.persistence.*;
 
@@ -24,17 +26,19 @@ public class SystemConfig implements Serializable {
     @Column(name = "com_id")
     private Long comId;
 
-    @Column(name = "jhi_key")
-    private String key;
+    @Column(name = "config_key")
+    @Enumerated(value = EnumType.STRING)
+    private SystemConfigKey key;
 
-    @Column(name = "value")
+    @Column(name = "config_value")
     private String value;
 
     @Column(name = "description")
     private String description;
 
     @Column(name = "data_type")
-    private String dataType;
+    @Enumerated(value = EnumType.STRING)
+    private SystemConfigType dataType;
 
     @Column(name = "activated")
     private Boolean activated;
@@ -61,16 +65,16 @@ public class SystemConfig implements Serializable {
         this.comId = comId;
     }
 
-    public String getKey() {
+    public SystemConfigKey getKey() {
         return key;
     }
 
-    public SystemConfig key(String key) {
+    public SystemConfig key(SystemConfigKey key) {
         this.key = key;
         return this;
     }
 
-    public void setKey(String key) {
+    public void setKey(SystemConfigKey key) {
         this.key = key;
     }
 
@@ -100,16 +104,16 @@ public class SystemConfig implements Serializable {
         this.description = description;
     }
 
-    public String getDataType() {
+    public SystemConfigType getDataType() {
         return dataType;
     }
 
-    public SystemConfig dataType(String dataType) {
+    public SystemConfig dataType(SystemConfigType dataType) {
         this.dataType = dataType;
         return this;
     }
 
-    public void setDataType(String dataType) {
+    public void setDataType(SystemConfigType dataType) {
         this.dataType = dataType;
     }
 

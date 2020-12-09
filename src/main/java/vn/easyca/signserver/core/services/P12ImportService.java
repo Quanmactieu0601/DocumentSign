@@ -13,9 +13,11 @@ import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
+import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
@@ -39,19 +41,20 @@ public class P12ImportService {
     private final UserApplicationService userApplicationService;
     private final SymmetricEncryptors symmetricService;
     private final CertificateRepository certificateRepository;
-    private final ApplicationProperties properties;
+    private final SystemConfigCachingService systemConfigCachingService;
 
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
-                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, ApplicationProperties properties) {
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
-        this.properties = properties;
+        this.systemConfigCachingService = systemConfigCachingService;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
+        SystemDbConfiguration dbConfiguration = systemConfigCachingService.getConfig();
         P12CryptoToken p12CryptoToken = new P12CryptoToken();
         try {
             p12CryptoToken.initPkcs12(input.getP12Base64(), input.getPin());
@@ -88,7 +91,7 @@ public class P12ImportService {
         certificateDTO.setAlias(alias);
         certificateDTO.setTokenType(CertificateDTO.PKCS_12);
         // Lưu thêm mã pin khi tạo cert
-        if (properties.getSaveP12Pin())
+        if (dbConfiguration.getSaveTokenPassword())
             certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());

@@ -3,9 +3,7 @@ package vn.easyca.signserver.webapp;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import vn.easyca.signserver.infrastructure.ra.CertificateRequesterImpl;
-import vn.easyca.signserver.ra.lib.RAConfig;
-import vn.easyca.signserver.ra.lib.RAServiceFade;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;
@@ -19,7 +17,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
-import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -36,9 +34,11 @@ public class WebappApp {
     private static final Logger log = LoggerFactory.getLogger(WebappApp.class);
 
     private final Environment env;
+    private static SystemConfigCachingService systemConfigCachingService = null;
 
-    public WebappApp(Environment env) {
+    public WebappApp(Environment env, SystemConfigCachingService systemConfigCachingService) {
         this.env = env;
+        this.systemConfigCachingService = systemConfigCachingService;
     }
 
     /**
@@ -79,6 +79,14 @@ public class WebappApp {
         // TODO: Refactor this code
 //        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
 //        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
+
+
+        // init system config cache
+        try {
+            systemConfigCachingService.getConfig();
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+        }
     }
 
     private static void logApplicationStartup(Environment env) {
