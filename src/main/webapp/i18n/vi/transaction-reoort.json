@@ -1,0 +1,15 @@
+{
+  "webappApp": {
+    "transactionReport": {
+      "startDate": "Ngày Bắt đầu",
+      "endDate": "Ngày kết thúc ",
+      "type": "Loại",
+      "search": "Tìm kiếm",
+      "exportPDF ": "Xuất PDF",
+      "TotalRequetsFail": "Tổng số request Lỗi",
+      "totalRequestSuccess": "Tổng số Request Thành công",
+      "figure1": "Hình 1 :",
+      "Chart": "Biểu đồ thống kê số Request Transaction"
+    }
+  }
+}

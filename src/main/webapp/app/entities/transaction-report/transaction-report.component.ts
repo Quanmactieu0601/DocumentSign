@@ -29,7 +29,7 @@ export class TransactionReportComponent implements OnInit {
       },
     },
   };
-
+  public show = false;
   public pieChartLabels: Label[] = [['Tổng số lỗi'], ['Tổng số requet thành công']];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
@@ -44,18 +44,14 @@ export class TransactionReportComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  onSubmit(): void {
-    this.transactionService.exportPDF().subscribe(
-      (res: HttpResponse<any>) => {
-        console.log(res.body);
-        console.log(' Export file PDF success');
-      },
-      error => {
-        console.log(error);
-        console.log(' error to export file pdf');
-      }
-    );
-  }
+  // onSubmit(): void {
+  //   this.transactionService.exportPDF().subscribe(
+  //     (res: HttpResponse<any>) => {
+  //       console.log(res.body);
+  //       console.log(' Export file PDF success');
+  //     }
+  //   );
+  // }
 
   onSubmit1(): void {
     const dataExport = {
@@ -63,21 +59,15 @@ export class TransactionReportComponent implements OnInit {
       endDate: this.userSearch.get(['endDate'])!.value,
       type: this.userSearch.get(['type'])!.value,
     };
-    this.transactionService.exportPDFfromjasper(dataExport.startDate, dataExport.endDate, dataExport.type).subscribe(
-      res => {
-        const blob = new Blob([res], { type: 'application/pdf' });
-        const downloadURL = window.URL.createObjectURL(res);
-        const link = document.createElement('a');
-        link.href = downloadURL;
-        link.download = 'Transaction Report-' + new Date().toLocaleDateString() + '.pdf';
-        link.click();
-        console.log('Export file success');
-      },
-      error => {
-        console.log(error);
-        console.log(' Export file failure');
-      }
-    );
+    this.transactionService.exportPDFfromjasper(dataExport.startDate, dataExport.endDate, dataExport.type).subscribe(res => {
+      const blob = new Blob([res], { type: 'application/pdf' });
+      const downloadURL = window.URL.createObjectURL(res);
+      const link = document.createElement('a');
+      link.href = downloadURL;
+      link.download = 'Transaction Report-' + new Date().toLocaleDateString() + '.pdf';
+      link.click();
+      // console.log('Export file success');
+    });
   }
 
   searchUser(): void {
@@ -86,17 +76,12 @@ export class TransactionReportComponent implements OnInit {
       endDate: this.userSearch.get(['endDate'])!.value,
       type: this.userSearch.get(['type'])!.value,
     };
-    this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe(
-      (res: HttpResponse<any>) => {
-        console.log(res.body);
-        this.totalsuccess = res.body.totalsuccess;
-        this.totalfail = res.body.totalfail;
-        this.pieChartData = [parseInt(this.totalfail, 10), parseInt(this.totalsuccess, 10)];
-      },
-      error => {
-        console.log('error transaction-report');
-        console.log(error);
-      }
-    );
+    this.show = true;
+    this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe((res: HttpResponse<any>) => {
+      // console.log(res.body);
+      this.totalsuccess = res.body.totalsuccess;
+      this.totalfail = res.body.totalfail;
+      this.pieChartData = [parseInt(this.totalfail, 10), parseInt(this.totalsuccess, 10)];
+    });
   }
 }
