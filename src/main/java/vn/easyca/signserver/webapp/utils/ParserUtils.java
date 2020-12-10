@@ -2,18 +2,11 @@ package vn.easyca.signserver.webapp.utils;
 
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.swing.Java2DRenderer;
-import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.webapp.domain.SignatureTemplate;
-import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

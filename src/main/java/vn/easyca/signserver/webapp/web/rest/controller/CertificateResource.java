@@ -1,8 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-import com.google.gson.Gson;
 import io.github.jhipster.web.util.PaginationUtil;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -16,15 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
-import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
-import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
-import vn.easyca.signserver.webapp.domain.SignatureImage;
-import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
-import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
-import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
@@ -48,16 +36,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResu
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.security.KeyStoreException;
-import java.security.cert.X509Certificate;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/certificate")
@@ -284,6 +263,19 @@ public class CertificateResource {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/getQRCodeOTP")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> getQRCodeOTP(@RequestParam String serial, @RequestParam String pin) {
+        log.info(" --- getQRCodeOTP --- serial: {}", serial);
+        try {
+            String base64Image = certificateService.getBase64OTPQRCode(serial, pin);
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
         } catch (ApplicationException e) {
             log.error(e.getMessage());

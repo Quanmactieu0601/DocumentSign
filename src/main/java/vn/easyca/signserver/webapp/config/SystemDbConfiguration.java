@@ -57,7 +57,12 @@ public class SystemDbConfiguration {
         return configuration;
     }
 
+    /**
+     * - use this option to save p12 cert pin to DB and skip check pin when signing
+     * - hsm always auto generate cert pin - dont depend on this config
+     */
     private Boolean saveTokenPassword;
+
     private String symmetricKey;
     private Boolean useOTP;
 

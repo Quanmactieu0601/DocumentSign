@@ -1,0 +1,2 @@
+alter table certificate
+	add secret_key varchar(200) null;

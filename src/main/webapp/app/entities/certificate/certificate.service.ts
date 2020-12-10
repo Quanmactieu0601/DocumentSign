@@ -85,4 +85,9 @@ export class CertificateService {
     const options = createRequestOption(req);
     return this.http.get<ICertificate[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
   }
+
+  getQRCodeOTP(req?: any): Observable<HttpResponse<{}>> {
+    const options = createRequestOption(req);
+    return this.http.delete(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'response' });
+  }
 }

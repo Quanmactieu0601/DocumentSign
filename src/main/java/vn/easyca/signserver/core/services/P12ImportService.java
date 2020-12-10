@@ -10,12 +10,12 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
-import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
-import vn.easyca.signserver.webapp.config.ApplicationProperties;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTP;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
@@ -42,15 +42,17 @@ public class P12ImportService {
     private final SymmetricEncryptors symmetricService;
     private final CertificateRepository certificateRepository;
     private final SystemConfigCachingService systemConfigCachingService;
+    private final AuthenticatorTOTP authenticatorTOTP;
 
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
-                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService) {
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTP authenticatorTOTP) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
         this.systemConfigCachingService = systemConfigCachingService;
+        this.authenticatorTOTP = authenticatorTOTP;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -80,7 +82,7 @@ public class P12ImportService {
             throw new ApplicationException(-1, "Certificate is already exist");
         String base64Cert = null;
         try {
-            base64Cert = CommonUtils.encodeBase64X509(x509Certificate);
+            base64Cert = CertUtils.encodeBase64X509(x509Certificate);
         } catch (CertificateEncodingException e) {
             throw new CertificateAppException("certificate encoding exception", e);
         }
@@ -93,6 +95,9 @@ public class P12ImportService {
         // Lưu thêm mã pin khi tạo cert
         if (dbConfiguration.getSaveTokenPassword())
             certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
+
+        certificateDTO.setSecretKey(authenticatorTOTP.generateEncryptedTOTPKey());
+
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());
         certificateDTO.setTokenInfo(tokenInfo);

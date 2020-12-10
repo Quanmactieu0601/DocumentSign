@@ -21,7 +21,7 @@ import java.util.Base64;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class CommonUtils {
+public class CertUtils {
 
     public static String encodeBase64X509(X509Certificate certificate) throws CertificateEncodingException {
         return Base64.getEncoder().encodeToString(certificate.getEncoded());

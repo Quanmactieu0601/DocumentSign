@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.core.services.CertificateGenerateService;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
@@ -25,7 +24,7 @@ import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
-import vn.easyca.signserver.webapp.utils.FileOIHelper;
+import vn.easyca.signserver.webapp.utils.FileIOHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -109,10 +108,10 @@ public class DataBatchImportResource {
         try {
             Gson gson = new Gson();
             String jsonSuccerss = gson.toJson(importSuccessList);
-            FileOIHelper.writeFile(jsonSuccerss, absoluteFolderPath + "/outSuccess.txt");
+            FileIOHelper.writeFile(jsonSuccerss, absoluteFolderPath + "/outSuccess.txt");
 
             String jsonError = gson.toJson(importErrorList);
-            FileOIHelper.writeFile(jsonError, absoluteFolderPath + "/outError.txt");
+            FileIOHelper.writeFile(jsonError, absoluteFolderPath + "/outError.txt");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -175,7 +174,7 @@ public class DataBatchImportResource {
         }
         try {
             String jsonError = gson.toJson(importErrors);
-            FileOIHelper.writeFile(jsonError, imagePath + "/outError.txt");
+            FileIOHelper.writeFile(jsonError, imagePath + "/outError.txt");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
@@ -233,7 +232,7 @@ public class DataBatchImportResource {
             }
         }
         try {
-            FileOIHelper.writeFileLine(result, p12FolderPath + "/outSuccess.txt");
+            FileIOHelper.writeFileLine(result, p12FolderPath + "/outSuccess.txt");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

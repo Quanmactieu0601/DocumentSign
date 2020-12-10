@@ -14,6 +14,7 @@ import vn.easyca.signserver.webapp.config.HsmTypeConstant;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 @Component
@@ -23,35 +24,43 @@ public class CryptoTokenProxyFactory {
     private final P11ProtectServerCryptoToken p11ProtectServerCryptoToken;
     private final P11CryptoToken p11CryptoToken;
     private final HsmConfig hsmConfig;
+    private final SystemConfigCachingService systemConfigCachingService;
 
     public CryptoTokenProxyFactory(SymmetricEncryptors symmetricService, P12CryptoToken p12CryptoToken,
                                    P11ProtectServerCryptoToken p11ProtectServerCryptoToken, P11CryptoToken p11CryptoToken,
-                                   HsmConfig hsmConfig) {
+                                   HsmConfig hsmConfig, SystemConfigCachingService systemConfigCachingService) {
         this.symmetricService = symmetricService;
         this.p12CryptoToken = p12CryptoToken;
         this.p11CryptoToken = p11CryptoToken;
         this.p11ProtectServerCryptoToken = p11ProtectServerCryptoToken;
         this.hsmConfig = hsmConfig;
+        this.systemConfigCachingService = systemConfigCachingService;
     }
 
     public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws ApplicationException {
         if (certificateDTO == null)
             throw new ApplicationException("Certificate is not null");
+        boolean skipCheckPassword = systemConfigCachingService.getConfig().getSaveTokenPassword();
         String serial = certificateDTO.getSerial();
-        String encryptedPinFromDB = certificateDTO.getEncryptedPin();
         String tokenType = certificateDTO.getTokenType();
+        String encryptedPinFromDB = certificateDTO.getEncryptedPin();
         String rawPin = null;
-        // Get pin from db instead from client if db pin has value
-        if (StringUtils.isNotEmpty(encryptedPinFromDB)) {
-            rawPin = symmetricService.decrypt(encryptedPinFromDB);
-            // require: compare input PIN vs DB PIN if token is HSM
-            if (Certificate.PKCS_11.equals(tokenType) && !rawPin.equals(pin)) {
-                throw new ApplicationException("Certificate pin not correct!");
+
+        if (Certificate.PKCS_12.equals(tokenType)) {
+            if (skipCheckPassword) {
+                if (StringUtils.isEmpty(encryptedPinFromDB))
+                    throw new ApplicationException("P12 DB password is empty");
+                rawPin = symmetricService.decrypt(encryptedPinFromDB);
+            } else {
+                rawPin = pin;
             }
-        } else if (!StringUtils.isNotEmpty(pin)) {
-            throw new ApplicationException("Certificate pin is empty!");
-        } else
-            rawPin = pin;
+        } else if (Certificate.PKCS_11.equals(tokenType)) {
+            if (StringUtils.isEmpty(encryptedPinFromDB))
+                throw new ApplicationException("HSM DB password is empty");
+            rawPin = symmetricService.decrypt(encryptedPinFromDB);
+            if (!rawPin.equals(pin))
+                throw new ApplicationException("Certificate pin not correct!");
+        }
 
         GuavaCache cache = GuavaCache.getInstance();
         String cachedKey = serial + rawPin;

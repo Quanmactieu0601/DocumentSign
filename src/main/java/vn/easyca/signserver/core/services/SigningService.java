@@ -11,10 +11,9 @@ import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
-import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.sign.integrated.pdf.visible.PartyMode;
 import vn.easyca.signserver.pki.sign.integrated.pdf.visible.SignPDFDto;
 import vn.easyca.signserver.pki.sign.integrated.pdf.visible.SignPDFPlugin;
@@ -28,7 +27,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -110,7 +108,7 @@ public class SigningService {
         RawSigner rawSigner = new RawSigner();
         String hashAlgorithm = request.getOptional().getHashAlgorithm();
         for (SignElement<String> signElement : signElements) {
-            byte[] hash = CommonUtils.decodeBase64(signElement.getContent());
+            byte[] hash = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
                 signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
@@ -148,7 +146,7 @@ public class SigningService {
         List<SignResultElement> resultElements = new ArrayList<>();
         RawSigner rawSigner = new RawSigner();
         for (SignElement<String> signElement : signElements) {
-            byte[] data = CommonUtils.decodeBase64(signElement.getContent());
+            byte[] data = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
                 signature = rawSigner.signData(data, privateKey, cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getHashAlgorithm()));
