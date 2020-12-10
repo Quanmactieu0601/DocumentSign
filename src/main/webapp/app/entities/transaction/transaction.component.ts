@@ -95,7 +95,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
-
   searchTransactions(page?: number): any {
     const pageToLoad: number = page || this.page || 1;
     const fieldTransaction = {

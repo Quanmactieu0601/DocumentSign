@@ -1,79 +1,82 @@
 <form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">
-            <div class="row">
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="col control-label no-padding-left" jhiTranslate="webappApp.transactionReport.startDate" >Ngày bắt đầu </label>
-                        <label>
-                            <input type="datetime-local" class="form-control firstInput" name="startDate" formControlName="startDate"/>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label class="col control-label no-padding-left" jhiTranslate="webappApp.transactionReport.endDate" >Ngày kết thúc </label>
-                        <label>
-                            <input type="datetime-local" class="form-control secondInput" name="endDate" formControlName="endDate"/>
-                        </label>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <label for="cars" [ngStyle]="{ 'padding-left':'40px'}"  jhiTranslate="webappApp.transactionReport.type">Loại </label>
-                        <select class="form-control selectForm" name="cars" id="cars" formControlName="type">
-                            <option label="------ Select ------"></option>
-                            <option value="SYSTEM"> SYSTEM</option>
-                            <option value="SIGNING">SIGNING</option>
-                            <option value="IMPORT_CERT">IMPORT_CERT</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-2  ">
-                    <div class="form-group">
-                        <label class="form-control-label"></label>
-                        <div class="mt-2">
-                            <button type="submit" class="btn btn-primary">
-                                <fa-icon icon="search"></fa-icon>
-                                Search
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-group">
-                        <div class="mt-2">
-                            <button type="submit" (click)="onSubmit1()" class="btn_export btn btn-primary">Export PDF</button>
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="col control-label no-padding-left" jhiTranslate="webappApp.transactionReport.startDate">Ngày
+                    bắt đầu </label>
+                <label>
+                    <input type="datetime-local" class="form-control firstInput" name="startDate"
+                           formControlName="startDate"/>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label class="col control-label no-padding-left" jhiTranslate="webappApp.transactionReport.endDate">Ngày
+                    kết thúc </label>
+                <label>
+                    <input type="datetime-local" class="form-control secondInput" name="endDate"
+                           formControlName="endDate"/>
+                </label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <label for="cars" [ngStyle]="{ 'padding-left':'40px'}" jhiTranslate="webappApp.transactionReport.type">Loại </label>
+                <select class="form-control selectForm" name="cars" id="cars" formControlName="type">
+                    <option label="------ Select ------"></option>
+                    <option value="SYSTEM"> SYSTEM</option>
+                    <option value="SIGNING">SIGNING</option>
+                    <option value="IMPORT_CERT">IMPORT_CERT</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-2  ">
+            <div class="form-group">
+                <label class="form-control-label"></label>
+                <div class="mt-2">
+                    <button type="submit" class="btn btn-primary">
+                        <fa-icon icon="search"></fa-icon>
+                        Search
+                    </button>
                 </div>
             </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+                <div class="mt-2">
+                    <button type="submit" (click)="ExportDPF()" class="btn_export btn btn-primary">Export PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<ng-container  *ngIf="show">
-            <div class="charts">
-                <div>
-                    <div class="chart">
-                        <canvas baseChart class="chartsize"
-                                [data]="pieChartData"
-                                [labels]="pieChartLabels"
-                                [chartType]="pieChartType"
-                                [options]="pieChartOptions"
-                                [plugins]="pieChartPlugins"
-                                [colors]="pieChartColors"
-                                [legend]="pieChartLegend">
-                        </canvas>
-                        <div [ngStyle]="{'margin-left': '200px','display': 'flex'}">
-                            <h4>
-                                <span jhiTranslate="webappApp.transactionReport.figure1">Figure 1 </span>
-                              </h4>
-                            <span [ngStyle]="{
+    <ng-container *ngIf="show">
+        <div class="charts">
+            <div>
+                <div class="chart">
+                    <canvas baseChart class="chartsize"
+                            [data]="pieChartData"
+                            [labels]="pieChartLabels"
+                            [chartType]="pieChartType"
+                            [options]="pieChartOptions"
+                            [plugins]="pieChartPlugins"
+                            [colors]="pieChartColors"
+                            [legend]="pieChartLegend">
+                    </canvas>
+                    <div [ngStyle]="{'margin-left': '200px','display': 'flex'}">
+                        <h4>
+                            <span jhiTranslate="webappApp.transactionReport.figure1">Figure 1 </span>
+                        </h4>
+                        <span [ngStyle]="{
                              'margin-left': '20px',
                               'margin-top':'5px'}"
-                                  jhiTranslate="webappApp.transactionReport.Chart"> Biểu đồ thống kê số Request Transaction</span>
-                        </div>
+                              jhiTranslate="webappApp.transactionReport.Chart"> Biểu đồ thống kê số Request Transaction</span>
                     </div>
                 </div>
             </div>
-
-</ng-container>
+        </div>
+    </ng-container>
 </form>
 <br/>
 <br/>

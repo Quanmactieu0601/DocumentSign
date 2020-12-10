@@ -7,6 +7,7 @@ import * as moment from 'moment';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ITransaction } from 'app/shared/model/transaction.model';
+import { Router } from '@angular/router';
 
 type EntityResponseType = HttpResponse<ITransaction>;
 type EntityArrayResponseType = HttpResponse<ITransaction[]>;
@@ -15,7 +16,7 @@ type EntityArrayResponseType = HttpResponse<ITransaction[]>;
 export class TransactionService {
   public resourceUrl = SERVER_API_URL + 'api/transactions';
 
-  constructor(protected http: HttpClient) {}
+  constructor(protected http: HttpClient, public routerService: Router) {}
 
   create(transaction: ITransaction): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(transaction);
@@ -42,20 +43,37 @@ export class TransactionService {
     return this.http.get<any>(this.resourceUrl + '/search', { params: options, observe: 'response' });
   }
 
-  queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
-    return this.http.get<any>(`${this.resourceUrl + '/report'}/${startDate}/${endDate}/${type}`, { observe: 'response' });
-  }
+  // queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
+  //   return this.http.get<any>(`${this.resourceUrl + '/report'}/${startDate}/${endDate}/${type}`, { observe: 'response' });
+  // }
 
-  exportPDF(): Observable<any> {
-    return this.http.get<any>(`${this.resourceUrl + '/exportPDF'}`, { observe: 'response' });
+  queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
+    return this.http.get<any>(`${this.resourceUrl + '/report'}`, {
+      params: {
+        startDate: startDate,
+        endDate: endDate,
+        type: type,
+      },
+      observe: 'response',
+    });
   }
 
   exportPDFfromjasper(startDate: string, endDate: string, type: string): Observable<any> {
-    const httpOptions = {
+    return this.http.get<any>(`${this.resourceUrl + '/exportPDFJasper'}`, {
+      params: {
+        startDate: startDate,
+        endDate: endDate,
+        type: type,
+      },
       responseType: 'blob' as 'json',
-    };
-    return this.http.get<any>(`${this.resourceUrl + '/exportPDFJasper'}/${startDate}/${endDate}/${type}`, httpOptions);
+    });
   }
+
+  // exportPDFfromjasper(startDate: string, endDate: string, type: string): Observable<any> {
+  //   return this.http.get<any>(`${this.resourceUrl + '/exportPDFJasper'}/${startDate}/${endDate}/${type}`, {
+  //     responseType: 'blob' as 'json',
+  //   });
+  // }
 
   query(req?: any): Observable<EntityArrayResponseType> {
     const options = createRequestOption(req);

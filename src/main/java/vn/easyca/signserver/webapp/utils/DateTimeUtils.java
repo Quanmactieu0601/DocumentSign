@@ -37,8 +37,7 @@ public class DateTimeUtils {
         return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
     }
 
-
-    public static Instant convertToInstant(String date)  {
+    public static Instant convertToInstant(String date) {
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
         Date dates = null;
         try {
@@ -50,8 +49,7 @@ public class DateTimeUtils {
         return dates.toInstant();
     }
 
-
-    public static LocalDateTime convertToLocalDateTime(String dateTime)  {
+    public static LocalDateTime convertToLocalDateTime(String dateTime) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         return LocalDateTime.parse(dateTime, formatter);
     }

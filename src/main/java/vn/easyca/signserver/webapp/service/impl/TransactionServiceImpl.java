@@ -14,6 +14,7 @@ import vn.easyca.signserver.webapp.service.mapper.TransactionMapper;
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToLocalDateTime;
@@ -21,13 +22,9 @@ import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToLocalDate
 /**
  * Service Implementation for managing {@link Transaction}.
  */
-
-
-
-
 @Service
 @Transactional
-public class TransactionServiceImpl implements TransactionService  {
+public class TransactionServiceImpl implements TransactionService {
 
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
@@ -47,8 +44,6 @@ public class TransactionServiceImpl implements TransactionService  {
      * @param transactionDTO the entity to save.
      * @return the persisted entity.
      */
-
-
     @Override
     public TransactionDTO save(TransactionDTO transactionDTO) {
         log.debug("Request to save Transaction : {}", transactionDTO);
@@ -70,6 +65,7 @@ public class TransactionServiceImpl implements TransactionService  {
         return transactionRepository.findAll(pageable)
             .map(transactionMapper::toDto);
     }
+
     /**
      * Get one transaction by id.
      *
@@ -97,7 +93,7 @@ public class TransactionServiceImpl implements TransactionService  {
      * @param id the id of the entity.
      */
     @Override
-    public void delete( Long id) {
+    public void delete(Long id) {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
     }
@@ -105,13 +101,15 @@ public class TransactionServiceImpl implements TransactionService  {
     /**
      * get all transaction between startDate and endDate
      */
-
     @Override
-    public List<TransactionDTO> findTransactionType(String startDate, String endDate, String type) {
-        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+    public List<TransactionDTO> findTransaction(String startDate, String endDate, String type) {
+        List<Transaction> listTransaction = transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
         return transactionMapper.toDto(listTransaction);
     }
 
-
-
+    @Override
+    public Map findTransactionType(String startDate, String endDate, String type) {
+        Map result = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+        return result;
+    }
 }

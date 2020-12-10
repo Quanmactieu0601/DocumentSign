@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.web.rest.controller;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vn.easyca.signserver.webapp.enm.Method;
@@ -32,7 +31,7 @@ public class UserJWTResource {
     private final AsyncTransactionService asyncTransactionService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public UserJWTResource(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder ) {
+    public UserJWTResource(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.asyncTransactionService = asyncTransactionService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;

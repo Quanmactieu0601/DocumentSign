@@ -40,20 +40,24 @@ export class TransactionReportComponent implements OnInit {
       backgroundColor: ['rgb(255,100,0)', '#4285F4'],
     },
   ];
+
   constructor(protected transactionService: TransactionService, private fb: FormBuilder) {}
 
   ngOnInit(): void {}
 
-  // onSubmit(): void {
-  //   this.transactionService.exportPDF().subscribe(
-  //     (res: HttpResponse<any>) => {
-  //       console.log(res.body);
-  //       console.log(' Export file PDF success');
-  //     }
-  //   );
-  // }
+  getTime(): any {
+    let date_time = new Date();
+    let date = ('0' + date_time.getDate()).slice(-2);
+    let month = ('0' + (date_time.getMonth() + 1)).slice(-2);
+    let year = date_time.getFullYear();
+    let hours = ('0' + date_time.getHours()).slice(-2);
+    let minutes = ('0' + date_time.getMinutes()).slice(-2);
+    let seconds = ('0' + date_time.getSeconds()).slice(-2);
+    let time = year + month + date + ' ' + hours + minutes + seconds;
+    return time;
+  }
 
-  onSubmit1(): void {
+  ExportDPF(): void {
     const dataExport = {
       startDate: this.userSearch.get(['startDate'])!.value,
       endDate: this.userSearch.get(['endDate'])!.value,
@@ -64,9 +68,8 @@ export class TransactionReportComponent implements OnInit {
       const downloadURL = window.URL.createObjectURL(res);
       const link = document.createElement('a');
       link.href = downloadURL;
-      link.download = 'Transaction Report-' + new Date().toLocaleDateString() + '.pdf';
+      link.download = 'Transaction Report ' + this.getTime() + '.pdf';
       link.click();
-      // console.log('Export file success');
     });
   }
 
@@ -78,9 +81,8 @@ export class TransactionReportComponent implements OnInit {
     };
     this.show = true;
     this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe((res: HttpResponse<any>) => {
-      // console.log(res.body);
-      this.totalsuccess = res.body.totalsuccess;
-      this.totalfail = res.body.totalfail;
+      this.totalsuccess = res.body.TotalSuccess;
+      this.totalfail = res.body.TotalFail;
       this.pieChartData = [parseInt(this.totalfail, 10), parseInt(this.totalsuccess, 10)];
     });
   }

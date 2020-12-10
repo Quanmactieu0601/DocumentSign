@@ -74,7 +74,6 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("fullName", "%" + fullName + "%");
         }
         sqlBuilder.append("ORDER BY a.id DESC ");
-
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
