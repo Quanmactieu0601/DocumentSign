@@ -109,7 +109,7 @@ public class CertificateGenerateService {
     private CertificateDTO saveNewCertificate(RawCertificate rawCertificate,
                                               String alias,
                                               String subjectInfo,
-                                              CryptoToken cryptoToken) throws ApplicationException {
+                                              CryptoToken cryptoToken) throws ApplicationException, CryptoTokenException {
 
         String certB64 = rawCertificate.getCert();
         String serial = rawCertificate.getSerial();
@@ -128,6 +128,7 @@ public class CertificateGenerateService {
         certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
         certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
         certificateDTO.setActiveStatus(1);
+
         TokenInfo tokenInfo = new TokenInfo()
             .setName(hsmConfig.getName());
         if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
@@ -140,6 +141,9 @@ public class CertificateGenerateService {
 
         vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
         entity = certificateRepository.save(entity);
+
+        cryptoToken.installCert(alias, x509Certificate);
+
         return certificateDTO;
     }
 
