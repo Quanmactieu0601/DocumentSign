@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.*;
 import vn.easyca.signserver.core.domain.CertificateDTO;
-import vn.easyca.signserver.pki.cryptotoken.HsmConfig;
+import vn.easyca.signserver.webapp.config.HsmConfig;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.pki.sign.cache.AbstractCachedObject;

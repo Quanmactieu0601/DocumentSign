@@ -16,6 +16,7 @@ import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.config.HsmConfig;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;

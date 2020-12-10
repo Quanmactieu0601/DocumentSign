@@ -1,7 +1,6 @@
 package vn.easyca.signserver.pki.cryptotoken;
 
 
-import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -24,6 +23,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.config.HsmConfig;
 
 @Component
 public class P11CryptoToken implements CryptoToken {

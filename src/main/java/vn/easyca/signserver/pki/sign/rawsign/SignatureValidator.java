@@ -15,9 +15,8 @@ public class SignatureValidator {
 
     private final String DEFAULT_SIG_ALGO = "SHA1withRSA";
 
-    // TODO: new SAFENETProvider() dang truyen them provider cho Nhi dong, can resolve theo tung crypto token
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey) throws Exception {
-        Signature signature = Signature.getInstance("NONEwithRSA", new SAFENETProvider());
+        Signature signature = Signature.getInstance("NONEwithRSA");
         signature.initVerify(publicKey);
         signature.update(origData);
         return signature.verify(sig);
@@ -27,7 +26,6 @@ public class SignatureValidator {
         return verify(origData, sig, cert.getPublicKey());
     }
 
-    // TODO: new SAFENETProvider() dang truyen them provider cho Nhi dong, can resolve theo tung crypto token
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey, String hashAlgo) throws Exception {
         Signature signature = null;
         hashAlgo = hashAlgo.trim().toLowerCase();
