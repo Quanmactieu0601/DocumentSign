@@ -9,6 +9,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
+import { Action, Extension, Method, Status, Type } from 'app/shared/constants/transaction.constants';
 
 @Component({
   selector: 'jhi-transaction',
@@ -18,7 +19,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactions: ITransaction[] | null = null;
   eventSubscriber?: Subscription;
   searchForm = this.fb.group({
-    // id: [],
     api: [],
     status: [],
     message: [],
@@ -39,6 +39,12 @@ export class TransactionComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+
+  type = Type;
+  method = Method;
+  action = Action;
+  extension = Extension;
+  status = Status;
 
   constructor(
     protected transactionService: TransactionService,
@@ -98,32 +104,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (fieldTransaction.api != null) {
       fieldTransaction.api = fieldTransaction.api.trim();
     }
-    if (fieldTransaction.status != null) {
-      fieldTransaction.status = fieldTransaction.status.trim();
-    }
     if (fieldTransaction.message != null) {
       fieldTransaction.message = fieldTransaction.message.trim();
     }
     if (fieldTransaction.data != null) {
       fieldTransaction.data = fieldTransaction.data.trim();
     }
-    if (fieldTransaction.type != null) {
-      fieldTransaction.type = fieldTransaction.type.trim();
-    }
     if (fieldTransaction.host != null) {
       fieldTransaction.host = fieldTransaction.host.trim();
     }
-    if (fieldTransaction.method != null) {
-      fieldTransaction.method = fieldTransaction.method.trim();
-    }
     if (fieldTransaction.fullName != null) {
       fieldTransaction.fullName = fieldTransaction.fullName.trim();
-    }
-    if (fieldTransaction.action != null) {
-      fieldTransaction.action = fieldTransaction.action.trim();
-    }
-    if (fieldTransaction.extension != null) {
-      fieldTransaction.extension = fieldTransaction.extension.trim();
     }
     this.transactionService
       .findByTransaction(fieldTransaction)

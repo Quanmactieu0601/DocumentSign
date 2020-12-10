@@ -28,7 +28,21 @@
       "startDate": "Start Date",
       "endDate": "End Date",
       "action": "Action",
-      "extension": "Extension"
+      "extension": "Extension",
+      "FAIL": "FAIL",
+      "SUCCESS": "SUCCESS",
+      "SYSTEM": "SYSTEM",
+      "BUSINESS": "BUSINESS",
+      "SIGN": "SIGN",
+      "HASH": "HASH",
+      "VERIFY": "VERIFY",
+      "CREATE": "CREATE",
+      "MODIFY": "MODIFY",
+      "DELETE": "DELETE",
+      "GET_INFO": "GET_INFO",
+      "LOGIN": "LOGIN",
+      "UPDATE": "UPDATE",
+      "": ""
     }
   }
 }

@@ -1,3 +1,5 @@
+<script src="../../shared/constants/pagination.constants.ts"></script>
+<script src="../../shared/constants/transaction.constants.ts"></script>
 <div class="card mb-5">
     <form name="searchTransactions" [formGroup]="searchForm" (ngSubmit)="searchTransactions()">
         <div class="card-header">
@@ -16,11 +18,9 @@
                                 <label for="method"><span
                                     jhiTranslate="webappApp.transaction.method">Method</span></label>
                                 <select class="form-control" formControlName="method">
-                                    <option>POST</option>
-                                    <option>PUT</option>
-                                    <option>UPDATE</option>
-                                    <option>GET</option>
-                                    <option></option>
+                                    <option *ngFor="let name of method"
+                                            [value]="name">{{name}}</option>
+                                    <option value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -29,9 +29,10 @@
                                 <label for="status"><span
                                     jhiTranslate="webappApp.transaction.status">Status</span></label>
                                 <select class="form-control" formControlName="status">
-                                    <option value="SUCCESS">Thành Công</option>
-                                    <option value="FAIL">Thất Bại</option>
-                                    <option></option>
+                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                            *ngFor="let name of status"
+                                            [value]="name">{{name}}</option>
+                                    <option value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -62,9 +63,10 @@
                                 <label for="type"><span
                                     jhiTranslate="webappApp.transaction.type">Type</span></label>
                                 <select class="form-control" formControlName="type">
-                                    <option>SYSTEM</option>
-                                    <option>BUSINESS</option>
-                                    <option></option>
+                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                            *ngFor="let name of type"
+                                            [value]="name">{{name}}</option>
+                                    <option value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -94,16 +96,10 @@
                                 <label for="action"><span
                                     jhiTranslate="webappApp.transaction.action">Action</span></label>
                                 <select class="form-control" formControlName="action">
-                                    <option>SIGN</option>
-                                    <option>HASH</option>
-                                    <option>VERIFY</option>
-                                    <option>CREATE</option>
-                                    <option>DELETE</option>
-                                    <option>GET_INFO</option>
-                                    <option>LOGIN</option>
-                                    <option>UPDATE</option>
-                                    <option>MODIFY</option>
-                                    <option></option>
+                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                            *ngFor="let name of action"
+                                            [value]="name">{{name}}</option>
+                                    <option value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -112,16 +108,9 @@
                                 <label for="extension"><span
                                     jhiTranslate="webappApp.transaction.extension">Extension</span></label>
                                 <select class="form-control" formControlName="extension">
-                                    <option>PDF</option>
-                                    <option>HASH</option>
-                                    <option>CERT</option>
-                                    <option>P11</option>
-                                    <option>P12</option>
-                                    <option>CSR</option>
-                                    <option>RAW</option>
-                                    <option>OOXML</option>
-                                    <option>XML</option>
-                                    <option></option>
+                                    <option *ngFor="let name of extension"
+                                            [value]="name">{{name}}</option>
+                                    <option value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -152,7 +141,8 @@
                 <th scope="col" jhiSortBy="action"><span jhiTranslate="webappApp.transaction.action">Action</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="extension"><span jhiTranslate="webappApp.transaction.extension">Extension</span>
+                <th scope="col" jhiSortBy="extension"><span
+                    jhiTranslate="webappApp.transaction.extension">Extension</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
@@ -179,25 +169,24 @@
                 <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="fullName"><span jhiTranslate="webappApp.transaction.fullName">Full Name</span>
+                <th scope="col" jhiSortBy="fullName"><span
+                    jhiTranslate="webappApp.transaction.fullName">Full Name</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <!-- <th scope="col"></th> -->
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let transaction of transactions ;trackBy: trackId">
-                <td>{{ transaction.action}}</td>
+            <tr
+                *ngFor="let transaction of transactions ;trackBy: trackId">
+                <td jhiTranslate="webappApp.transaction.{{transaction.action}}">{{ transaction.action}}</td>
                 <td>{{ transaction.extension}}</td>
                 <td>{{ transaction.api }}</td>
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
-                <td>
-                    <div *ngIf="transaction.status == true; else elseBlock">Thành Công</div>
-                    <ng-template #elseBlock>Thất bại</ng-template>
-                </td>
+                <td jhiTranslate="webappApp.transaction.{{transaction.status}}"> {{transaction.status}}</td>
                 <td>{{ transaction.message }}</td>
                 <td>{{ transaction.data }}</td>
-                <td>{{ transaction.type }}</td>
+                <td jhiTranslate="webappApp.transaction.{{transaction.type}}">{{ transaction.type }}</td>
                 <td>{{ transaction.method }}</td>
                 <td>{{ transaction.host }}</td>
                 <td>{{ transaction.fullName }}</td>

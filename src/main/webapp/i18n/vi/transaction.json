@@ -28,7 +28,21 @@
       "startDate": "Ngày bắt đầu",
       "endDate": "Ngày kết thúc",
       "action": "Hành động",
-      "extension": "Mở rộng"
+      "extension": "Mở rộng",
+      "FAIL": "Thất Bại",
+      "SUCCESS": "Thành Công",
+      "SYSTEM": "Hệ Thống",
+      "BUSINESS": "Nghiệp Vụ",
+      "SIGN": "Đăng Kí",
+      "HASH": "Băm",
+      "VERIFY": "Kiểm Chứng",
+      "CREATE": "Tạo Mới",
+      "MODIFY": "Thay Đổi",
+      "DELETE": "Xóa",
+      "GET_INFO": "Lấy Thông Tin",
+      "LOGIN": "Đăng Nhập",
+      "UPDATE": "Cập Nhật",
+      "": ""
     }
   }
 }
