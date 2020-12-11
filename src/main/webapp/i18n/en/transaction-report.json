@@ -6,8 +6,8 @@
       "type": "Type",
       "search": "Search",
       "exportPDF ": "Export PDF",
-      "TotalRequetsFail": "Total Request Fail",
-      "TotalRequestSuccess": "Total Request Success",
+      "totalRequetsFail": "Total Request Fail",
+      "totalRequestSuccess": "Total Request Success",
       "figure1": "Figure 1 :",
       "Chart": "Digital Request Transaction Statistics Chart"
     }
