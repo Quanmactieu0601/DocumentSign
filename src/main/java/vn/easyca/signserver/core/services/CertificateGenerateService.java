@@ -7,7 +7,7 @@ import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
-import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -17,9 +17,12 @@ import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
+import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
@@ -45,13 +48,15 @@ public class CertificateGenerateService {
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final HsmConfig hsmConfig;
     private final CertificateMapper mapper;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
+    private final SymmetricEncryptors symmetricService;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -59,6 +64,8 @@ public class CertificateGenerateService {
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.hsmConfig = hsmConfig;
         this.mapper = mapper;
+        this.authenticatorTOTPService = authenticatorTOTPService;
+        this.symmetricService = symmetricService;
     }
 
 
@@ -89,7 +96,7 @@ public class CertificateGenerateService {
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
         CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException {
-//        String alias = CommonUtils.genRandomAlias();
+//        String alias = CertUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
@@ -109,12 +116,12 @@ public class CertificateGenerateService {
     private CertificateDTO saveNewCertificate(RawCertificate rawCertificate,
                                               String alias,
                                               String subjectInfo,
-                                              CryptoToken cryptoToken) throws ApplicationException {
+                                              CryptoToken cryptoToken) throws ApplicationException, CryptoTokenException {
 
         String certB64 = rawCertificate.getCert();
         String serial = rawCertificate.getSerial();
         X509Certificate x509Certificate = null;
-        x509Certificate = CommonUtils.decodeBase64X509(certB64);
+        x509Certificate = CertUtils.decodeBase64X509(certB64);
         if (x509Certificate == null)
             throw new ApplicationException("Cannot init X509Certificate from cert with serial: " + serial);
         CertificateDTO certificateDTO = new CertificateDTO();
@@ -128,6 +135,12 @@ public class CertificateGenerateService {
         certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
         certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
         certificateDTO.setActiveStatus(1);
+        certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
+
+        //TODO: export this pin to user
+        // Create random password for hsm certificate
+        certificateDTO.setEncryptedPin(symmetricService.encrypt(CommonUtils.genRandomHsmCertPin()));
+
         TokenInfo tokenInfo = new TokenInfo()
             .setName(hsmConfig.getName());
         if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
@@ -140,6 +153,9 @@ public class CertificateGenerateService {
 
         vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
         entity = certificateRepository.save(entity);
+
+        cryptoToken.installCert(alias, x509Certificate);
+
         return certificateDTO;
     }
 
@@ -160,7 +176,7 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CertificateGenerateDTO dto) throws Exception {
-//        String alias = CommonUtils.genRandomAlias();
+//        String alias = CertUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
@@ -185,7 +201,7 @@ public class CertificateGenerateService {
      * @throws Exception
      */
     public String createCSR(CryptoToken cryptoToken, CertificateGenerateDTO dto) throws Exception {
-//        String alias = CommonUtils.genRandomAlias();
+//        String alias = CertUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
         String csr = new CSRGenerator().genCsr(
@@ -208,7 +224,7 @@ public class CertificateGenerateService {
      */
     private CertificateGenerateResult.Cert createCertFromCSR(CertificateGenerateDTO dto) throws
         CryptoTokenException, CryptoTokenProxyException, ApplicationException {
-//        String alias = CommonUtils.genRandomAlias();
+//        String alias = CertUtils.genRandomAlias();
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         RawCertificate rawCertificate = dto.getRawCertificate();

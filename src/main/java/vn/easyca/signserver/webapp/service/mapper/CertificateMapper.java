@@ -32,6 +32,7 @@ public class CertificateMapper {
         certificateDTO.setActiveStatus(entity.getActiveStatus());
         certificateDTO.setSignatureImageId(entity.getSignatureImageId());
         certificateDTO.setEncryptedPin(entity.getEncryptedPin());
+        certificateDTO.setSecretKey(entity.getSecretKey());
 
         //TODO: update decrypt
         certificateDTO = encryptionHelper.decryptCert(certificateDTO);
@@ -60,6 +61,7 @@ public class CertificateMapper {
         entity.setActiveStatus(certificateDTO.getActiveStatus());
         entity.setSignatureImageId(certificateDTO.getSignatureImageId());
         entity.setEncryptedPin(certificateDTO.getEncryptedPin());
+        entity.setSecretKey(certificateDTO.getSecretKey());
         return entity;
     }
 

@@ -6,22 +6,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
-import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
-import vn.easyca.signserver.core.utils.CommonUtils;
 import vn.easyca.signserver.webapp.domain.*;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
+import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.io.IOException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -35,15 +35,17 @@ public class CertificateService {
     private final SignatureTemplateRepository signatureTemplateRepository;
     private final SignatureImageRepository signatureImageRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
 
     private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, UserRepository userRepository) {
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureImageRepository = signatureImageRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
+        this.authenticatorTOTPService = authenticatorTOTPService;
         this.userRepository = userRepository;
     }
 
@@ -143,5 +145,22 @@ public class CertificateService {
     @Transactional
     public void saveOrUpdate(Certificate certificate) {
         certificateRepository.save(certificate);
+    }
+
+    public String getBase64OTPQRCode(String serial, String pin) throws ApplicationException {
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        if (!certificateOptional.isPresent())
+            throw new ApplicationException(String.format("Certificate is not exist - serial: %s", serial));
+        CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
+        if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
+            throw new ApplicationException("Pin is not correct");
+        }
+        String urlQrCode = authenticatorTOTPService.getQRCodeFromEncryptedSecretKey(serial, certificateOptional.get().getSecretKey());
+        try {
+            return FileIOHelper.getBase64EncodedImage(urlQrCode);
+        } catch (IOException e) {
+            throw new ApplicationException("Can't convert URL to base64 image", e);
+        }
     }
 }

@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.services;
 
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.dto.OptionalDTO;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
@@ -42,28 +43,28 @@ public class PDFSigningService {
         if (request == null)
             throw new BadServiceInputAppException("dont have element to sign", null);
         TokenInfoDTO tokenInfoDTO = request.getTokenInfo();
+        if (tokenInfoDTO == null)
+            throw new BadServiceInputAppException("tokenInfo object is empty");
+        OptionalDTO optionalDTO = request.getOptional();
+        String otp = optionalDTO.getOtpCode();
         CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
         SigningResponse signingResponse = new SigningResponse();
-        try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfo().getPin());
-            PrivateKey privateKey = cryptoTokenProxy.getPrivateKey();
-            Certificate x509Certificates = cryptoTokenProxy.getX509Certificate();
-            List<SigningResponseContent> responseContentList = new ArrayList<>();
-            List<SigningRequestContent> dataList = request.getSigningRequestContents();
-            SigningResponseContent responseContent = null;
-            String signatureAlgorithm = request.getOptional().getSignatureAlgorithm();
-            for (SigningRequestContent data : dataList) {
-                byte[] pairResult = invisiblePDFSigning.signPdf(data.getData(), "", "", privateKey, new Certificate[] {x509Certificates}, signatureAlgorithm);
-                responseContent = new SigningResponseContent(data.getDocumentName(), null, pairResult);
-                responseContentList.add(responseContent);
-            }
-            signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
-            signingResponse.setResponseContentList(responseContentList);
-            return signingResponse;
-        } catch (ApplicationException e) {
-            throw new ApplicationException("Certificate has error", e);
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, tokenInfoDTO.getPin(), otp);
+        PrivateKey privateKey = cryptoTokenProxy.getPrivateKey();
+        Certificate x509Certificates = cryptoTokenProxy.getX509Certificate();
+        List<SigningResponseContent> responseContentList = new ArrayList<>();
+        List<SigningRequestContent> dataList = request.getSigningRequestContents();
+        SigningResponseContent responseContent = null;
+        String signatureAlgorithm = optionalDTO.getSignatureAlgorithm();
+        for (SigningRequestContent data : dataList) {
+            byte[] pairResult = invisiblePDFSigning.signPdf(data.getData(), "", "", privateKey, new Certificate[] {x509Certificates}, signatureAlgorithm);
+            responseContent = new SigningResponseContent(data.getDocumentName(), null, pairResult);
+            responseContentList.add(responseContent);
         }
+        signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
+        signingResponse.setResponseContentList(responseContentList);
+        return signingResponse;
     }
 }

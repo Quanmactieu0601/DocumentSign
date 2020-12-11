@@ -2,6 +2,7 @@ package vn.easyca.signserver.core.services;
 
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.dto.OptionalDTO;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
@@ -32,10 +33,16 @@ public class XMLSigningService {
 
     public SigningResponse sign(SigningRequest request) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfo();
+        if (tokenInfoDTO == null)
+            throw new BadServiceInputAppException("tokenInfo object is empty");
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin());
+
+        OptionalDTO optionalDTO = request.getOptional();
+        String otp = optionalDTO.getOtpCode();
+
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin(), otp);
         SignXMLLib lib = new SignXMLLib();
         SigningResponse signingResponse = new SigningResponse();
         try {

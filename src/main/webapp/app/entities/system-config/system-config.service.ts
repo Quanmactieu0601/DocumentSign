@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ISystemConfig } from 'app/shared/model/system-config.model';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 type EntityResponseType = HttpResponse<ISystemConfig>;
 type EntityArrayResponseType = HttpResponse<ISystemConfig[]>;
@@ -34,5 +35,9 @@ export class SystemConfigService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  isAuthenOTP(): Observable<ResponseBody> {
+    return this.http.get<ResponseBody>(`${this.resourceUrl}/isAuthenOTP`, { observe: 'body' });
   }
 }

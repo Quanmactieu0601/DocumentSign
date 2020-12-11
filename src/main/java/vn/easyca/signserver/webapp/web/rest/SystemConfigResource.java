@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.SystemConfigService;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.SystemConfigDTO;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -39,8 +42,11 @@ public class SystemConfigResource {
 
     private final SystemConfigService systemConfigService;
 
-    public SystemConfigResource(SystemConfigService systemConfigService) {
+    private final SystemConfigCachingService systemConfigCachingService;
+
+    public SystemConfigResource(SystemConfigService systemConfigService, SystemConfigCachingService systemConfigCachingService) {
         this.systemConfigService = systemConfigService;
+        this.systemConfigCachingService = systemConfigCachingService;
     }
 
     /**
@@ -121,5 +127,16 @@ public class SystemConfigResource {
         log.debug("REST request to delete SystemConfig : {}", id);
         systemConfigService.delete(id);
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    @GetMapping("/system-configs/isAuthenOTP")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<BaseResponseVM> isAuthenOTP() {
+        try {
+            Boolean isUseOTP = systemConfigCachingService.getConfig().getUseOTP();
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(isUseOTP));
+        } catch (ApplicationException e) {
+            throw new BadRequestAlertException("Has error when get OTP configuration", "systemConfig", "otp");
+        }
     }
 }

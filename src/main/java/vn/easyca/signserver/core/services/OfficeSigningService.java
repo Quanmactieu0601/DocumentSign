@@ -3,6 +3,7 @@ package vn.easyca.signserver.core.services;
 import javafx.util.Pair;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.dto.OptionalDTO;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
@@ -37,21 +38,28 @@ public class OfficeSigningService {
 
     public SigningResponse sign(SigningRequest request) throws Exception {
         if (request == null)
-            throw new BadServiceInputAppException("dont have element to sign", null);
+            throw new BadServiceInputAppException("request object is empty", null);
         TokenInfoDTO tokenInfoDTO = request.getTokenInfo();
+        if (tokenInfoDTO == null)
+            throw new BadServiceInputAppException("tokenInfo object is empty");
+
         CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
+
+        OptionalDTO optionalDTO = request.getOptional();
+        String otp = optionalDTO.getOtpCode();
+
         SigningResponse signingResponse = new SigningResponse();
         try {
-            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, request.getTokenInfo().getPin());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, tokenInfoDTO.getPin(), otp);
             PrivateKey privateKey = cryptoTokenProxy.getPrivateKey();
             OfficeSigner officeSigner = new OfficeSigner();
             List<X509Certificate> x509Certificates = Arrays.asList(cryptoTokenProxy.getX509Certificate());
             List<SigningResponseContent> responseContentList = new ArrayList<>();
             List<SigningRequestContent> dataList = request.getSigningRequestContents();
             SigningResponseContent responseContent = null;
-            Signature signatureInstance = cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getOptional().getHashAlgorithm());
+            Signature signatureInstance = cryptoTokenProxy.getCryptoToken().getSignatureInstance(optionalDTO.getHashAlgorithm());
             for (SigningRequestContent data : dataList) {
                 Pair<byte[], byte[]> pairResult = officeSigner.signOOXMLFile(data.getData(), privateKey, x509Certificates, signatureInstance);
                 responseContent = new SigningResponseContent(data.getDocumentName(), pairResult.getKey(), pairResult.getValue());

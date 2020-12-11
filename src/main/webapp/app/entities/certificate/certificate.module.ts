@@ -8,6 +8,7 @@ import { CertificateUpdateComponent } from './certificate-update.component';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
 import { certificateRoute } from './certificate.route';
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
+import { OtpComponent } from './otp/otp.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -17,6 +18,7 @@ import { UploadCertificateComponent } from './upload-certificate/upload-certific
     CertificateUpdateComponent,
     CertificateDeleteDialogComponent,
     UploadCertificateComponent,
+    OtpComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

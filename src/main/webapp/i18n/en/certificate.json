@@ -29,7 +29,16 @@
       "rawData": "Raw Data",
       "validDate": "Valid Date",
       "expiredDate": "Expired Date",
-      "activeStatus": "Active Status"
+      "activeStatus": "Active Status",
+      "otp": {
+        "title": "Verification code",
+        "header": "Create verification code",
+        "placeholder": "Enter your PIN code",
+        "button": "Generate",
+        "success": "Create QR code successfully",
+        "error": "Create QR code failure",
+        "guide": "Guide"
+      }
     }
   }
 }

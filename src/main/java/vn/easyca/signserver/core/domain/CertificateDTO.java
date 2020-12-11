@@ -1,10 +1,8 @@
 package vn.easyca.signserver.core.domain;
 
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.core.utils.CertUtils;
 
-import javax.persistence.Column;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -44,6 +42,8 @@ public class CertificateDTO {
     private X509Certificate x509Certificate;
 
     private Long signatureImageId;
+
+    private String secretKey;
 
     public Long getId() {
         return id;
@@ -149,10 +149,18 @@ public class CertificateDTO {
         this.encryptedPin = encryptedPin;
     }
 
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
+    }
+
     public X509Certificate getX509Certificate() throws ApplicationException {
         if (x509Certificate != null)
             return x509Certificate;
-        return x509Certificate = CommonUtils.decodeBase64X509(rawData);
+        return x509Certificate = CertUtils.decodeBase64X509(rawData);
     }
     public Long getSignatureImageId() {
         return signatureImageId;

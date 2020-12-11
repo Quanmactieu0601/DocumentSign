@@ -101,7 +101,8 @@
       "keyLength": "Chọn Khóa",
       "open": "Mở",
       "save": "Lưu",
-      "view": "Xem"
+      "view": "Xem",
+      "qrcode": "Tạo mã QR"
     },
     "detail": {
       "field": "Trường",
@@ -139,7 +140,8 @@
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
-    }
+    },
+    "otp": "Có lỗi xảy ra khi kiểm tra cấu hình OTP"
   },
   "footer": "Đây là chân trang của bạn"
 }
