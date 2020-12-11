@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -52,5 +53,5 @@ public interface TransactionService {
      */
     List<TransactionDTO> findTransaction(String startDate, String endDate, String type);
 
-    Map findTransactionType(String startDate, String endDate, String type);
+    Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type);
 }

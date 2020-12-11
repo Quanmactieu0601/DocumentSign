@@ -30,6 +30,7 @@ export class TransactionReportComponent implements OnInit {
     },
   };
   public show = false;
+  public showAlert = false;
   public pieChartLabels: Label[] = [['Tổng số lỗi'], ['Tổng số requet thành công']];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
@@ -70,7 +71,14 @@ export class TransactionReportComponent implements OnInit {
       link.href = downloadURL;
       link.download = 'Transaction Report ' + this.getTime() + '.pdf';
       link.click();
+      setTimeout(() => {
+        this.showAlert = true;
+      }, 2000);
     });
+  }
+
+  alertNoification() {
+    this.showAlert = false;
   }
 
   searchUser(): void {

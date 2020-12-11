@@ -12,6 +12,7 @@ import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.mapper.TransactionMapper;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
@@ -108,8 +109,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map findTransactionType(String startDate, String endDate, String type) {
-        Map result = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+    public Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type) {
+        Map<String, BigInteger> result = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
         return result;
     }
 }

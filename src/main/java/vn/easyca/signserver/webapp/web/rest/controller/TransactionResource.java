@@ -21,6 +21,7 @@ import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -143,11 +144,11 @@ public class TransactionResource {
      * @return the total request success and totals request fail .
      */
     @GetMapping("/transactions/report")
-    public ResponseEntity<Map> getAllTransactionBetweenDate(@RequestParam("startDate") String startDate,
-                                                            @RequestParam("endDate") String endDate,
-                                                            @RequestParam("type") String type) {
+    public ResponseEntity<Map<String, BigInteger>> getAllTransactionBetweenDate(@RequestParam("startDate") String startDate,
+                                                                                @RequestParam("endDate") String endDate,
+                                                                                @RequestParam("type") String type) {
         log.debug("REST request to get all Transactions beween date and type ");
-        Map transactionDTOList = transactionService.findTransactionType(startDate, endDate, type);
+        Map<String, BigInteger> transactionDTOList = transactionService.findTransactionType(startDate, endDate, type);
         return ResponseEntity.ok().body(transactionDTOList);
     }
 
@@ -156,25 +157,6 @@ public class TransactionResource {
      * * @param startdate, enddate, type from transaction
      * @return the file pdf transaction report
      */
-//    @GetMapping("/transactions/exportPDFJasper/{startDate}/{endDate}/{type}")
-//    public void exportPDF(@PathVariable("startDate") String startDate,
-//                          @PathVariable("endDate") String endDate,
-//                          @PathVariable("type") String type, HttpServletResponse response) throws JRException, IOException {
-//
-//        log.debug("REST request to export  PDF Transactions ");
-//        Map<String, Object> parameter = new HashMap<>();
-//        List<TransactionDTO> listTranscation = transactionService.findTransaction(startDate, endDate, type);
-//        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTranscation);
-//        parameter.put("transactionDataSource", TransactionCollectionDataSource);
-//        parameter.put("title", "Transaction Report");
-//        JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
-//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
-//        OutputStream out = response.getOutputStream();
-//        JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-//        response.setContentType("application/pdf");
-//        response.addHeader("Content-Disposition", "inline; filename=TransactionReport.pdf;");
-//        log.debug("Export file transaction report.pdf success !");
-//    }
     @GetMapping("/transactions/exportPDFJasper")
     public void exportPDF(@RequestParam("startDate") String startDate,
                           @RequestParam("endDate") String endDate,

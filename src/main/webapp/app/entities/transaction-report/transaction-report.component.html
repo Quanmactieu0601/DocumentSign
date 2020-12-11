@@ -42,15 +42,25 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2 notification">
             <div class="form-group">
                 <div class="mt-2">
                     <button type="submit" (click)="ExportDPF()" class="btn_export btn btn-primary">Export PDF</button>
                 </div>
             </div>
         </div>
+        <div class="notificationExport">
+            <ng-container *ngIf="showAlert">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Download Successfull!
+                    <button type="button" class="close" (click)="alertNoification()" data-dismiss="alert"
+                            aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </ng-container>
+        </div>
     </div>
-
     <ng-container *ngIf="show">
         <div class="charts">
             <div>

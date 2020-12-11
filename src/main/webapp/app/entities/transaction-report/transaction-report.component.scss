@@ -2,6 +2,7 @@
   height: 400px !important;
   width: 800px !important;
 }
+
 .btn_export {
   margin-top: 24px;
   margin-left: -30px;
@@ -10,6 +11,7 @@
 .firstInput {
   width: 90% !important;
 }
+
 .secondInput {
   margin-left: 30px !important;
   width: 78% !important;
@@ -18,4 +20,8 @@
 .selectForm {
   width: 80% !important;
   margin-left: 50px !important;
+}
+
+.notification {
+  display: flex;
 }
