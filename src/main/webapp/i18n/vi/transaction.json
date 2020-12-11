@@ -47,6 +47,16 @@
         "DELETE": "Xóa",
         "GET_INFO": "Lấy Thông Tin",
         "LOGIN": "Đăng Nhập"
+      },
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "Chứng Thư Số",
+        "HASH": "HASH",
+        "NONE": "Không Xác Định"
       }
     }
   }

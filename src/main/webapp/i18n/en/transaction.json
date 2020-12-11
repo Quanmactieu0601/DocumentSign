@@ -47,6 +47,16 @@
         "DELETE": "DELETE",
         "GET_INFO": "GET_INFO",
         "LOGIN": "LOGIN"
+      },
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "CERT",
+        "HASH": "HASH",
+        "NONE": "NONE"
       }
     }
   }

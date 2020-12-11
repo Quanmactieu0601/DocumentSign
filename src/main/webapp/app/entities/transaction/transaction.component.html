@@ -159,7 +159,7 @@
             <tr
                 *ngFor="let transaction of transactions ;trackBy: trackId">
                 <td jhiTranslate="webappApp.transaction.ACTION.{{transaction.action}}">{{ transaction.action}}</td>
-                <td>{{ transaction.extension}}</td>
+                <td jhiTranslate="webappApp.transaction.EXTENSION.{{transaction.extension}}">{{ transaction.extension}}</td>
                 <td>{{ transaction.api }}</td>
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                 <td jhiTranslate="webappApp.transaction.STATUS.{{transaction.status}}"> {{transaction.status}}</td>
