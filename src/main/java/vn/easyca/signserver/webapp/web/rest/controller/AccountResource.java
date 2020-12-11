@@ -163,9 +163,9 @@ public class AccountResource {
                 TransactionStatus.FAIL, "Invalid Password", AccountUtils.getLoggedAccount());
             throw new InvalidPasswordException();
         } else {
+            userApplicationService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
             asyncTransactionService.newThread("/api/account/change-password", TransactionType.SYSTEM, Action.MODIFY, Extension.NONE, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            userApplicationService.changePassword(passwordChangeDto.getCurrentPassword(), passwordChangeDto.getNewPassword());
         }
     }
 

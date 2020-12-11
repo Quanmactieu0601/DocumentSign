@@ -3,7 +3,7 @@ package vn.easyca.signserver.webapp.enm;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 public enum Action {
-    SIGN, HASH, VERIFY, CREATE, MODIFY, DELETE, GET_INFO, LOGIN, UPDATE;
+    SIGN, HASH, VERIFY, CREATE, MODIFY, DELETE, GET_INFO, LOGIN;
 
     public static Action from(String action) {
         if (QueryUtils.isNullOrEmptyProperty(action)) {

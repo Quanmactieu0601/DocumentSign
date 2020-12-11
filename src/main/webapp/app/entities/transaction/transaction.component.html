@@ -18,7 +18,8 @@
                                 <select class="form-control" formControlName="method">
                                     <option *ngFor="let name of method"
                                             [value]="name">{{name}}</option>
-                                    <option value="">TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -27,10 +28,11 @@
                                 <label for="status"><span
                                     jhiTranslate="webappApp.transaction.status">Status</span></label>
                                 <select class="form-control" formControlName="status">
-                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                    <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
                                             *ngFor="let name of status"
                                             [value]="name">{{name}}</option>
-                                    <option value="">TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -61,10 +63,11 @@
                                 <label for="type"><span
                                     jhiTranslate="webappApp.transaction.type">Type</span></label>
                                 <select class="form-control" formControlName="type">
-                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                    <option jhiTranslate="webappApp.transaction.TYPE.{{name}}"
                                             *ngFor="let name of type"
                                             [value]="name">{{name}}</option>
-                                    <option value="">TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -94,10 +97,11 @@
                                 <label for="action"><span
                                     jhiTranslate="webappApp.transaction.action">Action</span></label>
                                 <select class="form-control" formControlName="action">
-                                    <option jhiTranslate="webappApp.transaction.{{name}}"
+                                    <option jhiTranslate="webappApp.transaction.ACTION.{{name}}"
                                             *ngFor="let name of action"
                                             [value]="name">{{name}}</option>
-                                    <option value="">TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -108,7 +112,8 @@
                                 <select class="form-control" formControlName="extension">
                                     <option *ngFor="let name of extension"
                                             [value]="name">{{name}}</option>
-                                    <option value="">TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -178,14 +183,14 @@
             <tbody>
             <tr
                 *ngFor="let transaction of transactions ;trackBy: trackId">
-                <td jhiTranslate="webappApp.transaction.{{transaction.action}}">{{ transaction.action}}</td>
+                <td jhiTranslate="webappApp.transaction.ACTION.{{transaction.action}}">{{ transaction.action}}</td>
                 <td>{{ transaction.extension}}</td>
                 <td>{{ transaction.api }}</td>
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
-                <td jhiTranslate="webappApp.transaction.{{transaction.status}}"> {{transaction.status}}</td>
+                <td jhiTranslate="webappApp.transaction.STATUS.{{transaction.status}}"> {{transaction.status}}</td>
                 <td>{{ transaction.message }}</td>
                 <td>{{ transaction.data }}</td>
-                <td jhiTranslate="webappApp.transaction.{{transaction.type}}">{{ transaction.type }}</td>
+                <td jhiTranslate="webappApp.transaction.TYPE.{{transaction.type}}">{{ transaction.type }}</td>
                 <td>{{ transaction.method }}</td>
                 <td>{{ transaction.host }}</td>
                 <td>{{ transaction.fullName }}</td>

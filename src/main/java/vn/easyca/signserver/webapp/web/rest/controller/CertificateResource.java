@@ -92,12 +92,12 @@ public class CertificateResource {
         try { //
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
-            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.P12, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.P12, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
         }
@@ -112,17 +112,17 @@ public class CertificateResource {
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
-            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.P11, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
@@ -255,11 +255,11 @@ public class CertificateResource {
     public ResponseEntity<BaseResponseVM> updateActiveStatus(@RequestBody Long id) {
         try {
             certificateService.updateActiveStatus(id);
-            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.UPDATE, null, Method.PUT,
+            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, null, Method.PUT,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(null));
         } catch (Exception e) {
-            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.UPDATE, null, Method.PUT,
+            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, null, Method.PUT,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }

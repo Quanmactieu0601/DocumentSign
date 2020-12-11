@@ -42,8 +42,8 @@ public class QueryUtils {
 
     public static String addMultiSort(Sort sort) {
         StringBuilder orderSql = new StringBuilder();
-        if (sort.toString().equals("id: ASC")) {
-            return " ORDER BY id DESC ";
+        if (sort == null) {
+            return " ORDER BY ID DESC ";
         }
         orderSql.append(" ORDER BY ");
         int i = 0;

@@ -29,20 +29,25 @@
       "endDate": "End Date",
       "action": "Action",
       "extension": "Extension",
-      "FAIL": "FAIL",
-      "SUCCESS": "SUCCESS",
-      "SYSTEM": "SYSTEM",
-      "BUSINESS": "BUSINESS",
-      "SIGN": "SIGN",
-      "HASH": "HASH",
-      "VERIFY": "VERIFY",
-      "CREATE": "CREATE",
-      "MODIFY": "MODIFY",
-      "DELETE": "DELETE",
-      "GET_INFO": "GET_INFO",
-      "LOGIN": "LOGIN",
-      "UPDATE": "UPDATE",
-      "": ""
+      "ALL": "ALL",
+      "STATUS": {
+        "FAIL": "FAIL",
+        "SUCCESS": "SUCCESS"
+      },
+      "TYPE": {
+        "SYSTEM": "SYSTEM",
+        "BUSINESS": "BUSINESS"
+      },
+      "ACTION": {
+        "SIGN": "SIGN",
+        "HASH": "HASH",
+        "VERIFY": "VERIFY",
+        "CREATE": "CREATE",
+        "MODIFY": "MODIFY",
+        "DELETE": "DELETE",
+        "GET_INFO": "GET_INFO",
+        "LOGIN": "LOGIN"
+      }
     }
   }
 }
