@@ -39,9 +39,9 @@
         "BUSINESS": "Nghiệp Vụ"
       },
       "ACTION": {
-        "SIGN": "Đăng Kí",
+        "SIGN": "Kí Số",
         "HASH": "Băm",
-        "VERIFY": "Kiểm Chứng",
+        "VERIFY": "Xác Nhận",
         "CREATE": "Tạo Mới",
         "MODIFY": "Thay Đổi",
         "DELETE": "Xóa",

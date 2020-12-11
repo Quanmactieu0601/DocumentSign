@@ -9,7 +9,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
-import { Action, Extension, Method, Status, Type } from 'app/shared/constants/transaction.constants';
+import { Method, Status, Type } from 'app/shared/constants/transaction.constants';
 
 @Component({
   selector: 'jhi-transaction',
@@ -42,8 +42,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   type = Type;
   method = Method;
-  action = Action;
-  extension = Extension;
   status = Status;
 
   constructor(

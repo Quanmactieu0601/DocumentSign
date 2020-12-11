@@ -16,10 +16,10 @@
                                 <label for="method"><span
                                     jhiTranslate="webappApp.transaction.method">Method</span></label>
                                 <select class="form-control" formControlName="method">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
                                     <option *ngFor="let name of method"
                                             [value]="name">{{name}}</option>
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -28,11 +28,11 @@
                                 <label for="status"><span
                                     jhiTranslate="webappApp.transaction.status">Status</span></label>
                                 <select class="form-control" formControlName="status">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
                                     <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
                                             *ngFor="let name of status"
                                             [value]="name">{{name}}</option>
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -63,11 +63,11 @@
                                 <label for="type"><span
                                     jhiTranslate="webappApp.transaction.type">Type</span></label>
                                 <select class="form-control" formControlName="type">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
                                     <option jhiTranslate="webappApp.transaction.TYPE.{{name}}"
                                             *ngFor="let name of type"
                                             [value]="name">{{name}}</option>
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            value="">TẤT CẢ</option>
                                 </select>
                             </div>
                         </div>
@@ -90,31 +90,6 @@
                                 <label for="data"><span
                                     jhiTranslate="webappApp.transaction.data">Date</span></label>
                                 <input type="text" class="form-control" formControlName="data"/>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="action"><span
-                                    jhiTranslate="webappApp.transaction.action">Action</span></label>
-                                <select class="form-control" formControlName="action">
-                                    <option jhiTranslate="webappApp.transaction.ACTION.{{name}}"
-                                            *ngFor="let name of action"
-                                            [value]="name">{{name}}</option>
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            value="">TẤT CẢ</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="extension"><span
-                                    jhiTranslate="webappApp.transaction.extension">Extension</span></label>
-                                <select class="form-control" formControlName="extension">
-                                    <option *ngFor="let name of extension"
-                                            [value]="name">{{name}}</option>
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            value="">TẤT CẢ</option>
-                                </select>
                             </div>
                         </div>
                     </div>
