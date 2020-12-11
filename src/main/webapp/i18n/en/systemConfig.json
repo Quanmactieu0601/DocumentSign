@@ -21,7 +21,10 @@
       "value": "Value",
       "description": "Description",
       "dataType": "Data Type",
-      "activated": "Activated"
+      "activated": "Activated",
+      "error": {
+        "otp": "Has error when get OTP configuration"
+      }
     }
   }
 }

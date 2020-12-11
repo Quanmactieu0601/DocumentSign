@@ -17,7 +17,7 @@ import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
-import vn.easyca.signserver.webapp.security.AuthenticatorTOTP;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
@@ -48,7 +48,7 @@ public class CertificateGenerateService {
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final HsmConfig hsmConfig;
     private final CertificateMapper mapper;
-    private final AuthenticatorTOTP authenticatorTOTP;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SymmetricEncryptors symmetricService;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
@@ -56,7 +56,7 @@ public class CertificateGenerateService {
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTP authenticatorTOTP, SymmetricEncryptors symmetricService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -64,7 +64,7 @@ public class CertificateGenerateService {
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.hsmConfig = hsmConfig;
         this.mapper = mapper;
-        this.authenticatorTOTP = authenticatorTOTP;
+        this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
     }
 
@@ -135,7 +135,7 @@ public class CertificateGenerateService {
         certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
         certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
         certificateDTO.setActiveStatus(1);
-        certificateDTO.setSecretKey(authenticatorTOTP.generateEncryptedTOTPKey());
+        certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
         //TODO: export this pin to user
         // Create random password for hsm certificate

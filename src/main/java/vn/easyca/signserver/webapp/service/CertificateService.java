@@ -14,7 +14,7 @@ import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
-import vn.easyca.signserver.webapp.security.AuthenticatorTOTP;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
@@ -35,17 +35,17 @@ public class CertificateService {
     private final SignatureTemplateRepository signatureTemplateRepository;
     private final SignatureImageRepository signatureImageRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
-    private final AuthenticatorTOTP authenticatorTOTP;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
 
     private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTP authenticatorTOTP, UserRepository userRepository) {
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureImageRepository = signatureImageRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
-        this.authenticatorTOTP = authenticatorTOTP;
+        this.authenticatorTOTPService = authenticatorTOTPService;
         this.userRepository = userRepository;
     }
 
@@ -156,7 +156,7 @@ public class CertificateService {
         if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
             throw new ApplicationException("Pin is not correct");
         }
-        String urlQrCode = authenticatorTOTP.getQRCodeFromEncryptedSecretKey(serial, certificateOptional.get().getSecretKey());
+        String urlQrCode = authenticatorTOTPService.getQRCodeFromEncryptedSecretKey(serial, certificateOptional.get().getSecretKey());
         try {
             return FileIOHelper.getBase64EncodedImage(urlQrCode);
         } catch (IOException e) {

@@ -1,0 +1,48 @@
+<div class="modal-header">
+    <h5 class="modal-title" jhiTranslate="webappApp.certificate.otp.header">Modal title</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+</div>
+<div class="modal-body">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">{{'webappApp.certificate.serial' | translate}}:</div>
+                <div class="col-md-9 bold">{{certificate?.serial}}</div>
+            </div>
+            <div class="row mg-top-10">
+                <div class="col-md-3">{{'webappApp.certificate.alias' | translate}}:</div>
+                <div class="col-md-9 bold">{{certificate?.alias}}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mg-top-10">
+        <form #f="ngForm" class="otp-form">
+            <div class="col-md-7">
+                <input required="required" class="form-control" type="text" [(ngModel)]="pin" name="pin"
+                       [placeholder]="'webappApp.certificate.otp.placeholder' | translate">
+            </div>
+            <div class="col-md-3 rm-pd-left">
+                <button type=submit class="btn btn-success width-full" (click)="genOtp()" [disabled]="!f.form.valid">
+                    <fa-icon icon="qrcode"></fa-icon>
+                    {{'webappApp.certificate.otp.button' | translate}}</button>
+            </div>
+            <div class="col-md-2 rm-pd-left">
+                <button type=submit class="btn btn-warning width-full" [title]="'webappApp.certificate.otp.guide' | translate" (click)="showGuide()">
+                    <fa-icon icon="info-circle"></fa-icon></button>
+            </div>
+        </form>
+    </div>
+    <div class="card mg-top-10" *ngIf="base64Img">
+        <div class="card-body rm-pd">
+            <div class="row mg-top-10">
+                <div class="col-md-6 offset-md-3">
+                    <img [src]="base64Img"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--<div class="modal-footer">-->
+<!--    <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--</div>-->

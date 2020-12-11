@@ -14,6 +14,7 @@ import vn.easyca.signserver.webapp.config.HsmTypeConstant;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
@@ -25,21 +26,43 @@ public class CryptoTokenProxyFactory {
     private final P11CryptoToken p11CryptoToken;
     private final HsmConfig hsmConfig;
     private final SystemConfigCachingService systemConfigCachingService;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
 
     public CryptoTokenProxyFactory(SymmetricEncryptors symmetricService, P12CryptoToken p12CryptoToken,
                                    P11ProtectServerCryptoToken p11ProtectServerCryptoToken, P11CryptoToken p11CryptoToken,
-                                   HsmConfig hsmConfig, SystemConfigCachingService systemConfigCachingService) {
+                                   HsmConfig hsmConfig, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTPService authenticatorTOTPService) {
         this.symmetricService = symmetricService;
         this.p12CryptoToken = p12CryptoToken;
         this.p11CryptoToken = p11CryptoToken;
         this.p11ProtectServerCryptoToken = p11ProtectServerCryptoToken;
         this.hsmConfig = hsmConfig;
         this.systemConfigCachingService = systemConfigCachingService;
+        this.authenticatorTOTPService = authenticatorTOTPService;
     }
 
-    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws ApplicationException {
+    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin)  throws ApplicationException {
         if (certificateDTO == null)
             throw new ApplicationException("Certificate is not null");
+        return getCryptoTokenProxy(certificateDTO, pin);
+    }
+
+    public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin, String otp) throws ApplicationException {
+        if (certificateDTO == null)
+            throw new ApplicationException("Certificate is not null");
+
+        boolean useOTP = systemConfigCachingService.getConfig().getUseOTP();
+        if (useOTP) {
+            if (StringUtils.isEmpty(otp))
+                throw new ApplicationException("OTP is empty");
+            boolean isOTPValid = authenticatorTOTPService.isAuthorized(certificateDTO.getSecretKey(), otp);
+            if (!isOTPValid) {
+                throw new ApplicationException("OTP is not valid");
+            }
+        }
+        return getCryptoTokenProxy(certificateDTO, pin);
+    }
+
+    private CryptoTokenProxy getCryptoTokenProxy(CertificateDTO certificateDTO, String pin) throws ApplicationException {
         boolean skipCheckPassword = systemConfigCachingService.getConfig().getSaveTokenPassword();
         String serial = certificateDTO.getSerial();
         String tokenType = certificateDTO.getTokenType();

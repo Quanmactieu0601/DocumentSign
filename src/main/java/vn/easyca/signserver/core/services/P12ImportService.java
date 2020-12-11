@@ -15,7 +15,7 @@ import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
-import vn.easyca.signserver.webapp.security.AuthenticatorTOTP;
+import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
@@ -42,17 +42,17 @@ public class P12ImportService {
     private final SymmetricEncryptors symmetricService;
     private final CertificateRepository certificateRepository;
     private final SystemConfigCachingService systemConfigCachingService;
-    private final AuthenticatorTOTP authenticatorTOTP;
+    private final AuthenticatorTOTPService authenticatorTOTPService;
 
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
-                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTP authenticatorTOTP) {
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTPService authenticatorTOTPService) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
         this.systemConfigCachingService = systemConfigCachingService;
-        this.authenticatorTOTP = authenticatorTOTP;
+        this.authenticatorTOTPService = authenticatorTOTPService;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -96,7 +96,7 @@ public class P12ImportService {
         if (dbConfiguration.getSaveTokenPassword())
             certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
 
-        certificateDTO.setSecretKey(authenticatorTOTP.generateEncryptedTOTPKey());
+        certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
         TokenInfo tokenInfo = new TokenInfo();
         tokenInfo.setData(input.getP12Base64());

@@ -38,6 +38,9 @@ import {
   faFileExcel,
   faExchangeAlt,
   faCreditCard,
+  faQrcode,
+  faInfo,
+  faInfoCircle,
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -81,5 +84,8 @@ export const fontAwesomeIcons = [
   faFileExcel,
   faExchangeAlt,
   faCreditCard,
+  faQrcode,
+  faInfo,
+  faInfoCircle,
   // jhipster-needle-add-icon-import
 ];

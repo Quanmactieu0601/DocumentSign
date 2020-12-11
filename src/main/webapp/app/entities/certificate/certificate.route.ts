@@ -40,7 +40,7 @@ export const certificateRoute: Routes = [
     component: CertificateComponent,
     data: {
       authorities: [Authority.USER],
-      defaultSort: 'id,asc',
+      defaultSort: 'id,desc',
       pageTitle: 'webappApp.certificate.home.title',
     },
     canActivate: [UserRouteAccessService],

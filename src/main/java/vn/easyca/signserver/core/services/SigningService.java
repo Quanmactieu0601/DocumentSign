@@ -3,6 +3,7 @@ package vn.easyca.signserver.core.services;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.dto.OptionalDTO;
 import vn.easyca.signserver.core.dto.sign.request.SignElement;
 import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
@@ -29,6 +30,7 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SigningService {
@@ -55,7 +57,7 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin(), request.getOptional().getOtpCode());
 
         String temFilePath = TEM_DIR + UniqueID.generate() + ".pdf";
         File file = new File(temFilePath);
@@ -101,7 +103,9 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
+        OptionalDTO optionalDTO = request.getOptional();
+        String otp = optionalDTO.getOtpCode();
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin(), otp);
 
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
@@ -129,12 +133,16 @@ public class SigningService {
 
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         if (tokenInfoDTO == null)
-            throw new BadServiceInputAppException("have not token info");
+            throw new BadServiceInputAppException("tokeninfo is empty");
+
+        OptionalDTO optionalDTO = request.getOptional();
+        String otp = optionalDTO.getOtpCode();
+
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
-        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin());
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin(), otp);
 
         PrivateKey privateKey = null;
         try {

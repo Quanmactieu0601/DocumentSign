@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ICertificate } from 'app/shared/model/certificate.model';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 type EntityResponseType = HttpResponse<ICertificate>;
 type EntityArrayResponseType = HttpResponse<ICertificate[]>;
@@ -86,8 +87,8 @@ export class CertificateService {
     return this.http.get<ICertificate[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
   }
 
-  getQRCodeOTP(req?: any): Observable<HttpResponse<{}>> {
+  getQRCodeOTP(req?: any): Observable<ResponseBody> {
     const options = createRequestOption(req);
-    return this.http.delete(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'response' });
+    return this.http.get<ResponseBody>(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'body' });
   }
 }
