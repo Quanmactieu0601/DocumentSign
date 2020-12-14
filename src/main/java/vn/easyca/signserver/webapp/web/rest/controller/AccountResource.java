@@ -66,13 +66,13 @@ public class AccountResource {
     @ResponseStatus(HttpStatus.CREATED)
     public void registerAccount(@Valid @RequestBody ManagedUserVM managedUserVM) {
         if (!checkPasswordLength(managedUserVM.getPassword())) {
-            asyncTransactionService.newThread("/api/register", TransactionType.SYSTEM, Action.SIGN, Extension.NONE, Method.POST,
+            asyncTransactionService.newThread("/api/register", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 TransactionStatus.FAIL, "Invalid Password", AccountUtils.getLoggedAccount());
             throw new InvalidPasswordException();
         } else {
             UserEntity userEntity = userApplicationService.registerUser(managedUserVM, managedUserVM.getPassword());
             mailService.sendActivationEmail(userEntity);
-            asyncTransactionService.newThread("api/register", TransactionType.SYSTEM, Action.SIGN, Extension.NONE, Method.POST,
+            asyncTransactionService.newThread("api/register", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         }
     }
@@ -87,11 +87,11 @@ public class AccountResource {
     public void activateAccount(@RequestParam(value = "key") String key) {
         Optional<UserEntity> user = userApplicationService.activateRegistration(key);
         if (!user.isPresent()) {
-            asyncTransactionService.newThread("/api/activate", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.GET,
+            asyncTransactionService.newThread("/api/activate", TransactionType.SYSTEM, Action.MODIFY, Extension.NONE, Method.GET,
                 TransactionStatus.FAIL, "No user was found for this activation key", AccountUtils.getLoggedAccount());
             throw new AccountResourceException("No user was found for this activation key");
         } else {
-            asyncTransactionService.newThread("/api/activate", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.GET,
+            asyncTransactionService.newThread("/api/activate", TransactionType.SYSTEM, Action.MODIFY, Extension.NONE, Method.GET,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         }
     }
