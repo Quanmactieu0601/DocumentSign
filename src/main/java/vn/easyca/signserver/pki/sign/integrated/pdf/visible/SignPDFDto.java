@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.sign.integrated.pdf;
+package vn.easyca.signserver.pki.sign.integrated.pdf.visible;
 
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.config.Constants;

@@ -91,7 +91,7 @@ public class UserApplicationService {
             });
     }
 
-    public BaseResponseVM registerListUser(List<UserDTO> userDTOList, String password) {
+    /*public BaseResponseVM registerListUser(List<UserDTO> userDTOList, String password) {
         StringBuilder errorMes = new StringBuilder();
         int row = 1;
         for (UserDTO userDTO : userDTOList) {
@@ -161,7 +161,7 @@ public class UserApplicationService {
             System.out.println(errorMes.toString());
             return new BaseResponseVM(400, null, errorMes.toString());
         }
-    }
+    }*/
 
 
     public UserEntity registerUser(UserDTO userDTO, String password) {

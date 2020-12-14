@@ -11,6 +11,9 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CertificateService } from './certificate.service';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
+import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
+import { SystemConfigService } from 'app/entities/system-config/system-config.service';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 @Component({
   selector: 'jhi-certificate',
@@ -26,6 +29,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+  isAuthenOTP = false;
 
   modalRef: NgbModalRef | undefined;
 
@@ -42,7 +46,8 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected router: Router,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    protected systemConfigService: SystemConfigService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -64,6 +69,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.handleNavigation();
     this.registerChangeInCertificates();
+    this.systemConfigService.isAuthenOTP().subscribe((res: ResponseBody) => {
+      this.isAuthenOTP = res.data;
+    });
   }
 
   handleNavigation(): void {
@@ -97,7 +105,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
 
   delete(certificate: ICertificate): void {
-    const modalRef = this.modalService.open(CertificateDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modalService.open(CertificateDeleteDialogComponent, { size: 'sm', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
   }
 
@@ -179,5 +187,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
         (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, lastPage, false),
         () => this.onError()
       );
+  }
+
+  showOTP(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(OtpComponent, { size: '300px', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
   }
 }

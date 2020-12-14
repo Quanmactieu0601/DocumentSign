@@ -134,8 +134,8 @@ public class P12CryptoToken implements CryptoToken {
     }
 
     @Override
-    public String getProviderName() throws CryptoTokenException {
-        throw new CryptoTokenException("Method is not supported with PKCS12");
+    public String getProviderName() {
+        return null;
     }
 
     @Override
@@ -150,6 +150,19 @@ public class P12CryptoToken implements CryptoToken {
             return Signature.getInstance(algorithm + "withRSA");
         } catch (NoSuchAlgorithmException e) {
             throw new ApplicationException(-1, "Cannot get signature instance", e);
+        }
+    }
+
+    @Override
+    public boolean isInitialized() throws ApplicationException {
+        try {
+            if (ks != null) {
+                ks.aliases();
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            throw new ApplicationException("Keystore is not initialized, please check PIN number");
         }
     }
 }

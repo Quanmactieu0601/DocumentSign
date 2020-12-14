@@ -9,6 +9,7 @@
         "main": "Entities",
         "certificate": "Certificate",
         "transaction": "Transaction",
+        "systemConfig": "System Config",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -102,7 +103,8 @@
       "keyLength": "Choose Key",
       "open": "Open",
       "save": "Save",
-      "view": "View"
+      "view": "View",
+      "qrcode": "QR Code"
     },
     "detail": {
       "field": "Field",
@@ -144,7 +146,8 @@
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
-    }
+    },
+    "otp": "Has error when get OTP configuration"
   },
   "footer": "This is your footer"
 }

@@ -1,0 +1,30 @@
+{
+  "webappApp": {
+    "systemConfig": {
+      "home": {
+        "title": "System Configs",
+        "createLabel": "Create a new System Config",
+        "createOrEditLabel": "Create or edit a System Config",
+        "notFound": "No System Configs found"
+      },
+      "created": "A new System Config is created with identifier {{ param }}",
+      "updated": "A System Config is updated with identifier {{ param }}",
+      "deleted": "A System Config is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete System Config {{ id }}?"
+      },
+      "detail": {
+        "title": "System Config"
+      },
+      "comId": "Com Id",
+      "key": "Key",
+      "value": "Value",
+      "description": "Description",
+      "dataType": "Data Type",
+      "activated": "Activated",
+      "error": {
+        "otp": "Has error when get OTP configuration"
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 package vn.easyca.signserver.core.dto.sign.newrequest;
 
+import java.util.Arrays;
+
 public class SigningRequestContent {
     /***
      * document byte array which need to be sign
@@ -25,5 +27,13 @@ public class SigningRequestContent {
 
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+
+    @Override
+    public String toString() {
+        return "SigningRequestContent{" +
+            "data=" + Arrays.toString(data) +
+            ", documentName='" + documentName + '\'' +
+            '}';
     }
 }

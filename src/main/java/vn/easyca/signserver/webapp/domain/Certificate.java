@@ -60,9 +60,11 @@ public class Certificate implements Serializable {
     @Column(name = "signature_image_id")
     private Long signatureImageId;
 
-
     @Column(name = "encrypted_pin")
     private String encryptedPin;
+
+    @Column(name = "secret_key")
+    private String secretKey;
 
     public Long getSignatureImageId() {
         return signatureImageId;
@@ -228,6 +230,14 @@ public class Certificate implements Serializable {
 
     public void setEncryptedPin(String encryptedPin) {
         this.encryptedPin = encryptedPin;
+    }
+
+    public String getSecretKey() {
+        return secretKey;
+    }
+
+    public void setSecretKey(String secretKey) {
+        this.secretKey = secretKey;
     }
 
     @Override

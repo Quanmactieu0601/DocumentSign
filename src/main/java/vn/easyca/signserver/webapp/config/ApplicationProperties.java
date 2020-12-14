@@ -10,13 +10,22 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "application", ignoreUnknownFields = false)
 public class ApplicationProperties {
-    private String symmetricKey;
-
-    public String getSymmetricKey() {
-        return symmetricKey;
-    }
-
-    public void setSymmetricKey(String symmetricKey) {
-        this.symmetricKey = symmetricKey;
-    }
+//    private String symmetricKey;
+//    private Boolean saveP12Pin;
+//
+//    public String getSymmetricKey() {
+//        return symmetricKey;
+//    }
+//
+//    public void setSymmetricKey(String symmetricKey) {
+//        this.symmetricKey = symmetricKey;
+//    }
+//
+//    public Boolean getSaveP12Pin() {
+//        return saveP12Pin;
+//    }
+//
+//    public void setSaveP12Pin(Boolean saveP12Pin) {
+//        this.saveP12Pin = saveP12Pin;
+//    }
 }

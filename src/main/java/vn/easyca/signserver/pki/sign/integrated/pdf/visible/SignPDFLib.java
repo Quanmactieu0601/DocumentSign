@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.sign.integrated.pdf;
+package vn.easyca.signserver.pki.sign.integrated.pdf.visible;
 
 import com.itextpdf.text.*;
 import com.itextpdf.text.io.RASInputStream;

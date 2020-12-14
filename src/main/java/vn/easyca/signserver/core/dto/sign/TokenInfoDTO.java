@@ -21,4 +21,12 @@ public class TokenInfoDTO {
     public void setSerial(String serial) {
         this.serial = serial;
     }
+
+    @Override
+    public String toString() {
+        return "TokenInfoDTO{" +
+            "serial='" + serial + '\'' +
+            ", pin='" + pin + '\'' +
+            '}';
+    }
 }

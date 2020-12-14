@@ -1,7 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
 import vn.easyca.signserver.core.dto.SignatureVerificationRequest;
-import vn.easyca.signserver.core.utils.CommonUtils;
+import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.webapp.web.rest.mapper.SignatureVerificationRequestMapper;
 
 import java.security.cert.X509Certificate;
@@ -38,7 +38,7 @@ public class SignatureVerificationVM {
             return serial;
         try {
             if (base64Certificate != null && !base64Certificate.isEmpty()) {
-                X509Certificate certificate = CommonUtils.decodeBase64X509(base64Certificate);
+                X509Certificate certificate = CertUtils.decodeBase64X509(base64Certificate);
                 return certificate.getSerialNumber().toString(16);
             }
         } catch (Exception ignored) {

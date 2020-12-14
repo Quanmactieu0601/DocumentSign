@@ -1,4 +1,4 @@
-package vn.easyca.signserver.core.model;
+package vn.easyca.signserver.core.factory;
 
 public class CryptoTokenProxyException extends Exception{
     public CryptoTokenProxyException(String message) {

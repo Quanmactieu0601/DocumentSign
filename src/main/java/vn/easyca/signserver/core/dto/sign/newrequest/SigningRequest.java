@@ -33,4 +33,13 @@ public class SigningRequest {
     public void setOptional(OptionalDTO optional) {
         this.optional = optional;
     }
+
+    @Override
+    public String toString() {
+        return "SigningRequest{" +
+            "signingRequestContents=" + signingRequestContents +
+            ", tokenInfo=" + tokenInfo +
+            ", optional=" + optional +
+            '}';
+    }
 }

@@ -8,71 +8,51 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.w3c.tidy.Tidy;
-import org.xhtmlrenderer.swing.Java2DRenderer;
-import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
-import vn.easyca.signserver.core.model.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.services.PDFSigningService;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.core.utils.CommonUtils;
-import vn.easyca.signserver.webapp.domain.SignatureTemplate;
-import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.*;
-import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
-import java.security.cert.X509Certificate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import vn.easyca.signserver.core.services.XMLSigningService;
+import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.enm.Method;
+
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 @RestController
 @RequestMapping("/api/sign")
 public class SigningResource {
     private final SigningService signService;
-    private static final Logger log = LoggerFactory.getLogger(SignatureVerificationResource.class);
-    private final TransactionService transactionService;
+    private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
     private final OfficeSigningService officeSigningService;
-    private final CertificateService certificateService;
-    private final UserApplicationService userApplicationService;
-    private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
-    private final SignatureTemplateService signatureTemplateService;
+    private final PDFSigningService pdfSigningService;
+    private final XMLSigningService xmlSigningService;
     private final AsyncTransactionService asyncTransactionService;
-    private final SignatureImageService signatureImageService;
 
-    public SigningResource(SigningService signService, TransactionService transactionService, CertificateService certificateService, UserApplicationService userApplicationService,
-                           SignatureTemplateService signatureTemplateService, OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService,
-                           CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureImageService signatureImageService) {
+    public SigningResource(SigningService signService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService,
+                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService) {
         this.signService = signService;
-        this.transactionService = transactionService;
-        this.certificateService = certificateService;
-        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
-        this.userApplicationService = userApplicationService;
-        this.signatureTemplateService = signatureTemplateService;
+        this.pdfSigningService = pdfSigningService;
+        this.xmlSigningService = xmlSigningService;
         this.officeSigningService = officeSigningService;
         this.asyncTransactionService = asyncTransactionService;
-        this.signatureImageService = signatureImageService;
     }
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
+        log.info(" --- signPDF --- {}", signingVM);
         try {
             byte[] fileData = file.getBytes();
             SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
@@ -91,6 +71,7 @@ public class SigningResource {
                 TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
+            log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/sign/pdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
@@ -99,6 +80,7 @@ public class SigningResource {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
+        log.info(" --- signHash --- {}", signingVM);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
@@ -120,6 +102,7 @@ public class SigningResource {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
+        log.info(" --- signRaw --- {}", signingVM);
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
@@ -139,81 +122,9 @@ public class SigningResource {
         }
     }
 
-
-
-    @GetMapping("/getImage")
-    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial) {
-        try {
-            CertificateDTO certificate = certificateService.getBySerial(serial);
-
-            Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-            Long userId = userEntity.get().getId();
-
-            Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateService.findOneWithUserId(userId);
-            if(! signatureTemplateDTO.isPresent()) {
-                return ResponseEntity.ok(new BaseResponseVM(-1, null, "Người dùng không có mẫu để ký"));
-            }
-
-            String htmlContent = getHtmlTemplateAndSignData(certificate,signatureTemplateDTO);
-            String base64ImageResponseData = convertHtmlContentToBase64(htmlContent);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64ImageResponseData));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        }
-    }
-
-
-
-    private String getHtmlTemplateAndSignData(CertificateDTO certificate, Optional<SignatureTemplate> signatureTemplateDTO) throws Exception {
-        String signImageData = "";
-        Long signImageId = certificate.getSignatureImageId();
-        if(signImageId != null) {
-            Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(signImageId);
-            signImageData = signatureImageDTO.get().getImgData();
-        }
-
-        X509Certificate x509Certificate = CommonUtils.decodeBase64X509(certificate.getRawData());
-        String contentInformation = x509Certificate.getSubjectDN().getName();
-        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-        final String regex = "CN=\"([^\"]+)\"";
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(contentInformation);
-        String CN = null;
-        while (matcher.find()) {
-            CN = matcher.group(1);
-        }
-
-        String[] signerInfor = CN.split(",");
-        String signerName = signerInfor[0];
-        String address = signerInfor[1];
-        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss, dd/MM/yyyy", Locale.getDefault());
-        Calendar cal = Calendar.getInstance();
-
-        String htmlContent = signatureTemplateDTO.get().getHtmlTemplate();
-        htmlContent = htmlContent
-            .replaceFirst("signer", signerName)
-            .replaceFirst("address", address)
-            .replaceFirst("signatureImage", signImageData)
-            .replaceFirst("timeSign", dateFormat.format(cal.getTime()));
-        return htmlContent;
-    }
-
-    private String convertHtmlContentToBase64(String htmlContent) throws IOException {
-        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
-        InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
-        Tidy tidy = new Tidy();
-        org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-
-        Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
-        BufferedImage img = renderer.getImage();
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        ImageIO.write(img, "png", os);
-        return Base64.getEncoder().encodeToString(os.toByteArray());
-    }
-
     @PostMapping(value = "/office")
     public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- signOffice --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
@@ -232,4 +143,45 @@ public class SigningResource {
         }
     }
 
+    @PostMapping(value = "/xml")
+    public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- signXML --- {} ", signingRequest);
+        try {
+            SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @PostMapping(value = "/invisiblePdf")
+    public ResponseEntity<BaseResponseVM> invisibleSignPdf(@RequestBody SigningRequest signingRequest) {
+        log.info(" --- invisiblePdf --- {} ", signingRequest);
+        try {
+            SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
 }

@@ -20,6 +20,10 @@ import { RouterModule } from '@angular/router';
         path: 'signature-image',
         loadChildren: () => import('./signature-image/signature-image.module').then(m => m.WebappSignatureImageModule),
       },
+      {
+        path: 'system-config',
+        loadChildren: () => import('./system-config/system-config.module').then(m => m.WebappSystemConfigModule),
+      },
       /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
     ]),
   ],

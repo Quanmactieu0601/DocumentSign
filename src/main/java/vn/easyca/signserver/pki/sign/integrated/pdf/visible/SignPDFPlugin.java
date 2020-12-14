@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.sign.integrated.pdf;
+package vn.easyca.signserver.pki.sign.integrated.pdf.visible;
 
 import com.google.common.io.Files;
 import org.apache.commons.io.IOUtils;

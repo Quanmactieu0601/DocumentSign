@@ -31,4 +31,13 @@ public class OptionalVM {
     public void setReturnInputData(boolean returnInputData) {
         this.returnInputData = returnInputData;
     }
+
+    @Override
+    public String toString() {
+        return "OptionalVM{" +
+            "hashAlgorithm='" + hashAlgorithm + '\'' +
+            ", signAlgorithm='" + signAlgorithm + '\'' +
+            ", returnInputData=" + returnInputData +
+            '}';
+    }
 }

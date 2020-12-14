@@ -39,4 +39,6 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
         parameters.put("params", entityName);
         return parameters;
     }
+
+    //TODO: custom error alert according to entity
 }

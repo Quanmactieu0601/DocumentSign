@@ -19,4 +19,12 @@ public class TokenVM {
     public String getSerial() {
         return serial;
     }
+
+    @Override
+    public String toString() {
+        return "TokenVM{" +
+            "serial='" + serial + '\'' +
+            ", pin='" + pin + '\'' +
+            '}';
+    }
 }
