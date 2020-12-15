@@ -21,7 +21,7 @@ export class TransactionUpdateComponent implements OnInit {
     id: [],
     api: [],
     triggerTime: [],
-    code: [],
+    // code: [],
     message: [],
     data: [],
     type: [],
@@ -45,7 +45,7 @@ export class TransactionUpdateComponent implements OnInit {
       id: transaction.id,
       api: transaction.api,
       triggerTime: transaction.triggerTime ? transaction.triggerTime.format(DATE_TIME_FORMAT) : null,
-      code: transaction.code,
+      // code: transaction.code,
       message: transaction.message,
       data: transaction.data,
       type: transaction.type,
@@ -74,7 +74,7 @@ export class TransactionUpdateComponent implements OnInit {
       triggerTime: this.editForm.get(['triggerTime'])!.value
         ? moment(this.editForm.get(['triggerTime'])!.value, DATE_TIME_FORMAT)
         : undefined,
-      code: this.editForm.get(['code'])!.value,
+      // code: this.editForm.get(['code'])!.value,
       message: this.editForm.get(['message'])!.value,
       data: this.editForm.get(['data'])!.value,
       type: this.editForm.get(['type'])!.value,

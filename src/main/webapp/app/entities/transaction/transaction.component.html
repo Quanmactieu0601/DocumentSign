@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="api" ><span
+                                <label for="api"><span
                                     jhiTranslate="webappApp.transaction.api">Api</span></label>
                                 <input type="text" class="form-control" formControlName="api">
                             </div>
@@ -15,14 +15,25 @@
                             <div class="form-group">
                                 <label for="method"><span
                                     jhiTranslate="webappApp.transaction.method">Method</span></label>
-                                <input type="text" class="form-control" formControlName="method">
+                                <select class="form-control" formControlName="method">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
+                                    <option *ngFor="let name of method"
+                                            [value]="name">{{name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label for="code"><span
-                                    jhiTranslate="webappApp.transaction.code">Code</span></label>
-                                <input type="text" class="form-control" formControlName="code">
+                                <label for="status"><span
+                                    jhiTranslate="webappApp.transaction.status">Status</span></label>
+                                <select class="form-control" formControlName="status">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
+                                            *ngFor="let name of status"
+                                            [value]="name">{{name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -36,7 +47,8 @@
                             <div class="form-group">
                                 <label for="startDate"><span
                                     jhiTranslate="webappApp.transaction.startDate">Start Date</span></label>
-                                <input type="datetime-local" name="date" class="form-control" formControlName="startDate">
+                                <input type="datetime-local" name="date" class="form-control"
+                                       formControlName="startDate">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -50,38 +62,45 @@
                             <div class="form-group">
                                 <label for="type"><span
                                     jhiTranslate="webappApp.transaction.type">Type</span></label>
-                                <input type="text" class="form-control" formControlName="type">
+                                <select class="form-control" formControlName="type">
+                                    <option jhiTranslate="webappApp.transaction.ALL"
+                                            [value]= null selected>TẤT CẢ</option>
+                                    <option jhiTranslate="webappApp.transaction.TYPE.{{name}}"
+                                            *ngFor="let name of type"
+                                            [value]="name">{{name}}</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="host"> <span
-                                jhiTranslate="webappApp.transaction.host">Host</span></label>
-                            <input type="text" class="form-control" formControlName="host">
+                            <div class="form-group">
+                                <label for="host"> <span
+                                    jhiTranslate="webappApp.transaction.host">Host</span></label>
+                                <input type="text" class="form-control" formControlName="host">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="fullName"><span
-                                jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
-                            <input type="text" class="form-control" formControlName="fullName">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="fullName"><span
+                                    jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
+                                <input type="text" class="form-control" formControlName="fullName">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="data"><span
-                                jhiTranslate="webappApp.transaction.data">Date</span></label>
-                            <input type="text" class="form-control" formControlName="data"/>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="data"><span
+                                    jhiTranslate="webappApp.transaction.data">Date</span></label>
+                                <input type="text" class="form-control" formControlName="data"/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">
-                <fa-icon icon="search"></fa-icon>
-                Search
-            </button>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">
+                    <fa-icon icon="search"></fa-icon>
+                    Search
+                </button>
+            </div>
         </div>
     </form>
 </div>
@@ -98,18 +117,23 @@
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
                 <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
+                <th scope="col" jhiSortBy="action"><span jhiTranslate="webappApp.transaction.action">Action</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
+                <th scope="col" jhiSortBy="extension"><span
+                    jhiTranslate="webappApp.transaction.extension">Extension</span>
+                    <fa-icon icon="sort"></fa-icon>
+                </th>
                 <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="triggerTime"><span
-                    jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
+                <th scope="col" jhiSortBy="triggerTime"><span jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="code"><span jhiTranslate="webappApp.transaction.code">Code</span>
+                <th scope="col" jhiSortBy="status"><span jhiTranslate="webappApp.transaction.status">Status</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="message"><span
-                    jhiTranslate="webappApp.transaction.message">Message</span>
+                <th scope="col" jhiSortBy="message"><span jhiTranslate="webappApp.transaction.message">Message</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="data"><span jhiTranslate="webappApp.transaction.data">Data</span>
@@ -132,16 +156,16 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let transaction of transactions ;trackBy: trackId">
-                <!-- <td><a [routerLink]="['/transaction', transaction.id, 'view']">{{ transaction.id }}</a></td> -->
+            <tr
+                *ngFor="let transaction of transactions ;trackBy: trackId">
+                <td jhiTranslate="webappApp.transaction.ACTION.{{transaction.action}}">{{ transaction.action}}</td>
+                <td jhiTranslate="webappApp.transaction.EXTENSION.{{transaction.extension}}">{{ transaction.extension}}</td>
                 <td>{{ transaction.api }}</td>
-                <!-- <td>{{ transaction.startDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
-                <td>{{ transaction.endDate | date:"MM/dd/yyyy hh:mm:ss" }}</td> -->
                 <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
-                <td>{{ transaction.code }}</td>
+                <td jhiTranslate="webappApp.transaction.STATUS.{{transaction.status}}"> {{transaction.status}}</td>
                 <td>{{ transaction.message }}</td>
                 <td>{{ transaction.data }}</td>
-                <td>{{ transaction.type }}</td>
+                <td jhiTranslate="webappApp.transaction.TYPE.{{transaction.type}}">{{ transaction.type }}</td>
                 <td>{{ transaction.method }}</td>
                 <td>{{ transaction.host }}</td>
                 <td>{{ transaction.fullName }}</td>
@@ -153,16 +177,16 @@
         <div class="row justify-content-center">
             <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
         </div>
-    <div class="row justify-content-center">
-        <ngb-pagination
-            [collectionSize]="totalItems"
-            [(page)]="ngbPaginationPage"
-            [pageSize]="itemsPerPage"
-            [maxSize]="5"
-            [rotate]="true"
-            [boundaryLinks]="true"
-            (pageChange)="loadPage($event)"
-        ></ngb-pagination>
+        <div class="row justify-content-center">
+            <ngb-pagination
+                [collectionSize]="totalItems"
+                [(page)]="ngbPaginationPage"
+                [pageSize]="itemsPerPage"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                (pageChange)="loadPage($event)"
+            ></ngb-pagination>
+        </div>
     </div>
-</div>
 </div>

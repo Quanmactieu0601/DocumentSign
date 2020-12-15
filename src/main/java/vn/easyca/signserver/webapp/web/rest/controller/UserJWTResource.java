@@ -2,8 +2,7 @@ package vn.easyca.signserver.webapp.web.rest.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import vn.easyca.signserver.webapp.enm.Method;
-import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.jwt.JWTFilter;
 import vn.easyca.signserver.webapp.security.jwt.TokenProvider;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
@@ -48,8 +47,8 @@ public class UserJWTResource {
         String jwt = tokenProvider.createToken(authentication, rememberMe);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(JWTFilter.AUTHORIZATION_HEADER, "Bearer " + jwt);
-        asyncTransactionService.newThread("/api/authenticate", TransactionType.SYSTEM, Method.POST,
-            "200", "OK", AccountUtils.getLoggedAccount());
+        asyncTransactionService.newThread("/api/authenticate", TransactionType.SYSTEM, Action.LOGIN, Extension.NONE, Method.POST,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
     }
 

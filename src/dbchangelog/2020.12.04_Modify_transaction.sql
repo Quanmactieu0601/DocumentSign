@@ -1,0 +1,1 @@
+alter table transaction change code status bit null;

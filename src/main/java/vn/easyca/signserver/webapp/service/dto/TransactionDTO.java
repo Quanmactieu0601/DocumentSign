@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.enm.*;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -15,21 +16,41 @@ public class TransactionDTO implements Serializable {
 
     private LocalDateTime triggerTime;
 
-    private String code;
+    private TransactionStatus status;
 
     private String message;
 
     private String data;
 
-    private String type;
+    private TransactionType type;
 
     private String createdBy;
 
     private String host;
 
-    private String method;
+    private Method method;
 
     private String fullName;
+
+    private Action action;
+
+    private Extension extension;
+
+    public Extension getExtension() {
+        return extension;
+    }
+
+    public void setExtension(Extension extension) {
+        this.extension = extension;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
     public String getFullName() {
         return fullName;
@@ -51,7 +72,7 @@ public class TransactionDTO implements Serializable {
         this.host = host;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(Method method) {
         this.method = method;
     }
 
@@ -59,24 +80,8 @@ public class TransactionDTO implements Serializable {
         return host;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
-    }
-
-    public TransactionDTO() {
-    }
-
-    public TransactionDTO(Transaction transaction) {
-        this.id = transaction.getId();
-        this.api = transaction.getApi();
-        this.code = transaction.getCode();
-        this.message = transaction.getMessage();
-        this.data = transaction.getData();
-        this.type = transaction.getType();
-        this.triggerTime = transaction.getTriggerTime();
-        this.createdBy = transaction.getCreatedBy();
-        this.host = transaction.getHost();
-        this.method = transaction.getMethod();
     }
 
     public Long getId() {
@@ -103,12 +108,12 @@ public class TransactionDTO implements Serializable {
         this.triggerTime = triggerTime;
     }
 
-    public String getCode() {
-        return code;
+    public TransactionStatus getStatus() {
+        return status;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -127,12 +132,28 @@ public class TransactionDTO implements Serializable {
         this.data = data;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
+    }
+
+    public TransactionDTO(Transaction transaction) {
+        this.id = transaction.getId();
+        this.api = transaction.getApi();
+        this.status = transaction.getStatus();
+        this.message = transaction.getMessage();
+        this.data = transaction.getData();
+        this.type = transaction.getType();
+        this.triggerTime = transaction.getTriggerTime();
+        this.createdBy = transaction.getCreatedBy();
+        this.host = transaction.getHost();
+        this.method = transaction.getMethod();
+    }
+
+    public TransactionDTO() {
     }
 
     @Override
@@ -159,13 +180,15 @@ public class TransactionDTO implements Serializable {
             "id=" + getId() +
             ", api='" + getApi() + "'" +
             ", triggerTime='" + getTriggerTime() + "'" +
-            ", code='" + getCode() + "'" +
+            ", status='" + getStatus() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() +
+            ", action=" + getAction() +
+            ", extension=" + getExtension() +
             "}";
     }
 }
