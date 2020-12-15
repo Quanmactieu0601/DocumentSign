@@ -4,6 +4,9 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.infrastructure.ra.CertificateRequesterImpl;
+import vn.easyca.signserver.ra.lib.RAConfig;
+import vn.easyca.signserver.ra.lib.RAServiceFade;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;
@@ -17,6 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.core.env.Environment;
+import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 
 import javax.annotation.PostConstruct;
@@ -35,10 +39,12 @@ public class WebappApp {
 
     private final Environment env;
     private static SystemConfigCachingService systemConfigCachingService = null;
+    private static RAConfig raConfig = null;
 
-    public WebappApp(Environment env, SystemConfigCachingService systemConfigCachingService) {
+    public WebappApp(Environment env, SystemConfigCachingService systemConfigCachingService, RAConfig raConfig) {
         this.env = env;
         this.systemConfigCachingService = systemConfigCachingService;
+        this.raConfig = raConfig;
     }
 
     /**
@@ -77,8 +83,8 @@ public class WebappApp {
     private static void init() {
         // init ra-service
         // TODO: Refactor this code
-//        RAConfig raConfig = new RAConfig(Constants.RAConfig.URL, Constants.RAConfig.UserName, Constants.RAConfig.Password);
-//        CertificateRequesterImpl.init(new RAServiceFade(raConfig));
+        if (raConfig.isConnectToRA())
+            CertificateRequesterImpl.init(new RAServiceFade(raConfig));
 
 
         // init system config cache

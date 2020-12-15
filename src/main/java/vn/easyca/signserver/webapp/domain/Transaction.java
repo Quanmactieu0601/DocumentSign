@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * A Transaction.
  */
 @Entity
-@Table(name = "transaction")
+@Table(name = "transaction_log")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Transaction implements Serializable {
 
