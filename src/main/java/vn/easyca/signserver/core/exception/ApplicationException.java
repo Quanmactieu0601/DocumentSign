@@ -22,6 +22,16 @@ public class ApplicationException extends Exception {
         this.code = code;
     }
 
+    public ApplicationException(String message, Throwable e) {
+        super(message, e);
+        this.code = APPLICATION_ERROR_CODE;
+    }
+
+    public ApplicationException(String message) {
+        super(message);
+        this.code = APPLICATION_ERROR_CODE;
+    }
+
     public ApplicationException(int code, String msg) {
         super(msg);
         this.code = code;

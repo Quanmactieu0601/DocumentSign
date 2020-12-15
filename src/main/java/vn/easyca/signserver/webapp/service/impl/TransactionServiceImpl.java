@@ -1,19 +1,22 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import vn.easyca.signserver.webapp.enm.*;
+import vn.easyca.signserver.webapp.service.TransactionService;
+import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.repository.TransactionRepository;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.mapper.TransactionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.domain.Transaction;
-import vn.easyca.signserver.webapp.repository.TransactionRepository;
-import vn.easyca.signserver.webapp.service.TransactionService;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-import vn.easyca.signserver.webapp.service.mapper.TransactionMapper;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
 import java.math.BigInteger;
 import java.text.ParseException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -83,9 +86,15 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<TransactionDTO> getByFilter(Pageable pageable, String triggerTime, String api, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
-        Page<TransactionDTO> page = transactionRepository.findByFilter(pageable, api, triggerTime, code, message, data, type, host, method, createdBy, fullName, startDate, endDate);
-        return page;
+    public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action, String extension) throws ParseException {
+        LocalDateTime startDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+        LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
+        Method methodEnum = Method.from(method);
+        Action actionEnum = Action.from(action);
+        Extension extensionEnum = Extension.from(extension);
+        TransactionStatus statusEnum = TransactionStatus.from(status);
+        TransactionType typeEnum = TransactionType.from(type);
+        return transactionRepository.findByFilter(pageable, api, triggerTime, statusEnum, message, data, typeEnum, host, methodEnum, createdBy, fullName, startDateConverted, endDateConverted, actionEnum, extensionEnum);
     }
 
     /**

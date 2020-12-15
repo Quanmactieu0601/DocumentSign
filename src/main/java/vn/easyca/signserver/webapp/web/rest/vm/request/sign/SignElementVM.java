@@ -37,4 +37,14 @@ public class SignElementVM<T> {
     public String getKey() {
         return key;
     }
+
+    @Override
+    public String toString() {
+        return "SignElementVM{" +
+            "signer='" + signer + '\'' +
+            ", signDate='" + signDate + '\'' +
+            ", content=" + content +
+            ", key='" + key + '\'' +
+            '}';
+    }
 }

@@ -1,10 +1,13 @@
 package vn.easyca.signserver.pki.sign.integrated.xml;
 
+import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.*;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
@@ -38,7 +41,7 @@ public class SignXMLLib {
 
     private static final String CONTENT_ID = "SigningData";
 
-    public String generateXMLDigitalSignature(SignXMLDto signXMLDto) throws MarshalException,
+    public String generateXMLDigitalSignature(String xml, PrivateKey privateKey, X509Certificate certificate, String providerName) throws MarshalException,
         XPathExpressionException,
         InvalidAlgorithmParameterException,
         NoSuchAlgorithmException,
@@ -46,9 +49,12 @@ public class SignXMLLib {
         TransformerException, IOException, SAXException, ParserConfigurationException {
 
         XMLSignatureFactory xmlSigFactory = XMLSignatureFactory.getInstance("DOM");
-        Document doc = parseDoc(signXMLDto.getXml());
+        Document doc = parseDoc(xml);
         Node content = getContentSign(doc);
-        DOMSignContext domSignCtx = new DOMSignContext(signXMLDto.getPrivateKey(), doc.getDocumentElement());
+        DOMSignContext domSignCtx = new DOMSignContext(privateKey, doc.getDocumentElement());
+        if (StringUtils.isNotEmpty(providerName))
+            domSignCtx.setProperty("org.jcp.xml.dsig.internal.dom.SignatureProvider", Security.getProvider(providerName));
+
         domSignCtx.setIdAttributeNS((Element) content, null, "Id");
         Reference ref = null;
         SignedInfo signedInfo = null;
@@ -62,7 +68,7 @@ public class SignXMLLib {
                 (C14NMethodParameterSpec) null),
             xmlSigFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
             Collections.singletonList(ref));
-        KeyInfo keyInfo = getKeyInfo(xmlSigFactory, signXMLDto.getX509Certificate());
+        KeyInfo keyInfo = getKeyInfo(xmlSigFactory, certificate);
         XMLSignature xmlSignature = xmlSigFactory.newXMLSignature(signedInfo, keyInfo);
         xmlSignature.sign(domSignCtx);
         return docToString(doc);

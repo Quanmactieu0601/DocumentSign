@@ -14,18 +14,50 @@
         "question": "Bạn có chắc là muốn xóa Transaction {{ id }}?"
       },
       "detail": {
-        "title": "Transaction"
+        "title": "Lịch sử giao dịch"
       },
       "api": "Api",
       "triggerTime": "Thời gian kích hoạt",
-      "code": "Mã code",
+      "status": "Trạng Thái",
       "message": "Thông điệp",
       "data": "Dữ liệu",
       "type": "Kiểu",
-      "transactionReport": "Báo cáo thống kê",
       "host": "Host",
-      "method": "Method",
-      "fullName": "FullName"
+      "method": "Phương thức",
+      "fullName": "Họ và tên",
+      "startDate": "Ngày bắt đầu",
+      "endDate": "Ngày kết thúc",
+      "action": "Hành động",
+      "extension": "Mở rộng",
+      "ALL": "Tất Cả",
+      "STATUS": {
+        "FAIL": "Thất Bại",
+        "SUCCESS": "Thành Công"
+      },
+      "TYPE": {
+        "SYSTEM": "Hệ Thống",
+        "BUSINESS": "Nghiệp Vụ"
+      },
+      "ACTION": {
+        "SIGN": "Kí Số",
+        "HASH": "Băm",
+        "VERIFY": "Xác Nhận",
+        "CREATE": "Tạo Mới",
+        "MODIFY": "Thay Đổi",
+        "DELETE": "Xóa",
+        "GET_INFO": "Lấy Thông Tin",
+        "LOGIN": "Đăng Nhập"
+      },
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "Chứng Thư Số",
+        "HASH": "HASH",
+        "NONE": "Không Xác Định"
+      }
     }
   }
 }

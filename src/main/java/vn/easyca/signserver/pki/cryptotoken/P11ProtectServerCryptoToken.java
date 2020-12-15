@@ -16,6 +16,7 @@ import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.config.HsmConfig;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
@@ -226,6 +227,19 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
             return Signature.getInstance(algorithm + "withRSA", new au.com.safenet.crypto.provider.slot0.SAFENETProvider());
         } catch (NoSuchAlgorithmException e) {
             throw new ApplicationException(-1, "Cannot get signature instance", e);
+        }
+    }
+
+    @Override
+    public boolean isInitialized() throws ApplicationException {
+        try {
+            if (ks != null) {
+                ks.aliases();
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            throw new ApplicationException("Keystore is not initialized, please check PIN number");
         }
     }
 }

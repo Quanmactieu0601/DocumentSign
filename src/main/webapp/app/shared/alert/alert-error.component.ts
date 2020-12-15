@@ -5,6 +5,7 @@ import { JhiEventManager, JhiAlert, JhiAlertService, JhiEventWithContent } from 
 import { Subscription } from 'rxjs';
 
 import { AlertError } from './alert-error.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'jhi-alert-error',
@@ -21,7 +22,12 @@ export class AlertErrorComponent implements OnDestroy {
   errorListener: Subscription;
   httpErrorListener: Subscription;
 
-  constructor(private alertService: JhiAlertService, private eventManager: JhiEventManager, translateService: TranslateService) {
+  constructor(
+    private alertService: JhiAlertService,
+    private eventManager: JhiEventManager,
+    private translateService: TranslateService,
+    private toastrService: ToastrService
+  ) {
     this.errorListener = eventManager.subscribe('webappApp.error', (response: JhiEventWithContent<AlertError>) => {
       const errorResponse = response.content;
       this.addErrorAlert(errorResponse.message, errorResponse.key, errorResponse.params);
@@ -100,18 +106,19 @@ export class AlertErrorComponent implements OnDestroy {
   }
 
   addErrorAlert(message: string, key?: string, data?: any): void {
-    message = key && key !== null ? key : message;
-
-    const newAlert: JhiAlert = {
-      type: 'danger',
-      msg: message,
-      params: data,
-      timeout: 5000,
-      toast: this.alertService.isToast(),
-      scoped: true,
-    };
-
-    this.alerts.push(this.alertService.addAlert(newAlert, this.alerts));
+    // message = key && key !== null ? key : message;
+    if (key && key !== null) this.toastrService.error(this.translateService.instant(key, data));
+    else this.toastrService.error(message);
+    // const newAlert: JhiAlert = {
+    //   type: 'danger',
+    //   msg: message,
+    //   params: data,
+    //   timeout: 5000,
+    //   toast: this.alertService.isToast(),
+    //   scoped: true,
+    // };
+    // //
+    // this.alerts.push(this.alertService.addAlert(newAlert, this.alerts));
   }
 
   close(alert: JhiAlert): void {

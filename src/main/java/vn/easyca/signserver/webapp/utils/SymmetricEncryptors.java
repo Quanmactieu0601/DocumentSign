@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.utils;
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.ApplicationProperties;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -17,15 +18,15 @@ import javax.crypto.NoSuchPaddingException;
 @Component
 public class SymmetricEncryptors {
     private static final int KEY_LENGTH = 16;
-    private final ApplicationProperties properties;
+    private final SystemConfigCachingService systemConfigCachingService;
 
-    public SymmetricEncryptors(ApplicationProperties properties) {
-        this.properties = properties;
+    public SymmetricEncryptors(SystemConfigCachingService systemConfigCachingService) {
+        this.systemConfigCachingService = systemConfigCachingService;
     }
 
     public String encrypt(String data) throws ApplicationException {
         try {
-            byte[] key = Base64.getDecoder().decode(properties.getSymmetricKey());
+            byte[] key = Base64.getDecoder().decode(systemConfigCachingService.getConfig().getSymmetricKey());
             byte[] clean = data.getBytes();
 
             // Generating IV.
@@ -69,7 +70,7 @@ public class SymmetricEncryptors {
 
     public String decrypt(String data) throws ApplicationException {
         try {
-            byte[] key = Base64.getDecoder().decode(properties.getSymmetricKey());
+            byte[] key = Base64.getDecoder().decode(systemConfigCachingService.getConfig().getSymmetricKey());
             int ivSize = KEY_LENGTH;
             int keySize = KEY_LENGTH;
             byte[] encryptedIvTextBytes = Base64.getDecoder().decode(data);

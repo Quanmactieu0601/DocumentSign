@@ -7,7 +7,8 @@
       "uploadUser": "Upload Users",
       "upload": "Upload",
       "notfound": "No User Found",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "exportCSR": "Export CSR"
     },
     "created": "Create user success !",
     "updated": "Update user success !",

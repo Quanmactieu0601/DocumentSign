@@ -78,11 +78,11 @@
     <div class="table-responsive" id="entities" *ngIf="certificates && certificates.length > 0">
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending">
+            <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
                 <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="tokenType"><span
+                <th scope="col" jhiSortBy="token_Type"><span
                     jhiTranslate="webappApp.certificate.tokenType">Token Type</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
@@ -90,20 +90,20 @@
                     <fa-icon icon="sort"></fa-icon>
                 </th>
 
-                <th scope="col" jhiSortBy="alias"><span jhiTranslate="webappApp.certificate.ownerId">Owner ID</span>
+                <th scope="col" jhiSortBy="owner_Id"><span jhiTranslate="webappApp.certificate.ownerId">Owner ID</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col" jhiSortBy="alias"><span jhiTranslate="webappApp.certificate.alias">Alias</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="activeStatus"><span jhiTranslate="webappApp.certificate.activeStatus">Active Status</span>
+                <th scope="col" jhiSortBy="active_Status"><span jhiTranslate="webappApp.certificate.activeStatus">Active Status</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="validDate"><span
+                <th scope="col" jhiSortBy="valid_Date"><span
                     jhiTranslate="webappApp.certificate.validDate">Valid Date</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="expiredDate"><span jhiTranslate="webappApp.certificate.expiredDate">Expired Date</span>
+                <th scope="col" jhiSortBy="expired_Date"><span jhiTranslate="webappApp.certificate.expiredDate">Expired Date</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
                 <th scope="col"></th>
@@ -123,11 +123,10 @@
                 <td>{{ certificate.expiredDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
                 <td class="text-right">
                     <div class="btn-group">
-                        <button type="submit"
-                                [routerLink]="['/certificate', certificate.id, 'view']"
-                                class="btn btn-info btn-sm">
-                            <fa-icon icon="eye"></fa-icon>
-                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                        <button type="button" (click)="showOTP(certificate)" *ngIf="isAuthenOTP"
+                                class="btn btn-warning btn-sm">
+                            <fa-icon icon="qrcode"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="entity.action.qrcode">Get QR Code</span>
                         </button>
 
                         <button type="submit" (click)="updateStatus(certificate.id)"

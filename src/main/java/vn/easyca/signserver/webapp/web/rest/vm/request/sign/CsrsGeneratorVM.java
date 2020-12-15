@@ -29,4 +29,12 @@ public class CsrsGeneratorVM {
 
     public CsrsGeneratorVM() {
     }
+
+    @Override
+    public String toString() {
+        return "CsrsGeneratorVM{" +
+            "userIds=" + userIds +
+            ", keyLen=" + keyLen +
+            '}';
+    }
 }

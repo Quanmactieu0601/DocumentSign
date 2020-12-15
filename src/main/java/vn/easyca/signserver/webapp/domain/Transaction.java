@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import vn.easyca.signserver.webapp.enm.*;
 
 import javax.persistence.*;
 
@@ -28,8 +29,9 @@ public class Transaction implements Serializable {
     @Column(name = "trigger_time")
     private LocalDateTime triggerTime;
 
-    @Column(name = "code")
-    private String code;
+    @Column(name = "status")
+    @Enumerated(EnumType.ORDINAL)
+    private TransactionStatus status;
 
     @Column(name = "message")
     private String message;
@@ -38,7 +40,8 @@ public class Transaction implements Serializable {
     private String data;
 
     @Column(name = "type")
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -47,7 +50,37 @@ public class Transaction implements Serializable {
     private String host;
 
     @Column(name = "method")
-    private String method;
+    @Enumerated(EnumType.STRING)
+    private Method method;
+
+    @Column(name = "action")
+    @Enumerated(EnumType.STRING)
+    private Action action;
+
+    @Column(name = "extension")
+    @Enumerated(EnumType.STRING)
+    private Extension extension;
+
+    public Extension getExtension() {
+        return extension;
+    }
+
+    public void setExtension(Extension extension) {
+        this.extension = extension;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public Transaction action(Action action) {
+        this.action = action;
+        return this;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
     public String getCreatedBy() {
         return createdBy;
@@ -61,7 +94,7 @@ public class Transaction implements Serializable {
         this.host = host;
     }
 
-    public void setMethod(String method) {
+    public void setMethod(Method method) {
         this.method = method;
     }
 
@@ -69,7 +102,7 @@ public class Transaction implements Serializable {
         return host;
     }
 
-    public String getMethod() {
+    public Method getMethod() {
         return method;
     }
 
@@ -107,16 +140,18 @@ public class Transaction implements Serializable {
     public void setTriggerTime(LocalDateTime triggerTime) {
         this.triggerTime = triggerTime;
     }
-    public String getCode() {
-        return code;
+
+    public TransactionStatus getStatus() {
+        return status;
     }
 
-    public Transaction code(String code) {
-        this.code = code;
+    public Transaction status(TransactionStatus status) {
+        this.status = status;
         return this;
     }
-    public void setCode(String code) {
-        this.code = code;
+
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
     }
 
     public String getMessage() {
@@ -145,16 +180,16 @@ public class Transaction implements Serializable {
         this.data = data;
     }
 
-    public String getType() {
+    public TransactionType getType() {
         return type;
     }
 
-    public Transaction type(String type) {
+    public Transaction type(TransactionType type) {
         this.type = type;
         return this;
     }
 
-    public void setType(String type) {
+    public void setType(TransactionType type) {
         this.type = type;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -182,13 +217,15 @@ public class Transaction implements Serializable {
             "id=" + getId() +
             ", api='" + getApi() + "'" +
             ", triggerTime='" + getTriggerTime() + "'" +
-            ", code='" + getCode() + "'" +
+            ", code='" + getStatus() + "'" +
             ", message='" + getMessage() + "'" +
             ", data='" + getData() + "'" +
             ", type=" + getType() + "'" +
             ", host=" + getHost() + "'" +
             ", method=" + getMethod() + "'" +
             ", createdBy=" + getCreatedBy() + "'" +
+            ", action=" + getAction() + "'" +
+            ", extension=" + getExtension() + "'" +
             "}";
     }
 

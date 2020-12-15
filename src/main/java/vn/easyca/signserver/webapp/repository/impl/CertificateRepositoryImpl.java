@@ -63,7 +63,8 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString(), Certificate.class);
+            String sort = QueryUtils.addMultiSort(pageable.getSort());
+            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString() + sort, Certificate.class);
             QueryUtils.setParamsWithPageable(query, params, pageable, total);
             certificateList = query.getResultList();
         }

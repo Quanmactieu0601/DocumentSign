@@ -42,11 +42,13 @@ export class UserManagementKeyLengthComponent {
           if (response.byteLength === 0) {
             this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
           } else {
+            const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
+            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), filename);
             this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
-            saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
           }
         });
       console.error(this.listId, this.keyLength);
     }
+    this.cancel();
   }
 }

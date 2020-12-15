@@ -30,12 +30,8 @@ public class SignatureVerificationService {
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
-        X509Certificate x509Certificate = null;
-        try {
-            x509Certificate = certificateDTO.getX509Certificate();
-        } catch (CertificateException e) {
-            throw new CertificateAppException(e);
-        }
+        X509Certificate x509Certificate = certificateDTO.getX509Certificate();
+
 
         SignatureValidator rawValidator = new SignatureValidator();
         for (SignatureVerificationRequest.Element element : request.getElements()) {
@@ -58,12 +54,7 @@ public class SignatureVerificationService {
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
         response.setCertificate(certificateDTO.getRawData());
-        X509Certificate x509Certificate = null;
-        try {
-            x509Certificate = certificateDTO.getX509Certificate();
-        } catch (CertificateException e) {
-            throw new CertificateAppException(e);
-        }
+        X509Certificate x509Certificate = certificateDTO.getX509Certificate();
         SignatureValidator rawValidator = new SignatureValidator();
         for (SignatureVerificationRequest.Element element : request.getElements()) {
             try {

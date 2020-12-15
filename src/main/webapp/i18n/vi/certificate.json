@@ -27,7 +27,16 @@
       "rawData": "Raw Data",
       "validDate": "Ngày hiệu lực",
       "expiredDate": "Ngày hết hạn",
-      "activeStatus": "Trạng thái"
+      "activeStatus": "Trạng thái",
+      "otp": {
+        "title": "Mã xác thực",
+        "header": "Tạo mã xác thực",
+        "placeholder": "Nhập mã PIN",
+        "button": "Tạo QR",
+        "success": "Tạo mã QR thành công",
+        "error": "Tạo mã QR thất bại",
+        "guide": "Hướng dẫn"
+      }
     }
   }
 }

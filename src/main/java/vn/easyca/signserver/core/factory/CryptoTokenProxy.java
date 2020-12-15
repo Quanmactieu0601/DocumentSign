@@ -1,6 +1,7 @@
-package vn.easyca.signserver.core.model;
+package vn.easyca.signserver.core.factory;
 
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 
 import java.security.PrivateKey;
@@ -26,7 +27,7 @@ public class CryptoTokenProxy {
         return cryptoToken.getPrivateKey(certificateDTO.getAlias());
     }
 
-    public boolean isExpired(Date date) throws CertificateException {
+    public boolean isExpired(Date date) throws ApplicationException {
         X509Certificate cert = null;
         cert = certificateDTO.getX509Certificate();
         Date notAfter = cert.getNotAfter();
@@ -39,7 +40,7 @@ public class CryptoTokenProxy {
         return certificateDTO.getRawData();
     }
 
-    public X509Certificate getX509Certificate() throws CertificateException {
+    public X509Certificate getX509Certificate() throws ApplicationException {
         return certificateDTO.getX509Certificate();
     }
 
@@ -53,5 +54,9 @@ public class CryptoTokenProxy {
 
     public CryptoToken getCryptoToken() {
         return cryptoToken;
+    }
+
+    public String getProviderName() throws CryptoTokenException {
+        return cryptoToken.getProviderName();
     }
 }

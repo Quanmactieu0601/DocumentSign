@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.cryptotoken;
+package vn.easyca.signserver.webapp.config;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
