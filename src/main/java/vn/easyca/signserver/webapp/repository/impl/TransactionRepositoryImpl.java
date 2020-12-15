@@ -6,13 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import javax.persistence.*;
-import java.text.ParseException;
 import java.time.*;
 import java.util.*;
 
@@ -22,7 +22,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, String code, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate) throws ParseException {
+    public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, TransactionStatus statusEnum, String message, String data, TransactionType typeEnum, String host, Method methodEnum, String createdBy, String fullName, LocalDateTime startDateConverted, LocalDateTime endDateConverted, Action actionEnum, Extension extensionEnum) {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -35,19 +35,17 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.api like :api ");
             params.put("api", "%" + api + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(startDate)) {
-            LocalDateTime startDateConverted = DateTimeUtils.convertToLocalDateTime(startDate);
+        if (startDateConverted != null) {
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
             params.put("startDate", startDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(endDate)) {
-            LocalDateTime endDateConverted = DateTimeUtils.convertToLocalDateTime(endDate);
+        if (endDateConverted != null) {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
-        if (!QueryUtils.isNullOrEmptyProperty(code)) {
-            sqlBuilder.append("AND a.code like :code ");
-            params.put("code", "%" + code + "%");
+        if (statusEnum != null) {
+            sqlBuilder.append("AND a.status =: status ");
+            params.put("status", statusEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(message)) {
             sqlBuilder.append("AND a.message like :message ");
@@ -57,21 +55,29 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.data like :data ");
             params.put("data", "%" + data + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(type)) {
-            sqlBuilder.append("AND a.type like :type ");
-            params.put("type", "%" + type + "%");
+        if (typeEnum != null) {
+            sqlBuilder.append("AND a.type = :type ");
+            params.put("type", typeEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(host)) {
             sqlBuilder.append("AND a.host like :host ");
             params.put("host", "%" + host + "%");
         }
-        if (!QueryUtils.isNullOrEmptyProperty(method)) {
-            sqlBuilder.append("AND a.method like :method ");
-            params.put("method", "%" + method + "%");
+        if (methodEnum != null) {
+            sqlBuilder.append("AND a.method = :method ");
+            params.put("method", methodEnum);
         }
         if (!QueryUtils.isNullOrEmptyProperty(fullName)) {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
+        }
+        if (actionEnum != null) {
+            sqlBuilder.append("AND a.action = :action ");
+            params.put("action", actionEnum);
+        }
+        if (extensionEnum != null) {
+            sqlBuilder.append("AND a.extension = :extension ");
+            params.put("extension", extensionEnum);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
@@ -79,7 +85,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.code as code, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
+            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
             QueryUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();

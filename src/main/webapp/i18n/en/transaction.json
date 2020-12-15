@@ -18,7 +18,7 @@
       },
       "api": "Api",
       "triggerTime": "Trigger Time",
-      "code": "Code",
+      "status": "Status",
       "message": "Message",
       "data": "Data",
       "type": "Type",
@@ -26,7 +26,38 @@
       "method": "Method",
       "fullName": "Full Name",
       "startDate": "Start Date",
-      "endDate": "End Date"
+      "endDate": "End Date",
+      "action": "Action",
+      "extension": "Extension",
+      "ALL": "ALL",
+      "STATUS": {
+        "FAIL": "FAIL",
+        "SUCCESS": "SUCCESS"
+      },
+      "TYPE": {
+        "SYSTEM": "SYSTEM",
+        "BUSINESS": "BUSINESS"
+      },
+      "ACTION": {
+        "SIGN": "SIGN",
+        "HASH": "HASH",
+        "VERIFY": "VERIFY",
+        "CREATE": "CREATE",
+        "MODIFY": "MODIFY",
+        "DELETE": "DELETE",
+        "GET_INFO": "GET_INFO",
+        "LOGIN": "LOGIN"
+      },
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "CERT",
+        "HASH": "HASH",
+        "NONE": "NONE"
+      }
     }
   }
 }

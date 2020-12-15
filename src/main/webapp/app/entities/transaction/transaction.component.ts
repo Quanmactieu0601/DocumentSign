@@ -9,6 +9,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
+import { Method, Status, Type } from 'app/shared/constants/transaction.constants';
 
 @Component({
   selector: 'jhi-transaction',
@@ -18,9 +19,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   transactions: ITransaction[] | null = null;
   eventSubscriber?: Subscription;
   searchForm = this.fb.group({
-    // id: [],
     api: [],
-    code: [],
+    status: [],
     message: [],
     data: [],
     type: [],
@@ -30,6 +30,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     triggerTime: [],
     startDate: [],
     endDate: [],
+    action: [],
+    extension: [],
   });
   totalItems = 0;
   itemsPerPage = ITEMS_PER_PAGE;
@@ -37,6 +39,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
+
+  type = Type;
+  method = Method;
+  status = Status;
 
   constructor(
     protected transactionService: TransactionService,
@@ -49,16 +55,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-    // this.transactionService
-    //   .query({
-    //     page: pageToLoad - 1,
-    //     size: this.itemsPerPage,
-    //     sort: this.sort(),
-    //   })
-    //   .subscribe(
-    //     (res: HttpResponse<ITransaction[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-    //     () => this.onError()
-    //   );
     this.searchTransactions(page);
   }
 
@@ -106,35 +102,17 @@ export class TransactionComponent implements OnInit, OnDestroy {
     if (fieldTransaction.api != null) {
       fieldTransaction.api = fieldTransaction.api.trim();
     }
-    if (fieldTransaction.code != null) {
-      fieldTransaction.code = fieldTransaction.code.trim();
-    }
     if (fieldTransaction.message != null) {
       fieldTransaction.message = fieldTransaction.message.trim();
     }
     if (fieldTransaction.data != null) {
       fieldTransaction.data = fieldTransaction.data.trim();
     }
-    if (fieldTransaction.type != null) {
-      fieldTransaction.type = fieldTransaction.type.trim();
-    }
     if (fieldTransaction.host != null) {
       fieldTransaction.host = fieldTransaction.host.trim();
     }
-    if (fieldTransaction.method != null) {
-      fieldTransaction.method = fieldTransaction.method.trim();
-    }
     if (fieldTransaction.fullName != null) {
       fieldTransaction.fullName = fieldTransaction.fullName.trim();
-    }
-    if (fieldTransaction.triggerTime != null) {
-      fieldTransaction.triggerTime = fieldTransaction.triggerTime.trim();
-    }
-    if (fieldTransaction.startDate != null) {
-      fieldTransaction.startDate = fieldTransaction.startDate.trim();
-    }
-    if (fieldTransaction.endDate != null) {
-      fieldTransaction.endDate = fieldTransaction.endDate.trim();
     }
     this.transactionService
       .findByTransaction(fieldTransaction)

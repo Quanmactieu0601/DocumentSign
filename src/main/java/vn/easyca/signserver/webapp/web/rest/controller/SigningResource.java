@@ -19,13 +19,14 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.core.services.XMLSigningService;
-import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.*;
-import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+import vn.easyca.signserver.core.services.XMLSigningService;
+import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.enm.Method;
 
 import java.util.List;
 
@@ -58,21 +59,21 @@ public class SigningResource {
             signRequest.getSignElements().get(0).getContent().setFileData(fileData);
             PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
             ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
-            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
                 .contentLength(resource.contentLength()) //
                 .body(resource);
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -83,18 +84,18 @@ public class SigningResource {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
-            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/hash", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -105,18 +106,18 @@ public class SigningResource {
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
-            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.BUSINESS, Action.SIGN, Extension.RAW, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.BUSINESS, Action.SIGN, Extension.RAW, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/raw", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/raw", TransactionType.BUSINESS, Action.SIGN, Extension.RAW, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -126,18 +127,18 @@ public class SigningResource {
         log.info(" --- signOffice --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -147,18 +148,18 @@ public class SigningResource {
         log.info(" --- signXML --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
-            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/xml", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
@@ -168,20 +169,19 @@ public class SigningResource {
         log.info(" --- invisiblePdf --- {} ", signingRequest);
         try {
             SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "200", "OK", AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/sign/office", TransactionType.SIGNING, Method.POST,
-                "400", e.getMessage(), AccountUtils.getLoggedAccount());
+            asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
-
 }
