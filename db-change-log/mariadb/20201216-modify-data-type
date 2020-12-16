@@ -1,0 +1,2 @@
+-- alter table certificate modify raw_data text null;
+-- alter table certificate modify encrypted_pin varchar(200) null;
