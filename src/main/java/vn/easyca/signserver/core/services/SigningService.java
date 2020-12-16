@@ -110,12 +110,13 @@ public class SigningService {
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
         RawSigner rawSigner = new RawSigner();
-        String hashAlgorithm = request.getOptional().getHashAlgorithm();
+//        String hashAlgorithm = request.getOptional().getHashAlgorithm();
         for (SignElement<String> signElement : signElements) {
             byte[] hash = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
-                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
+//                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
+                signature = rawSigner.signHashPdf(hash, cryptoTokenProxy.getPrivateKey());
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }
