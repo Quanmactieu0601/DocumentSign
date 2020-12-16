@@ -1,6 +1,3 @@
-create database signserver;
-use signserver;
-
 create table DATABASECHANGELOGLOCK
 (
     ID          int                        not null
