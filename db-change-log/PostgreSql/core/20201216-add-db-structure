@@ -217,7 +217,6 @@ create table transaction_log
             unique,
     api          varchar(200),
     trigger_time timestamp(6),
-    status       boolean,
     message      text,
     data         text,
     type         varchar(50),
@@ -227,7 +226,8 @@ create table transaction_log
     method       varchar(50),
     action       varchar(50),
     extension    varchar(10),
-    code         varchar(30)
+    code         varchar(30),
+    status       smallint
 );
 
 create table user_authority

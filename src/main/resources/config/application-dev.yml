@@ -50,6 +50,11 @@ spring:
     #    username: sdshd
     #    password: sds@2017
 
+    # db configuration for PostgreSql
+    #    url: jdbc:postgresql://10.172.18.32:5432/signserver_bvq11
+    #    username: postgres
+    #    password: 123456
+
     hikari:
       poolName: Hikari
       auto-commit: false
