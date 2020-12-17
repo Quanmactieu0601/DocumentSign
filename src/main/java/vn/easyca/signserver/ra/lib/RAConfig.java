@@ -1,15 +1,24 @@
 package vn.easyca.signserver.ra.lib;
 
-public class RAConfig {
-    private String baseUrl;
-    private String userName;
-    private String password;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 
-    public RAConfig(String baseUrl, String userName, String password) {
-        this.baseUrl = baseUrl;
-        this.userName = userName;
-        this.password = password;
-    }
+@Configuration
+@PropertySource(value = "classpath:ra-config.properties")
+public class RAConfig {
+
+    @Value("${connect-to-ra}")
+    private Boolean isConnectToRA;
+
+    @Value("${ra-url}")
+    private String baseUrl;
+
+    @Value("${ra-account}")
+    private String userName;
+
+    @Value("${ra-password}")
+    private String password;
 
     public String getBaseUrl() {
         return baseUrl;
@@ -23,15 +32,7 @@ public class RAConfig {
         return userName;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public boolean isConnectToRA() {
+        return isConnectToRA == null ? false : isConnectToRA;
     }
 }

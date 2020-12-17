@@ -147,6 +147,9 @@ public class CertificateGenerateDTO {
         this.rawCertificate = rawCertificate;
     }
 
+    public CertificateGenerateDTO() {
+    }
+
     public CertificateGenerateDTO(String ou, String l, String o, String s, String c, String cn, String ownerId, int keyLen) {
         this.ou = ou;
         this.l = l;

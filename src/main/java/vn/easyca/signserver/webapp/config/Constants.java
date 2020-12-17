@@ -17,13 +17,6 @@ public final class Constants {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String ANONYMOUS_USER = "anonymoususer";
 
-
-    public interface RAConfig {
-        String URL = "http://172.16.11.84:8787/api/";
-        String UserName = "admin";
-        String Password = "admin";
-    }
-
     public interface HASH_ALGORITHM {
         String SHA1 = "SHA1";
         String SHA256 = "SHA256";

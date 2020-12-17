@@ -1,0 +1,250 @@
+create table DATABASECHANGELOGLOCK
+(
+    ID          int                        not null
+        primary key,
+    LOCKED      bit                        not null,
+    LOCKGRANTED datetime /* mariadb-5.3 */ null,
+    LOCKEDBY    varchar(255)               null
+);
+
+create table authority_permission
+(
+    id            bigint       null,
+    authority_id  bigint       not null,
+    permission_id varchar(100) not null,
+    com_id        bigint       not null
+)
+    charset = utf8mb4;
+
+create table certificate
+(
+    id                 bigint auto_increment,
+    alias              text              null,
+    last_update        varchar(255)      null,
+    owner_id           varchar(255)      null,
+    raw_data           text              null,
+    serial             varchar(255)      null,
+    subject_info       varchar(255)      null,
+    token_info         text              null,
+    token_type         varchar(255)      null,
+    valid_date         datetime          null,
+    expired_date       datetime          null,
+    active_status      tinyint default 1 null,
+    com_id             bigint            null,
+    encrypted_pin      varchar(200)      null,
+    signature_image_id bigint            null,
+    secret_key         varchar(200)      null,
+    constraint certificate_id_uindex
+        unique (id)
+)
+    charset = utf8mb4;
+
+create index certificate_alias_index
+    on certificate (alias);
+
+alter table certificate
+    add primary key (id);
+
+create table company
+(
+    id              bigint auto_increment,
+    tax_code        varchar(15)  null,
+    name            varchar(200) null,
+    address         varchar(500) null,
+    law_representer varchar(100) null,
+    phone           varchar(20)  null,
+    email           varchar(30)  null,
+    constraint company_id_uindex
+        unique (id)
+)
+    charset = utf8mb4;
+
+alter table company
+    add primary key (id);
+
+create table jhi_authority
+(
+    name varchar(50) not null
+        primary key,
+    id   int         null
+)
+    charset = utf8mb4;
+
+create table jhi_persistent_audit_event
+(
+    event_id   bigint auto_increment
+        primary key,
+    event_date datetime(6) /* mariadb-5.3 */ null,
+    event_type varchar(255)                  null,
+    principal  varchar(255)                  not null
+)
+    charset = utf8mb4;
+
+create table jhi_persistent_audit_evt_data
+(
+    event_id bigint       not null,
+    value    varchar(255) null,
+    name     varchar(255) not null,
+    primary key (event_id, name),
+    constraint FK2ehnyx2si4tjd2nt4q7y40v8m
+        foreign key (event_id) references jhi_persistent_audit_event (event_id)
+)
+    charset = utf8mb4;
+
+create table jhi_user
+(
+    id                 bigint auto_increment
+        primary key,
+    created_by         varchar(50)                   not null,
+    created_date       datetime(6) /* mariadb-5.3 */ null,
+    last_modified_by   varchar(50)                   null,
+    last_modified_date datetime(6) /* mariadb-5.3 */ null,
+    activated          bit                           not null,
+    activation_key     varchar(20)                   null,
+    email              varchar(100)                  null,
+    first_name         varchar(200)                  null,
+    image_url          varchar(256)                  null,
+    lang_key           varchar(10)                   null,
+    last_name          varchar(200)                  null,
+    login              varchar(50)                   not null,
+    password_hash      varchar(60)                   not null,
+    reset_date         datetime(6) /* mariadb-5.3 */ null,
+    reset_key          varchar(20)                   null,
+    organization_name  varchar(200)                  null,
+    common_name        varchar(200)                  null,
+    organization_unit  varchar(200)                  null,
+    locality_name      varchar(200)                  null,
+    state_name         varchar(200)                  null,
+    country            varchar(200)                  null,
+    phone              varchar(50)                   null,
+    csr_status         tinyint default 0             null,
+    com_id             bigint                        null,
+    constraint UK_9y0frpqnmqe7y6mk109vw3246
+        unique (login),
+    constraint UK_bycanyquvi09q7fh5pgxrqnku
+        unique (email)
+)
+    charset = utf8mb4;
+
+create table jhi_user_authority
+(
+    user_id        bigint      not null,
+    authority_name varchar(50) not null,
+    primary key (user_id, authority_name),
+    constraint FK290okww5jujghp4el5i7mgwu0
+        foreign key (user_id) references jhi_user (id),
+    constraint FK4psxl0jtx6nr7rhqbynr6itoc
+        foreign key (authority_name) references jhi_authority (name)
+)
+    charset = utf8mb4;
+
+create table permission
+(
+    id          bigint auto_increment,
+    parent_code varchar(10)  null,
+    code        varchar(10)  not null,
+    description varchar(500) null,
+    com_id      bigint       null,
+    constraint permission_code_uindex
+        unique (code),
+    constraint permission_id_uindex
+        unique (id)
+)
+    charset = utf8mb4;
+
+alter table permission
+    add primary key (id);
+
+create table signature_image
+(
+    id                 bigint auto_increment,
+    img_data           longtext    null,
+    user_id            bigint      null,
+    created_date       datetime(6) null,
+    last_modified_date datetime(6) null,
+    created_by         varchar(50) null,
+    last_modified_by   varchar(50) null,
+    constraint signature_image_id_uindex
+        unique (id)
+);
+
+alter table signature_image
+    add primary key (id);
+
+create table signature_template
+(
+    id                 bigint auto_increment
+        primary key,
+    user_id            bigint      null,
+    created_by         varchar(50) null,
+    created_date       datetime(6) null,
+    last_modified_by   varchar(50) null,
+    last_modified_date datetime(6) null,
+    type               int         null,
+    html_template      longtext    null,
+    constraint signature_template_jhi_user_id_fk
+        foreign key (user_id) references jhi_user (id)
+)
+    charset = utf8mb4;
+
+create table system_config
+(
+    id           bigint auto_increment,
+    com_id       bigint        null,
+    config_key   varchar(300)  null,
+    config_value varchar(300)  null,
+    description  varchar(5000) null,
+    activated    bit           null,
+    data_type    varchar(10)   null,
+    constraint system_config_id_uindex
+        unique (id)
+)
+    charset = utf8mb4;
+
+alter table system_config
+    add primary key (id);
+
+create table transaction_log
+(
+    id           bigint auto_increment,
+    api          varchar(200)               null,
+    trigger_time datetime /* mariadb-5.3 */ null,
+    status       bit                        null,
+    message      longtext                   null,
+    data         longtext                   null,
+    type         varchar(50)                null,
+    com_id       bigint                     null,
+    created_by   varchar(50)                null,
+    host         varchar(50)                null,
+    method       varchar(50)                null,
+    action       varchar(50)                null,
+    extension    varchar(10)                null,
+    code         varchar(30)                null,
+    constraint transaction_id_uindex
+        unique (id)
+)
+    charset = utf8mb4;
+
+alter table transaction_log
+    add primary key (id);
+
+create table user_authority
+(
+    user_id      bigint not null,
+    authority_id bigint not null,
+    constraint user_authority_pk
+        unique (user_id, authority_id)
+)
+    charset = utf8mb4;
+
+create table user_permission
+(
+    id            bigint null,
+    user_id       bigint null,
+    permission_id bigint null,
+    com_id        bigint null,
+    constraint user_permission_pk
+        unique (user_id, permission_id)
+)
+    charset = utf8mb4;
+
