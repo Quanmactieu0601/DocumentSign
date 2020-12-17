@@ -9,7 +9,6 @@ import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
-import vn.easyca.signserver.webapp.web.rest.controller.AccountResource;
 import vn.easyca.signserver.webapp.web.rest.vm.KeyAndPasswordVM;
 import vn.easyca.signserver.webapp.web.rest.vm.ManagedUserVM;
 import org.apache.commons.lang3.RandomStringUtils;
