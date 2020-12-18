@@ -4,7 +4,8 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-
+import { KEYS } from 'app/entities/system-config/key.constants';
+import { DATATYPES } from 'app/entities/system-config/dataType.constants';
 import { ISystemConfig, SystemConfig } from 'app/shared/model/system-config.model';
 import { SystemConfigService } from './system-config.service';
 
@@ -13,8 +14,11 @@ import { SystemConfigService } from './system-config.service';
   templateUrl: './system-config-update.component.html',
 })
 export class SystemConfigUpdateComponent implements OnInit {
+  systemConfig!: SystemConfig;
   isSaving = false;
-
+  keys = KEYS;
+  dataTypes = DATATYPES;
+  valueDataType: string = 'STRING';
   editForm = this.fb.group({
     id: [],
     comId: [],
@@ -29,7 +33,10 @@ export class SystemConfigUpdateComponent implements OnInit {
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ systemConfig }) => {
-      this.updateForm(systemConfig);
+      if (systemConfig) {
+        this.systemConfig = systemConfig;
+      }
+      this.updateForm(this.systemConfig);
     });
   }
 
@@ -45,31 +52,32 @@ export class SystemConfigUpdateComponent implements OnInit {
     });
   }
 
+  changeDataType(newDataType: string) {
+    this.valueDataType = newDataType;
+  }
+
   previousState(): void {
     window.history.back();
   }
 
   save(): void {
     this.isSaving = true;
-    const systemConfig = this.createFromForm();
-    if (systemConfig.id !== undefined) {
-      this.subscribeToSaveResponse(this.systemConfigService.update(systemConfig));
+    this.createFromForm(this.systemConfig);
+    if (this.systemConfig.id !== undefined) {
+      this.subscribeToSaveResponse(this.systemConfigService.update(this.systemConfig));
     } else {
-      this.subscribeToSaveResponse(this.systemConfigService.create(systemConfig));
+      this.subscribeToSaveResponse(this.systemConfigService.create(this.systemConfig));
     }
   }
 
-  private createFromForm(): ISystemConfig {
-    return {
-      ...new SystemConfig(),
-      id: this.editForm.get(['id'])!.value,
-      comId: this.editForm.get(['comId'])!.value,
-      key: this.editForm.get(['key'])!.value,
-      value: this.editForm.get(['value'])!.value,
-      description: this.editForm.get(['description'])!.value,
-      dataType: this.editForm.get(['dataType'])!.value,
-      activated: this.editForm.get(['activated'])!.value,
-    };
+  private createFromForm(systemConfig: SystemConfig): void {
+    systemConfig.id = this.editForm.get(['id'])!.value;
+    systemConfig.comId = this.editForm.get(['comId'])!.value;
+    systemConfig.key = this.editForm.get(['key'])!.value;
+    systemConfig.value = this.editForm.get(['value'])!.value.toString();
+    systemConfig.description = this.editForm.get(['description'])!.value;
+    systemConfig.dataType = this.editForm.get(['dataType'])!.value;
+    systemConfig.activated = this.editForm.get(['activated'])!.value;
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ISystemConfig>>): void {

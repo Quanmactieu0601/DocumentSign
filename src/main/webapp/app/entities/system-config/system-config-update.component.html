@@ -19,26 +19,43 @@
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="webappApp.systemConfig.key" for="field_key">Key</label>
-                    <input type="text" class="form-control" name="key" id="field_key"
-                           formControlName="key"/>
+<!--                    <input type="text" class="form-control" name="key" id="field_key"-->
+<!--                           formControlName="key"/>-->
+                    <select class="form-control" id="field_key" name="key" formControlName="key">
+                        <option *ngFor="let key of keys" [ngValue]="key" selected>{{key}}</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.dataType" for="field_dataType">Data Type</label>
+                    <!--                    <input type="text" class="form-control" name="dataType" id="field_dataType"-->
+                    <!--                           formControlName="dataType"/>-->
+                    <select class="form-control" id="field_dataType" name="dataType" formControlName="dataType" ngModel (ngModelChange)="changeDataType($event)">
+                        <option *ngFor="let dataType of dataTypes" [ngValue]="dataType" selected >{{dataType}}</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="webappApp.systemConfig.value" for="field_value">Value</label>
-                    <input type="text" class="form-control" name="value" id="field_value"
-                           formControlName="value"/>
+<!--                    <input type="{{valueDataType}}" class="form-control" name="value" id="field_value"-->
+<!--                           formControlName="value" />-->
+                    <div [ngSwitch]="valueDataType" id="field_value">
+                        <div *ngSwitchCase="'STRING'">
+                            <input type="text" class="form-control" name="value" formControlName="value">
+                        </div>
+                        <div *ngSwitchCase="'NUMERIC'">
+                            <input type="number" class="form-control" name="value" formControlName="value">
+                        </div>
+                        <div *ngSwitchCase="'BOOLEAN'">
+                            <input type="checkbox" class="form-control" name="value" formControlName="value" checked >
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="webappApp.systemConfig.description" for="field_description">Description</label>
                     <input type="text" class="form-control" name="description" id="field_description"
                            formControlName="description"/>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.dataType" for="field_dataType">Data Type</label>
-                    <input type="text" class="form-control" name="dataType" id="field_dataType"
-                           formControlName="dataType"/>
                 </div>
 
                 <div class="form-group">
