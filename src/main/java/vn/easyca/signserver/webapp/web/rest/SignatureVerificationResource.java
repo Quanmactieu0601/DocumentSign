@@ -36,19 +36,19 @@ public class SignatureVerificationResource extends BaseResource {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
-                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
-                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
-                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 
@@ -57,19 +57,19 @@ public class SignatureVerificationResource extends BaseResource {
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
-                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
-                TransactionStatus.FAIL, applicationException.getMessage(), AccountUtils.getLoggedAccount());
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
-                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 
@@ -88,7 +88,7 @@ public class SignatureVerificationResource extends BaseResource {
             log.error(message, e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, message));
         } finally {
-            asyncTransactionService.newThread("/api/pdf", TransactionType.BUSINESS, Action.VERIFY, Extension.PDF, Method.POST,
+            asyncTransactionService.newThread("/api/verification/pdf", TransactionType.BUSINESS, Action.VERIFY, Extension.PDF, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
