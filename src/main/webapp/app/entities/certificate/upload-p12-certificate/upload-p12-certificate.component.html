@@ -17,10 +17,6 @@
     <input type="file" (change)="selectFile($event)" (click)="onInputClick($event)" class="inputFile" multiple />
 </label>
 
-<label class="btn btn-default lblUpload">
-    <input type="file" (change)="selectFile($event)" (click)="onInputClick($event)" class="inputFile" multiple />
-</label>
-
 <button class="btn btn-success" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">
     Upload
 </button>

@@ -65,6 +65,16 @@
             <fa-icon icon="upload"></fa-icon>
             Upload tệp CER
         </button>
+
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(p12UploadModal)">
+            <fa-icon icon="upload"></fa-icon>
+            Upload P12 Certificate
+        </button>
+
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(p12UploadModal)">
+            <fa-icon icon="upload"></fa-icon>
+            Upload ảnh chữ ký
+        </button>
     </h2>
 
     <jhi-alert-error></jhi-alert-error>
@@ -165,6 +175,27 @@
     <div class="modal-body uploadModalBody">
         <div class="form-group col-md-12 uploadFormGroup">
             <jhi-upload-certificate (isUploadedSucessfully)="isUploadedSucessfully($event)"></jhi-upload-certificate>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="group-btn">
+            <button type="button" class="btn btn-sm" (click)="d('Close')">Hủy</button>
+        </div>
+    </div>
+</ng-template>
+
+
+<!-- Modal Upload User Excel File -->
+<ng-template #p12UploadModal let-c="close" let-d="dismiss" data-dismiss="modal">
+    <div class="modal-header">
+        <h5 class="modal-title">Upload certificate</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body uploadModalBody">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <jhi-upload-p12-certificate (isUploadedSucessfully)="isUploadedSucessfully($event)"></jhi-upload-p12-certificate>
         </div>
     </div>
     <div class="modal-footer">

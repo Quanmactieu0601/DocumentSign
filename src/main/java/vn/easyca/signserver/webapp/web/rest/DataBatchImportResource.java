@@ -3,11 +3,18 @@ package vn.easyca.signserver.webapp.web.rest;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
@@ -15,6 +22,7 @@ import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
+import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -24,8 +32,12 @@ import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +47,8 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/api/data")
@@ -114,6 +128,100 @@ public class DataBatchImportResource {
             FileIOHelper.writeFile(jsonError, absoluteFolderPath + "/outError.txt");
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+
+    @PostMapping("/importP12FileSelected")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Resource> importP12FileSelected(@RequestParam("files") MultipartFile[] files) {
+        String CMND = "";
+        String PIN = "";
+        List<CertImportSuccessDTO> importSuccessList = new ArrayList<>();
+        List<CertImportErrorDTO> importErrorList = new ArrayList<>();
+        for (final MultipartFile fileEntry : files) {
+            try {
+                final String regex = "([^._]+)_([^._]+)";
+                final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+                final Matcher matcher = pattern.matcher(fileEntry.getOriginalFilename());
+                String[] infor = new String[3];
+
+                while (matcher.find()) {
+                    for (int i = 0; i <= matcher.groupCount(); i++) {
+                        infor[i] = matcher.group(i);
+                    }
+                }
+                CMND = infor[1];
+                PIN = infor[2];
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+                importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
+            }
+
+
+            String base64Certificate = "";
+            try {
+                base64Certificate = Base64.getEncoder().encodeToString(fileEntry.getBytes());
+            }catch (Exception e) {
+                log.error(e.getMessage(), e);
+                importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
+            }
+
+
+            Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
+                ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
+                p12ImportVM.setOwnerId(userId.get().getLogin());
+                p12ImportVM.setPin(PIN);
+                p12ImportVM.setP12Base64(base64Certificate);
+
+                try {
+                    Long idCertificate = p12ImportService.insert(p12ImportVM).getId();
+                    importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
+                } catch (ApplicationException e) {
+                    log.error(e.getMessage(), e);
+                    importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
+                    continue;
+                }
+        }
+        try {
+            Gson gson = new Gson();
+            String jsonSuccerss = gson.toJson(importSuccessList);
+            String jsonError = gson.toJson(importErrorList);
+
+//            FileIOHelper.writeFile(jsonSuccerss, "D:/" + "/outSuccess.txt");
+//            FileIOHelper.writeFile(jsonError, "D:/" + "/outError.txt");
+
+            byte[] successFileByteContent = jsonSuccerss.getBytes();
+            byte[] errorFileByteContent = jsonError.getBytes();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ZipOutputStream zos = new ZipOutputStream(baos);
+
+            ZipEntry entry = new ZipEntry("successFile.txt");
+            entry.setSize(successFileByteContent.length);
+
+            ZipEntry entry1 = new ZipEntry("errorFile.txt");
+            entry1.setSize(errorFileByteContent.length);
+
+            zos.putNextEntry(entry);
+            zos.write(successFileByteContent);
+
+            zos.putNextEntry(entry1);
+            zos.write(errorFileByteContent);
+            zos.closeEntry();
+            zos.close();
+
+            byte[] zipData = baos.toByteArray();
+            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(zipData));
+
+            String filename = "EasyCA-CSR-Export";
+           return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(file);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            return null;
         }
     }
 

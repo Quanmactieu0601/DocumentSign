@@ -231,7 +231,7 @@ public class CertificateResource {
 
     @PostMapping("/uploadCert")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("files") MultipartFile file) {
         try {
             log.info("uploadCert");
             List<CertDTO> dtos = ExcelUtils.convertExcelToCertDTO(file.getInputStream());
