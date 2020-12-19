@@ -40,9 +40,21 @@ spring:
     #    url: jdbc:mariadb://10.100.110.7:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: root
     #    password: Hddt@202o
+
     url: jdbc:mariadb://10.100.110.7:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: signserver
     password: Hddt@202o
+
+    # db configuration for SQL SERVER
+    #    url: jdbc:sqlserver://172.16.10.66:1433;database=signserver_bvq11
+    #    username: sdshd
+    #    password: sds@2017
+
+    # db configuration for PostgreSql
+    #    url: jdbc:postgresql://10.172.18.32:5432/signserver_bvq11
+    #    username: postgres
+    #    password: 123456
+
     hikari:
       poolName: Hikari
       auto-commit: false
