@@ -175,20 +175,20 @@ public class SignatureVerificationService {
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, null);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream rootCaStream = fileResourceService.getRootCer("easyca");
+            InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
             ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
 
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfStream));
             SignatureUtil signUtil = new SignatureUtil(pdfDoc);
             List<String> signatureNames = signUtil.getSignatureNames();
 
-            boolean isCoverWholeDocument = false;
+            boolean isCoverWholeDocument;
             int documentRevision;
             int totalRevision;
-            boolean isIntegrity = false;
+            boolean isIntegrity;
             String signTime;
-            SignatureVfDTO signatureVfDTO = null;
-            CertificateVfDTO certificateVfDTO = null;
+            SignatureVfDTO signatureVfDTO;
+            CertificateVfDTO certificateVfDTO;
             List<CertificateVfDTO> certificateVfDTOList;
             for (String name : signatureNames) {
                 certificateVfDTOList = new ArrayList<>();
