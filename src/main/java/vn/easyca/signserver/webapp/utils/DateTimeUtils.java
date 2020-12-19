@@ -19,6 +19,11 @@ public class DateTimeUtils {
         return formatter.parse(strDate);
     }
 
+    public static String format(Date date, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        return formatter.format(date);
+    }
+
     public static Date tryParse(String strDate, Date defaultVal) {
 
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
