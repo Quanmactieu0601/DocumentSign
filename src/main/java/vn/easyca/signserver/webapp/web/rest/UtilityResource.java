@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controller;
+package vn.easyca.signserver.webapp.web.rest;
 
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -16,12 +16,16 @@ public class UtilityResource {
     }
 
     @PostMapping("/encryptKey")
-    public String encryptKey(@Valid @RequestParam String rawKey) throws URISyntaxException, ApplicationException {
+    public String encryptKey(String secretKey, @Valid @RequestParam String rawKey) throws ApplicationException {
+        if (!"easysign-ca-!@#$%".equals(secretKey))
+            return "";
         return symmetricService.encrypt(rawKey);
     }
 
     @PostMapping("/decryptKey")
-    public String decryptKey(@Valid @RequestParam String decryptedKey) throws URISyntaxException, ApplicationException {
+    public String decryptKey(String secretKey, @Valid @RequestParam String decryptedKey) throws ApplicationException {
+        if (!"easysign-ca-!@#$%".equals(secretKey))
+            return "";
         return symmetricService.decrypt(decryptedKey);
     }
 }

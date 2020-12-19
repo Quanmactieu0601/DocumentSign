@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controller;
+package vn.easyca.signserver.webapp.web.rest;
 
 import vn.easyca.signserver.webapp.service.AuditEventService;
 

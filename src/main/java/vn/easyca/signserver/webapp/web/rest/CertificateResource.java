@@ -1,4 +1,4 @@
-package vn.easyca.signserver.webapp.web.rest.controller;
+package vn.easyca.signserver.webapp.web.rest;
 
 import io.github.jhipster.web.util.PaginationUtil;
 import org.springframework.core.io.InputStreamResource;
