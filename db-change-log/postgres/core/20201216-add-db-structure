@@ -208,6 +208,10 @@ create table system_config
 
 create sequence transaction_log_seq;
 
+create unique index system_config_config_key_uindex
+	on system_config (config_key);
+
+
 create table transaction_log
 (
     id           bigint default nextval ('transaction_log_seq')

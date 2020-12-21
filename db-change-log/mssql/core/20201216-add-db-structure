@@ -203,6 +203,11 @@ create table system_config
 )
 go
 
+create unique index system_config_config_key_uindex
+	on system_config (config_key)
+go
+
+
 create table transaction_log
 (
     id           bigint identity
