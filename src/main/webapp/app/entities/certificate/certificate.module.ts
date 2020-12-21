@@ -10,6 +10,7 @@ import { certificateRoute } from './certificate.route';
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { OtpComponent } from './otp/otp.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
+import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -21,6 +22,7 @@ import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p
     UploadCertificateComponent,
     OtpComponent,
     UploadP12CertificateComponent,
+    UploadSignatureImageComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

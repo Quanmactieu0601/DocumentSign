@@ -1,0 +1,253 @@
+create table DATABASECHANGELOGLOCK
+(
+    ID          int not null
+        primary key,
+    LOCKED      bit not null,
+    LOCKGRANTED datetime2,
+    LOCKEDBY    varchar(255)
+)
+go
+
+create table authority_permission
+(
+    id            bigint,
+    authority_id  bigint       not null,
+    permission_id varchar(100) not null,
+    com_id        bigint       not null
+)
+go
+
+create table certificate
+(
+    id                 bigint identity
+        constraint PK__certific__3213E83F4DB210C5
+            primary key
+        constraint certificate_id_uindex
+            unique,
+    alias              nvarchar(200),
+    last_update        varchar(255),
+    owner_id           varchar(255),
+    raw_data           varchar(5000),
+    serial             varchar(255),
+    subject_info       varchar(255),
+    token_info         nvarchar(max),
+    token_type         varchar(255),
+    valid_date         datetime2,
+    expired_date       datetime2,
+    active_status      tinyint
+        constraint DF__certifica__activ__25869641 default 1,
+    com_id             bigint,
+    encrypted_pin      varchar(200),
+    signature_image_id bigint,
+    secret_key         varchar(200)
+)
+go
+
+create index certificate_alias_index
+    on certificate (alias)
+go
+
+create table company
+(
+    id              bigint identity
+        constraint PK__company__3213E83FBDB14FBE
+            primary key
+        constraint company_id_uindex
+            unique,
+    tax_code        varchar(15),
+    name            nvarchar(200),
+    address         nvarchar(500),
+    law_representer nvarchar(100),
+    phone           varchar(20),
+    email           varchar(30)
+)
+go
+
+create table jhi_authority
+(
+    name varchar(50) not null
+        primary key,
+    id   int
+)
+go
+
+create table jhi_persistent_audit_event
+(
+    event_id   bigint identity
+        primary key,
+    event_date datetime2(6),
+    event_type varchar(255),
+    principal  varchar(255) not null
+)
+go
+
+create table jhi_persistent_audit_evt_data
+(
+    event_id bigint       not null
+        constraint FK2ehnyx2si4tjd2nt4q7y40v8m
+            references jhi_persistent_audit_event,
+    value    varchar(255),
+    name     varchar(255) not null,
+    primary key (event_id, name)
+)
+go
+
+create table jhi_user
+(
+    id                 bigint identity
+        constraint PK__jhi_user__3213E83FFAC712F1
+            primary key,
+    created_by         varchar(50) not null,
+    created_date       datetime2(6),
+    last_modified_by   varchar(50),
+    last_modified_date datetime2(6),
+    activated          bit         not null,
+    activation_key     varchar(20),
+    email              varchar(100)
+        constraint UK_bycanyquvi09q7fh5pgxrqnku
+            unique,
+    first_name         nvarchar(200),
+    image_url          varchar(256),
+    lang_key           varchar(10),
+    last_name          nvarchar(200),
+    login              varchar(50) not null
+        constraint UK_9y0frpqnmqe7y6mk109vw3246
+            unique,
+    password_hash      varchar(60) not null,
+    reset_date         datetime2(6),
+    reset_key          varchar(20),
+    organization_name  nvarchar(200),
+    common_name        nvarchar(200),
+    organization_unit  nvarchar(200),
+    locality_name      nvarchar(200),
+    state_name         nvarchar(200),
+    country            nvarchar(200),
+    phone              varchar(50),
+    csr_status         tinyint
+        constraint DF__jhi_user__csr_st__34C8D9D1 default 0,
+    com_id             bigint
+)
+go
+
+create table jhi_user_authority
+(
+    user_id        bigint      not null
+        constraint FK290okww5jujghp4el5i7mgwu0
+            references jhi_user,
+    authority_name varchar(50) not null
+        constraint FK4psxl0jtx6nr7rhqbynr6itoc
+            references jhi_authority,
+    primary key (user_id, authority_name)
+)
+go
+
+create table permission
+(
+    id          bigint identity
+        constraint PK__permissi__3213E83F84DDB304
+            primary key
+        constraint permission_id_uindex
+            unique,
+    parent_code varchar(10),
+    code        varchar(10) not null
+        constraint permission_code_uindex
+            unique,
+    description nvarchar(500),
+    com_id      bigint
+)
+go
+
+create table signature_image
+(
+    id                 bigint identity
+        primary key
+        constraint signature_image_id_uindex
+            unique,
+    img_data           varchar(max),
+    user_id            bigint,
+    created_date       datetime2(6),
+    last_modified_date datetime2(6),
+    created_by         varchar(50),
+    last_modified_by   varchar(50)
+)
+go
+
+create table signature_template
+(
+    id                 bigint identity
+        primary key,
+    user_id            bigint
+        constraint signature_template_jhi_user_id_fk
+            references jhi_user,
+    created_by         varchar(50),
+    created_date       datetime2(6),
+    last_modified_by   varchar(50),
+    last_modified_date datetime2(6),
+    type               int,
+    html_template      nvarchar(max)
+)
+go
+
+create table system_config
+(
+    id           bigint identity
+        primary key
+        constraint system_config_id_uindex
+            unique,
+    com_id       bigint,
+    config_key   varchar(300),
+    config_value varchar(300),
+    description  varchar(5000),
+    activated    bit,
+    data_type    varchar(10)
+)
+go
+
+create unique index system_config_config_key_uindex
+	on system_config (config_key)
+go
+
+
+create table transaction_log
+(
+    id           bigint identity
+        constraint PK__transact__3213E83FB1B2BA20
+            primary key
+        constraint transaction_id_uindex
+            unique,
+    api          varchar(200),
+    trigger_time datetime2,
+    status       bit,
+    message      nvarchar(max),
+    data         nvarchar(max),
+    type         varchar(50),
+    com_id       bigint,
+    created_by   varchar(50),
+    host         varchar(50),
+    method       varchar(50),
+    action       varchar(50),
+    extension    varchar(10),
+    code         varchar(30)
+)
+go
+
+create table user_authority
+(
+    user_id      bigint not null,
+    authority_id bigint not null,
+    constraint user_authority_pk
+        unique (user_id, authority_id)
+)
+go
+
+create table user_permission
+(
+    id            bigint,
+    user_id       bigint,
+    permission_id bigint,
+    com_id        bigint,
+    constraint user_permission_pk
+        unique (user_id, permission_id)
+)
+go
+

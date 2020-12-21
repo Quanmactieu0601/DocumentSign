@@ -92,6 +92,24 @@ export class CertificateService {
     return this.http.request(req);
   }
 
+  uploadSignatureImage(successFiles: File[], imageFiles: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(imageFiles).forEach(imageFile => {
+      formData.append('imageFiles', imageFile);
+    });
+
+    Array.from(successFiles).forEach(successFile => {
+      formData.append('successFiles', successFile);
+    });
+
+    const req = new HttpRequest('POST', `api/data/importImageSelected`, formData, {
+      responseType: 'arraybuffer' as 'arraybuffer',
+    });
+
+    return this.http.request(req);
+  }
+
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
   }

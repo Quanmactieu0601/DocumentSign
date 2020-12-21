@@ -34,6 +34,7 @@ import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
+import vn.easyca.signserver.webapp.web.rest.vm.request.ImageFileImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
@@ -286,6 +287,80 @@ public class DataBatchImportResource {
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+
+    @PostMapping("/importImageSelected")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+//    @RequestParam("successFile") MultipartFile successFile,
+    public ResponseEntity<Resource> importImageSelected(@RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestParam("successFiles") MultipartFile[] successFiles) {
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
+        Long userId = userEntity.get().getId();
+        List<CertImportErrorDTO> importErrors = new ArrayList<>();
+        Gson gson = new Gson();
+//        String certFilePath = certificateImportingResultPath; //"C:\\Users\\ThanhLD\\Downloads\\outSuccess.txt";
+//        String imgFolderPath = imagePath; // "E:\\Document\\EasyCA\\SignServer\\BVQ11_Data\\ImageSignature\\Mix";
+//        File imgFolder = new File(imgFolderPath);
+        String jsonCertSuccessMapping = null;
+        try {
+            jsonCertSuccessMapping = new String(successFiles[0].getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        CertImportSuccessDTO[] importSuccessList = gson.fromJson(jsonCertSuccessMapping, CertImportSuccessDTO[].class);
+        Map<String, String> mapImage = new HashMap<>();
+        for (MultipartFile fileEntry : imageFiles) {
+//            String filePath = fileEntry.getPath();
+            String fileName = fileEntry.getOriginalFilename().substring(0, fileEntry.getOriginalFilename().indexOf(".")).trim();
+            try {
+                String b64Image = Base64.getEncoder().encodeToString(fileEntry.getBytes());
+                mapImage.put(fileName, b64Image);
+            } catch (IOException e) {
+                importErrors.add(new CertImportErrorDTO(fileName, "Khong get duoc base64"));
+            }
+
+        }
+        for (CertImportSuccessDTO cert : importSuccessList) {
+            if (mapImage.containsKey(cert.getPersonIdentity().trim())) {
+                try {
+                    Optional<Certificate> certificateOptional = certificateService.findOne(Long.parseLong(cert.getCertId()));
+                    if (certificateOptional.isPresent()) {
+                        Certificate certificate = certificateOptional.get();
+                        if (certificate.getSignatureImageId() == null) {
+                            String b64Img = mapImage.get(cert.getPersonIdentity().trim());
+                            SignatureImage signatureImage = new SignatureImage();
+                            signatureImage.setImgData(b64Img);
+                            signatureImage.setUserId(userId);
+                            SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
+                            dto = signatureImageService.save(dto);
+
+                            certificate.setSignatureImageId(dto.getId());
+                            certificateService.saveOrUpdate(certificate);
+                        }
+                        else {
+                            importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Anh da duoc import"));
+                        }
+                    }
+                } catch (Exception e) {
+                    importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Loi khi luu anh va cert"));
+                }
+            } else {
+                importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Khong ton tai anh"));
+            }
+        }
+        try {
+            String jsonError = gson.toJson(importErrors);
+            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(jsonError.getBytes()));
+            FileIOHelper.writeFile(jsonError, "D:/" + "outErrorImageSignature.txt");
+            String filename = "EasyCA-CSR-Export";
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+                .contentType(MediaType.parseMediaType("application/zip"))
+                .body(file);
+        } catch (IOException e) {
+            return null;
+        }
+
     }
 
     @PostMapping("/exportSerial")

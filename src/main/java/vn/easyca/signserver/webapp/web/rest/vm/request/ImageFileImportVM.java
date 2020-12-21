@@ -3,15 +3,15 @@ package vn.easyca.signserver.webapp.web.rest.vm.request;
 import java.io.File;
 
 public class ImageFileImportVM {
-    private File fileSuccess;
+    private File successFile;
     private File[] imageFiles;
 
-    public File getFileSuccess() {
-        return fileSuccess;
+    public File getSuccessFile() {
+        return successFile;
     }
 
-    public void setFileSuccess(File fileSuccess) {
-        this.fileSuccess = fileSuccess;
+    public void setSuccessFile(File successFile) {
+        this.successFile = successFile;
     }
 
     public File[] getImageFiles() {
@@ -21,4 +21,5 @@ public class ImageFileImportVM {
     public void setImageFiles(File[] imageFiles) {
         this.imageFiles = imageFiles;
     }
+
 }
