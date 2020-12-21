@@ -4,8 +4,8 @@ import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { KEYS } from 'app/entities/system-config/key.constants';
-import { DATATYPES } from 'app/entities/system-config/dataType.constants';
+import { KEYS } from 'app/shared/constants/system-config.constants';
+import { DATATYPES } from 'app/shared/constants/system-config.constants';
 import { ISystemConfig, SystemConfig } from 'app/shared/model/system-config.model';
 import { SystemConfigService } from './system-config.service';
 

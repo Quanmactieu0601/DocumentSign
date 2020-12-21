@@ -22,7 +22,7 @@
 <!--                    <input type="text" class="form-control" name="key" id="field_key"-->
 <!--                           formControlName="key"/>-->
                     <select class="form-control" id="field_key" name="key" formControlName="key">
-                        <option *ngFor="let key of keys" [ngValue]="key" selected>{{key}}</option>
+                        <option *ngFor="let key of keys" [ngValue]="key" jhiTranslate="webappApp.systemConfig.KEYS.{{key}}" selected>{{key}}</option>
                     </select>
                 </div>
 
@@ -31,7 +31,7 @@
                     <!--                    <input type="text" class="form-control" name="dataType" id="field_dataType"-->
                     <!--                           formControlName="dataType"/>-->
                     <select class="form-control" id="field_dataType" name="dataType" formControlName="dataType" ngModel (ngModelChange)="changeDataType($event)">
-                        <option *ngFor="let dataType of dataTypes" [ngValue]="dataType" selected >{{dataType}}</option>
+                        <option *ngFor="let dataType of dataTypes" [ngValue]="dataType" jhiTranslate="webappApp.systemConfig.DATATYPES.{{dataType}}" selected >{{dataType}}</option>
                     </select>
                 </div>
 

@@ -24,6 +24,16 @@
       "activated": "Activated",
       "error": {
         "otp": "Has error when get OTP configuration"
+      },
+      "KEYS": {
+        "SAVE_TOKEN_PASSWORD": "SAVE_TOKEN_PASSWORD",
+        "USE_OTP": "USE_OTP",
+        "SYMMETRIC_KEY": "SYMMETRIC_KEY"
+      },
+      "DATATYPES": {
+        "STRING": "STRING",
+        "NUMERIC": "NUMERIC",
+        "BOOLEAN": "BOOLEAN"
       }
     }
   }

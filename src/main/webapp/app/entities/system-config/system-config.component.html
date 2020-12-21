@@ -36,10 +36,10 @@
                 <tr *ngFor="let systemConfig of systemConfigs ;trackBy: trackId">
                     <td><a [routerLink]="['/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a></td>
                     <td>{{ systemConfig.comId }}</td>
-                    <td>{{ systemConfig.key }}</td>
+                    <td jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</td>
                     <td>{{ systemConfig.value }}</td>
                     <td>{{ systemConfig.description }}</td>
-                    <td>{{ systemConfig.dataType }}</td>
+                    <td jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</td>
                     <td>{{ systemConfig.activated }}</td>
                     <td class="text-right">
                         <div class="btn-group">
