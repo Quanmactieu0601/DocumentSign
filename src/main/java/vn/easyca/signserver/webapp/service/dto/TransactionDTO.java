@@ -36,6 +36,10 @@ public class TransactionDTO implements Serializable {
 
     private Extension extension;
 
+    private String typeStr;
+
+    private String statusStr;
+
     public Extension getExtension() {
         return extension;
     }
@@ -138,6 +142,23 @@ public class TransactionDTO implements Serializable {
 
     public void setType(TransactionType type) {
         this.type = type;
+    }
+
+    public String getTypeStr() {
+        return this.type.toString();
+    }
+
+    public String getStatusStr(){
+
+        return this.status.toString();
+    }
+
+    public void setTypeStr() {
+        this.typeStr = this.type.toString();
+    }
+
+    public void setStatusStr() {
+        this.statusStr = this.status.toString();
     }
 
     public TransactionDTO(Transaction transaction) {

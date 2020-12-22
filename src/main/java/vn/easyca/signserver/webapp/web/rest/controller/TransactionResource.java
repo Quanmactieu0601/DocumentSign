@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -165,8 +164,10 @@ public class TransactionResource {
 
         log.debug("REST request to export  PDF Transactions ");
         Map<String, Object> parameter = new HashMap<>();
-        List<TransactionDTO> listTranscation = transactionService.findTransaction(startDate, endDate, type);
-        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTranscation);
+        System.out.println("type:"+type);
+        System.out.println("date "+startDate);
+        List<TransactionDTO> listTransaction = transactionService.findTransaction(startDate, endDate, type);
+        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTransaction);
         parameter.put("transactionDataSource", TransactionCollectionDataSource);
         parameter.put("title", "Transaction Report");
         JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);

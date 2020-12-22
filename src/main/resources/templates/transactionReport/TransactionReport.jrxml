@@ -34,10 +34,10 @@
 			<![CDATA[]]>
 		</queryString>
 		<field name="api" class="java.lang.String"/>
-		<field name="code" class="java.lang.String"/>
+		<field name="statusStr" class="java.lang.String"/>
 		<field name="message" class="java.lang.String"/>
 		<field name="data" class="java.lang.String"/>
-		<field name="type" class="java.lang.String"/>
+		<field name="typeStr" class="java.lang.String"/>
 	</subDataset>
 	<parameter name="title" class="java.lang.String"/>
 	<parameter name="transactionDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
@@ -78,6 +78,7 @@
 						<dataSourceExpression><![CDATA[$P{transactionDataSource}]]></dataSourceExpression>
 					</datasetRun>
 					<jr:column width="96" uuid="f3580d21-0cf5-42e0-9122-d8d51891b4a6">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="96" height="30" uuid="b04c7a61-da3c-424b-8a70-37cda9af4299"/>
@@ -100,6 +101,7 @@
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="96" uuid="edc91704-f8b3-4f9e-8522-c75e8bfc7339">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="96" height="30" uuid="bf011f19-638b-43a2-9bf7-7ea09e1927a0"/>
@@ -107,7 +109,7 @@
 									<font fontName="Arial Rounded MT Bold" size="12" isBold="true"/>
 									<paragraph leftIndent="25"/>
 								</textElement>
-								<text><![CDATA[code]]></text>
+								<text><![CDATA[status]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
@@ -117,11 +119,12 @@
 									<font fontName="Arial Rounded MT Bold"/>
 									<paragraph leftIndent="15"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{code}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{statusStr}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="96" uuid="2605b9ff-ab75-4499-9bfb-fe5206b82634">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="96" height="30" uuid="e4b5e189-c9d2-4c6f-acf9-44ac3675746b"/>
@@ -144,6 +147,7 @@
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="96" uuid="3d367f4e-2ee3-4986-af15-eb07e5092ffc">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="96" height="30" uuid="05f545d7-37c0-42c5-8582-33ca291cc9ba"/>
@@ -166,6 +170,7 @@
 						</jr:detailCell>
 					</jr:column>
 					<jr:column width="96" uuid="5e8ade9e-58f7-4309-8f17-8606e28ddb8e">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="96" height="30" uuid="39c33fed-3484-4ec1-8a06-9c0fa927b66c"/>
@@ -183,7 +188,7 @@
 									<font fontName="Arial Rounded MT Bold"/>
 									<paragraph leftIndent="15"/>
 								</textElement>
-								<textFieldExpression><![CDATA[$F{type}]]></textFieldExpression>
+								<textFieldExpression><![CDATA[$F{typeStr}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

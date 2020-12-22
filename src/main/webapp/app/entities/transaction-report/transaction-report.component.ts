@@ -47,14 +47,14 @@ export class TransactionReportComponent implements OnInit {
   ngOnInit(): void {}
 
   getTime(): any {
-    let date_time = new Date();
-    let date = ('0' + date_time.getDate()).slice(-2);
-    let month = ('0' + (date_time.getMonth() + 1)).slice(-2);
-    let year = date_time.getFullYear();
-    let hours = ('0' + date_time.getHours()).slice(-2);
-    let minutes = ('0' + date_time.getMinutes()).slice(-2);
-    let seconds = ('0' + date_time.getSeconds()).slice(-2);
-    let time = year + month + date + ' ' + hours + minutes + seconds;
+    const dateTime = new Date();
+    const date = ('0' + dateTime.getDate()).slice(-2);
+    const month = ('0' + (dateTime.getMonth() + 1)).slice(-2);
+    const year = dateTime.getFullYear();
+    const hours = ('0' + dateTime.getHours()).slice(-2);
+    const minutes = ('0' + dateTime.getMinutes()).slice(-2);
+    const seconds = ('0' + dateTime.getSeconds()).slice(-2);
+    const time = year + month + date + ' ' + hours + minutes + seconds;
     return time;
   }
 

@@ -113,7 +113,8 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     public List<TransactionDTO> findTransaction(String startDate, String endDate, String type) {
-        List<Transaction> listTransaction = transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+        TransactionType typeEnum = TransactionType.from(type);
+        List<Transaction> listTransaction = transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), typeEnum);
         return transactionMapper.toDto(listTransaction);
     }
 
