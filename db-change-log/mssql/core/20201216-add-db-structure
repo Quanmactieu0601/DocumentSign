@@ -1,10 +1,4 @@
 
-create database signserver_bvq11
-Go
-
-Use signserver_bvq11;
-Go
-
 create table DATABASECHANGELOGLOCK
 (
     ID          int not null
