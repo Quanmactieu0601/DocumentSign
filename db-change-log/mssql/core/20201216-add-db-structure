@@ -1,3 +1,10 @@
+
+create database signserver_bvq11
+Go
+
+Use signserver_bvq11;
+Go
+
 create table DATABASECHANGELOGLOCK
 (
     ID          int not null
@@ -19,11 +26,7 @@ go
 
 create table certificate
 (
-    id                 bigint identity
-        constraint PK__certific__3213E83F4DB210C5
-            primary key
-        constraint certificate_id_uindex
-            unique,
+    id                 bigint identity primary key,
     alias              nvarchar(200),
     last_update        varchar(255),
     owner_id           varchar(255),
@@ -49,11 +52,7 @@ go
 
 create table company
 (
-    id              bigint identity
-        constraint PK__company__3213E83FBDB14FBE
-            primary key
-        constraint company_id_uindex
-            unique,
+    id              bigint identity primary key,
     tax_code        varchar(15),
     name            nvarchar(200),
     address         nvarchar(500),
@@ -73,8 +72,7 @@ go
 
 create table jhi_persistent_audit_event
 (
-    event_id   bigint identity
-        primary key,
+    event_id   bigint identity primary key,
     event_date datetime2(6),
     event_type varchar(255),
     principal  varchar(255) not null
@@ -94,9 +92,7 @@ go
 
 create table jhi_user
 (
-    id                 bigint identity
-        constraint PK__jhi_user__3213E83FFAC712F1
-            primary key,
+    id                 bigint identity primary key,
     created_by         varchar(50) not null,
     created_date       datetime2(6),
     last_modified_by   varchar(50),
@@ -143,11 +139,7 @@ go
 
 create table permission
 (
-    id          bigint identity
-        constraint PK__permissi__3213E83F84DDB304
-            primary key
-        constraint permission_id_uindex
-            unique,
+    id          bigint identity primary key,
     parent_code varchar(10),
     code        varchar(10) not null
         constraint permission_code_uindex
@@ -159,10 +151,7 @@ go
 
 create table signature_image
 (
-    id                 bigint identity
-        primary key
-        constraint signature_image_id_uindex
-            unique,
+    id                 bigint identity primary key,
     img_data           varchar(max),
     user_id            bigint,
     created_date       datetime2(6),
@@ -190,10 +179,7 @@ go
 
 create table system_config
 (
-    id           bigint identity
-        primary key
-        constraint system_config_id_uindex
-            unique,
+    id           bigint identity primary key,
     com_id       bigint,
     config_key   varchar(300),
     config_value varchar(300),
@@ -203,13 +189,14 @@ create table system_config
 )
 go
 
+create unique index system_config_config_key_uindex
+	on system_config (config_key)
+go
+
+
 create table transaction_log
 (
-    id           bigint identity
-        constraint PK__transact__3213E83FB1B2BA20
-            primary key
-        constraint transaction_id_uindex
-            unique,
+    id           bigint identity primary key,
     api          varchar(200),
     trigger_time datetime2,
     status       bit,
@@ -233,6 +220,19 @@ create table user_authority
     constraint user_authority_pk
         unique (user_id, authority_id)
 )
+go
+
+create table user_permission
+(
+    id            bigint,
+    user_id       bigint,
+    permission_id bigint,
+    com_id        bigint,
+    constraint user_permission_pk
+        unique (user_id, permission_id)
+)
+go
+
 go
 
 create table user_permission
