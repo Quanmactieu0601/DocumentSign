@@ -71,9 +71,10 @@ export class TransactionReportComponent implements OnInit {
       link.href = downloadURL;
       link.download = 'Transaction Report ' + this.getTime() + '.pdf';
       link.click();
+      this.showAlert = true;
       setTimeout(() => {
-        this.showAlert = true;
-      }, 2000);
+        this.showAlert = false;
+      }, 4000);
     });
   }
 
