@@ -18,7 +18,6 @@ export class SystemConfigUpdateComponent implements OnInit {
   isSaving = false;
   keys = KEYS;
   dataTypes = DATATYPES;
-  valueDataType: string = 'STRING';
   editForm = this.fb.group({
     id: [],
     comId: [],
@@ -52,9 +51,7 @@ export class SystemConfigUpdateComponent implements OnInit {
     });
   }
 
-  changeDataType(newDataType: string) {
-    this.valueDataType = newDataType;
-  }
+
 
   previousState(): void {
     window.history.back();
@@ -74,7 +71,11 @@ export class SystemConfigUpdateComponent implements OnInit {
     systemConfig.id = this.editForm.get(['id'])!.value;
     systemConfig.comId = this.editForm.get(['comId'])!.value;
     systemConfig.key = this.editForm.get(['key'])!.value;
-    systemConfig.value = this.editForm.get(['value'])!.value.toString();
+    if(this.editForm.get(['value'])!.value.toString() === 'true'){
+      systemConfig.value = '1';
+    } else if(this.editForm.get(['value'])!.value.toString() === 'false'){
+      systemConfig.value = '0';
+    } else systemConfig = this.editForm.get(['value'])!.value.toString();
     systemConfig.description = this.editForm.get(['description'])!.value;
     systemConfig.dataType = this.editForm.get(['dataType'])!.value;
     systemConfig.activated = this.editForm.get(['activated'])!.value;

@@ -2,7 +2,7 @@
     <h2 id="page-heading">
         <span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
 
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config" [routerLink]="['/system-config/new']">
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config" [routerLink]="['/system-config/new']" hidden>
             <fa-icon icon="plus"></fa-icon>
             <span  jhiTranslate="webappApp.systemConfig.home.createLabel">
             Create a new System Config
@@ -37,7 +37,17 @@
                     <td><a [routerLink]="['/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a></td>
                     <td>{{ systemConfig.comId }}</td>
                     <td jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</td>
-                    <td>{{ systemConfig.value }}</td>
+                    <td>
+                        <div [ngSwitch]="systemConfig.value">
+                            <div *ngSwitchCase="0">
+                                <input type="checkbox" disabled="disabled" style="zoom: 2.0"  >
+                            </div>
+                            <div *ngSwitchCase="1">
+                                <input type="checkbox" disabled="disabled" checked="checked" style="zoom: 2.0">
+                            </div>
+                            <div *ngSwitchDefault> {{systemConfig.value}} </div>
+                        </div>
+                    </td>
                     <td>{{ systemConfig.description }}</td>
                     <td jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</td>
                     <td>{{ systemConfig.activated }}</td>

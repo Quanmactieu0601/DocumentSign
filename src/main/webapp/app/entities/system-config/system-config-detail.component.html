@@ -16,18 +16,29 @@
                 <dd>
                     <span jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</span>
                 </dd>
+                <dt><span jhiTranslate="webappApp.systemConfig.dataType">Data Type</span></dt>
+                <dd>
+                    <span jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</span>
+                </dd>
                 <dt><span jhiTranslate="webappApp.systemConfig.value">Value</span></dt>
                 <dd>
-                    <span>{{ systemConfig.value }}</span>
+                    <span>
+                        <div [ngSwitch]="systemConfig.value">
+                            <div *ngSwitchCase="0">
+                                <input type="checkbox" disabled="disabled" style="zoom:3.0;">
+                            </div>
+                            <div *ngSwitchCase="1">
+                                <input type="checkbox" disabled="disabled" checked="checked" style="zoom:3.0;">
+                            </div>
+                            <div *ngSwitchDefault> {{systemConfig.value}} </div>
+                        </div>
+                    </span>
                 </dd>
                 <dt><span jhiTranslate="webappApp.systemConfig.description">Description</span></dt>
                 <dd>
                     <span>{{ systemConfig.description }}</span>
                 </dd>
-                <dt><span jhiTranslate="webappApp.systemConfig.dataType">Data Type</span></dt>
-                <dd>
-                    <span jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</span>
-                </dd>
+
                 <dt><span jhiTranslate="webappApp.systemConfig.activated">Activated</span></dt>
                 <dd>
                     <span>{{ systemConfig.activated }}</span>
