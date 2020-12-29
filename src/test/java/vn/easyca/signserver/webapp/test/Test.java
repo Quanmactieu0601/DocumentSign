@@ -2,8 +2,8 @@
 //
 //import org.bouncycastle.util.encoders.Base64;
 //import vn.easyca.signserver.pki.cryptotoken.Config;
-//import vn.easyca.signserver.pki.cryptotoken.P11CryptoToken;
-//import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
+//import vn.easyca.signserver.pki.cryptotoken.impl.P11CryptoToken;
+//import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
 //import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 //import vn.easyca.signserver.pki.cryptotoken.utils.SignUtils;
 //

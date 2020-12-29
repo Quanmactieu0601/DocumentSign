@@ -62,7 +62,7 @@ public class SignatureVerificationService {
         return response;
     }
 
-    public SignatureVerificationResponse verifyRaw(SignatureVerificationRequest request) throws ApplicationException {
+    public SignatureVerificationResponse verifyRaw(SignatureVerificationRequest request) throws Exception {
         if (request.getHashAlgorithm() == null)
             request.setHashAlgorithm(Constants.HASH_ALGORITHM.SHA1);
         SignatureVerificationResponse response = new SignatureVerificationResponse();
@@ -73,12 +73,8 @@ public class SignatureVerificationService {
         X509Certificate x509Certificate = certificateDTO.getX509Certificate();
         SignatureValidator rawValidator = new SignatureValidator();
         for (SignatureVerificationRequest.Element element : request.getElements()) {
-            try {
-                boolean result = rawValidator.verify(element.getOriginalData(), element.getSignature(), x509Certificate, request.getHashAlgorithm());
-                response.add(element.getKey(), result);
-            } catch (Exception exception) {
-                exception.printStackTrace();
-            }
+            boolean result = rawValidator.verify(element.getOriginalData(), element.getSignature(), x509Certificate, request.getHashAlgorithm());
+            response.add(element.getKey(), result);
         }
         return response;
     }

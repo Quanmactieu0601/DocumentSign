@@ -8,7 +8,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;

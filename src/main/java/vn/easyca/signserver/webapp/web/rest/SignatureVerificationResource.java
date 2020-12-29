@@ -33,6 +33,7 @@ public class SignatureVerificationResource extends BaseResource {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> verifyHash(@RequestBody SignatureVerificationVM signatureVerificationVM) {
+        log.info(" --- verifyHash ---");
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyHash(request);
@@ -54,6 +55,7 @@ public class SignatureVerificationResource extends BaseResource {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> verifyRaw(@RequestBody SignatureVerificationVM signatureVerificationVM) {
+        log.info(" --- verifyRaw ---");
         try {
             SignatureVerificationRequest request = signatureVerificationVM.mapToDTO();
             Object result = verificationService.verifyRaw(request);
@@ -75,6 +77,7 @@ public class SignatureVerificationResource extends BaseResource {
 
     @PostMapping(value = "/pdf")
     public ResponseEntity<BaseResponseVM> verifyPdf(@RequestParam("file") MultipartFile file) {
+        log.info(" --- verifyPdf ---");
         try {
             VerificationResponseDTO result = verificationService.verifyPDF(file.getInputStream());
             status = TransactionStatus.SUCCESS;

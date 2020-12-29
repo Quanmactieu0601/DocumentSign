@@ -82,7 +82,7 @@ public class CertificateResource {
 
     @GetMapping("/search")
     public ResponseEntity<List<Certificate>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
-        log.info("search Certificate");
+        log.info(" --- getAllCertificatesByFilter ---");
         try {
             Page<Certificate> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -103,7 +103,7 @@ public class CertificateResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
-            log.info("importP12File: {}", p12ImportVM);
+            log.info("--- importP12File ---");
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
@@ -121,7 +121,7 @@ public class CertificateResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
-            log.info("genCertificate: {}", certificateGeneratorVM);
+            log.info("--- genCertificate ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
@@ -153,7 +153,7 @@ public class CertificateResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
-            log.info("createCSRAndUser: {}", certificateGeneratorVM);
+            log.info("--- createCSRAndUser ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.saveUserAndCreateCSR(dto);
@@ -185,7 +185,7 @@ public class CertificateResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
         try {
-            log.info("createCSR: {}", csrGeneratorVM);
+            log.info("--- createCSR ---");
             CertificateGenerateResult result = p11GeneratorService.createCSR(csrGeneratorVM);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
@@ -211,7 +211,7 @@ public class CertificateResource {
     public ResponseEntity<Resource> createCSRs(@RequestBody CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
-            log.info("exportCsr: {}", dto);
+            log.info("--- exportCsr ---");
             List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
             byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
@@ -233,7 +233,7 @@ public class CertificateResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            log.info("uploadCert");
+            log.info("--- uploadCert ---");
             List<CertDTO> dtos = ExcelUtils.convertExcelToCertDTO(file.getInputStream());
             p11GeneratorService.saveCerts(dtos);
             //TODO: hien tai moi chi luu chu chua dua ra thong bao loi chi tiet tung cert (neu xay ra loi)

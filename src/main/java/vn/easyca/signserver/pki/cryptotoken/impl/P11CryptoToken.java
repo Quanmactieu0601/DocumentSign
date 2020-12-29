@@ -1,7 +1,6 @@
-package vn.easyca.signserver.pki.cryptotoken;
+package vn.easyca.signserver.pki.cryptotoken.impl;
 
 
-import au.com.safenet.crypto.provider.SAFENETProvider;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -9,14 +8,6 @@ import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.BufferingContentSigner;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.springframework.stereotype.Component;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
-import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
-import vn.easyca.signserver.pki.sign.utils.StringUtils;
-import vn.easyca.signserver.webapp.config.Constants;
-import vn.easyca.signserver.webapp.config.HsmConfig;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
@@ -24,22 +15,24 @@ import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
-/**
- * @author ThanhLD
- * Cau hinh den HSM ProtectServer
- */
+import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.error.*;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.config.HsmConfig;
+
 @Component
-public class P11ProtectServerCryptoToken implements CryptoToken {
+public class P11CryptoToken implements CryptoToken {
     private KeyStore ks = null;
     private final HsmConfig hsmConfig;
     private String providerName;
 
-    public P11ProtectServerCryptoToken(HsmConfig hsmConfig) {
+    public P11CryptoToken(HsmConfig hsmConfig) {
         this.hsmConfig = hsmConfig;
     }
 
@@ -51,18 +44,19 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
                 throw new InitCryptoTokenException("Config is empty");
             if (modulePin.isEmpty())
                 throw new InitCryptoTokenException("modulePin is required");
+
             // init provider
             ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11Config.getBytes());
-            SAFENETProvider sAFENETProvider = new SAFENETProvider();
-            Security.addProvider((Provider)sAFENETProvider);
-            this.providerName = sAFENETProvider.getName();
+            Provider prov = new sun.security.pkcs11.SunPKCS11(confStream);
+            Security.addProvider(prov);
+            this.providerName = prov.getName();
 
             // load keystore
             char[] passphrase = modulePin.toCharArray();
             KeyStore ks = null;
             try {
-                ks = KeyStore.getInstance("CRYPTOKI", providerName);
-            } catch (KeyStoreException | NoSuchProviderException e) {
+                ks = KeyStore.getInstance("PKCS11", prov);
+            } catch (KeyStoreException e) {
                 throw new InitCryptoTokenException("Create KeyStore instance has error", e);
             }
             KeyStore.PasswordProtection pp = new KeyStore.PasswordProtection(passphrase);
@@ -148,11 +142,11 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
         } catch (Exception exception) {
             throw new CryptoTokenException("gen self signed Cert occurs has error ", exception);
         }
-        try {
-            ks.setKeyEntry(alias, keyPair.getPrivate(), hsmConfig.getModulePin().toCharArray(), new Certificate[]{cert});
-        } catch (KeyStoreException e) {
-            throw new CryptoTokenException("set entry key occurs error", e);
-        }
+//        try {
+//            ks.setKeyEntry(alias, keyPair.getPrivate(), config.getModulePin().toCharArray(), new Certificate[]{cert});
+//        } catch (KeyStoreException e) {
+//            throw new CryptoTokenException("set entry key occurs error", e);
+//        }
         return keyPair;
     }
 
@@ -222,10 +216,9 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
         algorithm = algorithm.trim().toUpperCase().replace("-", "");
         if (!Constants.HASH_ALGORITHMS.contains(algorithm))
             throw new ApplicationException(-1, "Hash algorithm not correct");
-
         try {
-            return Signature.getInstance(algorithm + "withRSA", new au.com.safenet.crypto.provider.slot0.SAFENETProvider());
-        } catch (NoSuchAlgorithmException e) {
+            return Signature.getInstance(algorithm + "withRSA", providerName);
+        } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
             throw new ApplicationException(-1, "Cannot get signature instance", e);
         }
     }

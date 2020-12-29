@@ -28,8 +28,7 @@ public class SignatureValidator {
 
     public boolean verify(byte[] origData, byte[] sig, PublicKey publicKey, String hashAlgo) throws Exception {
         Signature signature = null;
-        hashAlgo = hashAlgo.trim().toLowerCase();
-        hashAlgo = hashAlgo.replace("-", "");
+        hashAlgo = hashAlgo.trim().replace("-", "").toUpperCase();
         switch (hashAlgo) {
             case Constants.HASH_ALGORITHM.SHA1:
                 signature = Signature.getInstance(DEFAULT_SIG_ALGO);
