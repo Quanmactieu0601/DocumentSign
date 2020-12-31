@@ -43,24 +43,4 @@ public class ParserUtils {
             throw new ApplicationException("Error I/O when convert html to base64", e);
         }
     }
-
-    public static String getHtmlTemplateAndSignData(String subjectDN, String signatureTemplate, String signatureImage) {
-        //todo: hiện tại chỉ đang lấy pattern theo khách hàng Quốc Dũng như này còn khách hàng khác xử lý sau
-        final String regexCN = "CN=\"([^\"]+)\"";
-        final String regexT = ", T=([^,]+)";
-        String CN = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
-        String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
-        String[] signerInfor = CN.split(",");
-        String signerName = signerInfor[0];
-        String address = signerInfor[1];
-
-        String htmlContent = signatureTemplate;
-        htmlContent = htmlContent
-            .replaceFirst("signer", signerName)
-            .replaceFirst("position", T)
-            .replaceFirst("address", address)
-            .replaceFirst("signatureImage", signatureImage)
-            .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
-        return htmlContent;
-    }
 }

@@ -16,6 +16,8 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
@@ -36,16 +38,19 @@ public class CertificateService {
     private final SignatureImageRepository signatureImageRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final AuthenticatorTOTPService authenticatorTOTPService;
-
+    private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, UserRepository userRepository) {
+
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
+                              CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureImageRepository = signatureImageRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.authenticatorTOTPService = authenticatorTOTPService;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.userRepository = userRepository;
     }
 
@@ -134,7 +139,8 @@ public class CertificateService {
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
-        String htmlContent = ParserUtils.getHtmlTemplateAndSignData(subjectDN, signatureTemplate, signatureImageData);
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
         return ParserUtils.convertHtmlContentToBase64(htmlContent);
     }
 

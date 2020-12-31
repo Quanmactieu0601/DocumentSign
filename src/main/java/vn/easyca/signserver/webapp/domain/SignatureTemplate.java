@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 
 import javax.persistence.*;
 
@@ -30,6 +31,10 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @Column(name = "html_template")
     private String htmlTemplate;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "core_parser")
+    private SignatureTemplateParserType coreParser;
+
     public Integer getType() {
         return type;
     }
@@ -39,6 +44,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     }
 
     public String getHtmlTemplate() {
+        // todo : resolve template with individual parser
         return htmlTemplate;
     }
 
@@ -70,6 +76,13 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
 
+    public SignatureTemplateParserType getCoreParser() {
+        return coreParser;
+    }
+
+    public void setCoreParser(SignatureTemplateParserType coreParser) {
+        this.coreParser = coreParser;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -93,7 +106,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
             ", userId=" + userId +
             ", type=" + type +
             ", htmlTemplate='" + htmlTemplate + '\'' +
+            ", coreParser='" + coreParser + '\'' +
             '}';
     }
-
 }
