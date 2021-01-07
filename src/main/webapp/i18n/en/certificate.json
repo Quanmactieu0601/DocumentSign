@@ -38,6 +38,17 @@
         "success": "Create QR code successfully",
         "error": "Create QR code failure",
         "guide": "Guide"
+      },
+      "changePassword": {
+        "changePassword": "Change password",
+        "header": "Change password",
+        "oldPassword": "Current password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm Password",
+        "save": "Save",
+        "cancel": "Cancel",
+        "placeholder": "Enter your password",
+        "OTP": "Enter your OTP"
       }
     }
   }

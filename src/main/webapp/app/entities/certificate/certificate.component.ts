@@ -14,6 +14,7 @@ import { FormBuilder } from '@angular/forms';
 import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
 import { SystemConfigService } from 'app/entities/system-config/system-config.service';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { PasswordComponent } from 'app/entities/certificate/change-password/password.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -29,7 +30,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
-  isAuthenOTP = false;
+  isAuthenOTP?: boolean;
 
   modalRef: NgbModalRef | undefined;
 
@@ -52,17 +53,6 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
-    // this.certificateService
-    //   .query({
-    //     page: pageToLoad - 1,
-    //     size: this.itemsPerPage,
-    //     sort: this.sort(),
-    //   })
-    //   .subscribe(
-    //     (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-    //     () => this.onError()
-    //   );
     this.searchCertificate(page);
   }
 
@@ -192,5 +182,11 @@ export class CertificateComponent implements OnInit, OnDestroy {
   showOTP(certificate: ICertificate): void {
     const modalRef = this.modalService.open(OtpComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+  }
+
+  changePassword(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(PasswordComponent, { size: '300px', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }
 }

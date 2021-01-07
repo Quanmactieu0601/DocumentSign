@@ -36,6 +36,17 @@
         "success": "Tạo mã QR thành công",
         "error": "Tạo mã QR thất bại",
         "guide": "Hướng dẫn"
+      },
+      "changePassword": {
+        "changePassword": "Thay đổi mật khẩu",
+        "header": "Thay đổi mật khẩu",
+        "oldPassword": "Mật khẩu cũ",
+        "newPassword": "Mật khẩu mới",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "save": "Lưu",
+        "cancel": "Hủy bỏ",
+        "placeholder": "Nhập mật khẩu",
+        "OTP": "Nhập ma OTP"
       }
     }
   }
