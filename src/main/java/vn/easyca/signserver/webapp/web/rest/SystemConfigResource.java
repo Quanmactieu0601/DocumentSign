@@ -134,7 +134,7 @@ public class SystemConfigResource {
     public ResponseEntity<BaseResponseVM> isAuthenOTP() {
         try {
             Boolean isUseOTP = systemConfigCachingService.getConfig().getUseOTP();
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(isUseOTP));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(isUseOTP));
         } catch (ApplicationException e) {
             throw new BadRequestAlertException("Has error when get OTP configuration", "systemConfig", "otp");
         }

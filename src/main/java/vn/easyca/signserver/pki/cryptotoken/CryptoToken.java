@@ -33,4 +33,6 @@ public interface CryptoToken {
     Signature getSignatureInstance(String algorithm) throws ApplicationException;
 
     boolean isInitialized() throws ApplicationException;
+
+    KeyStore getKeyStore();
 }

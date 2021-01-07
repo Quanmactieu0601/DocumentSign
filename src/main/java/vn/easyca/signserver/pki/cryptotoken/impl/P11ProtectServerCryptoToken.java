@@ -1,4 +1,4 @@
-package vn.easyca.signserver.pki.cryptotoken;
+package vn.easyca.signserver.pki.cryptotoken.impl;
 
 
 import au.com.safenet.crypto.provider.SAFENETProvider;
@@ -12,6 +12,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
@@ -241,5 +242,10 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
         } catch (Exception ex) {
             throw new ApplicationException("Keystore is not initialized, please check PIN number");
         }
+    }
+
+    @Override
+    public KeyStore getKeyStore() {
+        return ks;
     }
 }

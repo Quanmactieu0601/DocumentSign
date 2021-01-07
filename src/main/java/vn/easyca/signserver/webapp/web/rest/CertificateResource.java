@@ -37,6 +37,7 @@ import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.P12PinVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -82,7 +83,7 @@ public class CertificateResource extends BaseResource {
 
     @GetMapping("/search")
     public ResponseEntity<List<Certificate>> getAllCertificatesByFilter(Pageable pageable, @RequestParam(required = false) String alias, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String serial, @RequestParam(required = false) String validDate, @RequestParam(required = false) String expiredDate) {
-        log.info("search Certificate");
+        log.info(" --- getAllCertificatesByFilter ---");
         try {
             Page<Certificate> page = certificateService.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
@@ -103,15 +104,15 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
-            log.info("importP12File: {}", p12ImportVM);
+            log.info("--- importP12File ---");
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e));
         } finally {
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
@@ -122,14 +123,14 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
-            log.info("genCertificate: {}", certificateGeneratorVM);
+            log.info("--- genCertificate ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.genCertificate(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -154,14 +155,14 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
-            log.info("createCSRAndUser: {}", certificateGeneratorVM);
+            log.info("--- createCSRAndUser ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             CertificateGenerateDTO dto = mapper.map(certificateGeneratorVM);
             CertificateGenerateResult result = p11GeneratorService.saveUserAndCreateCSR(dto);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -186,12 +187,12 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
         try {
-            log.info("createCSR: {}", csrGeneratorVM);
+            log.info("--- createCSR ---");
             CertificateGenerateResult result = p11GeneratorService.createCSR(csrGeneratorVM);
             CertificateGeneratorResultVM certificateGeneratorResultVM = new CertificateGeneratorResultVM();
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
@@ -213,7 +214,7 @@ public class CertificateResource extends BaseResource {
     public ResponseEntity<Resource> createCSRs(@RequestBody CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
-            log.info("exportCsr: {}", dto);
+            log.info("--- exportCsr ---");
             List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
             byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
@@ -236,11 +237,11 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            log.info("uploadCert");
+            log.info("--- uploadCert ---");
             List<CertDTO> dtos = ExcelUtils.convertExcelToCertDTO(file.getInputStream());
             p11GeneratorService.saveCerts(dtos);
             //TODO: hien tai moi chi luu chu chua dua ra thong bao loi chi tiet tung cert (neu xay ra loi)
-//            return ResponseEntity.status(HttpStatus.OK).body(BaseResponseVM.CreateNewSuccessResponse(null));
+//            return ResponseEntity.status(HttpStatus.OK).body(BaseResponseVM.createNewSuccessResponse(null));
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
         } catch (Exception e) {
@@ -259,7 +260,7 @@ public class CertificateResource extends BaseResource {
             log.info("getBase64Cert by serial: {}", serial);
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -281,7 +282,7 @@ public class CertificateResource extends BaseResource {
         try {
             certificateService.updateActiveStatus(id);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(null));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(null));
         } catch (Exception e) {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
@@ -296,7 +297,7 @@ public class CertificateResource extends BaseResource {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
         } catch (ApplicationException e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
@@ -309,7 +310,23 @@ public class CertificateResource extends BaseResource {
         log.info(" --- getQRCodeOTP --- serial: {}", serial);
         try {
             String base64Image = certificateService.getBase64OTPQRCode(serial, pin);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/changeCertPIN")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> changeCertPIN(@RequestBody P12PinVM p12PinVM) {
+        try {
+            log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
+            certificateService.changePIN(p12PinVM.serial, p12PinVM.oldPIN, p12PinVM.newPIN, p12PinVM.otpCode);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));

@@ -2,8 +2,10 @@
 <!DOCTYPE configuration>
 
 <configuration scan="true">
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
+<!--    <include resource="org/springframework/boot/logging/logback/base.xml"/>-->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+<!--    <include resource="org/springframework/boot/logging/logback/file-appender.xml" />-->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/opt/easysign/signserver.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -23,6 +25,7 @@
 
     <root>
         <appender-ref ref="ASYNC"/>
+        <appender-ref ref="CONSOLE" />
     </root>
 
     <logger name="javax.activation" level="WARN"/>

@@ -52,7 +52,7 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
-        log.info(" --- signPDF --- {}", signingVM);
+        log.info(" --- signPDF --- ");
         try {
             byte[] fileData = file.getBytes();
             SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
@@ -80,12 +80,12 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
-        log.info(" --- signHash --- {}", signingVM);
+        log.info(" --- signHash --- ");
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             Object signingDataResponse = signService.signHash(request);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -102,12 +102,12 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> signRaw(@RequestBody SigningVM<String> signingVM) {
-        log.info(" --- signRaw --- {}", signingVM);
+        log.info(" --- signRaw --- ");
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -124,11 +124,11 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/office")
     public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest signingRequest) {
-        log.info(" --- signOffice --- {} ", signingRequest);
+        log.info(" --- signOffice --- ");
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -145,11 +145,11 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/xml")
     public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest signingRequest) {
-        log.info(" --- signXML --- {} ", signingRequest);
+        log.info(" --- signXML --- ");
         try {
             SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -166,11 +166,11 @@ public class SigningResource extends BaseResource {
 
     @PostMapping(value = "/invisiblePdf")
     public ResponseEntity<BaseResponseVM> invisibleSignPdf(@RequestBody SigningRequest signingRequest) {
-        log.info(" --- invisiblePdf --- {} ", signingRequest);
+        log.info(" --- invisiblePdf --- ");
         try {
             SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();

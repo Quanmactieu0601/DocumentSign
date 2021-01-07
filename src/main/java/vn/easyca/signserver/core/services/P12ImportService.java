@@ -8,7 +8,7 @@ import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateAppException;
-import vn.easyca.signserver.pki.cryptotoken.P12CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
@@ -124,31 +124,4 @@ public class P12ImportService {
         throw new CryptoTokenException("Can not found alias in crypto token");
     }
 
-    // TODO: Call this function to change P12 password
-    public byte[] changePKCS12KeyPassword(byte[] privateKeyData, String oldPassword, String newPassword) {
-        try {
-            KeyStore newKs = KeyStore.getInstance("PKCS12");
-            newKs.load(null, null);
-
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(new ByteArrayInputStream(privateKeyData), oldPassword.toCharArray());
-            Enumeration<String> aliases = ks.aliases();
-
-            while (aliases.hasMoreElements()) {
-                String alias = aliases.nextElement();
-                Key privateKey = ks.getKey(alias, oldPassword.toCharArray());
-                java.security.cert.Certificate[] certificateChain = ks.getCertificateChain(alias);
-                newKs.setKeyEntry(alias, privateKey, newPassword.toCharArray(), certificateChain);
-            }
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            newKs.store(baos, newPassword.toCharArray());
-            return baos.toByteArray();
-        } catch (KeyStoreException
-            | CertificateException
-            | NoSuchAlgorithmException
-            | UnrecoverableKeyException
-            | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

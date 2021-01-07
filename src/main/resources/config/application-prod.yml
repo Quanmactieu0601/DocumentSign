@@ -59,6 +59,11 @@ spring:
     #    username: replicatedb
     #    password: DbSlave@202o
 
+    # BV An Phuoc - cau hinh DB
+    #    url: jdbc:sqlserver://192.168.3.72:1433;database=signserver
+    #    username: sa
+    #    password: admin@123
+
     hikari:
       poolName: Hikari
       auto-commit: false
