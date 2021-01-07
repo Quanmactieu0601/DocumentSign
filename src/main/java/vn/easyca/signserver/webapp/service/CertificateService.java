@@ -185,7 +185,7 @@ public class CertificateService {
                 throw new ApplicationException("Cannot init token");
             }
             if (certificateDTO.getTokenType() == CertificateDTO.PKCS_11) {
-
+                // TODO: change PIN HSM
             } else {
                 KeyStore newKs = KeyStore.getInstance("PKCS12");
                 newKs.load(null, null);
