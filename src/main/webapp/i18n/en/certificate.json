@@ -39,15 +39,15 @@
         "error": "Create QR code failure",
         "guide": "Guide"
       },
-      "changePassword": {
-        "changePassword": "Change password",
-        "header": "Change password",
-        "oldPassword": "Current password",
-        "newPassword": "New Password",
-        "confirmPassword": "Confirm Password",
+      "changeCertPIN": {
+        "changePIN": "PIN",
+        "header": "Change PIN",
+        "currentPIN": "Current PIN",
+        "newPIN": "New PIN",
+        "confirmPIN": "Confirm PIN",
         "save": "Save",
         "cancel": "Cancel",
-        "placeholder": "Enter your password",
+        "placeholder": "Enter your PIN",
         "OTP": "Enter your OTP"
       }
     }

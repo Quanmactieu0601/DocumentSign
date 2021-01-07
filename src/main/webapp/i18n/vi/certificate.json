@@ -37,15 +37,15 @@
         "error": "Tạo mã QR thất bại",
         "guide": "Hướng dẫn"
       },
-      "changePassword": {
-        "changePassword": "Thay đổi mật khẩu",
-        "header": "Thay đổi mật khẩu",
-        "oldPassword": "Mật khẩu cũ",
-        "newPassword": "Mật khẩu mới",
-        "confirmPassword": "Xác nhận mật khẩu",
+      "changeCertPIN": {
+        "changePIN": "Mã PIN",
+        "header": "Thay đổi mã PIN",
+        "currentPIN": "Mã PIN cũ",
+        "newPIN": "Mã PIN mới",
+        "confirmPIN": "Nhập lại mã PIN",
         "save": "Lưu",
         "cancel": "Hủy bỏ",
-        "placeholder": "Nhập mật khẩu",
+        "placeholder": "Nhập mã PIN",
         "OTP": "Nhập ma OTP"
       }
     }

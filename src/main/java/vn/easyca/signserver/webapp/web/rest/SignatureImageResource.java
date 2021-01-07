@@ -89,7 +89,7 @@ public class SignatureImageResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         SignatureImageDTO result = signatureImageService.save(signatureImageDTO);
-        asyncTransactionService.newThread("/api/signature-images", TransactionType.BUSINESS, Action.CREATE, Extension.NONE, Method.PUT,
+        asyncTransactionService.newThread("/api/signature-images", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, signatureImageDTO.getId().toString()))

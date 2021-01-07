@@ -92,7 +92,7 @@ export class CertificateService {
     return this.http.get<ResponseBody>(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'body' });
   }
 
-  savePassword(newPassword: string, currentPassword: string): Observable<{}> {
-    return this.http.post(`${this.resourceUrl}/change-password`, { currentPassword, newPassword });
+  savePIN(serial: string | undefined, oldPIN: string, newPIN: string): Observable<{}> {
+    return this.http.post(`${this.resourceUrl}/changeCertPIN`, { serial, oldPIN, newPIN });
   }
 }

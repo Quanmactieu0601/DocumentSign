@@ -30,7 +30,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   predicate!: string;
   ascending!: boolean;
   ngbPaginationPage = 1;
-  isAuthenOTP?: boolean;
+  isAuthenOTP = false;
 
   modalRef: NgbModalRef | undefined;
 

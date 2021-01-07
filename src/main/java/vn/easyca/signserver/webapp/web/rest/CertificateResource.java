@@ -323,13 +323,19 @@ public class CertificateResource extends BaseResource {
         try {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
             certificateService.changePIN(p12PinVM.serial, p12PinVM.oldPIN, p12PinVM.newPIN, p12PinVM.otpCode);
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
         } catch (ApplicationException e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/changeCertPIN", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 }

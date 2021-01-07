@@ -48,7 +48,7 @@ public class SignatureVerificationResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
+            asyncTransactionService.newThread("/api/verification/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
@@ -70,7 +70,7 @@ public class SignatureVerificationResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
+            asyncTransactionService.newThread("/api/verification/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
