@@ -39,7 +39,7 @@ public class SignatureVerificationResource extends BaseResource {
             Object result = verificationService.verifyHash(request);
             asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/hash", TransactionType.BUSINESS, Action.VERIFY, Extension.HASH, Method.POST,
@@ -61,7 +61,7 @@ public class SignatureVerificationResource extends BaseResource {
             Object result = verificationService.verifyRaw(request);
             asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/raw", TransactionType.BUSINESS, Action.VERIFY, Extension.RAW, Method.POST,
@@ -81,7 +81,7 @@ public class SignatureVerificationResource extends BaseResource {
         try {
             VerificationResponseDTO result = verificationService.verifyPDF(file.getInputStream());
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(result));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             message = applicationException.getMessage();
             log.error(message, applicationException);

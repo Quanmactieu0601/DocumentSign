@@ -86,7 +86,7 @@ public class SigningResource {
             Object signingDataResponse = signService.signHash(request);
             asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
@@ -108,7 +108,7 @@ public class SigningResource {
             SignDataResponse<List<SignResultElement>> signResponse = signService.signRaw(request);
             asyncTransactionService.newThread("/api/sign/raw", TransactionType.BUSINESS, Action.SIGN, Extension.RAW, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/raw", TransactionType.BUSINESS, Action.SIGN, Extension.RAW, Method.POST,
@@ -129,7 +129,7 @@ public class SigningResource {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
@@ -150,7 +150,7 @@ public class SigningResource {
             SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
             asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/xml", TransactionType.BUSINESS, Action.SIGN, Extension.XML, Method.POST,
@@ -171,7 +171,7 @@ public class SigningResource {
             SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
             asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(signingDataResponse));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/sign/invisiblePdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,

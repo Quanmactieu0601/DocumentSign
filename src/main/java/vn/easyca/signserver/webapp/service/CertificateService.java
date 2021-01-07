@@ -5,11 +5,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.webapp.domain.*;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
@@ -21,7 +25,12 @@ import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -161,6 +170,58 @@ public class CertificateService {
             return FileIOHelper.getBase64EncodedImage(urlQrCode);
         } catch (IOException e) {
             throw new ApplicationException("Can't convert URL to base64 image", e);
+        }
+    }
+
+    // TODO: Call this function to change P12 password
+    public void changePIN(String serial, String oldPin, String newPin, String otp) throws ApplicationException {
+        try {
+            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+            if (!certificateOptional.isPresent())
+                throw new ApplicationException("Certificate is not found");
+            CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, oldPin, otp);
+            if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
+                throw new ApplicationException("Cannot init token");
+            }
+            if (certificateDTO.getTokenType() == CertificateDTO.PKCS_11) {
+
+            } else {
+                KeyStore newKs = KeyStore.getInstance("PKCS12");
+                newKs.load(null, null);
+
+                KeyStore currentKs = cryptoTokenProxy.getCryptoToken().getKeyStore();
+                Enumeration<String> aliases = currentKs.aliases();
+
+                while (aliases.hasMoreElements()) {
+                    String alias = aliases.nextElement();
+                    Key privateKey = currentKs.getKey(alias, oldPin.toCharArray());
+                    java.security.cert.Certificate[] certificateChain = currentKs.getCertificateChain(alias);
+                    newKs.setKeyEntry(alias, privateKey, newPin.toCharArray(), certificateChain);
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                newKs.store(baos, newPin.toCharArray());
+                byte[] output = baos.toByteArray();
+                X509Certificate x509Certificate = (X509Certificate) newKs.getCertificate(certificateDTO.getAlias());
+
+                String base64Cert = CertUtils.encodeBase64X509(x509Certificate);
+
+                certificateDTO.setRawData(base64Cert);
+                TokenInfo tokenInfo = new TokenInfo();
+                tokenInfo.setData(Base64.getEncoder().encodeToString(output));
+                certificateDTO.setTokenInfo(tokenInfo);
+            }
+            this.save(certificateDTO);
+        } catch (IOException e) {
+            throw new ApplicationException("IOException", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ApplicationException("NoSuchAlgorithmException", e);
+        } catch (UnrecoverableKeyException e) {
+            throw new ApplicationException("UnrecoverableKeyException", e);
+        } catch (CertificateEncodingException e) {
+            throw new ApplicationException("CertificateEncodingException", e);
+        } catch (KeyStoreException | CertificateException e) {
+            throw new ApplicationException("KeyStoreException | CertificateException", e);
         }
     }
 }

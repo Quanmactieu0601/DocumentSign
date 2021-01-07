@@ -37,6 +37,7 @@ import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.P12PinVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -108,12 +109,12 @@ public class CertificateResource {
             p12ImportService.insert(serviceInput);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse("OK"));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
         } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewErrorResponse(e));
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e));
         }
     }
 
@@ -129,7 +130,7 @@ public class CertificateResource {
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/gen/p11", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
@@ -161,7 +162,7 @@ public class CertificateResource {
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/createCSRAndUser", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/createCSRAndUser", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
@@ -191,7 +192,7 @@ public class CertificateResource {
             Object viewModel = MappingHelper.map(result, certificateGeneratorResultVM.getClass());
             asyncTransactionService.newThread("/api/certificate/createCSR", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             asyncTransactionService.newThread("/api/certificate/createCSR", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
@@ -256,7 +257,7 @@ public class CertificateResource {
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.BUSINESS, Action.GET_INFO, Extension.CERT, Method.GET,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(certificateDTO.getRawData()));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(certificateDTO.getRawData()));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             asyncTransactionService.newThread("/api/certificate/get-by-serial", TransactionType.BUSINESS, Action.GET_INFO, Extension.CERT, Method.GET,
@@ -278,7 +279,7 @@ public class CertificateResource {
             certificateService.updateActiveStatus(id);
             asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(null));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(null));
         } catch (Exception e) {
             asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
                 TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
@@ -291,7 +292,7 @@ public class CertificateResource {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
         } catch (ApplicationException e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
@@ -304,7 +305,23 @@ public class CertificateResource {
         log.info(" --- getQRCodeOTP --- serial: {}", serial);
         try {
             String base64Image = certificateService.getBase64OTPQRCode(serial, pin);
-            return ResponseEntity.ok(BaseResponseVM.CreateNewSuccessResponse(base64Image));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/changeCertPIN")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> changeCertPIN(@RequestBody P12PinVM p12PinVM) {
+        try {
+            log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
+            certificateService.changePIN(p12PinVM.serial, p12PinVM.oldPIN, p12PinVM.newPIN, p12PinVM.otpCode);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));

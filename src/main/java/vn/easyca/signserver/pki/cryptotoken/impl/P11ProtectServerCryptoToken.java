@@ -243,4 +243,9 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
             throw new ApplicationException("Keystore is not initialized, please check PIN number");
         }
     }
+
+    @Override
+    public KeyStore getKeyStore() {
+        return ks;
+    }
 }
