@@ -12,6 +12,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.PinIncorrectException;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
 import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
@@ -232,15 +233,14 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
     }
 
     @Override
-    public boolean isInitialized() throws ApplicationException {
+    public void checkInitialized() throws ApplicationException {
         try {
-            if (ks != null) {
+            if (ks == null)
+                throw new ApplicationException("Cannot init token");
+            else
                 ks.aliases();
-                return true;
-            }
-            return false;
         } catch (Exception ex) {
-            throw new ApplicationException("Keystore is not initialized, please check PIN number");
+            throw new PinIncorrectException();
         }
     }
 

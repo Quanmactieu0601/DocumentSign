@@ -11,7 +11,6 @@ import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import javax.validation.Valid;
-import java.awt.peer.PanelPeer;
 import java.util.Optional;
 
 @RestController
@@ -57,9 +56,7 @@ public class UtilityResource {
                 return "-- Certificate is not found --";
             CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
-            if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-                return "-- Cannot init token. PIN is not correct --";
-            }
+            cryptoTokenProxy.getCryptoToken().checkInitialized();
             return "** Authen OK **";
         } catch (Exception ex) {
             return String.format("-- Co loi xay ra: %s --", ex.getMessage());

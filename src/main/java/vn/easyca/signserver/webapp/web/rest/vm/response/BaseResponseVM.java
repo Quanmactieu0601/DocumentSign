@@ -22,6 +22,10 @@ public class BaseResponseVM {
         return new BaseResponseVM(STATUS_OK, null, null);
     }
 
+    public static BaseResponseVM createNewSuccessResponseWithMsg(String msg) {
+        return new BaseResponseVM(STATUS_OK, null, msg);
+    }
+
     private int status;
 
     private String msg;

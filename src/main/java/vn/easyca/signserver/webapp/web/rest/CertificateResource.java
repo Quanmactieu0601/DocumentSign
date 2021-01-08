@@ -324,7 +324,7 @@ public class CertificateResource extends BaseResource {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
             certificateService.changePIN(p12PinVM.serial, p12PinVM.oldPIN, p12PinVM.newPIN, p12PinVM.otpCode);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponseWithMsg("Change Certificate PIN successfully!"));
         } catch (ApplicationException e) {
             log.error(e.getMessage());
             message = e.getMessage();

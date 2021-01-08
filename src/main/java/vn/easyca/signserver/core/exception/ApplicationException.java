@@ -10,6 +10,7 @@ public class ApplicationException extends Exception {
     public static final int SIGN_ERROR_CODE = 10;
     public static final int CERTIFICATE_NOT_FOUND = 11;
     public static final int VERIFIED_EXCEPTION = 12;
+    public static final int PIN_INCORRECT = 13;
 
     private int code;
 
