@@ -318,7 +318,7 @@ public class CertificateResource {
         try {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
             certificateService.changePIN(p12PinVM.serial, p12PinVM.oldPIN, p12PinVM.newPIN, p12PinVM.otpCode);
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponseWithMsg("Change Certificate PIN successfully!"));
         } catch (ApplicationException e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));

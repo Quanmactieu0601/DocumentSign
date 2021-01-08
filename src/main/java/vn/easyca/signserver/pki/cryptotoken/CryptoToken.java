@@ -6,6 +6,7 @@ import java.security.cert.X509Certificate;
 import java.util.List;
 
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.PinIncorrectException;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 
 public interface CryptoToken {
@@ -32,7 +33,7 @@ public interface CryptoToken {
 
     Signature getSignatureInstance(String algorithm) throws ApplicationException;
 
-    boolean isInitialized() throws ApplicationException;
+    void checkInitialized() throws ApplicationException;
 
     KeyStore getKeyStore();
 }

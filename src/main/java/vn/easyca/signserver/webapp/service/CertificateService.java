@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -7,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.*;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
@@ -20,12 +21,8 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
-import vn.easyca.signserver.webapp.utils.AccountUtils;
-import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
-import vn.easyca.signserver.webapp.utils.FileIOHelper;
-import vn.easyca.signserver.webapp.utils.ParserUtils;
+import vn.easyca.signserver.webapp.utils.*;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.*;
@@ -45,16 +42,20 @@ public class CertificateService {
     private final SignatureImageRepository signatureImageRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final AuthenticatorTOTPService authenticatorTOTPService;
+    private final SystemConfigCachingService systemConfigCachingService;
+    private final SymmetricEncryptors symmetricService;
 
     private final UserRepository userRepository;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, UserRepository userRepository) {
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, UserRepository userRepository) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureImageRepository = signatureImageRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.authenticatorTOTPService = authenticatorTOTPService;
+        this.systemConfigCachingService = systemConfigCachingService;
+        this.symmetricService = symmetricService;
         this.userRepository = userRepository;
     }
 
@@ -123,9 +124,7 @@ public class CertificateService {
             throw new ApplicationException("Certificate is not found");
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
-        if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-            throw new ApplicationException("Cannot init token");
-        }
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
         Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
         if (!signatureTemplateDTO.isPresent()) {
@@ -162,9 +161,7 @@ public class CertificateService {
             throw new ApplicationException(String.format("Certificate is not exist - serial: %s", serial));
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
-        if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-            throw new ApplicationException("Pin is not correct");
-        }
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
         String urlQrCode = authenticatorTOTPService.getQRCodeFromEncryptedSecretKey(serial, certificateOptional.get().getSecretKey());
         try {
             return FileIOHelper.getBase64EncodedImage(urlQrCode);
@@ -176,16 +173,21 @@ public class CertificateService {
     // TODO: Call this function to change P12 password
     public void changePIN(String serial, String oldPin, String newPin, String otp) throws ApplicationException {
         try {
+            if (StringUtils.isBlank(serial) || StringUtils.isBlank(oldPin) || StringUtils.isBlank(newPin)) {
+                throw new ApplicationException("Please enter required info (serial | old PIN | new PIN)");
+            } else if (oldPin.equals(newPin)) {
+                throw new ApplicationException("new PIN have to different old PIN");
+            }
+            SystemDbConfiguration dbConfiguration = systemConfigCachingService.getConfig();
             Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
             if (!certificateOptional.isPresent())
                 throw new ApplicationException("Certificate is not found");
             CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, oldPin, otp);
-            if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-                throw new ApplicationException("Cannot init token");
-            }
-            if (certificateDTO.getTokenType() == CertificateDTO.PKCS_11) {
+            cryptoTokenProxy.getCryptoToken().checkInitialized();
+            if (CertificateDTO.PKCS_11.equals(certificateDTO.getTokenType())) {
                 // TODO: change PIN HSM
+                certificateDTO.setEncryptedPin(symmetricService.encrypt(newPin));
             } else {
                 KeyStore newKs = KeyStore.getInstance("PKCS12");
                 newKs.load(null, null);
@@ -210,6 +212,8 @@ public class CertificateService {
                 TokenInfo tokenInfo = new TokenInfo();
                 tokenInfo.setData(Base64.getEncoder().encodeToString(output));
                 certificateDTO.setTokenInfo(tokenInfo);
+                if (dbConfiguration.getSaveTokenPassword())
+                    certificateDTO.setEncryptedPin(symmetricService.encrypt(newPin));
             }
             this.save(certificateDTO);
         } catch (IOException e) {
