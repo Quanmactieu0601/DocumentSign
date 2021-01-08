@@ -43,8 +43,16 @@
         "changePIN": "PIN",
         "header": "Change PIN",
         "currentPIN": "Current PIN",
-        "newPIN": "New PIN",
-        "confirmPIN": "Confirm PIN",
+        "newPIN": {
+          "newPIN": "New PIN",
+          "minlength": "Your PIN is required to be at least 4 characters",
+          "maxlength": "Your PIN cannot be longer than 50 characters"
+        },
+        "confirmPIN": {
+          "confirmPIN": "Confirm PIN",
+          "minlength": "Your confirmation PIN is required to be at least 4 characters",
+          "maxlength": "Your confirmation PIN cannot be longer than 50 characters"
+        },
         "save": "Save",
         "cancel": "Cancel",
         "placeholder": "Enter your PIN",

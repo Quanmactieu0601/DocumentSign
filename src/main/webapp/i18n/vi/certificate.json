@@ -41,8 +41,16 @@
         "changePIN": "Mã PIN",
         "header": "Thay đổi mã PIN",
         "currentPIN": "Mã PIN cũ",
-        "newPIN": "Mã PIN mới",
-        "confirmPIN": "Nhập lại mã PIN",
+        "newPIN": {
+          "newPIN": "Mã PIN mới",
+          "minlength": "Mã PIN của bạn bắt buộc phải có ít nhất 4 ký tự",
+          "maxlength": "Mã PIN của bạn không được dài hơn 50 ký tự"
+        },
+        "confirmPIN": {
+          "confirmPIN": "Nhập lại mã PIN",
+          "minlength": "Mã PIN xác nhận của bạn bắt buộc phải có ít nhất 4 ký tự",
+          "maxlength": "Mã PIN xác nhận của bạn không được dài hơn 50 ký tự"
+        },
         "save": "Lưu",
         "cancel": "Hủy bỏ",
         "placeholder": "Nhập mã PIN",
