@@ -14,9 +14,9 @@ export class PasswordComponent implements OnInit {
   certificate?: ICertificate;
   isAuthenOTP = false;
   changeCertPINForm = this.fb.group({
-    currentPINInput: ['', [Validators.required]],
-    newPINInput: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
-    confirmPINInput: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(50)]],
+    currentPINInput: [''],
+    newPINInput: ['', [Validators.minLength(4), Validators.maxLength(50)]],
+    confirmPINInput: ['', [Validators.minLength(4), Validators.maxLength(50)]],
   });
 
   constructor(
