@@ -56,7 +56,14 @@
         "save": "Save",
         "cancel": "Cancel",
         "placeholder": "Enter your PIN",
-        "OTP": "Enter your OTP"
+        "OTP": "Enter your OTP",
+        "error": "PIN and its confirmation do not match!",
+        "success": "PIN changed successfully",
+        "required": {
+          "currentPIN": "Your PIN is required",
+          "newPIN": "Your new PIN is required",
+          "confirmPIN": "Your confirm PIN is required"
+        }
       }
     }
   }

@@ -4,11 +4,11 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { FormBuilder, Validators } from '@angular/forms';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-password',
   templateUrl: './password.component.html',
-  styleUrls: ['./password.component.scss'],
 })
 export class PasswordComponent implements OnInit {
   certificate?: ICertificate;
@@ -23,7 +23,8 @@ export class PasswordComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private certificateService: CertificateService,
     private fb: FormBuilder,
-    private toastService: ToastrService
+    private toastService: ToastrService,
+    private translate: TranslateService
   ) {}
 
   cancel(): void {
@@ -37,13 +38,13 @@ export class PasswordComponent implements OnInit {
     const currentPIN = this.changeCertPINForm.get(['currentPINInput'])!.value;
     const newPIN = this.changeCertPINForm.get(['newPINInput'])!.value;
     if (newPIN !== this.changeCertPINForm.get(['confirmPINInput'])!.value) {
-      this.toastService.error('PIN and its confirmation do not match!');
+      this.toastService.error(this.translate.instant('webappApp.certificate.changeCertPIN.error'));
     } else {
       this.certificateService.savePIN(serial, currentPIN, newPIN).subscribe((res: any) => {
         if (res.status !== 0) {
           this.toastService.error(res.msg);
         } else {
-          this.toastService.success('PIN changed successfully');
+          this.toastService.success(this.translate.instant('webappApp.certificate.changeCertPIN.success'));
         }
       });
     }
