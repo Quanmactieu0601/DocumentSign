@@ -10,3 +10,5 @@ eg $input-color: red;
 @import '~bootstrap/scss/bootstrap';
 @import '~ngx-toastr/toastr';
 /* jhipster-needle-scss-add-vendor JHipster will add new css style */
+@import '../css/ruang-admin.css';
+@import '~@fortawesome/fontawesome-free/css/all.min.css';
