@@ -1,49 +1,47 @@
-<body class="bg-gradient-login">
-<div class="row justify-content-center">
+<div class="d-flex justify-content-center login-container">
     <div class="content mx-auto">
-        <div class="card shadow-sm my-5">
+        <div class="card shadow-sm mg-top-100 rounded-10">
             <div class="card-body p-0">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="login-form">
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">
-                                    <img src="https://easyinvoice.vn/wp-content/uploads/2019/10/phan-mem-hoa-don-dien-tu-easyinvoice.png" alt="" width="250px">
+                                    <img src="/content/images/logo/logo-1.png" alt="" width="250px">
                                 </h1>
                             </div>
-
                             <form class="user" *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
 
+<!--                                <div class="form-group">-->
+<!--                                    <input type="text" class="form-control form-control-lg" placeholder="{{'login.taxCode' | translate}}" name="taxcode" [(ngModel)]="form.taxcode" required #taxcode="ngModel">-->
+<!--                                    <div class="invalid-feedback enabled" role="alert" *ngIf="taxcode?.errors?.required && (taxcode?.touched || f.submmited)">-->
+<!--                                        {{ 'login.alert.taxcodeInvalid' | translate }}-->
+<!--                                    </div>-->
+<!--                                </div>-->
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg" placeholder="{{'login.taxCode' | translate}}" name="taxcode" [(ngModel)]="form.taxcode" required #taxcode="ngModel">
-                                    <div class="invalid-feedback enabled" role="alert" *ngIf="taxcode?.errors?.required && (taxcode?.touched || f.submmited)">
-                                        {{ 'login.alert.taxcodeInvalid' | translate }}
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg" placeholder="{{'login.username' | translate}}" name="username" [(ngModel)]="form.username" required #username="ngModel">
-                                    <div class="invalid-feedback enabled" role="alert" *ngIf="username?.errors?.required && (username?.touched || f.submmited)">
+                                    <input type="text" class="form-control form-control-lg"  placeholder="{{ 'global.form.username.placeholder' | translate }}" name="username" [(ngModel)]="form.username" required #username="ngModel">
+                                    <div class="invalid-feedback enabled" role="alert" *ngIf="username?.errors?.required && (username?.touched || f.submitted)">
                                         {{ 'login.alert.usernameInvalid' | translate }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" placeholder="{{'login.password' | translate}}" name="password" [(ngModel)]="form.password" required minlength="6" #password="ngModel">
-                                    <div class="invalid-feedback enabled" role="alert" *ngIf="(password?.errors?.required || password?.errors?.minlength) && (password?.touched || f.submmited)">
+                                    <input type="password" class="form-control form-control-lg" placeholder="{{ 'login.form.password.placeholder' | translate }}" name="password" [(ngModel)]="form.password" required minlength="6" #password="ngModel">
+                                    <div class="invalid-feedback enabled" role="alert" *ngIf="(password?.errors?.required || password?.errors?.minlength) && (password?.touched || f.submitted)">
                                         {{ 'login.alert.passwordInvalid' | translate }}
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
                                         <input type="checkbox" id="rememberMe" class="custom-control-input" name="rememberMe" [(ngModel)]="form.rememberMe" #rememberMe="ngModel">
-                                        <label class="custom-control-label" for="rememberMe">{{ 'login.remember' | translate }}</label>
+                                        <label class="custom-control-label" for="rememberMe" jhiTranslate="login.form.rememberme"></label>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-block btn-lg" style="background: #f36e22; color: #fff;">{{ 'login.buttonLogin' | translate | uppercase }}</button>
+                                    <button class="btn btn-block btn-lg" style="background: #f36e22; color: #fff;" jhiTranslate="login.form.button"></button>
                                 </div>
                             </form>
                             <div class="text-center">
-                                <a class="font-weight-bold small" href="#" style="color: #006fe4; font-size: 85%">{{ 'login.forgotPassword' | translate }}</a>
+                                <a class="font-weight-bold small" href="#" style="color: #006fe4; font-size: 85%" jhiTranslate="login.password.forgot"></a>
                             </div>
                         </div>
                     </div>
@@ -52,4 +50,3 @@
         </div>
     </div>
 </div>
-</body>

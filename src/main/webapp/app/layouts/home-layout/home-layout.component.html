@@ -1,0 +1,18 @@
+<div id="wrapper">
+    <jhi-page-ribbon></jhi-page-ribbon>
+    <jhi-navbar></jhi-navbar>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <jhi-topbar></jhi-topbar>
+        <!-- Topbar -->
+        <div id="content">
+            <div class="container-fluid">
+                <div class="card jh-card">
+                    <router-outlet></router-outlet>
+                    <ngx-loading-bar [color]="'#ee7512'" [diameter]="'30px'"></ngx-loading-bar>
+                </div>
+
+                <jhi-footer></jhi-footer>
+            </div>
+        </div>
+    </div>
+</div>
