@@ -728,7 +728,8 @@ a:focus {
   padding-bottom: 0.5rem;
   padding-left: 2.2rem !important;
   display: block;
-  color: #063559;
+  /*color: #063559;*/
+  /*color: #063559;*/
   text-decoration: none;
   border-radius: 0.35rem;
   white-space: nowrap;
@@ -773,7 +774,8 @@ a:focus {
 
 .sidebar .nav-item .collapse .collapse-inner .collapse-item.active,
 .sidebar .nav-item .collapsing .collapse-inner .collapse-item.active {
-  color: #3a3b45;
+  /*color: #3a3b45;*/
+  color: #063559;
   font-weight: 800;
 }
 

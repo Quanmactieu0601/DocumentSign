@@ -28,7 +28,7 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
   ],
-  declarations: [MainComponent, ErrorComponent, ActiveMenuDirective, LoginComponent, HomeLayoutComponent],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

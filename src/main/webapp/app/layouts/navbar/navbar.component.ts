@@ -9,7 +9,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { LoginService } from 'app/core/login/login.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MenuToggleService } from 'app/shared/services/menu-toggle.service';
 
 @Component({
   selector: 'jhi-navbar',
@@ -18,7 +18,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class NavbarComponent implements OnInit {
   inProduction?: boolean;
-  isNavbarCollapsed = true;
   languages = LANGUAGES;
   swaggerEnabled?: boolean;
   version: string;
@@ -31,7 +30,7 @@ export class NavbarComponent implements OnInit {
     private loginModalService: LoginModalService,
     private profileService: ProfileService,
     private router: Router,
-    private modalService: NgbModal
+    public menuToggle: MenuToggleService
   ) {
     this.version = VERSION ? (VERSION.toLowerCase().startsWith('v') ? VERSION : 'v' + VERSION) : '';
   }
@@ -43,15 +42,6 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  changeLanguage(languageKey: string): void {
-    this.sessionStorage.store('locale', languageKey);
-    this.languageService.changeLanguage(languageKey);
-  }
-
-  collapseNavbar(): void {
-    this.isNavbarCollapsed = true;
-  }
-
   isAuthenticated(): boolean {
     return this.accountService.isAuthenticated();
   }
@@ -61,16 +51,7 @@ export class NavbarComponent implements OnInit {
   }
 
   logout(): void {
-    this.collapseNavbar();
     this.loginService.logout();
     this.router.navigate(['']);
-  }
-
-  toggleNavbar(): void {
-    this.isNavbarCollapsed = !this.isNavbarCollapsed;
-  }
-
-  getImageUrl(): string {
-    return this.isAuthenticated() ? this.accountService.getImageUrl() : '';
   }
 }

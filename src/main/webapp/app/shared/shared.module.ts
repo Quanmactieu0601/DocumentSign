@@ -9,9 +9,10 @@ import { PageRibbonComponent } from 'app/layouts/profiles/page-ribbon.component'
 import { NavbarComponent } from 'app/layouts/navbar/navbar.component';
 import { TopbarComponent } from 'app/layouts/topbar/topbar.component';
 import { FooterComponent } from 'app/layouts/footer/footer.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
-  imports: [WebappSharedLibsModule],
+  imports: [WebappSharedLibsModule, RouterModule],
   declarations: [
     FindLanguageFromKeyPipe,
     AlertComponent,

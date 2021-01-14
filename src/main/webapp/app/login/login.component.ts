@@ -2,6 +2,8 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { LoginService } from 'app/core/login/login.service';
 import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-login',
@@ -16,7 +18,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
   isLoggedIn = false;
   roles: string[] = [];
 
-  constructor(private loginService: LoginService, private router: Router, private accountService: AccountService) {}
+  constructor(
+    private loginService: LoginService,
+    private router: Router,
+    private accountService: AccountService,
+    private toastrService: ToastrService,
+    private translateService: TranslateService
+  ) {}
 
   ngAfterViewInit(): void {
     if (this.usernameEl) {
@@ -32,22 +40,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
-    // const returnUrl = this.stateStorageService.getUrl() || '/home';
-    // this.stateStorageService.clearUrl();
-    // this.authService.login(this.form).subscribe(
-    //   data => {
-    //     this.tokenStorage.store(data, this.form.rememberMe);
-    //     this.isLoggedIn = true;
-    //     this.roles = this.tokenStorage.getUser().roles;
-    //     this.toastr.success(this.translate.instant('login.alert.success'), this.translate.instant('login.alert.title'));
-    //     this.router.navigate([returnUrl]);
-    //   },
-    //   err => {
-    //     this.toastr.error(this.translate.instant('login.alert.failure'), this.translate.instant('login.alert.title'));
-    //     console.log(err);
-    //   }
-    // );
-
     this.loginService.login(this.form).subscribe(
       () => {
         // this.authenticationError = false;
@@ -60,9 +52,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
           this.router.navigate(['']);
         }
       },
-      () =>
-        alert('fail')
-        // this.authenticationError = true
+      () => this.toastrService.error(this.translateService.instant('login.messages.error.authentication'))
     );
   }
 }

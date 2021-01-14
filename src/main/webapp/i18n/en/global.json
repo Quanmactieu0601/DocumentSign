@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "SignServer",
+    "title": "EasySign - Remote Signing System",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
@@ -10,6 +10,7 @@
         "certificate": "Certificate",
         "transaction": "Transaction",
         "systemConfig": "System Config",
+        "report": "Statistic Report",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -19,7 +20,8 @@
         "sessions": "Sessions",
         "login": "Sign in",
         "logout": "Sign out",
-        "register": "Register"
+        "register": "Register",
+        "profile": "Profile"
       },
       "admin": {
         "main": "Administration",

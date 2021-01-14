@@ -1,15 +1,16 @@
 {
   "global": {
-    "title": "SignServer",
+    "title": "Hệ thống ký số từ xa EasySign",
     "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
     "menu": {
       "home": "Trang chủ",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Thực thể",
-        "certificate": "Certificate",
-        "transaction": "Transaction",
-        "systemConfig": "System Config",
+        "certificate": "Chứng thư số",
+        "transaction": "Giao dịch hệ thống",
+        "systemConfig": "Cấu hình hệ thống",
+        "report": "Thống kê báo cáo",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -19,7 +20,8 @@
         "sessions": "Phiên đăng nhập",
         "login": "Đăng nhập",
         "logout": "Đăng xuất",
-        "register": "Đăng ký"
+        "register": "Đăng ký",
+        "profile": "Thông tin tài khoản"
       },
       "admin": {
         "main": "Quản trị",

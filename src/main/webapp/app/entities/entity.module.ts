@@ -10,9 +10,9 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
         path: '',
         component: HomeLayoutComponent,
         children: [
-          { path: '', redirectTo: '', pathMatch: 'full' },
+          { path: '', redirectTo: 'index', pathMatch: 'full' },
           {
-            path: '',
+            path: 'index',
             component: HomeComponent,
           },
           {

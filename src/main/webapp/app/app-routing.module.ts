@@ -12,14 +12,14 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
   imports: [
     RouterModule.forRoot(
       [
-        // {
-        //   path: 'admin',
-        //   data: {
-        //     authorities: [Authority.ADMIN],
-        //   },
-        //   canActivate: [UserRouteAccessService],
-        //   loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
-        // },
+        {
+          path: 'admin',
+          data: {
+            authorities: [Authority.ADMIN],
+          },
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
+        },
         { path: '', redirectTo: 'home', pathMatch: 'full' },
         {
           path: 'home',

@@ -10,6 +10,7 @@
                                     <img src="/content/images/logo/logo-1.png" alt="" width="250px">
                                 </h1>
                             </div>
+                            <div class="text-center" id="easysign-title" jhiTranslate="global.title">Hệ thống ký số từ xa EasySign</div>
                             <form class="user" *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
 
 <!--                                <div class="form-group">-->
@@ -19,13 +20,13 @@
 <!--                                    </div>-->
 <!--                                </div>-->
                                 <div class="form-group">
-                                    <input type="text" class="form-control form-control-lg"  placeholder="{{ 'global.form.username.placeholder' | translate }}" name="username" [(ngModel)]="form.username" required #username="ngModel">
+                                    <input type="text" class="form-control form-control-lg"  placeholder="{{ 'global.form.username.placeholder' | translate }}" name="username" [(ngModel)]="form.username" required minlength="1" #username="ngModel">
                                     <div class="invalid-feedback enabled" role="alert" *ngIf="username?.errors?.required && (username?.touched || f.submitted)">
                                         {{ 'login.alert.usernameInvalid' | translate }}
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" placeholder="{{ 'login.form.password.placeholder' | translate }}" name="password" [(ngModel)]="form.password" required minlength="6" #password="ngModel">
+                                    <input type="password" class="form-control form-control-lg" placeholder="{{ 'login.form.password.placeholder' | translate }}" name="password" [(ngModel)]="form.password" required minlength="1" #password="ngModel">
                                     <div class="invalid-feedback enabled" role="alert" *ngIf="(password?.errors?.required || password?.errors?.minlength) && (password?.touched || f.submitted)">
                                         {{ 'login.alert.passwordInvalid' | translate }}
                                     </div>
@@ -37,7 +38,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <button class="btn btn-block btn-lg" style="background: #f36e22; color: #fff;" jhiTranslate="login.form.button"></button>
+                                    <button class="btn btn-block btn-lg" style="background: #566181; color: #fff;" jhiTranslate="login.form.button" [disabled]="f.invalid"></button>
                                 </div>
                             </form>
                             <div class="text-center">
