@@ -14,7 +14,8 @@ import { FormBuilder } from '@angular/forms';
 import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
 import { SystemConfigService } from 'app/entities/system-config/system-config.service';
 import { ResponseBody } from 'app/shared/model/response-body';
-
+import { AccountService } from 'app/core/auth/account.service';
+import { Authority } from 'app/shared/constants/authority.constants';
 @Component({
   selector: 'jhi-certificate',
   templateUrl: './certificate.component.html',
@@ -47,7 +48,8 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
     protected fb: FormBuilder,
-    protected systemConfigService: SystemConfigService
+    protected systemConfigService: SystemConfigService,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
@@ -192,5 +194,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
   showOTP(certificate: ICertificate): void {
     const modalRef = this.modalService.open(OtpComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+  }
+
+  isSuperAdmin(): boolean {
+    return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
   }
 }

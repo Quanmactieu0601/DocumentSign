@@ -73,7 +73,7 @@ public class DataBatchImportResource {
     }
 
     @PostMapping("/importP12")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public void importResource(@RequestParam String absoluteFolderPath) {
         final File folder = new File(absoluteFolderPath);
         String CMND = "";
@@ -134,7 +134,7 @@ public class DataBatchImportResource {
 
 
     @PostMapping("/importP12FileSelected")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<Resource> importP12FileSelected(@RequestParam("files") MultipartFile[] files) {
         String CMND = "";
         String PIN = "";
@@ -227,7 +227,7 @@ public class DataBatchImportResource {
     }
 
     @PostMapping("/importImage")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public void importImage(String certificateImportingResultPath, String imagePath) {
         Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
         Long userId = userEntity.get().getId();
@@ -291,7 +291,7 @@ public class DataBatchImportResource {
 
 
     @PostMapping("/importImageSelected")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
 //    @RequestParam("successFile") MultipartFile successFile,
     public ResponseEntity<Resource> importImageSelected(@RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestParam("successFiles") MultipartFile[] successFiles) {
         Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();

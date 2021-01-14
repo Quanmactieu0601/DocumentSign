@@ -66,12 +66,13 @@
             Upload tệp CER
         </button>
 
-        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(p12UploadModal)">
+
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(p12UploadModal)" *ngIf="isSuperAdmin()">
             <fa-icon icon="upload"></fa-icon>
             Upload P12 Certificate
         </button>
 
-        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(signatureImageUpload)">
+        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2" (click)="openModal(signatureImageUpload)" *ngIf="isSuperAdmin()">
             <fa-icon icon="upload"></fa-icon>
             Upload ảnh chữ ký
         </button>
