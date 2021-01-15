@@ -10,7 +10,7 @@ public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplatePa
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) {
-        final String regexCN = "CN=\"([^\"]+)\"";
+        final String regexCN = "CN=([^\",]+)";
         final String regexT = ", T=([^,]+)";
         String CN = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
         String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
