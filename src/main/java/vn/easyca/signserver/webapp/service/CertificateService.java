@@ -22,6 +22,12 @@ import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
+import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
+import vn.easyca.signserver.webapp.utils.FileIOHelper;
+import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,8 +52,14 @@ public class CertificateService {
     private final SymmetricEncryptors symmetricService;
 
     private final UserRepository userRepository;
+    private final SignatureTemplateParserFactory signatureTemplateParserFactory;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, UserRepository userRepository) {
+
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper,
+                              SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
+                              CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService,
+                              SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository,
+                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
@@ -56,6 +68,7 @@ public class CertificateService {
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.systemConfigCachingService = systemConfigCachingService;
         this.symmetricService = symmetricService;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.userRepository = userRepository;
     }
 
@@ -142,7 +155,8 @@ public class CertificateService {
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
-        String htmlContent = ParserUtils.getHtmlTemplateAndSignData(subjectDN, signatureTemplate, signatureImageData);
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
         return ParserUtils.convertHtmlContentToBase64(htmlContent);
     }
 

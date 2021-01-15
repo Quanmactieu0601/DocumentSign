@@ -294,7 +294,7 @@ public class CertificateResource {
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
-        } catch (ApplicationException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
