@@ -14,7 +14,7 @@ import { FormBuilder } from '@angular/forms';
 import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
 import { SystemConfigService } from 'app/entities/system-config/system-config.service';
 import { ResponseBody } from 'app/shared/model/response-body';
-import { PasswordComponent } from 'app/entities/certificate/change-password/password.component';
+import { CertPINComponent } from 'app/entities/certificate/change-CertPIN/CertPIN.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -185,7 +185,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
 
   changePassword(certificate: ICertificate): void {
-    const modalRef = this.modalService.open(PasswordComponent, { size: '300px', backdrop: 'static' });
+    const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }

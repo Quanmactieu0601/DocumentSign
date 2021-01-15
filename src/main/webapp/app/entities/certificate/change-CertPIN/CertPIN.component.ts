@@ -7,10 +7,10 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'jhi-password',
-  templateUrl: './password.component.html',
+  selector: 'jhi-CertPIN',
+  templateUrl: './CertPIN.component.html',
 })
-export class PasswordComponent implements OnInit {
+export class CertPINComponent implements OnInit {
   certificate?: ICertificate;
   isAuthenOTP = false;
   changeCertPINForm = this.fb.group({
@@ -33,7 +33,7 @@ export class PasswordComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  changePassword(): void {
+  changeCertPIN(): void {
     const serial = this.certificate?.serial;
     const currentPIN = this.changeCertPINForm.get(['currentPINInput'])!.value;
     const newPIN = this.changeCertPINForm.get(['newPINInput'])!.value;

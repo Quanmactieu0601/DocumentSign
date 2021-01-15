@@ -287,7 +287,7 @@ public class CertificateResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
+            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.PUT,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
@@ -334,7 +334,7 @@ public class CertificateResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/changeCertPIN", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.POST,
+            asyncTransactionService.newThread("/api/certificate/changeCertPIN", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }

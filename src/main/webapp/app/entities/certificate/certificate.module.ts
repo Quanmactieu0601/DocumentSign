@@ -9,7 +9,7 @@ import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.co
 import { certificateRoute } from './certificate.route';
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { OtpComponent } from './otp/otp.component';
-import { PasswordComponent } from 'app/entities/certificate/change-password/password.component';
+import { CertPINComponent } from 'app/entities/certificate/change-CertPIN/CertPIN.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -20,7 +20,7 @@ import { PasswordComponent } from 'app/entities/certificate/change-password/pass
     CertificateDeleteDialogComponent,
     UploadCertificateComponent,
     OtpComponent,
-    PasswordComponent,
+    CertPINComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })
