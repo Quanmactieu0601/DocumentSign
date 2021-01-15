@@ -14,7 +14,7 @@ import { FormBuilder } from '@angular/forms';
 import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
 import { SystemConfigService } from 'app/entities/system-config/system-config.service';
 import { ResponseBody } from 'app/shared/model/response-body';
-import { CertPINComponent } from 'app/entities/certificate/change-CertPIN/CertPIN.component';
+import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
 
 @Component({
   selector: 'jhi-certificate',

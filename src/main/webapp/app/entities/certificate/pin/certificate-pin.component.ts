@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-certpin',
-  templateUrl: './CertPIN.component.html',
+  templateUrl: './certificate-pin.component.html',
 })
 export class CertPINComponent implements OnInit {
   certificate?: ICertificate;
