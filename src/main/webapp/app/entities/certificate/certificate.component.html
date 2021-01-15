@@ -142,9 +142,15 @@
 
                         <button type="submit" (click)="updateStatus(certificate.id)"
                                 class="btn btn-danger btn-sm" [disabled]="certificate.activeStatus == 0">
-                            <fa-icon icon="times"></fa-icon>
+                            <fa-icon icon="ban"></fa-icon>
                             <span class="d-none d-md-inline"
                                   jhiTranslate="webappApp.certificate.deactive">Deactive</span>
+                        </button>
+
+                        <button type="button" (click)="changePassword(certificate)"
+                                class="btn btn-warning btn-sm">
+                            <fa-icon icon="pencil-alt"></fa-icon>
+                            <span class="d-none d-md-inline" jhiTranslate="webappApp.certificate.changeCertPIN.changePIN">Change Password</span>
                         </button>
                     </div>
                 </td>

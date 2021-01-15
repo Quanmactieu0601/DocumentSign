@@ -121,4 +121,8 @@ export class CertificateService {
     const options = createRequestOption(req);
     return this.http.get<ResponseBody>(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'body' });
   }
+
+  savePIN(serial: string | undefined, oldPIN: string, newPIN: string): Observable<{}> {
+    return this.http.post(`${this.resourceUrl}/changeCertPIN`, { serial, oldPIN, newPIN });
+  }
 }

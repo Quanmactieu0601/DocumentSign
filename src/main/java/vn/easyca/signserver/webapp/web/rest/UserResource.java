@@ -72,7 +72,7 @@ import java.util.*;
  */
 @RestController
 @RequestMapping("/api")
-public class UserResource {
+public class UserResource extends BaseResource {
     private final Logger log = LoggerFactory.getLogger(UserResource.class);
 
     @Value("${jhipster.clientApp.name}")
@@ -141,33 +141,29 @@ public class UserResource {
                 // TODO: use other method instead of use registerUser
                 userApplicationService.registerUser(userDTO, userDTO.getLogin());
             }
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
         } catch (IOException e) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, e.getMessage(), AccountUtils.getLoggedAccount());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
         } catch (UsernameAlreadyUsedException usernameAlreadyUsedException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, usernameAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
+            message = usernameAlreadyUsedException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
         } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, emailAlreadyUsedException.getMessage(), AccountUtils.getLoggedAccount());
+            message = emailAlreadyUsedException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
         } catch (RequiredColumnNotFoundException requiredColumnNotFoundException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, requiredColumnNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
+            message = requiredColumnNotFoundException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, requiredColumnNotFoundException.getMessage()));
         } catch (InvalidCountryColumnLength invalidCountryColumnLength) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, invalidCountryColumnLength.getMessage(), AccountUtils.getLoggedAccount());
+            message = invalidCountryColumnLength.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, invalidCountryColumnLength.getMessage()));
         } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException) {
-            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, infoFromCNToCountryNotFoundException.getMessage(), AccountUtils.getLoggedAccount());
+            message = infoFromCNToCountryNotFoundException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, infoFromCNToCountryNotFoundException.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 

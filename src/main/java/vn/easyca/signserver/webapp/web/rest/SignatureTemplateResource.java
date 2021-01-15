@@ -1,6 +1,9 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import vn.easyca.signserver.webapp.enm.*;
+import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 
@@ -13,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class SignatureTemplateResource {
 
+    private final AsyncTransactionService asyncTransactionService;
+
     private final Logger log = LoggerFactory.getLogger(SignatureTemplateResource.class);
 
     private static final String ENTITY_NAME = "signatureTemplate";
@@ -39,7 +43,8 @@ public class SignatureTemplateResource {
 
     private final SignatureTemplateService signatureTemplateService;
 
-    public SignatureTemplateResource(SignatureTemplateService signatureTemplateService) {
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, SignatureTemplateService signatureTemplateService) {
+        this.asyncTransactionService = asyncTransactionService;
         this.signatureTemplateService = signatureTemplateService;
     }
 
@@ -54,9 +59,13 @@ public class SignatureTemplateResource {
     public ResponseEntity<SignatureTemplateDTO> createSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException {
         log.debug("REST request to save SignatureTemplate : {}", signatureTemplateDTO);
         if (signatureTemplateDTO.getId() != null) {
+            asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.CREATE, Extension.NONE, Method.POST,
+                TransactionStatus.FAIL, "A new signatureTemplate cannot already have an ID", AccountUtils.getLoggedAccount());
             throw new BadRequestAlertException("A new signatureTemplate cannot already have an ID", ENTITY_NAME, "idexists");
         }
         SignatureTemplateDTO result = signatureTemplateService.save(signatureTemplateDTO);
+        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.CREATE, Extension.NONE, Method.POST,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.created(new URI("/api/signature-templates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -75,9 +84,13 @@ public class SignatureTemplateResource {
     public ResponseEntity<SignatureTemplateDTO> updateSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException {
         log.debug("REST request to update SignatureTemplate : {}", signatureTemplateDTO);
         if (signatureTemplateDTO.getId() == null) {
+            asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
+                TransactionStatus.FAIL, "Invalid id", AccountUtils.getLoggedAccount());
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         SignatureTemplateDTO result = signatureTemplateService.save(signatureTemplateDTO);
+        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, signatureTemplateDTO.getId().toString()))
             .body(result);
@@ -94,6 +107,8 @@ public class SignatureTemplateResource {
         log.debug("REST request to get a page of SignatureTemplates");
         Page<SignatureTemplateDTO> page = signatureTemplateService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
@@ -107,6 +122,8 @@ public class SignatureTemplateResource {
     public ResponseEntity<SignatureTemplateDTO> getSignatureTemplate(@PathVariable Long id) {
         log.debug("REST request to get SignatureTemplate : {}", id);
         Optional<SignatureTemplateDTO> signatureTemplateDTO = signatureTemplateService.findOne(id);
+        asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseUtil.wrapOrNotFound(signatureTemplateDTO);
     }
 
@@ -120,6 +137,8 @@ public class SignatureTemplateResource {
     public ResponseEntity<Void> deleteSignatureTemplate(@PathVariable Long id) {
         log.debug("REST request to delete SignatureTemplate : {}", id);
         signatureTemplateService.delete(id);
+        asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.DELETE, Extension.NONE, Method.DELETE,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 }

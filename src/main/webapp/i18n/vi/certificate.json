@@ -36,6 +36,32 @@
         "success": "Tạo mã QR thành công",
         "error": "Tạo mã QR thất bại",
         "guide": "Hướng dẫn"
+      },
+      "changeCertPIN": {
+        "changePIN": "Mã PIN",
+        "header": "Thay đổi mã PIN",
+        "currentPIN": "Mã PIN cũ",
+        "newPIN": {
+          "newPIN": "Mã PIN mới",
+          "minlength": "Mã PIN của bạn bắt buộc phải có ít nhất 4 ký tự",
+          "maxlength": "Mã PIN của bạn không được dài hơn 50 ký tự"
+        },
+        "confirmPIN": {
+          "confirmPIN": "Nhập lại mã PIN",
+          "minlength": "Mã PIN xác nhận của bạn bắt buộc phải có ít nhất 4 ký tự",
+          "maxlength": "Mã PIN xác nhận của bạn không được dài hơn 50 ký tự"
+        },
+        "save": "Lưu",
+        "cancel": "Hủy bỏ",
+        "placeholder": "Nhập mã PIN",
+        "OTP": "Nhập ma OTP",
+        "error": "Mã PIN và xác nhận của nó không khớp!",
+        "success": "Mã PIN đã được thay đổi thành công",
+        "required": {
+          "currentPIN": "Mã PIN của bạn là bắt buộc",
+          "newPIN": "Mã PIN mới của bạn là bắt buộc",
+          "confirmPIN": "Mã PIN xác nhận của bạn là bắt buộc"
+        }
       }
     }
   }
