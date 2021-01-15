@@ -57,11 +57,9 @@ export class CertificateService {
   public uploadFile(fileToUpload: File): Observable<object> {
     const formData = new FormData();
     formData.append('formData', fileToUpload, fileToUpload.name);
-
     // return this.http.post(this.resourceUrl + '/upload-file-data', _formData, { headers:{'Content-Type': 'undefined'} ,observe: 'response' });
     return this.http.post(this.resourceUrl + '/upload-file-data', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
   }
-
   sendData(req?: any): Observable<any> {
     return this.http.post(this.resourceUrl + '/exportCsr', req, httpOptions);
   }

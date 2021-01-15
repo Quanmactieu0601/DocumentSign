@@ -30,7 +30,7 @@ public class UserJWTResource {
     private final AsyncTransactionService asyncTransactionService;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public UserJWTResource(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder ) {
+    public UserJWTResource(TokenProvider tokenProvider, AsyncTransactionService asyncTransactionService, AuthenticationManagerBuilder authenticationManagerBuilder) {
         this.tokenProvider = tokenProvider;
         this.asyncTransactionService = asyncTransactionService;
         this.authenticationManagerBuilder = authenticationManagerBuilder;

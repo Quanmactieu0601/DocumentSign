@@ -8,16 +8,17 @@ import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.service.mapper.TransactionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToLocalDateTime;
@@ -27,7 +28,7 @@ import static vn.easyca.signserver.webapp.utils.DateTimeUtils.convertToLocalDate
  */
 @Service
 @Transactional
-public class TransactionServiceImpl implements TransactionService  {
+public class TransactionServiceImpl implements TransactionService {
 
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
@@ -47,8 +48,6 @@ public class TransactionServiceImpl implements TransactionService  {
      * @param transactionDTO the entity to save.
      * @return the persisted entity.
      */
-
-
     @Override
     public TransactionDTO save(TransactionDTO transactionDTO) {
         log.debug("Request to save Transaction : {}", transactionDTO);
@@ -70,6 +69,7 @@ public class TransactionServiceImpl implements TransactionService  {
         return transactionRepository.findAll(pageable)
             .map(transactionMapper::toDto);
     }
+
     /**
      * Get one transaction by id.
      *
@@ -83,6 +83,7 @@ public class TransactionServiceImpl implements TransactionService  {
         return transactionRepository.findById(id)
             .map(transactionMapper::toDto);
     }
+
     @Override
     @Transactional(readOnly = true)
     public Page<TransactionDTO> getByFilter(Pageable pageable, String api, String triggerTime, String status, String message, String data, String type, String host, String method, String createdBy, String fullName, String startDate, String endDate, String action, String extension) throws ParseException {
@@ -102,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService  {
      * @param id the id of the entity.
      */
     @Override
-    public void delete( Long id) {
+    public void delete(Long id) {
         log.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
     }
@@ -111,8 +112,15 @@ public class TransactionServiceImpl implements TransactionService  {
      * get all transaction between startDate and endDate
      */
     @Override
-    public List<TransactionDTO> findTransactionType(String startDate, String endDate, String type) {
-        List<Transaction> listTransaction  = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+    public List<TransactionDTO> findTransaction(String startDate, String endDate, String type) {
+        TransactionType typeEnum = TransactionType.from(type);
+        List<Transaction> listTransaction = transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), typeEnum);
         return transactionMapper.toDto(listTransaction);
+    }
+
+    @Override
+    public Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type) {
+        Map<String, BigInteger> result = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+        return result;
     }
 }

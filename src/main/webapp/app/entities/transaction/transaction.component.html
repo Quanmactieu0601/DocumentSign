@@ -104,11 +104,26 @@
         </div>
     </form>
 </div>
+
+
 <!-- abcd ----------------------------------------------------->
 <div>
-    <h2 id="page-heading">
-        <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>
-    </h2>
+    <div>
+        <h2 id="page-heading">
+            <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>
+        </h2>
+
+        <button type="submit" class="btn btn-primary " [routerLink]="['./report']"
+                [ngStyle]="{  'float': 'right',
+                             'margin-right': '40px',
+                             'margin-bottom':'15px'}"
+        >
+            <fa-icon icon="file-excel"></fa-icon>
+            Report Transaction
+        </button>
+
+
+    </div>
     <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
         <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
     </div>

@@ -5,10 +5,13 @@ import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -52,5 +55,7 @@ public interface TransactionService {
      *
      * @param startDate , enddate ,ttype
      */
-    List<TransactionDTO> findTransactionType(String startDate, String endDate, String type);
+    List<TransactionDTO> findTransaction(String startDate, String endDate, String type);
+
+    Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type);
 }

@@ -1,18 +1,29 @@
 package vn.easyca.signserver.webapp.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.Transaction;
-import org.springframework.data.jpa.repository.*;
+import vn.easyca.signserver.webapp.enm.TransactionType;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Spring Data  repository for the Transaction entity.
  */
+
 @SuppressWarnings({"unused", "JpaQlInspection"})
-public interface TransactionRepository extends JpaRepository<Transaction, Long> , TransactionRepositoryCustom {
+public interface TransactionRepository extends JpaRepository<Transaction, Long>, TransactionRepositoryCustom {
     @Query(value = " FROM Transaction t WHERE t.triggerTime BETWEEN :startDate  AND :endDate  AND t.type = :type")
-    List<Transaction> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
-                                                    @Param("endDate") LocalDateTime endDate, @Param("type") String type);
+    List<Transaction> findAllTransaction(@Param("startDate") LocalDateTime startDate,
+                                         @Param("endDate") LocalDateTime endDate, @Param("type") TransactionType type);
+
+
+    @Query(value = " SELECT COUNT( CASE WHEN t.code='200' THEN 1 END )AS TotalSuccess ,COUNT( CASE WHEN  t.code<>'200' THEN 1 END) AS TotalFail FROM transaction_log t WHERE t.trigger_time BETWEEN :startDate AND :endDate AND t.type=:type ", nativeQuery = true)
+    Map<String, BigInteger> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
+                                                          @Param("endDate") LocalDateTime endDate, @Param("type") String type);
+
 }

@@ -22,6 +22,7 @@
       "message": "Message",
       "data": "Data",
       "type": "Type",
+      "transactionReport": "Report Transaction",
       "host": "Host",
       "method": "Method",
       "fullName": "Full Name",

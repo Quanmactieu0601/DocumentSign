@@ -1,28 +1,35 @@
 package vn.easyca.signserver.webapp.web.rest;
 
-import vn.easyca.signserver.webapp.service.TransactionService;
-import vn.easyca.signserver.webapp.service.dto.TransactionReportDTO;
-import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import vn.easyca.signserver.webapp.service.TransactionService;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+
 
 /**
  * REST controller for managing {@link vn.easyca.signserver.webapp.domain.Transaction}.
@@ -32,14 +39,14 @@ import java.util.Optional;
 public class TransactionResource {
 
     private final Logger log = LoggerFactory.getLogger(TransactionResource.class);
-
     private final String ENTITY_NAME = "transaction";
+    static final String fileName = "src/main/resources/templates/transactionReport/TransactionReport.jrxml";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
     private final TransactionService transactionService;
 
-    public TransactionResource( TransactionService transactionService) {
+    public TransactionResource(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
 
@@ -69,10 +76,9 @@ public class TransactionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated transactionDTO,
      * or with status {@code 400 (Bad Request)} if the transactionDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the transactionDTO couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/transactions")
-    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody TransactionDTO transactionDTO) throws URISyntaxException {
+    public ResponseEntity<TransactionDTO> updateTransaction(@RequestBody TransactionDTO transactionDTO) {
         log.debug("REST request to update Transaction : {}", transactionDTO);
         if (transactionDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -96,6 +102,7 @@ public class TransactionResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
     @GetMapping("/transactions/search")
     public ResponseEntity<List<TransactionDTO>> getAllTransactionsByFilter(Pageable pageable, @RequestParam(required = false) String api, @RequestParam(required = false) String triggerTime, @RequestParam(required = false) String status, @RequestParam(required = false) String message, @RequestParam(required = false) String data, @RequestParam(required = false) String type, @RequestParam(required = false)  String host, @RequestParam(required = false) String method, @RequestParam(required = false) String createdBy, @RequestParam(required = false) String fullName, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate, @RequestParam(required = false) String action, @RequestParam(required = false) String extension) throws ParseException {
         log.debug("REST request to get a page of Transactions");
@@ -133,32 +140,42 @@ public class TransactionResource {
     /**
      * {@code get all transaction   /transaction/report}
      *
-     * @param startdate, enddate, type from transaction
+     * @param startDate, enddate, type from transaction
      * @return the total request success and totals request fail .
      */
-    @GetMapping("/transactions/report/{startDate}/{endDate}/{type}")
-    public ResponseEntity<TransactionReportDTO> getAllTransactionBetweenDate(@PathVariable("startDate") String startdate,
-                                                             @PathVariable("endDate") String enddate,
-                                                             @PathVariable("type") String type) throws ParseException {
-
+    @GetMapping("/transactions/report")
+    public ResponseEntity<Map<String, BigInteger>> getAllTransactionBetweenDate(@RequestParam("startDate") String startDate,
+                                                                                @RequestParam("endDate") String endDate,
+                                                                                @RequestParam("type") String type) {
         log.debug("REST request to get all Transactions beween date and type ");
-        TransactionReportDTO transactionReportDTO = new TransactionReportDTO();
-        int totalsuccess = 0;
-        int totalfalse = 0;
-        List<TransactionDTO> transactionDTOList = new ArrayList<>();
-        transactionDTOList = transactionService.findTransactionType(startdate, enddate, type);
-        for (TransactionDTO item : transactionDTOList) {
-//            if (item.getStatus().equals("SUCCESS")) {
-//                totalsuccess += 1;
-//            } else {
-//                totalfalse += 1;
-//            }
-        }
-        if (totalfalse != 0 || totalsuccess != 0) {
-            transactionReportDTO.setTotalfail(totalfalse);
-            transactionReportDTO.setTotalsuccess(totalsuccess);
+        Map<String, BigInteger> transactionDTOList = transactionService.findTransactionType(startDate, endDate, type);
+        return ResponseEntity.ok().body(transactionDTOList);
+    }
 
-        }
-        return ResponseEntity.ok().body(transactionReportDTO);
+    /*
+     *@code export file pdf transaction report
+     * * @param startdate, enddate, type from transaction
+     * @return the file pdf transaction report
+     */
+    @GetMapping("/transactions/exportPDFJasper")
+    public void exportPDF(@RequestParam("startDate") String startDate,
+                          @RequestParam("endDate") String endDate,
+                          @RequestParam("type") String type, HttpServletResponse response) throws JRException, IOException {
+
+        log.debug("REST request to export  PDF Transactions ");
+        Map<String, Object> parameter = new HashMap<>();
+        System.out.println("type:"+type);
+        System.out.println("date "+startDate);
+        List<TransactionDTO> listTransaction = transactionService.findTransaction(startDate, endDate, type);
+        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTransaction);
+        parameter.put("transactionDataSource", TransactionCollectionDataSource);
+        parameter.put("title", "Transaction Report");
+        JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
+        OutputStream out = response.getOutputStream();
+        JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+        response.setContentType("application/pdf");
+        response.addHeader("Content-Disposition", "inline; filename=TransactionReport.pdf;");
+        log.debug("Export file transaction report.pdf success !");
     }
 }

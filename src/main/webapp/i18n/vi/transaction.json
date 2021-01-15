@@ -16,7 +16,7 @@
       "detail": {
         "title": "Lịch sử giao dịch"
       },
-      "Api": "Api",
+      "api": "Api",
       "triggerTime": "Thời gian kích hoạt",
       "status": "Trạng Thái",
       "message": "Thông điệp",
