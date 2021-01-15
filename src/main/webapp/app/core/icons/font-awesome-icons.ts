@@ -42,6 +42,8 @@ import {
   faInfo,
   faInfoCircle,
   // jhipster-needle-add-icon-import
+  faCogs,
+  faExclamationCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -88,4 +90,6 @@ export const fontAwesomeIcons = [
   faInfo,
   faInfoCircle,
   // jhipster-needle-add-icon-import
+  faCogs,
+  faExclamationCircle,
 ];

@@ -7,7 +7,6 @@ import { AccountService } from 'app/core/auth/account.service';
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LANGUAGES } from 'app/core/language/language.constants';
 import { Account } from 'app/core/user/account.model';
 
@@ -27,12 +26,14 @@ export class TopbarComponent implements OnInit {
     private accountService: AccountService,
     private loginModalService: LoginModalService,
     private profileService: ProfileService,
-    private router: Router,
-    private modalService: NgbModal
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.currentAccount = this.accountService.getCurrentLoggedAccount();
+    this.accountService.getAuthenticationState().subscribe(account => {
+      this.currentAccount = account;
+    });
+    // this.currentAccount = this.accountService.getCurrentLoggedAccount();
   }
 
   toggleSideBar(): void {
