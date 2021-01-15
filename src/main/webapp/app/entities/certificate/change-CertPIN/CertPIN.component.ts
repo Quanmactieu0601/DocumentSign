@@ -7,7 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  selector: 'jhi-CertPIN',
+  selector: 'jhi-certpin',
   templateUrl: './CertPIN.component.html',
 })
 export class CertPINComponent implements OnInit {
