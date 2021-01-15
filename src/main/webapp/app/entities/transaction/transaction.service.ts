@@ -46,9 +46,9 @@ export class TransactionService {
   queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
     return this.http.get<any>(`${this.resourceUrl + '/report'}`, {
       params: {
-        startDate: startDate,
-        endDate: endDate,
-        type: type,
+        startDate,
+        endDate,
+        type,
       },
       observe: 'response',
     });
@@ -57,9 +57,9 @@ export class TransactionService {
   exportPDFfromjasper(startDate: string, endDate: string, type: string): Observable<any> {
     return this.http.get<any>(`${this.resourceUrl + '/exportPDFJasper'}`, {
       params: {
-        startDate: startDate,
-        endDate: endDate,
-        type: type,
+        startDate,
+        endDate,
+        type,
       },
       responseType: 'blob' as 'json',
     });

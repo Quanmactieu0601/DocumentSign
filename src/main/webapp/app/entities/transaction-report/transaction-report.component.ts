@@ -78,7 +78,7 @@ export class TransactionReportComponent implements OnInit {
     });
   }
 
-  alertNoification() {
+  alertNotification(): void {
     this.showAlert = false;
   }
 
