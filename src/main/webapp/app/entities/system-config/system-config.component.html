@@ -1,38 +1,55 @@
-<div>
-    <h2 id="page-heading">
-        <span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
+<div class="card mb-3 searching">
+    <div class="card-body">
+        <h2 id="page-heading">
+            <span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
 
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config" [routerLink]="['/system-config/new']">
-            <fa-icon icon="plus"></fa-icon>
-            <span  jhiTranslate="webappApp.systemConfig.home.createLabel">
+            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config"
+                    [routerLink]="['/system-config/new']">
+                <fa-icon icon="plus"></fa-icon>
+                <span jhiTranslate="webappApp.systemConfig.home.createLabel">
             Create a new System Config
             </span>
-        </button>
-    </h2>
+            </button>
+        </h2>
 
-    <jhi-alert-error></jhi-alert-error>
+        <jhi-alert-error></jhi-alert-error>
 
-    <jhi-alert></jhi-alert>
+        <jhi-alert></jhi-alert>
 
-    <div class="alert alert-warning" id="no-result" *ngIf="systemConfigs?.length === 0">
-        <span jhiTranslate="webappApp.systemConfig.home.notFound">No systemConfigs found</span>
-    </div>
+        <div class="alert alert-warning" id="no-result" *ngIf="systemConfigs?.length === 0">
+            <span jhiTranslate="webappApp.systemConfig.home.notFound">No systemConfigs found</span>
+        </div>
 
-    <div class="table-responsive" id="entities" *ngIf="systemConfigs && systemConfigs.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
-            <thead>
+        <div class="table-responsive" id="entities" *ngIf="systemConfigs && systemConfigs.length > 0">
+            <table class="table table-striped" aria-describedby="page-heading">
+                <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="comId"><span jhiTranslate="webappApp.systemConfig.comId">Com Id</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="key"><span jhiTranslate="webappApp.systemConfig.key">Key</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="value"><span jhiTranslate="webappApp.systemConfig.value">Value</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="description"><span jhiTranslate="webappApp.systemConfig.description">Description</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="dataType"><span jhiTranslate="webappApp.systemConfig.dataType">Data Type</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="activated"><span jhiTranslate="webappApp.systemConfig.activated">Activated</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="comId"><span jhiTranslate="webappApp.systemConfig.comId">Com Id</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="key"><span jhiTranslate="webappApp.systemConfig.key">Key</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="value"><span jhiTranslate="webappApp.systemConfig.value">Value</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="description"><span jhiTranslate="webappApp.systemConfig.description">Description</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="dataType"><span
+                        jhiTranslate="webappApp.systemConfig.dataType">Data Type</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th scope="col" jhiSortBy="activated"><span jhiTranslate="webappApp.systemConfig.activated">Activated</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
                     <th scope="col"></th>
                 </tr>
-            </thead>
-            <tbody>
+                </thead>
+                <tbody>
                 <tr *ngFor="let systemConfig of systemConfigs ;trackBy: trackId">
                     <td><a [routerLink]="['/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a></td>
                     <td>{{ systemConfig.comId }}</td>
@@ -65,17 +82,20 @@
                         </div>
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div *ngIf="systemConfigs && systemConfigs.length > 0">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+                </tbody>
+            </table>
         </div>
 
-        <div class="row justify-content-center">
-            <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage" [maxSize]="5" [rotate]="true" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
+        <div *ngIf="systemConfigs && systemConfigs.length > 0">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+
+            <div class="row justify-content-center">
+                <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage"
+                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="loadPage($event)"></ngb-pagination>
+            </div>
         </div>
     </div>
 </div>

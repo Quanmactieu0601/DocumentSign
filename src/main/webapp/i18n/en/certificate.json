@@ -20,6 +20,8 @@
       },
       "lastUpdate": "Last Update",
       "tokenType": "Token Type",
+      "action": "Action",
+      "info": "Info",
       "serial": "Serial",
       "ownerTaxcode": "Owner Taxcode",
       "ownerId": "Owner Id",

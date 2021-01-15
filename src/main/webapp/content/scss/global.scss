@@ -117,6 +117,7 @@ Custom alerts for notification
 .alerts {
   .alert {
     text-overflow: ellipsis;
+
     pre {
       background: none;
       border: none;
@@ -125,22 +126,28 @@ Custom alerts for notification
       padding: 0;
       margin: 0;
     }
+
     .popover pre {
       font-size: 10px;
     }
   }
+
   .jhi-toast {
     position: fixed;
     width: 100%;
+
     &.left {
       left: 5px;
     }
+
     &.right {
       right: 5px;
     }
+
     &.top {
       top: 55px;
     }
+
     &.bottom {
       bottom: 55px;
     }
@@ -167,6 +174,7 @@ entity detail page css
     dt {
       margin-bottom: 15px;
     }
+
     dd {
       border-bottom: 1px solid #eee;
       padding-left: 180px;
@@ -196,4 +204,37 @@ ui bootstrap tweaks
 html,
 body {
   height: 100%;
+}
+
+.searching .form-control-label {
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.breadcrumb.in-page {
+  padding: 0rem 0.2rem;
+  background-color: transparent;
+}
+
+.list-header {
+  margin-bottom: 3rem;
+}
+
+.list-header .left {
+  float: left;
+}
+
+.list-header .right {
+  float: right;
+}
+
+.custom-middle-align {
+  text-align: center !important;
+  vertical-align: middle !important;
+}
+
+table.table-custom th,
+table.table-custom td {
+  //padding: 0.8rem !important;
+  border-top: none !important;
 }

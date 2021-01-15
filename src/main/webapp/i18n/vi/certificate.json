@@ -19,6 +19,8 @@
         "title": "Certificate"
       },
       "tokenType": "Loại token",
+      "action": "Hành động",
+      "info": "Thông tin",
       "serial": "Số serial",
       "ownerTaxcode": "Mã số thuế",
       "ownerId": "Owner ID",
