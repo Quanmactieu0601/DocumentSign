@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "EasySign - Remote Signing System",
+    "title": "EasySign - Concentrated Digital Signature System",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
@@ -35,7 +35,23 @@
         "apidocs": "API",
         "database": "Database",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
-        "uploadUser": "Upload User"
+        "uploadUser": "Upload User",
+        "certVerification": {
+          "main": "Verification",
+          "cert": "Certificate",
+          "pdf": "PDF File",
+          "ooxml": "Office File",
+          "raw": "Raw Data",
+          "xml": "XML File"
+        },
+        "signing": {
+          "main": "Signing",
+          "pdf": "PDF File",
+          "ooxml": "Office File",
+          "raw": "Raw File",
+          "xml": "XML File"
+        },
+        "question": "Frequently asked questions"
       },
       "language": "Language"
     },
@@ -151,5 +167,9 @@
     },
     "otp": "Has error when get OTP configuration"
   },
-  "footer": "This is your footer"
+  "footer": "This is your footer",
+  "tooltip": {
+    "language": "Switch language",
+    "profile": "View profile"
+  }
 }

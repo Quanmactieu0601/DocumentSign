@@ -14,6 +14,7 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
           {
             path: 'index',
             component: HomeComponent,
+            // loadChildren: () => import('../home/home.module').then(m => m.WebappHomeModule)
           },
           {
             path: 'certificate',

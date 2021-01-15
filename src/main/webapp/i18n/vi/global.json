@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "Hệ thống ký số từ xa EasySign",
+    "title": "Hệ thống ký số tập trung EasySign",
     "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
     "menu": {
       "home": "Trang chủ",
@@ -27,7 +27,7 @@
         "main": "Quản trị",
         "userManagement": "Quản lý tài khoản",
         "tracker": "Theo dõi người dùng",
-        "metrics": "Số liệu",
+        "metrics": "Trình theo dõi",
         "health": "Tình trạng",
         "configuration": "Cấu hình",
         "logs": "Ghi logs",
@@ -35,7 +35,23 @@
         "apidocs": "API",
         "database": "Cơ sở dữ liệu",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
-        "uploadUser": "Upload User"
+        "uploadUser": "Upload User",
+        "certVerification": {
+          "main": "Xác thực",
+          "cert": "Chứng thư số",
+          "pdf": "Xác thực PDF",
+          "ooxml": "Xác thực Office",
+          "raw": "Xác thực Raw",
+          "xml": "Xác thực XML"
+        },
+        "signing": {
+          "main": "Ký số",
+          "pdf": "Ký số PDF",
+          "ooxml": "Ký số Office",
+          "raw": "Ký số Raw",
+          "xml": "Ký số XML"
+        },
+        "question": "Câu hỏi thường gặp"
       },
       "language": "Ngôn ngữ"
     },
@@ -145,5 +161,9 @@
     },
     "otp": "Có lỗi xảy ra khi kiểm tra cấu hình OTP"
   },
-  "footer": "Đây là chân trang của bạn"
+  "footer": "Đây là chân trang của bạn",
+  "tooltip": {
+    "language": "Chuyển đổi ngôn ngữ",
+    "profile": "Xem thông tin"
+  }
 }

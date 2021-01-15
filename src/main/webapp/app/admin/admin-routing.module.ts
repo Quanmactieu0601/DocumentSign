@@ -17,6 +17,7 @@ import { HomeComponent } from 'app/home/home.component';
           {
             path: '',
             component: HomeComponent,
+            // loadChildren: () => import('../home/home.module').then(m => m.WebappHomeModule)
           },
           {
             path: 'user-management',
