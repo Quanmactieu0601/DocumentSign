@@ -220,7 +220,8 @@ public class CertificateResource {
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+                .contentType(MediaType.parseMediaType("text/plain;charset=ISO-8859-1"))
                 .body(file);
         } catch (Exception e) {
             log.error(e.getMessage());
