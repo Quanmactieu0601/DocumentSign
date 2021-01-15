@@ -35,9 +35,9 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
 
     # DB production
-    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign
-    password: EasySign@202o
+    #    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: EasySign@202o
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -45,9 +45,9 @@ spring:
     #    password: 123
 
     # SDS - Cau hinh Test
-    #    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: signserver
-    #    password: Hddt@202o
+    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: signserver
+    password: Hddt@202o
 
     # BV Q11 - cau hinh db IP VIP
     #    url: jdbc:mariadb://172.16.99.16:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
