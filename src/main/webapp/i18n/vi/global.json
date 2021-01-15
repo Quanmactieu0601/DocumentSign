@@ -1,15 +1,16 @@
 {
   "global": {
-    "title": "SignServer",
+    "title": "Hệ thống ký số tập trung EasySign",
     "browsehappy": "Bạn đang sử dụng một trình duyệt <strong>quá cũ</strong>. Vui lòng <a href=\"http://browsehappy.com/?locale=en\">nâng cấp trình duyệt</a> của bạn để có trải nghiệm tốt nhất.",
     "menu": {
       "home": "Trang chủ",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Thực thể",
-        "certificate": "Certificate",
-        "transaction": "Transaction",
-        "systemConfig": "System Config",
+        "certificate": "Chứng thư số",
+        "transaction": "Giao dịch hệ thống",
+        "systemConfig": "Cấu hình hệ thống",
+        "report": "Thống kê báo cáo",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
@@ -19,13 +20,14 @@
         "sessions": "Phiên đăng nhập",
         "login": "Đăng nhập",
         "logout": "Đăng xuất",
-        "register": "Đăng ký"
+        "register": "Đăng ký",
+        "profile": "Thông tin tài khoản"
       },
       "admin": {
         "main": "Quản trị",
         "userManagement": "Quản lý tài khoản",
         "tracker": "Theo dõi người dùng",
-        "metrics": "Số liệu",
+        "metrics": "Trình theo dõi",
         "health": "Tình trạng",
         "configuration": "Cấu hình",
         "logs": "Ghi logs",
@@ -33,7 +35,23 @@
         "apidocs": "API",
         "database": "Cơ sở dữ liệu",
         "jhipster-needle-menu-add-admin-element": "JHipster will add additional menu entries here (do not translate!)",
-        "uploadUser": "Upload User"
+        "uploadUser": "Upload User",
+        "certVerification": {
+          "main": "Xác thực",
+          "cert": "Chứng thư số",
+          "pdf": "Xác thực PDF",
+          "ooxml": "Xác thực Office",
+          "raw": "Xác thực Raw",
+          "xml": "Xác thực XML"
+        },
+        "signing": {
+          "main": "Ký số",
+          "pdf": "Ký số PDF",
+          "ooxml": "Ký số Office",
+          "raw": "Ký số Raw",
+          "xml": "Ký số XML"
+        },
+        "question": "Câu hỏi thường gặp"
       },
       "language": "Ngôn ngữ"
     },
@@ -141,7 +159,12 @@
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""
     },
-    "otp": "Có lỗi xảy ra khi kiểm tra cấu hình OTP"
+    "otp": "Có lỗi xảy ra khi kiểm tra cấu hình OTP",
+    "developing": "Chức năng này đang được phát triển"
   },
-  "footer": "Đây là chân trang của bạn"
+  "footer": "Đây là chân trang của bạn",
+  "tooltip": {
+    "language": "Chuyển đổi ngôn ngữ",
+    "profile": "Xem thông tin"
+  }
 }

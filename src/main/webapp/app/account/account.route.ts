@@ -6,12 +6,14 @@ import { passwordResetFinishRoute } from './password-reset/finish/password-reset
 import { passwordResetInitRoute } from './password-reset/init/password-reset-init.route';
 import { registerRoute } from './register/register.route';
 import { settingsRoute } from './settings/settings.route';
+import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 
 const ACCOUNT_ROUTES = [activateRoute, passwordRoute, passwordResetFinishRoute, passwordResetInitRoute, registerRoute, settingsRoute];
 
 export const accountState: Routes = [
   {
     path: '',
+    component: HomeLayoutComponent,
     children: ACCOUNT_ROUTES,
   },
 ];

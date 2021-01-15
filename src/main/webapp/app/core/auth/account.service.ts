@@ -94,4 +94,8 @@ export class AccountService {
       this.router.navigateByUrl(previousUrl);
     }
   }
+
+  getCurrentLoggedAccount(): Account | null {
+    return this.userIdentity;
+  }
 }
