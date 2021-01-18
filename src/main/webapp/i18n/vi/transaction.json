@@ -2,10 +2,10 @@
   "webappApp": {
     "transaction": {
       "home": {
-        "title": "Transactions",
+        "title": "Lịch sử giao dịch",
         "createLabel": "Thêm mới một Transaction",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Transaction",
-        "notFound": "No Transactions found"
+        "notFound": "Không tìm thấy lịch sử giao dịch"
       },
       "created": "Một Transaction mới được tạo với định danh {{ param }}",
       "updated": "Một Transaction cập nhật với định danh {{ param }}",
@@ -14,7 +14,11 @@
         "question": "Bạn có chắc là muốn xóa Transaction {{ id }}?"
       },
       "detail": {
+        "detail": "Chi tiết",
         "title": "Lịch sử giao dịch"
+      },
+      "transactionReport": {
+        "transactionReport": "Thống kê báo cáo"
       },
       "api": "Api",
       "triggerTime": "Thời gian kích hoạt",
@@ -29,7 +33,7 @@
       "endDate": "Ngày kết thúc",
       "action": "Hành động",
       "extension": "Mở rộng",
-      "ALL": "Tất cả",
+      "all": "tất cả",
       "STATUS": {
         "FAIL": "Thất bại",
         "SUCCESS": "Thành công"
@@ -57,7 +61,8 @@
         "CERT": "Chứng thư số",
         "HASH": "HASH",
         "NONE": "Không xác định"
-      }
+      },
+      "search": "Tìm kiếm"
     }
   }
 }

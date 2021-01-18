@@ -10,6 +10,7 @@ import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
 import { Method, Status, Type } from 'app/shared/constants/transaction.constants';
+import { DetailTransactionComponent } from 'app/entities/transaction/detail/detail-transaction.component';
 
 @Component({
   selector: 'jhi-transaction',
@@ -53,8 +54,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected fb: FormBuilder
   ) {}
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    const pageToLoad: number = page || this.page || 1;
+  loadPage(page?: number): void {
+    // const pageToLoad: number = page || this.page || 1;
     this.searchTransactions(page);
   }
 
@@ -150,5 +151,10 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+
+  detail(transaction: ITransaction): void {
+    const modalRef = this.modalService.open(DetailTransactionComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.transaction = transaction;
   }
 }

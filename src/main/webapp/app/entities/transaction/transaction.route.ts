@@ -95,7 +95,7 @@ export const transactionRoute: Routes = [
     canActivate: [UserRouteAccessService],
   },
   {
-    path: 'report',
+    path: 'transaction-report',
     component: TransactionReportComponent,
     resolve: {
       transaction: TransactionResolve,

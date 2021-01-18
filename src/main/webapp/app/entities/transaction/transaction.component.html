@@ -1,207 +1,185 @@
-<div class="card mb-5">
-    <form name="searchTransactions" [formGroup]="searchForm" (ngSubmit)="searchTransactions()">
-        <div class="card-header">
-            <div class="row my-3">
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page"><span jhiTranslate="webappApp.transaction.home.title">Transaction</span>
+    </li>
+</ol>
+<div class="card mb-3 searching">
+    <div class="card-body">
+        <form name="searchTransactions" [formGroup]="searchForm">
+            <div class="row row-cols-3">
                 <div class="col">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="api"><span
-                                    jhiTranslate="webappApp.transaction.api">Api</span></label>
-                                <input type="text" class="form-control" formControlName="api">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="method"><span
-                                    jhiTranslate="webappApp.transaction.method">Method</span></label>
-                                <select class="form-control" formControlName="method">
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            [value]= null selected>TẤT CẢ</option>
-                                    <option *ngFor="let name of method"
-                                            [value]="name">{{name}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="status"><span
-                                    jhiTranslate="webappApp.transaction.status">Status</span></label>
-                                <select class="form-control" formControlName="status">
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            [value]= null selected>TẤT CẢ</option>
-                                    <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
-                                            *ngFor="let name of status"
-                                            [value]="name">{{name}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="message"><span
-                                    jhiTranslate="webappApp.transaction.message">Message</span></label>
-                                <input type="text" class="form-control" formControlName="message">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="startDate"><span
-                                    jhiTranslate="webappApp.transaction.startDate">Start Date</span></label>
-                                <input type="datetime-local" name="date" class="form-control"
-                                       formControlName="startDate">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="endDate"><span
-                                    jhiTranslate="webappApp.transaction.endDate">End Date</span></label>
-                                <input type="datetime-local" class="form-control" formControlName="endDate">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="type"><span
-                                    jhiTranslate="webappApp.transaction.type">Type</span></label>
-                                <select class="form-control" formControlName="type">
-                                    <option jhiTranslate="webappApp.transaction.ALL"
-                                            [value]= null selected>TẤT CẢ</option>
-                                    <option jhiTranslate="webappApp.transaction.TYPE.{{name}}"
-                                            *ngFor="let name of type"
-                                            [value]="name">{{name}}</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="host"> <span
-                                    jhiTranslate="webappApp.transaction.host">Host</span></label>
-                                <input type="text" class="form-control" formControlName="host">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="fullName"><span
-                                    jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
-                                <input type="text" class="form-control" formControlName="fullName">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label for="data"><span
-                                    jhiTranslate="webappApp.transaction.data">Date</span></label>
-                                <input type="text" class="form-control" formControlName="data"/>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.action">Action</span></label>
+                        <input type="text" class="form-control form-control-sm" name="action"
+                               formControlName="action">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.extension">Extension</span></label>
+                        <input type="text" class="form-control form-control-sm" name="extension"
+                               formControlName="extension">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.status">Status</span></label>
+                        <select class="form-control form-control-sm" name="status" formControlName="status">
+                            <option jhiTranslate="webappApp.transaction.all"
+                                    [value]=null selected>TẤT CẢ
+                            </option>
+                            <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
+                                    *ngFor="let name of status"
+                                    [value]="name">{{name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.startDate">Start Date</span></label>
+                        <input type="datetime-local" class="form-control form-control-sm" name="startDate"
+                               formControlName="startDate">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.endDate">End Date</span></label>
+                        <input type="datetime-local" class="form-control form-control-sm" name="endDate"
+                               formControlName="endDate">
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.transaction.fullName">Full Name</span></label>
+                        <input type="text" class="form-control form-control-sm" name="fullName"
+                               formControlName="fullName">
                     </div>
                 </div>
             </div>
+
             <div class="text-center">
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn btn-primary btn-sm" (click)="searchTransactions()">
                     <fa-icon icon="search"></fa-icon>
-                    Search
+                    <span jhiTranslate="webappApp.transaction.search"></span>
                 </button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
 </div>
 
-
-<!-- abcd ----------------------------------------------------->
-<div>
-    <div>
-        <h2 id="page-heading">
-            <span jhiTranslate="webappApp.transaction.home.title">Transactions</span>
-        </h2>
-
-        <button type="submit" class="btn btn-primary " [routerLink]="['./report']"
-                [ngStyle]="{  'float': 'right',
+<!-- content ----------------------------------------------------->
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="list-header">
+            <div class="left">
+                <i class="fa fa-list-ul"></i> <span jhiTranslate="webappApp.transaction.home.title">Transaction</span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
+                    routerLink="/home/transaction/transaction-report"
+                    [ngStyle]="{  'float': 'right',
                              'margin-right': '40px',
                              'margin-bottom':'15px'}"
-        >
-            <fa-icon icon="file-excel"></fa-icon>
-            Report Transaction
-        </button>
-
-
-    </div>
-    <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
-        <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
-    </div>
-    <div class="table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
-        <table class="table table-striped" aria-describedby="page-heading">
-            <thead>
-            <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                <!-- <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th> -->
-                <th scope="col" jhiSortBy="action"><span jhiTranslate="webappApp.transaction.action">Action</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="extension"><span
-                    jhiTranslate="webappApp.transaction.extension">Extension</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="api"><span jhiTranslate="webappApp.transaction.api">Api</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="triggerTime"><span jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="status"><span jhiTranslate="webappApp.transaction.status">Status</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="message"><span jhiTranslate="webappApp.transaction.message">Message</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="data"><span jhiTranslate="webappApp.transaction.data">Data</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="type"><span jhiTranslate="webappApp.transaction.type">Type</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="method"><span jhiTranslate="webappApp.transaction.method">Method</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="host"><span jhiTranslate="webappApp.transaction.host">Host</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <th scope="col" jhiSortBy="fullName"><span
-                    jhiTranslate="webappApp.transaction.fullName">Full Name</span>
-                    <fa-icon icon="sort"></fa-icon>
-                </th>
-                <!-- <th scope="col"></th> -->
-            </tr>
-            </thead>
-            <tbody>
-            <tr
-                *ngFor="let transaction of transactions ;trackBy: trackId">
-                <td jhiTranslate="webappApp.transaction.ACTION.{{transaction.action}}">{{ transaction.action}}</td>
-                <td jhiTranslate="webappApp.transaction.EXTENSION.{{transaction.extension}}">{{ transaction.extension}}</td>
-                <td>{{ transaction.api }}</td>
-                <td>{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
-                <td jhiTranslate="webappApp.transaction.STATUS.{{transaction.status}}"> {{transaction.status}}</td>
-                <td>{{ transaction.message }}</td>
-                <td>{{ transaction.data }}</td>
-                <td jhiTranslate="webappApp.transaction.TYPE.{{transaction.type}}">{{ transaction.type }}</td>
-                <td>{{ transaction.method }}</td>
-                <td>{{ transaction.host }}</td>
-                <td>{{ transaction.fullName }}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div *ngIf="transactions&& transactions.length > 0">
-        <div class="row justify-content-center">
-            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            >
+                <fa-icon icon="file-excel"></fa-icon>
+                <span jhiTranslate="webappApp.transaction.transactionReport.transactionReport"></span>
+            </button>
         </div>
-        <div class="row justify-content-center">
-            <ngb-pagination
-                [collectionSize]="totalItems"
-                [(page)]="ngbPaginationPage"
-                [pageSize]="itemsPerPage"
-                [maxSize]="5"
-                [rotate]="true"
-                [boundaryLinks]="true"
-                (pageChange)="loadPage($event)"
-            ></ngb-pagination>
+
+        <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
+            <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
+        </div>
+        <div class="table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
+            <table class="table table-striped" aria-describedby="page-heading">
+                <thead>
+                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+                    <th class="custom-middle-align" scope="col" jhiSortBy="action"><span
+                        jhiTranslate="webappApp.transaction.action">Action</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th class="custom-middle-align" scope="col" jhiSortBy="extension"><span
+                        jhiTranslate="webappApp.transaction.extension">Extension</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th class="custom-middle-align" scope="col" jhiSortBy="triggerTime"><span
+                        jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th class="custom-middle-align" scope="col" jhiSortBy="status"><span
+                        jhiTranslate="webappApp.transaction.status">Status</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th class="custom-middle-align" scope="col" jhiSortBy="fullName"><span
+                        jhiTranslate="webappApp.transaction.fullName">Full Name</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
+                    <th jhiTranslate="webappApp.transaction.detail.detail" scope="col" class="custom-middle-align">
+                        <span>Detail</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr
+                    *ngFor="let transaction of transactions; trackBy: trackId">
+                    <td class="custom-middle-align">
+                        <span *ngIf="transaction.action == 'SIGN'" class="badge badge-success" jhiTranslate="webappApp.transaction.ACTION.SIGN"></span>
+                        <span *ngIf="transaction.action == 'HASH'" class="badge badge-primary" jhiTranslate="webappApp.transaction.ACTION.HASH"></span>
+                        <span *ngIf="transaction.action == 'VERIFY'" class="badge badge-secondary" jhiTranslate="webappApp.transaction.ACTION.VERIFY"></span>
+                        <span *ngIf="transaction.action == 'CREATE'" class="badge badge-warning" jhiTranslate="webappApp.transaction.ACTION.CREATE"></span>
+                        <span *ngIf="transaction.action == 'MODIFY'" class="badge badge-info" jhiTranslate="webappApp.transaction.ACTION.MODIFY"></span>
+                        <span *ngIf="transaction.action == 'DELETE'" class="badge badge-danger" jhiTranslate="webappApp.transaction.ACTION.DELETE"></span>
+                        <span *ngIf="transaction.action == 'GET_INFO'" class="badge badge-dark" jhiTranslate="webappApp.transaction.ACTION.GET_INFO"></span>
+                        <span *ngIf="transaction.action == 'LOGIN'" class="badge badge-light" jhiTranslate="webappApp.transaction.ACTION.LOGIN"></span>
+                    </td>
+                    <td class="custom-middle-align">
+                    <span *ngIf="transaction.extension == 'PDF'" class="badge badge-success" jhiTranslate="webappApp.transaction.EXTENSION.SIGN"></span>
+                    <span *ngIf="transaction.extension == 'XML'" class="badge badge-primary" jhiTranslate="webappApp.transaction.EXTENSION.XML"></span>
+                    <span *ngIf="transaction.extension == 'OOXML'" class="badge badge-secondary" jhiTranslate="webappApp.transaction.EXTENSION.OOXML"></span>
+                    <span *ngIf="transaction.extension == 'RAW'" class="badge badge-warning" jhiTranslate="webappApp.transaction.EXTENSION.RAW"></span>
+                    <span *ngIf="transaction.extension == 'CSR'" class="badge badge-info" jhiTranslate="webappApp.transaction.EXTENSION.CSR"></span>
+                    <span *ngIf="transaction.extension == 'CERT'" class="badge badge-danger" jhiTranslate="webappApp.transaction.EXTENSION.CERT"></span>
+                    <span *ngIf="transaction.extension == 'HASH'" class="badge badge-dark" jhiTranslate="webappApp.transaction.EXTENSION.HASH"></span>
+                    <span *ngIf="transaction.extension == 'NONE'" class="badge badge-light" jhiTranslate="webappApp.transaction.EXTENSION.NONE"></span>
+                    </td>
+                    <td class="custom-middle-align">{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
+                    <td class="custom-middle-align">
+                        <fa-icon icon="check-circle" *ngIf="transaction.status == 'SUCCESS'" class="text-success"></fa-icon>
+                        <fa-icon icon="ban" *ngIf="transaction.status == 'FAIL'" class="text-danger"></fa-icon>
+                    </td>
+                    <td class="custom-middle-align">{{ transaction.fullName }}</td>
+
+                    <td class="custom-middle-align">
+                        <div class="btn-group">
+                            <button type="button" (click)="detail(transaction)"
+                                    class="btn btn-warning btn-sm"
+                                    ngbTooltip="{{ 'webappApp.transaction.detail.detail' | translate}}">
+                                <fa-icon icon="eye"></fa-icon>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div *ngIf="transactions&& transactions.length > 0">
+            <div class="row justify-content-center">
+                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+            </div>
+            <div class="row justify-content-center">
+                <ngb-pagination
+                    [collectionSize]="totalItems"
+                    [(page)]="ngbPaginationPage"
+                    [pageSize]="itemsPerPage"
+                    [maxSize]="5"
+                    [rotate]="true"
+                    [boundaryLinks]="true"
+                    (pageChange)="loadPage($event)"
+                ></ngb-pagination>
+            </div>
         </div>
     </div>
 </div>

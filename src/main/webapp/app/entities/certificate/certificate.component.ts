@@ -191,7 +191,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
   }
 
-  changePassword(certificate: ICertificate): void {
+  changePIN(certificate: ICertificate): void {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
