@@ -233,8 +233,26 @@ body {
   vertical-align: middle !important;
 }
 
+table.table-custom {
+  font-size: 14px;
+}
 table.table-custom th,
 table.table-custom td {
-  //padding: 0.8rem !important;
+  //padding: 0.5rem !important;
   border-top: none !important;
 }
+
+// rounded everything
+.card,
+input.form-control {
+  border-radius: 5px !important;
+}
+
+.btn {
+  border-radius: 5px;
+}
+
+.sidebar.toggled .nav-item .collapse .collapse-inner {
+  border-radius: 5px !important;
+}
+//end rouned
