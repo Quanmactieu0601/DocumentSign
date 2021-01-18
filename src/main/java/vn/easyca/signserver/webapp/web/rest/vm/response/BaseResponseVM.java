@@ -6,16 +6,24 @@ public class BaseResponseVM {
 
     public static final int STATUS_OK = 0, STATUS_ERROR = -1;
 
-    public static BaseResponseVM CreateNewErrorResponse(String msg) {
+    public static BaseResponseVM createNewErrorResponse(String msg) {
         return new BaseResponseVM(STATUS_ERROR, null, msg);
     }
 
-    public static BaseResponseVM CreateNewErrorResponse(ApplicationException ex) {
+    public static BaseResponseVM createNewErrorResponse(ApplicationException ex) {
         return new BaseResponseVM(ex.getCode(), null, ex.getMessage());
     }
 
-    public static BaseResponseVM CreateNewSuccessResponse(Object data) {
+    public static BaseResponseVM createNewSuccessResponse(Object data) {
         return new BaseResponseVM(STATUS_OK, data, null);
+    }
+
+    public static BaseResponseVM createNewSuccessResponse() {
+        return new BaseResponseVM(STATUS_OK, null, null);
+    }
+
+    public static BaseResponseVM createNewSuccessResponseWithMsg(String msg) {
+        return new BaseResponseVM(STATUS_OK, null, msg);
     }
 
     private int status;

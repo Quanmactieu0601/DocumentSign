@@ -1,27 +1,39 @@
 package vn.easyca.signserver.webapp.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.*;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
+import vn.easyca.signserver.webapp.utils.*;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.security.*;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -36,16 +48,27 @@ public class CertificateService {
     private final SignatureImageRepository signatureImageRepository;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final AuthenticatorTOTPService authenticatorTOTPService;
+    private final SystemConfigCachingService systemConfigCachingService;
+    private final SymmetricEncryptors symmetricService;
 
     private final UserRepository userRepository;
+    private final SignatureTemplateParserFactory signatureTemplateParserFactory;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService, UserRepository userRepository) {
+
+    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper,
+                              SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
+                              CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService,
+                              SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository,
+                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureImageRepository = signatureImageRepository;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.authenticatorTOTPService = authenticatorTOTPService;
+        this.systemConfigCachingService = systemConfigCachingService;
+        this.symmetricService = symmetricService;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.userRepository = userRepository;
     }
 
@@ -114,9 +137,7 @@ public class CertificateService {
             throw new ApplicationException("Certificate is not found");
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
-        if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-            throw new ApplicationException("Cannot init token");
-        }
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
         Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
         if (!signatureTemplateDTO.isPresent()) {
@@ -134,7 +155,8 @@ public class CertificateService {
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
-        String htmlContent = ParserUtils.getHtmlTemplateAndSignData(subjectDN, signatureTemplate, signatureImageData);
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
         return ParserUtils.convertHtmlContentToBase64(htmlContent);
     }
 
@@ -153,14 +175,71 @@ public class CertificateService {
             throw new ApplicationException(String.format("Certificate is not exist - serial: %s", serial));
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
-        if (!cryptoTokenProxy.getCryptoToken().isInitialized()) {
-            throw new ApplicationException("Pin is not correct");
-        }
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
         String urlQrCode = authenticatorTOTPService.getQRCodeFromEncryptedSecretKey(serial, certificateOptional.get().getSecretKey());
         try {
             return FileIOHelper.getBase64EncodedImage(urlQrCode);
         } catch (IOException e) {
             throw new ApplicationException("Can't convert URL to base64 image", e);
+        }
+    }
+
+    // TODO: Call this function to change P12 password
+    public void changePIN(String serial, String oldPin, String newPin, String otp) throws ApplicationException {
+        try {
+            if (StringUtils.isBlank(serial) || StringUtils.isBlank(oldPin) || StringUtils.isBlank(newPin)) {
+                throw new ApplicationException("Please enter required info (serial | old PIN | new PIN)");
+            } else if (oldPin.equals(newPin)) {
+                throw new ApplicationException("new PIN have to different old PIN");
+            }
+            SystemDbConfiguration dbConfiguration = systemConfigCachingService.getConfig();
+            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+            if (!certificateOptional.isPresent())
+                throw new ApplicationException("Certificate is not found");
+            CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, oldPin, otp);
+            cryptoTokenProxy.getCryptoToken().checkInitialized();
+            if (CertificateDTO.PKCS_11.equals(certificateDTO.getTokenType())) {
+                // TODO: change PIN HSM
+                certificateDTO.setEncryptedPin(symmetricService.encrypt(newPin));
+            } else {
+                KeyStore newKs = KeyStore.getInstance("PKCS12");
+                newKs.load(null, null);
+
+                KeyStore currentKs = cryptoTokenProxy.getCryptoToken().getKeyStore();
+                Enumeration<String> aliases = currentKs.aliases();
+
+                while (aliases.hasMoreElements()) {
+                    String alias = aliases.nextElement();
+                    Key privateKey = currentKs.getKey(alias, oldPin.toCharArray());
+                    java.security.cert.Certificate[] certificateChain = currentKs.getCertificateChain(alias);
+                    newKs.setKeyEntry(alias, privateKey, newPin.toCharArray(), certificateChain);
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                newKs.store(baos, newPin.toCharArray());
+                byte[] output = baos.toByteArray();
+                X509Certificate x509Certificate = (X509Certificate) newKs.getCertificate(certificateDTO.getAlias());
+
+                String base64Cert = CertUtils.encodeBase64X509(x509Certificate);
+
+                certificateDTO.setRawData(base64Cert);
+                TokenInfo tokenInfo = new TokenInfo();
+                tokenInfo.setData(Base64.getEncoder().encodeToString(output));
+                certificateDTO.setTokenInfo(tokenInfo);
+                if (dbConfiguration.getSaveTokenPassword())
+                    certificateDTO.setEncryptedPin(symmetricService.encrypt(newPin));
+            }
+            this.save(certificateDTO);
+        } catch (IOException e) {
+            throw new ApplicationException("IOException", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new ApplicationException("NoSuchAlgorithmException", e);
+        } catch (UnrecoverableKeyException e) {
+            throw new ApplicationException("UnrecoverableKeyException", e);
+        } catch (CertificateEncodingException e) {
+            throw new ApplicationException("CertificateEncodingException", e);
+        } catch (KeyStoreException | CertificateException e) {
+            throw new ApplicationException("KeyStoreException | CertificateException", e);
         }
     }
 }

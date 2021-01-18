@@ -21,3 +21,13 @@ Main page styles
     background-size: contain;
   }
 }
+
+.home-container .card {
+  height: 85px !important;
+  border: none;
+  background-color: #4b6987;
+}
+
+.home-container .align-items-center {
+  margin-top: 9px;
+}

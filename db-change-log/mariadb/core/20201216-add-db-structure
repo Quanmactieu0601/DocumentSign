@@ -19,7 +19,7 @@ create table authority_permission
 create table certificate
 (
     id                 bigint auto_increment,
-    alias              text              null,
+    alias              varchar(500)      null,
     last_update        varchar(255)      null,
     owner_id           varchar(255)      null,
     raw_data           text              null,
@@ -203,6 +203,15 @@ create table system_config
 
 alter table system_config
     add primary key (id);
+
+create unique index system_config_config_key_uindex
+	on system_config (config_key);
+
+--- init default config
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'SYMMETRIC_KEY', 'c2RzQHNpZ24yMDIw', null, true, 'STRING');
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'SAVE_TOKEN_PASSWORD', '0', null, true, 'BOOLEAN');
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'USE_OTP', '0', null, true, 'BOOLEAN');
+
 
 create table transaction_log
 (

@@ -23,7 +23,7 @@ public class CertificateMapper {
         certificateDTO.setId(entity.getId());
         certificateDTO.setOwnerId(entity.getOwnerId());
         certificateDTO.setRawData(entity.getRawData());
-        certificateDTO.setSerial(entity.getRawData());
+        certificateDTO.setSerial(entity.getSerial());
         certificateDTO.setSubjectInfo(entity.getSubjectInfo());
         certificateDTO.setTokenType(entity.getTokenType());
         certificateDTO.setTokenInfo(TokenInfo.createInstance(entity.getTokenInfo()));
@@ -39,7 +39,6 @@ public class CertificateMapper {
         return certificateDTO;
     }
 
-    // TODO: mapping TH này sẽ sai nếu là get object ra để update
     public Certificate map(CertificateDTO certificateDTO) {
         if (certificateDTO == null)
             return null;

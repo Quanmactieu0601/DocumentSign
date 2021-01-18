@@ -16,7 +16,7 @@
       "detail": {
         "title": "Lịch sử giao dịch"
       },
-      "Api": "Api",
+      "api": "Api",
       "triggerTime": "Thời gian kích hoạt",
       "status": "Trạng Thái",
       "message": "Thông điệp",
@@ -29,24 +29,24 @@
       "endDate": "Ngày kết thúc",
       "action": "Hành động",
       "extension": "Mở rộng",
-      "ALL": "Tất Cả",
+      "ALL": "Tất cả",
       "STATUS": {
-        "FAIL": "Thất Bại",
-        "SUCCESS": "Thành Công"
+        "FAIL": "Thất bại",
+        "SUCCESS": "Thành công"
       },
       "TYPE": {
-        "SYSTEM": "Hệ Thống",
-        "BUSINESS": "Nghiệp Vụ"
+        "SYSTEM": "Hệ thống",
+        "BUSINESS": "Nghiệp vụ"
       },
       "ACTION": {
-        "SIGN": "Kí Số",
+        "SIGN": "Kí số",
         "HASH": "Băm",
-        "VERIFY": "Xác Nhận",
-        "CREATE": "Tạo Mới",
-        "MODIFY": "Thay Đổi",
+        "VERIFY": "Xác nhận",
+        "CREATE": "Tạo mới",
+        "MODIFY": "Thay đổi",
         "DELETE": "Xóa",
-        "GET_INFO": "Lấy Thông Tin",
-        "LOGIN": "Đăng Nhập"
+        "GET_INFO": "Lấy thông tin",
+        "LOGIN": "Đăng nhập"
       },
       "EXTENSION": {
         "PDF": "PDF",
@@ -54,9 +54,9 @@
         "OOXML": "OOXML",
         "RAW": "RAW",
         "CSR": "CSR",
-        "CERT": "Chứng Thư Số",
+        "CERT": "Chứng thư số",
         "HASH": "HASH",
-        "NONE": "Không Xác Định"
+        "NONE": "Không xác định"
       }
     }
   }

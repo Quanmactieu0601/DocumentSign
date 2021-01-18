@@ -3,7 +3,6 @@ package vn.easyca.signserver.webapp.web.rest;
 import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
-import vn.easyca.signserver.webapp.web.rest.controller.UserJWTResource;
 import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

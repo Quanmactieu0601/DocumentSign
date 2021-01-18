@@ -20,6 +20,8 @@
       },
       "lastUpdate": "Last Update",
       "tokenType": "Token Type",
+      "action": "Action",
+      "info": "Info",
       "serial": "Serial",
       "ownerTaxcode": "Owner Taxcode",
       "ownerId": "Owner Id",
@@ -38,6 +40,32 @@
         "success": "Create QR code successfully",
         "error": "Create QR code failure",
         "guide": "Guide"
+      },
+      "changeCertPIN": {
+        "changePIN": "PIN",
+        "header": "Change PIN",
+        "currentPIN": "Current PIN",
+        "newPIN": {
+          "newPIN": "New PIN",
+          "minlength": "Your PIN is required to be at least 4 characters",
+          "maxlength": "Your PIN cannot be longer than 50 characters"
+        },
+        "confirmPIN": {
+          "confirmPIN": "Confirm PIN",
+          "minlength": "Your confirmation PIN is required to be at least 4 characters",
+          "maxlength": "Your confirmation PIN cannot be longer than 50 characters"
+        },
+        "save": "Save",
+        "cancel": "Cancel",
+        "placeholder": "Enter your PIN",
+        "OTP": "Enter your OTP",
+        "error": "PIN and its confirmation do not match!",
+        "success": "PIN changed successfully",
+        "required": {
+          "currentPIN": "Your PIN is required",
+          "newPIN": "Your new PIN is required",
+          "confirmPIN": "Your confirm PIN is required"
+        }
       }
     }
   }

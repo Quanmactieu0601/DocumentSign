@@ -28,7 +28,7 @@ public class CertificateEncryptionHelper {
 
     public CertificateDTO encryptCert(CertificateDTO certificateDTO) {
         String plaintData = certificateDTO.getTokenInfo() != null ? certificateDTO.getTokenInfo().getData() : null;
-        if (plaintData != null){
+        if (plaintData != null) {
             String encryptionData = null;
             try {
                 encryptionData = symmetricEncryptors.encrypt(plaintData);

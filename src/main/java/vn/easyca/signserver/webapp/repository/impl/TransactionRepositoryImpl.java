@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
@@ -39,6 +38,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime >= :startDate ");
             params.put("startDate", startDateConverted);
         }
+
         if (endDateConverted != null) {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
@@ -71,6 +71,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
         }
+
         if (actionEnum != null) {
             sqlBuilder.append("AND a.action = :action ");
             params.put("action", actionEnum);

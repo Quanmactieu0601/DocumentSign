@@ -1,0 +1,25 @@
+.content {
+  width: 400px;
+}
+
+.rounded-10 {
+  border-radius: 10px;
+  -webkit-box-shadow: 0 0 0.3rem 0 rgba(58, 59, 69, 0.15) !important;
+  box-shadow: 0 0 0.3rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.login-container {
+  background-color: #ffffff !important;
+  height: 100%;
+}
+
+.mg-top-100 {
+  margin-top: 100px;
+}
+
+#easysign-title {
+  margin-bottom: 1.5rem;
+  margin-top: -1rem;
+  font-weight: bold;
+  color: #37454f;
+}

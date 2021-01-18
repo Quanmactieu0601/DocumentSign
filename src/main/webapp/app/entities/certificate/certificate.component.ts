@@ -14,6 +14,9 @@ import { FormBuilder } from '@angular/forms';
 import { OtpComponent } from 'app/entities/certificate/otp/otp.component';
 import { SystemConfigService } from 'app/entities/system-config/system-config.service';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { AccountService } from 'app/core/auth/account.service';
+import { Authority } from 'app/shared/constants/authority.constants';
+import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -47,22 +50,12 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
     protected fb: FormBuilder,
-    protected systemConfigService: SystemConfigService
+    protected systemConfigService: SystemConfigService,
+    protected accountService: AccountService
   ) {}
 
   loadPage(page?: number, dontNavigate?: boolean): void {
     const pageToLoad: number = page || this.page || 1;
-
-    // this.certificateService
-    //   .query({
-    //     page: pageToLoad - 1,
-    //     size: this.itemsPerPage,
-    //     sort: this.sort(),
-    //   })
-    //   .subscribe(
-    //     (res: HttpResponse<ICertificate[]>) => this.onSuccess(res.body, res.headers, pageToLoad, !dontNavigate),
-    //     () => this.onError()
-    //   );
     this.searchCertificate(page);
   }
 
@@ -192,5 +185,15 @@ export class CertificateComponent implements OnInit, OnDestroy {
   showOTP(certificate: ICertificate): void {
     const modalRef = this.modalService.open(OtpComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+  }
+
+  isSuperAdmin(): boolean {
+    return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
+  }
+
+  changePassword(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }
 }

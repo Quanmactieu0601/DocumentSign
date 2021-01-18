@@ -1,14 +1,15 @@
-<div>
-    <div class="row">
-        <div class="col-md-4">
-            <span class="hipster img-fluid rounded"></span>
-        </div>
+<div class="card mb-3 searching">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-1">
+                <i id="error-icon" [ngClass]="icon + ' ' + color"></i>
+            </div>
 
-        <div class="col-md-8">
-            <h1 jhiTranslate="error.title">Error Page!</h1>
-
-            <div *ngIf="errorMessage">
-                <div class="alert alert-danger">{{ errorMessage }}</div>
+            <div class="col-md-11">
+                <h1>{{pageTitleMessage}}</h1>
+                <div *ngIf="errorMessage">
+                    <div class="alert alert-danger">{{ errorMessage }}</div>
+                </div>
             </div>
         </div>
     </div>

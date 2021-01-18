@@ -9,7 +9,7 @@
     },
     "messages": {
       "error": {
-        "authentication": "<strong>Đăng nhập thất bại!</strong> Bạn vui lòng kiểm tra thông tin đăng nhập và thử lại."
+        "authentication": "Đăng nhập thất bại! Bạn vui lòng kiểm tra thông tin đăng nhập và thử lại."
       }
     },
     "password": {

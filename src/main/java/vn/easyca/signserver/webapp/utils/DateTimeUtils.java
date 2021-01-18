@@ -19,6 +19,11 @@ public class DateTimeUtils {
         return formatter.parse(strDate);
     }
 
+    public static String format(Date date, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        return formatter.format(date);
+    }
+
     public static Date tryParse(String strDate, Date defaultVal) {
 
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
@@ -42,7 +47,6 @@ public class DateTimeUtils {
         return new SimpleDateFormat(format).format(new Date());
     }
 
-
     public static Instant convertToInstant(String date)  {
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
         Date dates = null;
@@ -54,6 +58,7 @@ public class DateTimeUtils {
         }
         return dates.toInstant();
     }
+
 
     public static LocalDateTime convertToLocalDateTime(String dateTime)  {
         if (QueryUtils.isNullOrEmptyProperty(dateTime)) {

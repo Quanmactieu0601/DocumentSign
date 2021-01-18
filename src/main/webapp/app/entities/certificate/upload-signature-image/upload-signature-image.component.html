@@ -1,0 +1,29 @@
+<div *ngIf="imageFileImport" class="progress">
+    <div
+        class="progress-bar progress-bar-info progress-bar-striped"
+        role="progressbar"
+        attr.aria-valuenow="{{ progress }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        [ngStyle]="{ width: progress + '%' }">
+        {{ progress }}%
+    </div>
+</div>
+
+
+
+<div style="padding-bottom: 10px">
+    <label class="btn btn-default lblUpload">
+        <label>Success File</label>
+        <input type="file" (change)="selectedSuccessFile($event)" (click)="onInputClick($event)" class="inputFile"/>
+    </label>
+
+    <label class="btn btn-default lblUpload">
+        <label>Image Files</label>
+        <input type="file" (change)="selectedImageFiles($event)" (click)="onInputClick($event)" class="inputFile" multiple />
+    </label>
+
+    <button class="btn btn-success" [disabled]="this.successFile == null || this.listImageFiles == null" (click)="upload()">
+        Upload
+    </button>
+</div>
