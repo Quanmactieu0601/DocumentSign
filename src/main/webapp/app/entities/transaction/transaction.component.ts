@@ -9,7 +9,7 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
-import { Method, Status, Type } from 'app/shared/constants/transaction.constants';
+import { Action, Status } from 'app/shared/constants/transaction.constants';
 import { DetailTransactionComponent } from 'app/entities/transaction/detail/detail-transaction.component';
 
 @Component({
@@ -41,9 +41,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
-  type = Type;
-  method = Method;
   status = Status;
+  actions = Action;
 
   constructor(
     protected transactionService: TransactionService,
@@ -55,7 +54,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ) {}
 
   loadPage(page?: number): void {
-    // const pageToLoad: number = page || this.page || 1;
     this.searchTransactions(page);
   }
 
@@ -100,21 +98,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
       sort: this.sort(),
       ...this.searchForm.value,
     };
-    if (fieldTransaction.api != null) {
-      fieldTransaction.api = fieldTransaction.api.trim();
-    }
-    if (fieldTransaction.message != null) {
-      fieldTransaction.message = fieldTransaction.message.trim();
-    }
-    if (fieldTransaction.data != null) {
-      fieldTransaction.data = fieldTransaction.data.trim();
-    }
-    if (fieldTransaction.host != null) {
-      fieldTransaction.host = fieldTransaction.host.trim();
-    }
-    if (fieldTransaction.fullName != null) {
-      fieldTransaction.fullName = fieldTransaction.fullName.trim();
-    }
+    fieldTransaction.fullName = fieldTransaction.fullName ? fieldTransaction.fullName.trim() : null;
+    fieldTransaction.action = fieldTransaction.action ? fieldTransaction.action.trim() : null;
     this.transactionService
       .findByTransaction(fieldTransaction)
       .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));

@@ -33,7 +33,6 @@
       "endDate": "Ngày kết thúc",
       "action": "Hành động",
       "extension": "Mở rộng",
-      "all": "tất cả",
       "STATUS": {
         "FAIL": "Thất bại",
         "SUCCESS": "Thành công"
@@ -52,17 +51,8 @@
         "GET_INFO": "Lấy thông tin",
         "LOGIN": "Đăng nhập"
       },
-      "EXTENSION": {
-        "PDF": "PDF",
-        "XML": "XML",
-        "OOXML": "OOXML",
-        "RAW": "RAW",
-        "CSR": "CSR",
-        "CERT": "Chứng thư số",
-        "HASH": "HASH",
-        "NONE": "Không xác định"
-      },
-      "search": "Tìm kiếm"
+      "search": "Tìm kiếm",
+      "properties": "Các thuộc tính"
     }
   }
 }

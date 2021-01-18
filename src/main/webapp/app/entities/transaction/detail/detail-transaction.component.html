@@ -4,32 +4,53 @@
 </div>
 
 <div class="modal-body">
+    <h5 jhiTranslate="webappApp.transaction.properties">Properties</h5>
     <div class="card">
         <div class="card-body">
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.api' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.api}}</div>
-            </div>
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.type' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.type}}</div>
-            </div>
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.method' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.method}}</div>
-            </div>
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.message' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.message}}</div>
-            </div>
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.host' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.host}}</div>
-            </div>
-            <div class="row mg-top-10">
-                <div class="col-md-3">{{'webappApp.transaction.data' | translate}}:</div>
-                <div class="col-md-9 font-weight-bold">{{transaction?.data}}</div>
-            </div>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" jhiTranslate="health.details.name">Name</th>
+                    <th scope="col" jhiTranslate="health.details.value">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.api' | translate}}</td>
+                    <td>{{ transaction?.api  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.type' | translate}}</td>
+                    <td>{{ transaction?.type  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.method' | translate}}</td>
+                    <td>{{ transaction?.method  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.message' | translate}}</td>
+                    <td>{{ transaction?.message  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.host' | translate}}</td>
+                    <td class="text-left">{{ transaction?.data  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.data' | translate}}</td>
+                    <td>{{ transaction?.data  }}</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

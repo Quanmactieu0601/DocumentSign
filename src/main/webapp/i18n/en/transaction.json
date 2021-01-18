@@ -33,10 +33,9 @@
       "endDate": "End Date",
       "action": "Action",
       "extension": "Extension",
-      "all": "all",
       "STATUS": {
-        "FAIL": "FAIL",
-        "SUCCESS": "SUCCESS"
+        "FAIL": "fail",
+        "SUCCESS": "success"
       },
       "TYPE": {
         "SYSTEM": "SYSTEM",
@@ -52,17 +51,8 @@
         "GET_INFO": "GET_INFO",
         "LOGIN": "LOGIN"
       },
-      "EXTENSION": {
-        "PDF": "PDF",
-        "XML": "XML",
-        "OOXML": "OOXML",
-        "RAW": "RAW",
-        "CSR": "CSR",
-        "CERT": "CERT",
-        "HASH": "HASH",
-        "NONE": "NONE"
-      },
-      "search": "Search"
+      "search": "Search",
+      "properties": "Properties"
     }
   }
 }

@@ -6,21 +6,17 @@
 <div class="card mb-3 searching">
     <div class="card-body">
         <form name="searchTransactions" [formGroup]="searchForm">
-            <div class="row row-cols-3">
+            <div class="row row-cols-5">
                 <div class="col">
                     <div class="form-group">
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.transaction.action">Action</span></label>
-                        <input type="text" class="form-control form-control-sm" name="action"
-                               formControlName="action">
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label class="form-control-label"><span
-                            jhiTranslate="webappApp.transaction.extension">Extension</span></label>
-                        <input type="text" class="form-control form-control-sm" name="extension"
-                               formControlName="extension">
+                        <select class="form-control form-control-sm" name="action" formControlName="action">
+                            <option [value]=null selected>--</option>
+                            <option jhiTranslate="webappApp.transaction.ACTION.{{name}}"
+                                    *ngFor="let name of actions"
+                                    [value]="name">{{name}}</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col">
@@ -28,9 +24,7 @@
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.transaction.status">Status</span></label>
                         <select class="form-control form-control-sm" name="status" formControlName="status">
-                            <option jhiTranslate="webappApp.transaction.all"
-                                    [value]=null selected>TẤT CẢ
-                            </option>
+                            <option [value]=null selected>--</option>
                             <option jhiTranslate="webappApp.transaction.STATUS.{{name}}"
                                     *ngFor="let name of status"
                                     [value]="name">{{name}}</option>
@@ -84,8 +78,7 @@
                     routerLink="/home/transaction/transaction-report"
                     [ngStyle]="{  'float': 'right',
                              'margin-right': '40px',
-                             'margin-bottom':'15px'}"
-            >
+                             'margin-bottom':'15px'}">
                 <fa-icon icon="file-excel"></fa-icon>
                 <span jhiTranslate="webappApp.transaction.transactionReport.transactionReport"></span>
             </button>
@@ -126,24 +119,32 @@
                 <tr
                     *ngFor="let transaction of transactions; trackBy: trackId">
                     <td class="custom-middle-align">
-                        <span *ngIf="transaction.action == 'SIGN'" class="badge badge-success" jhiTranslate="webappApp.transaction.ACTION.SIGN"></span>
-                        <span *ngIf="transaction.action == 'HASH'" class="badge badge-primary" jhiTranslate="webappApp.transaction.ACTION.HASH"></span>
-                        <span *ngIf="transaction.action == 'VERIFY'" class="badge badge-secondary" jhiTranslate="webappApp.transaction.ACTION.VERIFY"></span>
-                        <span *ngIf="transaction.action == 'CREATE'" class="badge badge-warning" jhiTranslate="webappApp.transaction.ACTION.CREATE"></span>
-                        <span *ngIf="transaction.action == 'MODIFY'" class="badge badge-info" jhiTranslate="webappApp.transaction.ACTION.MODIFY"></span>
-                        <span *ngIf="transaction.action == 'DELETE'" class="badge badge-danger" jhiTranslate="webappApp.transaction.ACTION.DELETE"></span>
-                        <span *ngIf="transaction.action == 'GET_INFO'" class="badge badge-dark" jhiTranslate="webappApp.transaction.ACTION.GET_INFO"></span>
-                        <span *ngIf="transaction.action == 'LOGIN'" class="badge badge-light" jhiTranslate="webappApp.transaction.ACTION.LOGIN"></span>
+                        <span *ngIf="transaction.action == 'SIGN'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.SIGN"></span>
+                        <span *ngIf="transaction.action == 'HASH'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.HASH"></span>
+                        <span *ngIf="transaction.action == 'VERIFY'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.VERIFY"></span>
+                        <span *ngIf="transaction.action == 'CREATE'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.CREATE"></span>
+                        <span *ngIf="transaction.action == 'MODIFY'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.MODIFY"></span>
+                        <span *ngIf="transaction.action == 'DELETE'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.DELETE"></span>
+                        <span *ngIf="transaction.action == 'GET_INFO'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.GET_INFO"></span>
+                        <span *ngIf="transaction.action == 'LOGIN'" class="badge badge-success"
+                              jhiTranslate="webappApp.transaction.ACTION.LOGIN"></span>
                     </td>
                     <td class="custom-middle-align">
-                    <span *ngIf="transaction.extension == 'PDF'" class="badge badge-success" jhiTranslate="webappApp.transaction.EXTENSION.SIGN"></span>
-                    <span *ngIf="transaction.extension == 'XML'" class="badge badge-primary" jhiTranslate="webappApp.transaction.EXTENSION.XML"></span>
-                    <span *ngIf="transaction.extension == 'OOXML'" class="badge badge-secondary" jhiTranslate="webappApp.transaction.EXTENSION.OOXML"></span>
-                    <span *ngIf="transaction.extension == 'RAW'" class="badge badge-warning" jhiTranslate="webappApp.transaction.EXTENSION.RAW"></span>
-                    <span *ngIf="transaction.extension == 'CSR'" class="badge badge-info" jhiTranslate="webappApp.transaction.EXTENSION.CSR"></span>
-                    <span *ngIf="transaction.extension == 'CERT'" class="badge badge-danger" jhiTranslate="webappApp.transaction.EXTENSION.CERT"></span>
-                    <span *ngIf="transaction.extension == 'HASH'" class="badge badge-dark" jhiTranslate="webappApp.transaction.EXTENSION.HASH"></span>
-                    <span *ngIf="transaction.extension == 'NONE'" class="badge badge-light" jhiTranslate="webappApp.transaction.EXTENSION.NONE"></span>
+                        <span *ngIf="transaction.extension == 'PDF'" class="badge"
+                              style="background-color: #dda20a">PDF</span>
+                        <span *ngIf="transaction.extension == 'XML'" class="badge badge-primary">XML</span>
+                        <span *ngIf="transaction.extension == 'OOXML'" class="badge badge-secondary">OOXML</span>
+                        <span *ngIf="transaction.extension == 'RAW'" class="badge badge-warning">RAW</span>
+                        <span *ngIf="transaction.extension == 'CSR'" class="badge badge-info">CSR</span>
+                        <span *ngIf="transaction.extension == 'CERT'" class="badge" style="background-color: #0bd59d">CERT</span>
+                        <span *ngIf="transaction.extension == 'HASH'" class="badge badge-dark">HASH</span>
                     </td>
                     <td class="custom-middle-align">{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                     <td class="custom-middle-align">
@@ -154,8 +155,7 @@
 
                     <td class="custom-middle-align">
                         <div class="btn-group">
-                            <button type="button" (click)="detail(transaction)"
-                                    class="btn btn-warning btn-sm"
+                            <button type="button" (click)="detail(transaction)" class="btn btn-warning btn-sm"
                                     ngbTooltip="{{ 'webappApp.transaction.detail.detail' | translate}}">
                                 <fa-icon icon="eye"></fa-icon>
                             </button>
@@ -165,7 +165,7 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="transactions&& transactions.length > 0">
+        <div *ngIf="transactions && transactions.length > 0">
             <div class="row justify-content-center">
                 <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
             </div>
