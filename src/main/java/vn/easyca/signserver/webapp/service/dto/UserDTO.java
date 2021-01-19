@@ -77,6 +77,8 @@ public class UserDTO {
         // Empty constructor needed for Jackson.
     }
 
+    private String currentPassword;
+
     public UserDTO(UserEntity userEntity) {
         this.id = userEntity.getId();
         this.login = userEntity.getLogin();
@@ -103,6 +105,9 @@ public class UserDTO {
             .collect(Collectors.toSet());
     }
 
+    public String getCurrentPassword() { return currentPassword; }
+
+    public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
     public String getPassword() {
         return password;
     }

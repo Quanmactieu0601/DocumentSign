@@ -45,6 +45,8 @@ import {
   faCogs,
   faExclamationCircle,
   faCheckCircle,
+  faCertificate,
+  faFileArchive,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -94,4 +96,6 @@ export const fontAwesomeIcons = [
   faCogs,
   faExclamationCircle,
   faCheckCircle,
+  faCertificate,
+  faFileArchive,
 ];
