@@ -17,8 +17,8 @@ export class TransactionReportComponent implements OnInit {
     endDate: '',
     type: '',
   });
-  totalsuccess = '';
-  totalfail = '';
+  totalSuccess = '';
+  totalFail = '';
   public pieChartOptions: ChartOptions = {
     responsive: true,
     legend: {
@@ -89,9 +89,9 @@ export class TransactionReportComponent implements OnInit {
     };
     this.show = true;
     this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe((res: HttpResponse<any>) => {
-      this.totalsuccess = res.body.TotalSuccess;
-      this.totalfail = res.body.TotalFail;
-      this.pieChartData = [parseInt(this.totalfail, 10), parseInt(this.totalsuccess, 10)];
+      this.totalSuccess = res.body.TotalSuccess;
+      this.totalFail = res.body.TotalFail;
+      this.pieChartData = [parseInt(this.totalFail, 10), parseInt(this.totalSuccess, 10)];
     });
   }
 }
