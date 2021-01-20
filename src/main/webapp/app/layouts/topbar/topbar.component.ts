@@ -49,6 +49,13 @@ export class TopbarComponent implements OnInit {
     return this.languageService.getCurrentLanguage();
   }
 
+  getCurrentLoggedAccount(): string | undefined {
+    if (this.currentAccount?.firstName && this.currentAccount?.lastName) {
+      return this.currentAccount?.firstName + ' ' + this.currentAccount?.lastName;
+    }
+    return this.currentAccount?.login;
+  }
+
   logout(): void {
     this.loginService.logout();
     this.router.navigate(['/login']);
