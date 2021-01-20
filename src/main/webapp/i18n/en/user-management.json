@@ -51,6 +51,7 @@
     "createdDate": "Created date",
     "lastModifiedBy": "Modified by",
     "lastModifiedDate": "Modified date",
+    "chooseFile": "Choose File",
     "alert": {
       "success": {
         "csrExported": "Export CSR successfully",

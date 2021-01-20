@@ -256,3 +256,14 @@ input.form-control {
   border-radius: 5px !important;
 }
 //end rouned
+
+.modal-header {
+  padding: 0.5rem 0.5rem !important;
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+.modal-title .title-custom {
+  font-weight: bold;
+}
+.modal-footer.footer-custom {
+  padding: 0.5rem 0.5rem !important;
+}

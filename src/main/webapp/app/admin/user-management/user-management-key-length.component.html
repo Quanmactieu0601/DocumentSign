@@ -1,6 +1,6 @@
 <form (ngSubmit)="saveAndGenCSR()">
   <div class="modal-header">
-    <h4 class="modal-title" jhiTranslate="entity.action.keyLength">Choose Key</h4>
+      <h6 class="modal-title" ><span class="title-custom" jhiTranslate="entity.action.keyLength">Choose Key</span></h6>
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
   </div>
 
@@ -13,12 +13,12 @@
       </div>
     </label>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+  <div class="modal-footer footer-custom">
+    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" (click)="cancel()">
       <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
     </button>
 
-    <button type="submit" class="btn btn-primary">
+    <button type="submit" class="btn btn-primary btn-sm">
       <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
     </button>
   </div>

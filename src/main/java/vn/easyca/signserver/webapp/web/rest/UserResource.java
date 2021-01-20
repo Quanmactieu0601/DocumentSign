@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
@@ -43,6 +44,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URI;
@@ -121,10 +123,10 @@ public class UserResource extends BaseResource {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
-        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
-                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
-            throw new EmailAlreadyUsedException();
+//        } else if (userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).isPresent()) {
+//            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
+//                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
+//            throw new EmailAlreadyUsedException();
         } else {
             UserEntity newUserEntity = userApplicationService.createUser(userDTO);
             mailService.sendCreationEmail(newUserEntity);
@@ -147,25 +149,14 @@ public class UserResource extends BaseResource {
             }
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.OK.value(), null, null));
-        } catch (IOException e) {
+        } catch (ApplicationException e) {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
-        } catch (UsernameAlreadyUsedException usernameAlreadyUsedException) {
-            message = usernameAlreadyUsedException.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, usernameAlreadyUsedException.getMessage()));
-        } catch (vn.easyca.signserver.webapp.service.error.EmailAlreadyUsedException emailAlreadyUsedException) {
-            message = emailAlreadyUsedException.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, emailAlreadyUsedException.getMessage()));
-        } catch (RequiredColumnNotFoundException requiredColumnNotFoundException) {
-            message = requiredColumnNotFoundException.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, requiredColumnNotFoundException.getMessage()));
-        } catch (InvalidCountryColumnLength invalidCountryColumnLength) {
-            message = invalidCountryColumnLength.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, invalidCountryColumnLength.getMessage()));
-        } catch (InfoFromCNToCountryNotFoundException infoFromCNToCountryNotFoundException) {
-            message = infoFromCNToCountryNotFoundException.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.BAD_REQUEST.value(), null, infoFromCNToCountryNotFoundException.getMessage()));
-        } finally {
+        } catch (Exception e){
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null,e.getMessage()));
+        }
+         finally {
             asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
@@ -201,7 +192,7 @@ public class UserResource extends BaseResource {
             if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
                 asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
                     TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
-                throw new CurrentPasswordNotMatchException();
+                throw new BadRequestAlertException("Current Password does not match","user","currentPassNotMatch");
             }
         }
 
