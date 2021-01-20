@@ -1,0 +1,27 @@
+{
+  "webappApp": {
+    "otpHistory": {
+      "home": {
+        "title": "Otp Histories",
+        "createLabel": "Thêm mới một Otp History",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Otp History",
+        "notFound": "No Otp Histories found"
+      },
+      "created": "Một Otp History mới được tạo với định danh {{ param }}",
+      "updated": "Một Otp History cập nhật với định danh {{ param }}",
+      "deleted": "Một Otp History đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Otp History {{ id }}?"
+      },
+      "detail": {
+        "title": "Otp History"
+      },
+      "userId": "User Id",
+      "comId": "Com Id",
+      "secretKey": "Secret Key",
+      "otp": "Otp",
+      "actionTime": "Action Time",
+      "expireTime": "Expire Time"
+    }
+  }
+}

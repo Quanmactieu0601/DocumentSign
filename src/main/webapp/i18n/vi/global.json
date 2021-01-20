@@ -11,6 +11,7 @@
         "transaction": "Giao dịch hệ thống",
         "systemConfig": "Cấu hình hệ thống",
         "report": "Thống kê báo cáo",
+        "otpHistory": "Otp History",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

@@ -1,0 +1,70 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-otp-history-heading" jhiTranslate="webappApp.otpHistory.home.createOrEditLabel">Create or edit a Otp History</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.userId" for="field_userId">User Id</label>
+                    <input type="number" class="form-control" name="userId" id="field_userId"
+                           formControlName="userId"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.comId" for="field_comId">Com Id</label>
+                    <input type="number" class="form-control" name="comId" id="field_comId"
+                           formControlName="comId"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.secretKey" for="field_secretKey">Secret Key</label>
+                    <input type="text" class="form-control" name="secretKey" id="field_secretKey"
+                           formControlName="secretKey"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.otp" for="field_otp">Otp</label>
+                    <input type="text" class="form-control" name="otp" id="field_otp"
+                           formControlName="otp"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.actionTime" for="field_actionTime">Action Time</label>
+                    <div class="input-group">
+                        <input id="field_actionTime" type="text" class="form-control" name="actionTime" ngbDatepicker #actionTimeDp="ngbDatepicker" formControlName="actionTime"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="actionTimeDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.otpHistory.expireTime" for="field_expireTime">Expire Time</label>
+                    <div class="input-group">
+                        <input id="field_expireTime" type="text" class="form-control" name="expireTime" ngbDatepicker #expireTimeDp="ngbDatepicker" formControlName="expireTime"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="expireTimeDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
