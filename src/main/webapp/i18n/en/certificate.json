@@ -18,6 +18,7 @@
       "detail": {
         "title": "Certificate"
       },
+      "activeStatus": "Status",
       "lastUpdate": "Last Update",
       "tokenType": "Token Type",
       "action": "Action",

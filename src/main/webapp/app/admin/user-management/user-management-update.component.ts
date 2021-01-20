@@ -6,6 +6,7 @@ import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ReturnStatement } from '@angular/compiler';
 
 @Component({
   selector: 'jhi-user-mgmt-update',
@@ -18,6 +19,7 @@ export class UserManagementUpdateComponent implements OnInit {
   isSaving = false;
   password: any;
   confirmPassword: any;
+  isChangePassword = false;
   editForm = this.fb.group({
     id: [],
     login: [
@@ -42,8 +44,9 @@ export class UserManagementUpdateComponent implements OnInit {
     activated: [],
     langKey: [],
     authorities: [],
-    password: [],
-    confirmPassword: [],
+    currentPassword: ['', [Validators.minLength(5), Validators.maxLength(50)]],
+    password: ['', [Validators.minLength(5), Validators.maxLength(50)]],
+    confirmPassword: ['', [Validators.minLength(5), Validators.maxLength(50)]],
   });
 
   constructor(
@@ -67,6 +70,11 @@ export class UserManagementUpdateComponent implements OnInit {
     this.userService.authorities().subscribe(authorities => {
       this.authorities = authorities;
     });
+    this.setCheckBoxChangePassword();
+  }
+
+  setCheckBoxChangePassword(): void {
+    this.isChangePassword = this.user.id === undefined ? true : false;
   }
 
   previousState(): void {
@@ -87,10 +95,12 @@ export class UserManagementUpdateComponent implements OnInit {
       this.toastrService.error(this.translateService.instant('userManagement.updated-err'));
       this.onSaveError();
     } else if (this.user.id !== undefined) {
-      this.userService.update(this.user).subscribe(
-        () => this.onSaveSuccess(),
-        () => this.onSaveError()
-      );
+      if (this.updatePass()) {
+        this.userService.update(this.user).subscribe(
+          () => this.onSaveSuccess(),
+          () => this.onSaveError()
+        );
+      }
     } else {
       if (this.updatePass()) {
         this.userService.create(this.user).subscribe(
@@ -132,6 +142,7 @@ export class UserManagementUpdateComponent implements OnInit {
     }
     return false;
   }
+
   private updateUser(user: User): void {
     user.login = this.editForm.get(['login'])!.value;
     user.firstName = this.editForm.get(['firstName'])!.value;
@@ -145,18 +156,45 @@ export class UserManagementUpdateComponent implements OnInit {
     user.country = this.editForm.get(['country'])!.value;
     user.activated = this.editForm.get(['activated'])!.value;
     user.langKey = this.editForm.get(['langKey'])!.value;
-    user.authorities = this.editForm.get(['authorities'])!.value;
+    user.authorities = this.getListCheckedAuthorities();
     user.phone = this.editForm.get(['phone'])!.value;
     user.password = this.editForm.get(['password'])!.value;
+    user.currentPassword = this.editForm.get(['currentPassword'])!.value;
+  }
+
+  private getListCheckedAuthorities(): string[] {
+    const listCheckedAuthorities: string[] = [];
+    const elements = document.getElementsByName('checkboxElement');
+    elements.forEach((inputRow: any) => {
+      if (inputRow.checked) listCheckedAuthorities.push(inputRow.value);
+    });
+    return listCheckedAuthorities;
   }
 
   private onSaveSuccess(): void {
     this.isSaving = false;
-    this.toastrService.success(this.translateService.instant('userManagement.updated'));
+    this.toastrService.success(this.translateService.instant('userManagement.created'));
     this.previousState();
   }
 
   private onSaveError(): void {
     this.isSaving = false;
+  }
+
+  public isChecked(authority: any): boolean {
+    const check = this.user.authorities?.includes(authority);
+    return check === undefined ? false : check === false ? false : true;
+  }
+
+  changeSelect(row: any): void {
+    // row.target.checked? this.isChangePassword = true : this.isChangePassword = false;
+    if (row.target.checked) {
+      this.isChangePassword = true;
+    } else {
+      this.isChangePassword = false;
+      this.editForm.controls['currentPassword'].setValue('');
+      this.editForm.controls['password'].setValue('');
+      this.editForm.controls['confirmPassword'].setValue('');
+    }
   }
 }

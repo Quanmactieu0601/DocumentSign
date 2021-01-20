@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import com.google.common.base.Strings;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
@@ -287,7 +288,7 @@ public class UserApplicationService {
         log.debug("Created Information for User: {}", newUserEntity);
         return newUserEntity;
     }
-
+    
     /**
      * Update all information for a specific user, and return the modified user.
      *
@@ -301,6 +302,9 @@ public class UserApplicationService {
             .map(Optional::get)
             .map(user -> {
                 this.clearUserCaches(user);
+                if (!Strings.isNullOrEmpty(userDTO.getPassword())) {
+                    user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+                }
                 user.setLogin(userDTO.getLogin().toLowerCase());
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());

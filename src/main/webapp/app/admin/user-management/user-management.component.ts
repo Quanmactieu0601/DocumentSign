@@ -22,6 +22,7 @@ import { UserManagementKeyLengthComponent } from './user-management-key-length.c
 @Component({
   selector: 'jhi-user-mgmt',
   templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit, OnDestroy {
   userSearch = this.fb.group({

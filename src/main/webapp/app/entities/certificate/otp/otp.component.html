@@ -19,16 +19,16 @@
     <div class="row mg-top-10">
         <form #f="ngForm" class="otp-form">
             <div class="col-md-7">
-                <input required="required" class="form-control" type="text" [(ngModel)]="pin" name="pin"
+                <input required="required" class="form-control form-control-sm" type="text" [(ngModel)]="pin" name="pin"
                        [placeholder]="'webappApp.certificate.otp.placeholder' | translate">
             </div>
             <div class="col-md-3 rm-pd-left">
-                <button type=submit class="btn btn-success width-full" (click)="genOtp()" [disabled]="!f.form.valid">
+                <button type=submit class="btn btn-success width-full btn-sm" (click)="genOtp()" [disabled]="!f.form.valid">
                     <fa-icon icon="qrcode"></fa-icon>
                     {{'webappApp.certificate.otp.button' | translate}}</button>
             </div>
             <div class="col-md-2 rm-pd-left">
-                <button type=submit class="btn btn-warning width-full" [title]="'webappApp.certificate.otp.guide' | translate" (click)="showGuide()">
+                <button type=submit class="btn btn-warning width-full btn-sm" [title]="'webappApp.certificate.otp.guide' | translate" (click)="showGuide()">
                     <fa-icon icon="info-circle"></fa-icon></button>
             </div>
         </form>
