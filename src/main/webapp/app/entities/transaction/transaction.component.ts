@@ -15,6 +15,7 @@ import { DetailTransactionComponent } from 'app/entities/transaction/detail/deta
 @Component({
   selector: 'jhi-transaction',
   templateUrl: './transaction.component.html',
+  styleUrls: ['./transaction.component.scss'],
 })
 export class TransactionComponent implements OnInit, OnDestroy {
   transactions: ITransaction[] | null = null;
@@ -141,5 +142,37 @@ export class TransactionComponent implements OnInit, OnDestroy {
   detail(transaction: ITransaction): void {
     const modalRef = this.modalService.open(DetailTransactionComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.transaction = transaction;
+  }
+
+  transform(action: string | undefined): string {
+    switch (action) {
+      case 'RAW': {
+        return 'ext-raw';
+      }
+      case 'PDF': {
+        return 'ext-pdf';
+      }
+      case 'HASH': {
+        return 'ext-hash';
+      }
+      case 'XML': {
+        return 'ext-xml';
+      }
+      case 'OOXML': {
+        return 'ext-ooml';
+      }
+      case 'CSR': {
+        return 'ext-csr';
+      }
+      case 'CERT': {
+        return 'ext-cert';
+      }
+      case 'NONE': {
+        return 'ext-none';
+      }
+      default: {
+        return '';
+      }
+    }
   }
 }

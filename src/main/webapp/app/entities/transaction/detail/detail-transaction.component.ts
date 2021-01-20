@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ICertificate } from 'app/shared/model/certificate.model';
 import { ITransaction } from 'app/shared/model/transaction.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
