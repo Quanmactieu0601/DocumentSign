@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import com.google.common.base.Strings;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -19,6 +21,7 @@ import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
+import vn.easyca.signserver.webapp.web.rest.errors.CurrentPasswordNotMatchException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
 import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
 
@@ -81,13 +84,14 @@ public class UserResource extends BaseResource {
     private final UserApplicationService userApplicationService;
 
     private final UserRepository userRepository;
-
+    private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final AsyncTransactionService asyncTransactionService;
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, MailService mailService, AsyncTransactionService asyncTransactionService) {
+    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, AsyncTransactionService asyncTransactionService) {
         this.userApplicationService = userApplicationService;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
         this.asyncTransactionService = asyncTransactionService;
     }
@@ -185,12 +189,22 @@ public class UserResource extends BaseResource {
                 TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
             throw new EmailAlreadyUsedException();
         }
+
         existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
             asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
                 TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
             throw new LoginAlreadyUsedException();
         }
+
+        if (!Strings.isNullOrEmpty(userDTO.getCurrentPassword())) {
+            if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
+                asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                    TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
+                throw new CurrentPasswordNotMatchException();
+            }
+        }
+
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
