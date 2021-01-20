@@ -44,7 +44,7 @@ export class TransactionService {
   }
 
   queryTransaction(startDate: string, endDate: string, type: string): Observable<any> {
-    return this.http.get<any>(`${this.resourceUrl + '/transaction-report'}`, {
+    return this.http.get<any>(`${this.resourceUrl + '/report'}`, {
       params: {
         startDate,
         endDate,

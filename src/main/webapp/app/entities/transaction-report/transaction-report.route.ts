@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
-import { TransactionReportComponent } from 'app/entities/transaction-report/transaction-report.component';
+import { Routes } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class TransactionReportRoute {}

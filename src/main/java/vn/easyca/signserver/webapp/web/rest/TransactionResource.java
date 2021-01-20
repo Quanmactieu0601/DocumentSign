@@ -143,7 +143,7 @@ public class TransactionResource {
      * @param startDate, enddate, type from transaction
      * @return the total request success and totals request fail .
      */
-    @GetMapping("/transactions/transaction-report")
+    @GetMapping("/transactions/report")
     public ResponseEntity<Map<String, BigInteger>> getAllTransactionBetweenDate(@RequestParam("startDate") String startDate,
                                                                                 @RequestParam("endDate") String endDate,
                                                                                 @RequestParam("type") String type) {

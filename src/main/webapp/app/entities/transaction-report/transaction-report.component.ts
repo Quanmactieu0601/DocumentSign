@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ChartType, ChartOptions } from 'chart.js';
+import { ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { HttpResponse } from '@angular/common/http';
@@ -54,8 +54,7 @@ export class TransactionReportComponent implements OnInit {
     const hours = ('0' + dateTime.getHours()).slice(-2);
     const minutes = ('0' + dateTime.getMinutes()).slice(-2);
     const seconds = ('0' + dateTime.getSeconds()).slice(-2);
-    const time = year + month + date + ' ' + hours + minutes + seconds;
-    return time;
+    return year + month + date + ' ' + hours + minutes + seconds;
   }
 
   ExportDPF(): void {
@@ -65,7 +64,7 @@ export class TransactionReportComponent implements OnInit {
       type: this.userSearch.get(['type'])!.value,
     };
     this.transactionService.exportPDFfromjasper(dataExport.startDate, dataExport.endDate, dataExport.type).subscribe(res => {
-      const blob = new Blob([res], { type: 'application/pdf' });
+      // const blob = new Blob([res], { type: 'application/pdf' });
       const downloadURL = window.URL.createObjectURL(res);
       const link = document.createElement('a');
       link.href = downloadURL;
