@@ -29,13 +29,15 @@
       "KEYS": {
         "SAVE_TOKEN_PASSWORD": "Lưu mật khẩu token",
         "USE_OTP": "Dùng OTP",
-        "SYMMETRIC_KEY": "Khóa đối xứng"
+        "SYMMETRIC_KEY": "Khóa đối xứng",
+        "OTP_LIFE_TIME_SECOND": "Lifetime của OTP"
       },
       "DATATYPES": {
         "STRING": "Chuỗi ký tự",
         "NUMERIC": "Số",
         "BOOLEAN": "Đúng/sai"
-      }
+      },
+      "Action": "Hành động"
     }
   }
 }

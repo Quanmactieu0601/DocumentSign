@@ -1,111 +1,138 @@
-<div class="card mb-3 searching">
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page"><span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
+    </li>
+</ol>
+
+<div class="card mb-1">
     <div class="card-body">
-        <h2 id="page-heading">
-            <span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
-
-
-            <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config"
-                    [routerLink]="['/system-config/new']">
-                <fa-icon icon="plus"></fa-icon>
-                <span jhiTranslate="webappApp.systemConfig.home.createLabel">
-                    Create a new System Config
-                </span>
-            </button>
-        </h2>
-
-        <jhi-alert-error></jhi-alert-error>
-
-        <jhi-alert></jhi-alert>
-
-        <div class="alert alert-warning" id="no-result" *ngIf="systemConfigs?.length === 0">
-            <span jhiTranslate="webappApp.systemConfig.home.notFound">No systemConfigs found</span>
-        </div>
-
-        <div class="table-responsive" id="entities" *ngIf="systemConfigs && systemConfigs.length > 0">
-            <table class="table table-striped" aria-describedby="page-heading">
-                <thead>
-                <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="comId"><span jhiTranslate="webappApp.systemConfig.comId">Com Id</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="key"><span jhiTranslate="webappApp.systemConfig.key">Key</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="value"><span jhiTranslate="webappApp.systemConfig.value">Value</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="description"><span jhiTranslate="webappApp.systemConfig.description">Description</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="dataType"><span
-                        jhiTranslate="webappApp.systemConfig.dataType">Data Type</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col" jhiSortBy="activated"><span jhiTranslate="webappApp.systemConfig.activated">Activated</span>
-                        <fa-icon icon="sort"></fa-icon>
-                    </th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let systemConfig of systemConfigs ;trackBy: trackId">
-                    <td><a [routerLink]="['/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a></td>
-                    <td>{{ systemConfig.comId }}</td>
-                    <td jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</td>
-                    <td>
-                        <div [ngSwitch]="systemConfig.value">
-                            <div *ngSwitchCase="0">
-                                <input type="checkbox" disabled="disabled" style="zoom: 2.0"  >
-                            </div>
-                            <div *ngSwitchCase="1">
-                                <input type="checkbox" disabled="disabled" checked="checked" style="zoom: 2.0">
-                            </div>
-                            <div *ngSwitchDefault> {{systemConfig.value}} </div>
-                        </div>
-                    </td>
-                    <td>{{ systemConfig.description }}</td>
-                    <td jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</td>
-                    <td>{{ systemConfig.activated }}</td>
-                    <td class="text-right">
-                        <div class="btn-group">
-                            <button type="submit"
-                                    [routerLink]="['/system-config', systemConfig.id, 'view']"
-                                    class="btn btn-info btn-sm">
-                                <fa-icon icon="eye"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
-                            </button>
-
-                            <button type="submit"
-                                    [routerLink]="['/system-config', systemConfig.id, 'edit']"
-                                    class="btn btn-primary btn-sm">
-                                <fa-icon icon="pencil-alt"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
-                            </button>
-
-                            <button type="submit" (click)="delete(systemConfig)"
-                                    class="btn btn-danger btn-sm">
-                                <fa-icon icon="times"></fa-icon>
-                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div *ngIf="systemConfigs && systemConfigs.length > 0">
-            <div class="row justify-content-center">
-                <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+        <div class="list-header">
+            <div class="left">
+                <i class="fa fa-list-ul"></i> <span jhiTranslate="webappApp.systemConfig.home.title">System Configs</span>
+            </div>
+            <div class="right">
+                <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-system-config btn-sm"
+                        [routerLink]="['/home/system-config/new']">
+                    <fa-icon icon="plus"></fa-icon>
+                    <span jhiTranslate="webappApp.systemConfig.home.createLabel">
+                        Create a new System Config
+                    </span>
+                </button>
             </div>
 
-            <div class="row justify-content-center">
-                <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage"
-                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
-                                (pageChange)="loadPage($event)"></ngb-pagination>
+            <jhi-alert-error></jhi-alert-error>
+
+            <jhi-alert></jhi-alert>
+
+            <div class="alert alert-warning" id="no-result" *ngIf="systemConfigs?.length === 0">
+                <span jhiTranslate="webappApp.systemConfig.home.notFound">No systemConfigs found</span>
+            </div>
+
+            <div class="card table-responsive" id="entities" *ngIf="systemConfigs && systemConfigs.length > 0">
+                <table class="table table-striped table-custom" aria-describedby="page-heading">
+                    <thead>
+                    <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
+<!--                        <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>-->
+<!--                            <fa-icon icon="sort"></fa-icon>-->
+<!--                        </th>-->
+                        <th scope="col" jhiSortBy="comId" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.comId">Com Id</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="key" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.key">Key</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="value" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.value">Value</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="description" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.description">Description</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="dataType" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.dataType">Data Type</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" jhiSortBy="activated" class="custom-middle-align"><span
+                            jhiTranslate="webappApp.systemConfig.activated">Activated</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
+                        <th scope="col" class="custom-middle-align"><span jhiTranslate="webappApp.systemConfig.Action">Action</span>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let systemConfig of systemConfigs ;trackBy: trackId">
+<!--                        <td class="custom-middle-align"><a-->
+<!--                            [routerLink]="['/home/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a>-->
+<!--                        </td>-->
+                        <td class="custom-middle-align">{{ systemConfig.comId }}</td>
+                        <td class="custom-middle-align"><span class="badge badge-info"
+                                                              jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</span>
+                        </td>
+                        <td class="custom-middle-align">
+                            <!--                        <div [ngSwitch]="systemConfig.value">-->
+                            <!--                            <div *ngSwitchCase="0">-->
+                            <!--                                <input type="checkbox" disabled="disabled" style="zoom: 2.0"  >-->
+                            <!--                            </div>-->
+                            <!--                            <div *ngSwitchCase="1">-->
+                            <!--                                <input type="checkbox" disabled="disabled" checked="checked" style="zoom: 2.0">-->
+                            <!--                            </div>-->
+                            <!--                            <div *ngSwitchDefault> {{systemConfig.value}} </div>-->
+                            <!--                        </div>-->
+                            <fa-icon icon="check-circle" *ngIf="systemConfig.value == '1'" class="green"></fa-icon>
+                            <fa-icon icon="ban" *ngIf="systemConfig.value == '0'" class="red"></fa-icon>
+                            <div
+                                *ngIf="systemConfig.value != '0' && systemConfig.value != '1'">{{systemConfig.value}}</div>
+                        </td>
+                        <td class="custom-middle-align">{{ systemConfig.description }}</td>
+                        <td class="custom-middle-align"
+                            jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}">{{ systemConfig.dataType }}</td>
+                        <td class="custom-middle-align">
+                            <!--                        {{ systemConfig.activated }}-->
+                            <fa-icon icon="check-circle" *ngIf="systemConfig.activated == true" class="green"></fa-icon>
+                            <fa-icon icon="ban" *ngIf="systemConfig.activated == false" class="red"></fa-icon>
+                        </td>
+                        <td class="custom-middle-align">
+                            <div class="btn-group">
+                                <button type="submit"
+                                        [routerLink]="['/home/system-config', systemConfig.id, 'view']"
+                                        class="btn btn-info btn-sm">
+                                    <fa-icon icon="eye"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                                </button>
+
+                                <button type="submit"
+                                        [routerLink]="['/home/system-config', systemConfig.id, 'edit']"
+                                        class="btn btn-primary btn-sm">
+                                    <fa-icon icon="pencil-alt"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                                </button>
+
+                                <button type="submit" (click)="delete(systemConfig)"
+                                        class="btn btn-danger btn-sm">
+                                    <fa-icon icon="times"></fa-icon>
+                                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div *ngIf="systemConfigs && systemConfigs.length > 0">
+                <div class="row justify-content-center">
+                    <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>
+                </div>
+
+                <div class="row justify-content-center">
+                    <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage"
+                                    [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                                    (pageChange)="loadPage($event)"></ngb-pagination>
+                </div>
             </div>
         </div>
     </div>

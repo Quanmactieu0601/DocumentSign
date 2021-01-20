@@ -8,5 +8,6 @@ public enum SystemConfigKey {
      */
     SAVE_TOKEN_PASSWORD,
     USE_OTP,
-    SYMMETRIC_KEY
+    SYMMETRIC_KEY,
+    OTP_LIFE_TIME_SECOND
 }

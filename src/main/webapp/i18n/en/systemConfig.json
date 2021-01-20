@@ -28,13 +28,15 @@
       "KEYS": {
         "SAVE_TOKEN_PASSWORD": "SAVE_TOKEN_PASSWORD",
         "USE_OTP": "USE_OTP",
-        "SYMMETRIC_KEY": "SYMMETRIC_KEY"
+        "SYMMETRIC_KEY": "SYMMETRIC_KEY",
+        "OTP_LIFE_TIME_SECOND": "OTP_LIFE_TIME_SECOND"
       },
       "DATATYPES": {
         "STRING": "STRING",
         "NUMERIC": "NUMERIC",
         "BOOLEAN": "BOOLEAN"
-      }
+      },
+      "Action": "Action"
     }
   }
 }

@@ -18,6 +18,7 @@ export class SystemConfigUpdateComponent implements OnInit {
   isSaving = false;
   keys = KEYS;
   dataTypes = DATATYPES;
+  isCheck = false;
   editForm = this.fb.group({
     id: [],
     comId: [],
@@ -49,6 +50,9 @@ export class SystemConfigUpdateComponent implements OnInit {
       dataType: systemConfig.dataType,
       activated: systemConfig.activated,
     });
+    if (systemConfig.dataType=='BOOLEAN'){
+      this.isCheck = systemConfig.value != '0';
+    }
   }
 
 
