@@ -9,7 +9,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>/opt/easysign-test/log/signserver.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/signserver.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>/opt/easysign-test/log/signserver.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
         <encoder>
