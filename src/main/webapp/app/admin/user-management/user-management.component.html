@@ -294,7 +294,7 @@
             <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
         </div>
 
-        <div class="table-responsive" id="entities" *ngIf="this.users && this.users.length > 0">
+        <div class="card table-responsive" id="entities" *ngIf="this.users && this.users.length > 0">
             <table class="table table-striped table-custom" aria-describedby="page-heading" id="usermanagement-table">
                 <thead jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="transition.bind(this)">
                 <!--                <th><input type="checkbox" name="checkboxAll" (change)="checkAll(this.$event)"/></th>-->
