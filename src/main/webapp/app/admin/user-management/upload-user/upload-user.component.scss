@@ -1,0 +1,17 @@
+.input-group > .custom-file {
+  font-size: 14px;
+}
+//#custom-file .custom-file-control:lang(en)::after {
+//  content: "Browse1";
+//  font-family: 'Nunito' !important;
+//}
+
+.custom-file-label::after {
+  font-family: 'Nunito' !important;
+  background-color: #398bf8 !important;
+  color: #ffffff;
+}
+
+.custom-file-input:lang(vi) ~ .custom-file-label::after {
+  content: 'Nhập';
+}

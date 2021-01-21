@@ -123,7 +123,8 @@
       "open": "Open",
       "save": "Save",
       "view": "View",
-      "qrcode": "QR Code"
+      "qrcode": "QR Code",
+      "upload": "Upload"
     },
     "detail": {
       "field": "Field",

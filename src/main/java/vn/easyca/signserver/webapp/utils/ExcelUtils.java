@@ -4,6 +4,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import vn.easyca.signserver.core.dto.CertDTO;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
 
@@ -69,7 +70,7 @@ public class ExcelUtils {
         return dtos;
     }
 
-    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws IOException, RequiredColumnNotFoundException{
+    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws ApplicationException, IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();

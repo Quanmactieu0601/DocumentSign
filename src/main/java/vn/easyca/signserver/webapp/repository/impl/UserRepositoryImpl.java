@@ -32,7 +32,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             params.put("login", "%" + account + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(name)) {
-            sqlBuilder.append("AND a.last_name like :name ");
+            sqlBuilder.append("AND Concat(a.first_name,a.last_name) like :name ");
             params.put("name", "%" + name + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(email)) {

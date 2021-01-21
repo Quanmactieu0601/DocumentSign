@@ -1,9 +1,11 @@
 {
   "webappApp": {
     "transactionReport": {
+      "exportPDF": "xuất file PDF",
+      "title": "Thống kê báo cáo",
       "startDate": "Ngày Bắt đầu",
       "endDate": "Ngày kết thúc ",
-      "type": "Loại",
+      "type": "Kiểu",
       "search": "Tìm kiếm",
       "exportPDF ": "Xuất PDF",
       "totalRequetsFail": "Tổng số request Lỗi",

@@ -120,7 +120,6 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type) {
-        Map<String, BigInteger> result = transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
-        return result;
+        return transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
     }
 }
