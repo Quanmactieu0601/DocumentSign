@@ -1,0 +1,71 @@
+<div>
+    <h2 id="page-heading">
+        <span jhiTranslate="webappApp.otpHistory.home.title">Otp Histories</span>
+
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-otp-history" [routerLink]="['/otp-history/new']">
+            <fa-icon icon="plus"></fa-icon>
+            <span  jhiTranslate="webappApp.otpHistory.home.createLabel">
+            Create a new Otp History
+            </span>
+        </button>
+    </h2>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <jhi-alert></jhi-alert>
+
+    <div class="alert alert-warning" id="no-result" *ngIf="otpHistories?.length === 0">
+        <span jhiTranslate="webappApp.otpHistory.home.notFound">No otpHistories found</span>
+    </div>
+
+    <div class="table-responsive" id="entities" *ngIf="otpHistories && otpHistories.length > 0">
+        <table class="table table-striped" aria-describedby="page-heading">
+            <thead>
+                <tr>
+                    <th scope="col" ><span jhiTranslate="global.field.id">ID</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.userId">User Id</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.comId">Com Id</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.secretKey">Secret Key</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.otp">Otp</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.actionTime">Action Time</span></th>
+                    <th scope="col" ><span jhiTranslate="webappApp.otpHistory.expireTime">Expire Time</span></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let otpHistory of otpHistories ;trackBy: trackId">
+                    <td><a [routerLink]="['/otp-history', otpHistory.id, 'view']">{{ otpHistory.id }}</a></td>
+                    <td>{{ otpHistory.userId }}</td>
+                    <td>{{ otpHistory.comId }}</td>
+                    <td>{{ otpHistory.secretKey }}</td>
+                    <td>{{ otpHistory.otp }}</td>
+                    <td>{{ otpHistory.actionTime | date:'mediumDate' }}</td>
+                    <td>{{ otpHistory.expireTime | date:'mediumDate' }}</td>
+                    <td class="text-right">
+                        <div class="btn-group">
+                            <button type="submit"
+                                    [routerLink]="['/otp-history', otpHistory.id, 'view']"
+                                    class="btn btn-info btn-sm">
+                                <fa-icon icon="eye"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                            </button>
+
+                            <button type="submit"
+                                    [routerLink]="['/otp-history', otpHistory.id, 'edit']"
+                                    class="btn btn-primary btn-sm">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                            </button>
+
+                            <button type="submit" (click)="delete(otpHistory)"
+                                    class="btn btn-danger btn-sm">
+                                <fa-icon icon="times"></fa-icon>
+                                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

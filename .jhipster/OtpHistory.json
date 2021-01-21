@@ -1,0 +1,40 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "userId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "comId",
+      "fieldType": "Long"
+    },
+    {
+      "fieldName": "secretKey",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "otp",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "actionTime",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "expireTime",
+      "fieldType": "LocalDate"
+    }
+  ],
+  "changelogDate": "20210119042034",
+  "dto": "no",
+  "searchEngine": false,
+  "service": "serviceImpl",
+  "entityTableName": "otp_history",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": false,
+  "pagination": "no"
+}

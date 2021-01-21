@@ -11,6 +11,7 @@
         "transaction": "Transaction",
         "systemConfig": "System Config",
         "report": "Statistic Report",
+        "otpHistory": "Otp History",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {

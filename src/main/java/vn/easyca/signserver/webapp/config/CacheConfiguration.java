@@ -59,6 +59,7 @@ public class CacheConfiguration {
             createCache(cm, vn.easyca.signserver.webapp.domain.SignatureImage.class.getName());
             createCache(cm, vn.easyca.signserver.webapp.domain.SystemConfig.class.getName());
             createCache(cm, SystemConfigCachingService.SYSTEM_CONFIG_CACHE);
+            createCache(cm, vn.easyca.signserver.webapp.domain.OtpHistory.class.getName());
             // jhipster-needle-ehcache-add-entry
         };
     }

@@ -12,17 +12,6 @@ import java.util.Optional;
 import static vn.easyca.signserver.webapp.enm.SystemConfigType.BOOLEAN;
 
 public class SystemDbConfiguration {
-//    private static SystemDbConfiguration configuration;
-//
-//    public SystemDbConfiguration() {
-//    }
-//
-//    public static SystemDbConfiguration getInstance() throws ApplicationException {
-//        if (configuration != null)
-//            return configuration;
-//        throw new ApplicationException("System configuration has not configured!");
-//    }
-
     public static SystemDbConfiguration init(List<SystemConfigDTO> systemConfigDTOList) throws ApplicationException {
         if (systemConfigDTOList == null || systemConfigDTOList.isEmpty())
             throw new ApplicationException("System configuration doesn't have any record!");
@@ -42,11 +31,18 @@ public class SystemDbConfiguration {
                     case SAVE_TOKEN_PASSWORD:
                         configuration.saveTokenPassword = new TypeConverter<Boolean>().getValue(dto.get().getValue(), dto.get().getDataType());
                         break;
+                    case OTP_LIFE_TIME_SECOND:
+                        configuration.otpLifeTime = new TypeConverter<Integer>().getValue(dto.get().getValue(), dto.get().getDataType());
+                        break;
                 }
             } else {
+                // Init default config value if config key is not configured
                 switch (key) {
                     case USE_OTP:
                         configuration.useOTP = false;
+                        break;
+                    case OTP_LIFE_TIME_SECOND:
+                        configuration.otpLifeTime = 0;
                         break;
                     case SAVE_TOKEN_PASSWORD:
                     case SYMMETRIC_KEY:
@@ -65,30 +61,24 @@ public class SystemDbConfiguration {
 
     private String symmetricKey;
     private Boolean useOTP;
+    private Integer otpLifeTime;
 
     public Boolean getSaveTokenPassword() {
         return saveTokenPassword;
-    }
-
-    public void setSaveTokenPassword(Boolean saveTokenPassword) {
-        this.saveTokenPassword = saveTokenPassword;
     }
 
     public String getSymmetricKey() {
         return symmetricKey;
     }
 
-    public void setSymmetricKey(String symmetricKey) {
-        this.symmetricKey = symmetricKey;
-    }
-
     public Boolean getUseOTP() {
         return useOTP;
     }
 
-    public void setUseOTP(Boolean useOTP) {
-        this.useOTP = useOTP;
+    public Integer getOtpLifeTime() {
+        return otpLifeTime;
     }
+
 }
 
 class TypeConverter<T> {
