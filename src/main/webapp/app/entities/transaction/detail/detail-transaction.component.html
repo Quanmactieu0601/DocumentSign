@@ -1,0 +1,56 @@
+<div class="modal-header">
+    <h5 class="modal-title" jhiTranslate="webappApp.transaction.detail.detail">Modal title</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+</div>
+
+<div class="modal-body">
+    <h5 jhiTranslate="webappApp.transaction.properties">Properties</h5>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th scope="col" jhiTranslate="health.details.name">Name</th>
+                    <th scope="col" jhiTranslate="health.details.value">Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.api' | translate}}</td>
+                    <td>{{ transaction?.api  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.type' | translate}}</td>
+                    <td>{{ transaction?.type  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.method' | translate}}</td>
+                    <td>{{ transaction?.method  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.message' | translate}}</td>
+                    <td>{{ transaction?.message  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.host' | translate}}</td>
+                    <td class="text-left">{{ transaction?.data  }}</td>
+                </tr>
+                </tbody>
+                <tbody>
+                <tr>
+                    <td>{{'webappApp.transaction.data' | translate}}</td>
+                    <td>{{ transaction?.data  }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

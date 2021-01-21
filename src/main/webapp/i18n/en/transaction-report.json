@@ -1,6 +1,8 @@
 {
   "webappApp": {
     "transactionReport": {
+      "exportPDF": "Export PDF",
+      "title": "Transaction Report",
       "startDate": "Start Date",
       "endDate": "End Date",
       "type": "Type",

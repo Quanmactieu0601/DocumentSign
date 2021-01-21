@@ -9,11 +9,13 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { TransactionService } from './transaction.service';
 import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.component';
 import { FormBuilder } from '@angular/forms';
-import { Method, Status, Type } from 'app/shared/constants/transaction.constants';
+import { Action, Status } from 'app/shared/constants/transaction.constants';
+import { DetailTransactionComponent } from 'app/entities/transaction/detail/detail-transaction.component';
 
 @Component({
   selector: 'jhi-transaction',
   templateUrl: './transaction.component.html',
+  styleUrls: ['./transaction.component.scss'],
 })
 export class TransactionComponent implements OnInit, OnDestroy {
   transactions: ITransaction[] | null = null;
@@ -40,9 +42,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   ngbPaginationPage = 1;
 
-  type = Type;
-  method = Method;
   status = Status;
+  actions = Action;
 
   constructor(
     protected transactionService: TransactionService,
@@ -53,8 +54,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected fb: FormBuilder
   ) {}
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    const pageToLoad: number = page || this.page || 1;
+  loadPage(page?: number): void {
     this.searchTransactions(page);
   }
 
@@ -99,21 +99,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
       sort: this.sort(),
       ...this.searchForm.value,
     };
-    if (fieldTransaction.api != null) {
-      fieldTransaction.api = fieldTransaction.api.trim();
-    }
-    if (fieldTransaction.message != null) {
-      fieldTransaction.message = fieldTransaction.message.trim();
-    }
-    if (fieldTransaction.data != null) {
-      fieldTransaction.data = fieldTransaction.data.trim();
-    }
-    if (fieldTransaction.host != null) {
-      fieldTransaction.host = fieldTransaction.host.trim();
-    }
-    if (fieldTransaction.fullName != null) {
-      fieldTransaction.fullName = fieldTransaction.fullName.trim();
-    }
+    fieldTransaction.fullName = fieldTransaction.fullName ? fieldTransaction.fullName.trim() : null;
+    fieldTransaction.action = fieldTransaction.action ? fieldTransaction.action.trim() : null;
     this.transactionService
       .findByTransaction(fieldTransaction)
       .subscribe((res: HttpResponse<any>) => this.onSuccess(res.body, res.headers, pageToLoad, false));
@@ -150,5 +137,42 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   protected onError(): void {
     this.ngbPaginationPage = this.page ?? 1;
+  }
+
+  detail(transaction: ITransaction): void {
+    const modalRef = this.modalService.open(DetailTransactionComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.transaction = transaction;
+  }
+
+  transform(action: string | undefined): string {
+    switch (action) {
+      case 'RAW': {
+        return 'ext-raw';
+      }
+      case 'PDF': {
+        return 'ext-pdf';
+      }
+      case 'HASH': {
+        return 'ext-hash';
+      }
+      case 'XML': {
+        return 'ext-xml';
+      }
+      case 'OOXML': {
+        return 'ext-ooml';
+      }
+      case 'CSR': {
+        return 'ext-csr';
+      }
+      case 'CERT': {
+        return 'ext-cert';
+      }
+      case 'NONE': {
+        return 'ext-none';
+      }
+      default: {
+        return '';
+      }
+    }
   }
 }
