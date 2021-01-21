@@ -15,9 +15,9 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
-import { map } from 'rxjs/operators';
 import { IUser, User } from '../../core/user/user.model';
 import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
+import { UploadUserComponent } from 'app/admin/user-management/upload-user/upload-user-component';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -104,12 +104,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       sort: this.sort(),
     };
     const pageToLoad: number = page || this.page || 1;
-    // const jsonData = JSON.stringify(data);
-    // for (let i = 0; i < jsonData.length; i++){
-    //   if (jsonData[i] != null) {
-    //     jsonData[i] === jsonData[i].trim();
-    //     }
-    // }
 
     if (data.account != null) {
       data.account = data.account.trim();
@@ -130,8 +124,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       data.phone = data.phone.trim();
     }
 
-    // console.error(jsonData);
-    // console.error(data);
     this.userService.findByUser(data).subscribe((res: HttpResponse<User[]>) => this.onSuccess(res.body, res.headers));
   }
 
@@ -215,48 +207,10 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   createCSR(): void {
     const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
     this.userService.setListId(this.listId);
-    // if (this.listId.length > 0) {
-    //   this.certificateService
-    //     .sendData({
-    //       userIds: this.listId,
-    //     })
-    //     .subscribe((response: any) => {
-    //       if (response.byteLength === 0) {
-    //         this.toastrService.error(this.translateService.instant('userManagement.alert.fail.csrExported'));
-    //       } else {
-    //         this.toastrService.success(this.translateService.instant('userManagement.alert.success.csrExported'));
-    //         saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), 'excel.xlsx');
-    //       }
-    //     });
-    // }
   }
 
-  downLoadFileTemplate(): void {
-    this.userService.downLoadTemplateFile().subscribe(
-      res => {
-        const bindData = [];
-        bindData.push(res.data);
-        const url = window.URL.createObjectURL(
-          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        );
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display: none');
-        a.setAttribute('target', 'blank');
-        a.href = url;
-        a.download = 'templateFile';
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-      },
-      error => {
-        console.error(error);
-      }
-    );
-  }
-
-  openModal(content: any): void {
-    this.modalRef = this.modalService.open(content, { size: 'md' });
+  showUploadComponent(): void {
+    this.modalRef = this.modalService.open(UploadUserComponent, { size: 'lg' });
   }
   isUploadedSucessfully(agreed: boolean): void {
     if (agreed) {

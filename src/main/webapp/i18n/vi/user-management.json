@@ -51,6 +51,7 @@
     "createdDate": "Ngày tạo",
     "lastModifiedBy": "Người sửa",
     "lastModifiedDate": "Ngày sửa",
+    "chooseFile": "Chọn tệp",
     "alert": {
       "success": {
         "csrExported": "Tạo tệp CSR thành công",
