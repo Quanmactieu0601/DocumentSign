@@ -39,7 +39,7 @@ export const systemConfigRoute: Routes = [
     path: '',
     component: SystemConfigComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.SUPER_ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'webappApp.systemConfig.home.title',
     },
@@ -52,7 +52,7 @@ export const systemConfigRoute: Routes = [
       systemConfig: SystemConfigResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.systemConfig.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -64,7 +64,7 @@ export const systemConfigRoute: Routes = [
       systemConfig: SystemConfigResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.systemConfig.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -76,7 +76,7 @@ export const systemConfigRoute: Routes = [
       systemConfig: SystemConfigResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.systemConfig.home.title',
     },
     canActivate: [UserRouteAccessService],
