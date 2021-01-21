@@ -37,7 +37,9 @@
         "BOOLEAN": "BOOLEAN",
         "": ""
       },
-      "Action": "Action"
+      "Action": "Action",
+      "create": "Create",
+      "edit": "Edit"
     }
   }
 }

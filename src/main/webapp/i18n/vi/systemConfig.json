@@ -38,7 +38,9 @@
         "BOOLEAN": "Đúng/sai",
         "": ""
       },
-      "Action": "Hành động"
+      "Action": "Hành động",
+      "create": "Tạo mới",
+      "edit": "Chỉnh sửa"
     }
   }
 }

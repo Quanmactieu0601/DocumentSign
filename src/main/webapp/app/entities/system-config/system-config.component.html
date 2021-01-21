@@ -32,9 +32,9 @@
                 <table class="table table-striped table-custom" aria-describedby="page-heading">
                     <thead>
                     <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-<!--                        <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>-->
-<!--                            <fa-icon icon="sort"></fa-icon>-->
-<!--                        </th>-->
+                        <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span>
+                            <fa-icon icon="sort"></fa-icon>
+                        </th>
                         <th scope="col" jhiSortBy="comId" class="custom-middle-align"><span
                             jhiTranslate="webappApp.systemConfig.comId">Com Id</span>
                             <fa-icon icon="sort"></fa-icon>
@@ -65,9 +65,9 @@
                     </thead>
                     <tbody>
                     <tr *ngFor="let systemConfig of systemConfigs ;trackBy: trackId">
-<!--                        <td class="custom-middle-align"><a-->
-<!--                            [routerLink]="['/home/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a>-->
-<!--                        </td>-->
+                        <td class="custom-middle-align"><a
+                            [routerLink]="['/home/system-config', systemConfig.id, 'view']">{{ systemConfig.id }}</a>
+                        </td>
                         <td class="custom-middle-align">{{ systemConfig.comId }}</td>
                         <td class="custom-middle-align"><span class="badge badge-info"
                                                               jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</span>

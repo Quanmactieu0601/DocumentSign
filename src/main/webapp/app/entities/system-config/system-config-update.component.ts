@@ -64,7 +64,6 @@ export class SystemConfigUpdateComponent implements OnInit {
   change(systemConfigCategory: SystemConfigCategory): void {
     this.systemConfig.description = systemConfigCategory.description;
     this.systemConfig.dataType = systemConfigCategory.dataType;
-
   }
 
   previousState(): void {
@@ -84,12 +83,15 @@ export class SystemConfigUpdateComponent implements OnInit {
   private createFromForm(systemConfig: SystemConfig): void {
     systemConfig.id = this.editForm.get(['id'])!.value;
     systemConfig.comId = this.editForm.get(['comId'])!.value;
-    systemConfig.key = this.editForm.get(['key'])!.value.configKey;
+    if (this.editForm.get(['id'])!.value){
+      systemConfig.key = this.editForm.get(['key'])!.value;
+    }
+    else systemConfig.key = this.editForm.get(['key'])!.value.configKey;
     if(this.editForm.get(['value'])!.value.toString() === 'true'){
       systemConfig.value = '1';
     } else if(this.editForm.get(['value'])!.value.toString() === 'false'){
       systemConfig.value = '0';
-    } else systemConfig = this.editForm.get(['value'])!.value.toString();
+    } else systemConfig.value = this.editForm.get(['value'])!.value.toString();
     systemConfig.description = this.editForm.get(['description'])!.value;
     systemConfig.dataType = this.editForm.get(['dataType'])!.value;
     systemConfig.activated = this.editForm.get(['activated'])!.value;
