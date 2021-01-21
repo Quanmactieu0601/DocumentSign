@@ -142,7 +142,8 @@ public class DataBatchImportResource {
         List<CertImportErrorDTO> importErrorList = new ArrayList<>();
         for (final MultipartFile fileEntry : files) {
             try {
-                final String regex = "([^._]+)_([^._]+)";
+//                final String regex = "([^._]+)_([^._]+)";
+                final String regex = "([^._]+)(?:_|-)([^._]+)";
                 final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
                 final Matcher matcher = pattern.matcher(fileEntry.getOriginalFilename());
                 String[] infor = new String[3];
@@ -152,8 +153,8 @@ public class DataBatchImportResource {
                         infor[i] = matcher.group(i);
                     }
                 }
-                CMND = infor[1];
-                PIN = infor[2];
+                CMND = infor[1].trim();
+                PIN = infor[2].trim();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
