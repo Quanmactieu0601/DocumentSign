@@ -35,7 +35,8 @@
       "DATATYPES": {
         "STRING": "Chuỗi ký tự",
         "NUMERIC": "Số",
-        "BOOLEAN": "Đúng/sai"
+        "BOOLEAN": "Đúng/sai",
+        "": ""
       },
       "Action": "Hành động"
     }

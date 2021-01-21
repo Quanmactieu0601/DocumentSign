@@ -34,7 +34,8 @@
       "DATATYPES": {
         "STRING": "STRING",
         "NUMERIC": "NUMERIC",
-        "BOOLEAN": "BOOLEAN"
+        "BOOLEAN": "BOOLEAN",
+        "": ""
       },
       "Action": "Action"
     }
