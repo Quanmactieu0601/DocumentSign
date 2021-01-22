@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.parser;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
+
 public interface SignatureTemplateParseService {
-    String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage);
+    String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException;
 }

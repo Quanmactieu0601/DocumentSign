@@ -57,9 +57,9 @@ public class Transaction implements Serializable {
     @Enumerated(EnumType.STRING)
     private Action action;
 
-    @Column(name = "extension")
+    @Column(name = "extension", columnDefinition = "varchar(50) default 'NONE'")
     @Enumerated(EnumType.STRING)
-    private Extension extension;
+    private Extension extension = Extension.NONE;
 
     public Extension getExtension() {
         return extension;

@@ -294,14 +294,23 @@ public class CertificateResource extends BaseResource {
     }
 
     @GetMapping("/getImage")
-    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial, @RequestParam String pin) {
+    public ResponseEntity<BaseResponseVM> getSignatureTemplateImage(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 
@@ -312,9 +321,17 @@ public class CertificateResource extends BaseResource {
         try {
             String base64Image = certificateService.getBase64OTPQRCode(serial, pin);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getQRCodeOTP", TransactionType.BUSINESS, Action.GET_INFO, Extension.QR_CODE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 
