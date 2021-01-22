@@ -3,15 +3,16 @@
     <li class="breadcrumb-item active" aria-current="page"><span jhiTranslate="webappApp.transactionReport.title">Transaction report</span>
     </li>
 </ol>
-<div class="card mb-sm-4 searching">
+<div class="card mb-3 searching">
     <div class="card-body">
         <form name="userSearch" [formGroup]="userSearch">
-            <div class="row row-cols-4">
+            <div class="row row-cols-4 text-center">
                 <div class="col">
                     <div class="form-group">
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.transactionReport.startDate">Start Date</span></label>
-                        <input type="datetime-local" class="form-control form-control-sm" name="startDate"
+                        <input type="datetime-local" class="form-control form-control-sm"
+                               name="startDate"
                                formControlName="startDate">
                     </div>
                 </div>
@@ -27,10 +28,11 @@
                     <div class="form-group">
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.transactionReport.type">Type</span></label>
-                        <select class="form-control form-control-sm" name="type" formControlName="type">
-                            <option label="------ Select ------"></option>
-                            <option value="SYSTEM"> SYSTEM</option>
-                            <option value="SIGNING">BUSINESS</option>
+                        <select class="form-control form-control-sm" name="type"
+                                formControlName="type">
+                            <option value="" selected>--</option>
+                            <option value="SYSTEM">SYSTEM</option>
+                            <option value="BUSINESS">BUSINESS</option>
                         </select>
                     </div>
                 </div>
@@ -38,58 +40,51 @@
 
             <div class="col">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-sm" (click)="searchUser()">
+                    <button type="submit" class="btn btn-primary btn-sm" (click)="searchUser()"
+                            [disabled]="!userSearch.valid">
                         <fa-icon icon="search"></fa-icon>
                         <span jhiTranslate="webappApp.transactionReport.search"></span>
                     </button>
 
-                    <button type="submit" class="btn btn-primary btn-sm" (click)="ExportDPF()">
-                        <fa-icon icon="file-excel"></fa-icon>
-                        <span jhiTranslate="webappApp.transactionReport.exportPDF"></span>
-                    </button>
                 </div>
-            </div>
-            <div class="notificationExport">
-                <ng-container *ngIf="showAlert">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        Download Successfull!
-                        <button type="button" class="close" (click)="alertNotification()" data-dismiss="alert"
-                                aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                </ng-container>
             </div>
         </form>
     </div>
 </div>
-<ng-container *ngIf="show">
-    <div class="charts">
-        <div>
-            <div class="chart">
-                <canvas baseChart class="chartsize"
-                        [data]="pieChartData"
-                        [labels]="pieChartLabels"
-                        [chartType]="pieChartType"
-                        [options]="pieChartOptions"
-                        [plugins]="pieChartPlugins"
-                        [colors]="pieChartColors"
-                        [legend]="pieChartLegend">
-                </canvas>
-                <div [ngStyle]="{'margin-left': '200px','display': 'flex'}">
-                    <h4>
-                        <span jhiTranslate="webappApp.transactionReport.figure1">Figure 1 </span>
-                    </h4>
-                    <span [ngStyle]="{
+<div class="card mb-1" *ngIf="show">
+    <div class="card-body">
+        <div class="charts">
+            <div>
+                <div class="chart">
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary btn-sm" (click)="ExportDPF()">
+                            <fa-icon icon="file-excel"></fa-icon>
+                            <span jhiTranslate="webappApp.transactionReport.exportPDF"></span>
+                        </button>
+                    </div>
+                    <canvas baseChart class="chartsize"
+                            [data]="pieChartData"
+                            [labels]="pieChartLabels"
+                            [chartType]="pieChartType"
+                            [options]="pieChartOptions"
+                            [plugins]="pieChartPlugins"
+                            [colors]="pieChartColors"
+                            [legend]="pieChartLegend">
+                    </canvas>
+                    <div [ngStyle]="{'margin-left': '200px','display': 'flex'}">
+                        <h4>
+                            <span jhiTranslate="webappApp.transactionReport.figure1">Figure 1 </span>
+                        </h4>
+                        <span [ngStyle]="{
                              'margin-left': '20px',
                               'margin-top':'5px'}"
-                          jhiTranslate="webappApp.transactionReport.Chart"> Biểu đồ thống kê số Request Transaction</span>
+                              jhiTranslate="webappApp.transactionReport.Chart"> Biểu đồ thống kê số Request Transaction</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</ng-container>
-
+</div>
 
 
 

@@ -124,7 +124,8 @@
                             {{transaction.action}}</span>
                     </td>
                     <td class="custom-middle-align">
-                        <span class="badge {{transform(transaction.extension)}}">{{transaction.extension}}</span>
+                        <span jhiTranslate="webappApp.transaction.EXTENSION.{{transaction.extension}}"
+                            class="badge {{transform(transaction.extension)}}">{{transaction.extension}}</span>
                     </td>
                     <td class="custom-middle-align">{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                     <td class="custom-middle-align">
