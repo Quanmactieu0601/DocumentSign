@@ -33,6 +33,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
@@ -96,8 +97,12 @@ public class CertificateResource extends BaseResource {
     @GetMapping("ownerId/{ownerId}")
     public ResponseEntity<List<Certificate>> findByOwnerId(@PathVariable String ownerId) {
         log.info("get cert by owner Id: {}", ownerId);
-        List<Certificate> certificateList = certificateService.getByOwnerId(ownerId);
-        return new ResponseEntity<>(certificateList, HttpStatus.OK);
+        try {
+            List<Certificate> certificateList = certificateService.getByOwnerId(ownerId);
+            return new ResponseEntity<>(certificateList, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new BadRequestAlertException(e.getMessage(), "certificate", "findByOwnerId");
+        }
     }
 
     @PostMapping("/import/p12")

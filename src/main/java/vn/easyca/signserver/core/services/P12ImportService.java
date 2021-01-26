@@ -77,7 +77,7 @@ public class P12ImportService {
             throw new CertificateAppException("certificate has error", e);
         }
         String serial = x509Certificate.getSerialNumber().toString(16);
-        Optional<Certificate> certBySerial = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certBySerial = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (certBySerial.isPresent())
             throw new ApplicationException(-1, "Certificate is already exist");
         String base64Cert = null;

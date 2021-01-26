@@ -40,7 +40,6 @@ import java.util.*;
 @Service
 public class CertificateService {
 
-    private Optional<UserEntity> userEntityOptional;
     private List<Certificate> certificateList = new ArrayList<>();
     private final CertificateRepository certificateRepository;
     private final CertificateMapper mapper;
@@ -72,19 +71,14 @@ public class CertificateService {
         this.userRepository = userRepository;
     }
 
-    public List<Certificate> getByOwnerId(String ownerId) {
+    public List<Certificate> getByOwnerId(String ownerId) throws ApplicationException {
         Long id = Long.parseLong(ownerId);
-        userEntityOptional = userRepository.findById(id);
-        System.out.println(userEntityOptional);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
+        if (!userEntityOptional.isPresent())
+            throw new ApplicationException(String.format("User is not exist - ownerId %s", ownerId));
         UserEntity userEntity = userEntityOptional.get();
-        boolean roleAdmin = false;
         Set<Authority> userAuthority = userEntity.getAuthorities();
-        for (Authority setAuthority : userAuthority) {
-            if (setAuthority.getName().equals("ROLE_ADMIN")) {
-                roleAdmin = true;
-            }
-        }
-        if (roleAdmin) {
+        if (userAuthority.stream().anyMatch(ua -> "ROLE_ADMIN".equals(ua.getName()) || "ROLE_SUPER_ADMIN".equals(ua.getName()))) {
             certificateList = certificateRepository.findAll();
         } else {
             certificateList = certificateRepository.findByOwnerId(ownerId);
@@ -93,7 +87,7 @@ public class CertificateService {
     }
 
     public CertificateDTO getBySerial(String serial) throws CertificateNotFoundAppException {
-        Optional<Certificate> certificate = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificate = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         CertificateDTO certificateDTO = null;
         if (certificate.isPresent()) {
             certificateDTO = mapper.map(certificate.get());
@@ -132,7 +126,7 @@ public class CertificateService {
     }
 
     public String getSignatureImage(String serial, String pin) throws ApplicationException {
-        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
@@ -170,7 +164,7 @@ public class CertificateService {
     }
 
     public String getBase64OTPQRCode(String serial, String pin) throws ApplicationException {
-        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException(String.format("Certificate is not exist - serial: %s", serial));
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
@@ -193,7 +187,7 @@ public class CertificateService {
                 throw new ApplicationException("new PIN have to different old PIN");
             }
             SystemDbConfiguration dbConfiguration = systemConfigCachingService.getConfig();
-            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
             if (!certificateOptional.isPresent())
                 throw new ApplicationException("Certificate is not found");
             CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
