@@ -116,7 +116,7 @@ public class SigningService {
             byte[] signature = new byte[0];
             try {
 //                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
-                signature = rawSigner.signHashPdf(hash, cryptoTokenProxy.getPrivateKey());
+                signature = rawSigner.signHashWithoutDigestInfo(hash, cryptoTokenProxy.getPrivateKey());
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }

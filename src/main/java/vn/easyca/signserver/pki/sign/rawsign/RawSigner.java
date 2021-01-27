@@ -18,15 +18,15 @@ public class RawSigner {
         return signature.sign();
     }
 
-    // sign hash without digest info (must add digest info when hash at client-side)
-    public byte[] signHashPdf(byte[] hash, PrivateKey privateKey) throws Exception {
+    // sign hash without digest info (have to add digest info when hash on client-side)
+    public byte[] signHashWithoutDigestInfo(byte[] hash, PrivateKey privateKey) throws Exception {
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         cipher.init(Cipher.ENCRYPT_MODE, privateKey);
         return cipher.doFinal(hash);
     }
 
-    // sign hash with digest info
-    public byte[] signHash(byte[] hash, PrivateKey privateKey, String hashAlgorithm) throws Exception {
+    // sign hash with digest info (no need to add digest info when hash on client-side)
+    public byte[] signHashWithDigestInfo(byte[] hash, PrivateKey privateKey, String hashAlgorithm) throws Exception {
         DigestCreator digestCreator = new DigestCreator();
         hash = digestCreator.digestWithSHAInfo(hashAlgorithm, hash);
         Cipher cipher = Cipher.getInstance("RSA");
