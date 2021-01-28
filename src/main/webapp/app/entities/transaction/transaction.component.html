@@ -87,8 +87,8 @@
         <div class="alert alert-warning" id="no-result" *ngIf="transactions?.length === 0">
             <span jhiTranslate="webappApp.transaction.home.notFound">No transactions found</span>
         </div>
-        <div class="card table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
-            <table class="table table-striped table-custom" aria-describedby="page-heading">
+        <div class="table-responsive" id="entities" *ngIf="transactions && transactions.length > 0">
+            <table class="table table-striped" aria-describedby="page-heading">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
                     <th class="custom-middle-align" scope="col" jhiSortBy="action"><span
