@@ -10,40 +10,43 @@
             <div class="row row-cols-xl-6 row-cols-md-4 row-cols-sm-1">
                 <div class="col">
                     <div class="form-group ">
-                        <label class="form-control-label">Login Account:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.login">Login Account:</label>
                         <input type="email" class="form-control form-control-sm" name="account"
                                formControlName="account"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Name:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.fullName"
+                        >Name:</label>
                         <input type="text" class="form-control form-control-sm" name="name" formControlName="name"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Common Name :</label>
+                        <label class="form-control-label">Common Name</label>
                         <input type="text" class="form-control form-control-sm" name="commonName"
                                formControlName="commonName"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Email :</label>
+                        <label class="form-control-label">Email</label>
                         <input type="email" class="form-control form-control-sm" name="email" formControlName="email"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Country:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.country"
+                        >Country:</label>
                         <input type="text" class="form-control form-control-sm" name="country"
                                formControlName="country"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Phone:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.phone"
+                        >Phone:</label>
                         <input type="text" class="form-control form-control-sm" name="phone" formControlName="phone"/>
                     </div>
                 </div>
@@ -51,7 +54,7 @@
             <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-sm">
                     <fa-icon icon="search"></fa-icon>
-                    Search
+                    <span jhiTranslate="userManagement.search"></span>
                 </button>
             </div>
         </form>
@@ -291,7 +294,7 @@
 
         </div>
             <div class="alert alert-warning" id="no-result" *ngIf="this.users?.length === 0">
-                <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
+                <span jhiTranslate="userManagement.home.notfound">No users found</span>
             </div>
 
             <div class="table-responsive" id="entities" *ngIf="this.users && this.users.length > 0">
@@ -364,7 +367,7 @@
                         <th scope="col" jhiSortBy="active_Status" class="custom-middle-align"><span jhiTranslate="userManagement.role">Role</span>
                             <fa-icon icon="sort"></fa-icon>
                         </th>
-                        <th scope="col" class="custom-middle-align"><span jhiTranslate="webappApp.certificate.action">Action</span></th>
+                        <th scope="col" class="custom-middle-align"><span jhiTranslate="userManagement.action">Action</span></th>
 
                     </thead>
                     <tbody>
