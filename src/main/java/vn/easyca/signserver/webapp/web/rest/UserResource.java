@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import com.google.common.base.Strings;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,6 +74,7 @@ import java.util.*;
  * <p>
  * Another option would be to have a specific JPA entity graph to handle this case.
  */
+@Scope("request")
 @RestController
 @RequestMapping("/api")
 public class UserResource extends BaseResource {
