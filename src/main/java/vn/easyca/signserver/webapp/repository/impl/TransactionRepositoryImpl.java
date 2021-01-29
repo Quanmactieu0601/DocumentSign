@@ -86,7 +86,11 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, CONCAT(b.lastName,' ',b.firstName) as fullName " + sqlBuilder.toString() + sort)
+            Query transactionDTOList = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, " +
+                "CASE WHEN b.firstName is null THEN b.lastName " +
+                "     WHEN b.lastName is null THEN b.firstName " +
+                "     else concat(b.lastName, ' ', b.firstName) " +
+                "     end as fullName " + sqlBuilder.toString() + sort)
                 .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
             QueryUtils.setParamsWithPageable(transactionDTOList, params, pageable, total);
             transactionList = transactionDTOList.getResultList();

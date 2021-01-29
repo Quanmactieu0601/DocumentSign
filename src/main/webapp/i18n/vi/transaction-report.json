@@ -11,7 +11,8 @@
       "totalRequetsFail": "Tổng số request Lỗi",
       "totalRequestSuccess": "Tổng số Request Thành công",
       "figure1": "Hình 1 :",
-      "Chart": "Biểu đồ thống kê số Request Transaction"
+      "Chart": "Biểu đồ thống kê số Request Transaction",
+      "success": "Tải thành công"
     }
   }
 }

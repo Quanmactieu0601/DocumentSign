@@ -164,8 +164,8 @@ public class TransactionResource {
 
         log.debug("REST request to export  PDF Transactions ");
         Map<String, Object> parameter = new HashMap<>();
-        System.out.println("type:"+type);
-        System.out.println("date "+startDate);
+        System.out.println("type:" + type);
+        System.out.println("date " + startDate);
         List<TransactionDTO> listTransaction = transactionService.findTransaction(startDate, endDate, type);
         JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTransaction);
         parameter.put("transactionDataSource", TransactionCollectionDataSource);

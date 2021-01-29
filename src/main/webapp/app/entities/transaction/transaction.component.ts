@@ -144,8 +144,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.transaction = transaction;
   }
 
-  transform(action: string | undefined): string {
-    switch (action) {
+  transform(extension: string | undefined): string {
+    switch (extension) {
       case 'RAW': {
         return 'ext-raw';
       }
@@ -166,6 +166,18 @@ export class TransactionComponent implements OnInit, OnDestroy {
       }
       case 'CERT': {
         return 'ext-cert';
+      }
+      case 'SIGN_TEMPLATE': {
+        return 'ext-sign-template';
+      }
+      case 'SIGN_IMAGE': {
+        return 'ext-sign-image';
+      }
+      case 'ACCOUNT': {
+        return 'ext-account';
+      }
+      case 'QR_CODE': {
+        return 'ext-qr-code';
       }
       case 'NONE': {
         return 'ext-none';

@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+@Scope("request")
 @Controller
 @RequestMapping("/api/verification")
 public class SignatureVerificationResource extends BaseResource {

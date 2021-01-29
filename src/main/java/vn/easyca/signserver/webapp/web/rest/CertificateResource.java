@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import io.github.jhipster.web.util.PaginationUtil;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -46,6 +47,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
+@Scope("request")
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateResource extends BaseResource {

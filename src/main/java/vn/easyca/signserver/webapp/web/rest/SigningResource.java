@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import java.util.List;
 
 
+@Scope("request")
 @RestController
 @RequestMapping("/api/sign")
 public class SigningResource extends BaseResource {
