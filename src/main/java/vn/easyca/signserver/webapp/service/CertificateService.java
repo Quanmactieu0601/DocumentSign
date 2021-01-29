@@ -20,6 +20,7 @@ import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
+import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -115,6 +116,14 @@ public class CertificateService {
 
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+        Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if (userEntityOptional.isPresent()) {
+            Set<Authority> userAuthority = userEntityOptional.get().getAuthorities();
+            boolean isAdmin = userAuthority.stream().anyMatch(ua -> "ROLE_ADMIN".equals(ua.getName()) || "ROLE_SUPER_ADMIN".equals(ua.getName()));
+            if (!isAdmin) {
+                ownerId = userEntityOptional.get().getLogin();
+            }
+        }
         return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
     }
 
