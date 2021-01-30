@@ -44,10 +44,12 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             sqlBuilder.append("AND a.triggerTime <= :endDate ");
             params.put("endDate", endDateConverted);
         }
+
         if (statusEnum != null) {
             sqlBuilder.append("AND a.status = :status ");
             params.put("status", statusEnum);
         }
+
         if (!QueryUtils.isNullOrEmptyProperty(fullName)) {
             sqlBuilder.append("AND CONCAT(b.lastName,' ',b.firstName) like :fullName ");
             params.put("fullName", "%" + fullName + "%");
