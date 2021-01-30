@@ -4,7 +4,7 @@ import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { HttpResponse } from '@angular/common/http';
 import { TransactionService } from 'app/entities/transaction/transaction.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Type } from 'app/shared/constants/transaction.constants';
@@ -12,7 +12,6 @@ import { Type } from 'app/shared/constants/transaction.constants';
 @Component({
   selector: 'jhi-transaction-report',
   templateUrl: './transaction-report.component.html',
-  styleUrls: ['./transaction-report.component.scss'],
 })
 export class TransactionReportComponent implements OnInit {
   userSearch = this.fb.group({
@@ -37,7 +36,10 @@ export class TransactionReportComponent implements OnInit {
   };
   public show = false;
   // public showAlert = false;
-  public pieChartLabels: Label[] = [['Tổng số lỗi'], ['Tổng số requet thành công']];
+  public pieChartLabels: Label[] = [
+    this.translate.instant('webappApp.transactionReport.requestFail'),
+    this.translate.instant('webappApp.transactionReport.requestSuccess'),
+  ];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
