@@ -55,6 +55,36 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("fullName", "%" + fullName + "%");
         }
 
+        if (!QueryUtils.isNullOrEmptyProperty(api)) {
+            sqlBuilder.append("AND a.api like :api ");
+            params.put("api", "%" + api + "%");
+        }
+
+        if (!QueryUtils.isNullOrEmptyProperty(message)) {
+            sqlBuilder.append("AND a.message like :message ");
+            params.put("message", "%" + message + "%");
+        }
+
+        if (!QueryUtils.isNullOrEmptyProperty(data)) {
+            sqlBuilder.append("AND a.data like :data ");
+            params.put("data", "%" + data + "%");
+        }
+
+        if (typeEnum != null) {
+            sqlBuilder.append("AND a.type = :type ");
+            params.put("type", typeEnum);
+        }
+
+        if (!QueryUtils.isNullOrEmptyProperty(host)) {
+            sqlBuilder.append("AND a.host like :host ");
+            params.put("host", "%" + host + "%");
+        }
+
+        if (methodEnum != null) {
+            sqlBuilder.append("AND a.method = :method ");
+            params.put("method", methodEnum);
+        }
+
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
@@ -75,7 +105,11 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Override
     public List findAllTransaction(LocalDateTime startDate, LocalDateTime endDate, TransactionType type) {
         Map<String, Object> params = new HashMap<>();
-        StringBuilder sqlBuilderExport = new StringBuilder();
+        StringBuilder sqlBuilderExport = new StringBuilder("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, " +
+            " CASE WHEN b.firstName is null THEN b.lastName " +
+            "      WHEN b.lastName is null THEN b.firstName " +
+            "      else concat(b.lastName, ' ', b.firstName) " +
+            "      end as fullName ");
         sqlBuilderExport.append("from Transaction a ");
         sqlBuilderExport.append("left join UserEntity b ");
         sqlBuilderExport.append("on a.createdBy = b.login ");
@@ -95,11 +129,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("type", type);
         }
 
-        Query transactionDTOQuery = entityManager.createQuery(" select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, " +
-            " CASE WHEN b.firstName is null THEN b.lastName " +
-            "     WHEN b.lastName is null THEN b.firstName " +
-            "     else concat(b.lastName, ' ', b.firstName) " +
-            "     end as fullName " + sqlBuilderExport.toString())
+        Query transactionDTOQuery = entityManager.createQuery(sqlBuilderExport.toString())
             .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
         QueryUtils.setParams(transactionDTOQuery, params);
 
