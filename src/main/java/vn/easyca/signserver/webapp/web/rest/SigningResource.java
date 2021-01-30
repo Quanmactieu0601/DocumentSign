@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
+import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
+import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
@@ -28,6 +30,9 @@ import vn.easyca.signserver.core.services.XMLSigningService;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.enm.Method;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
 
 
@@ -50,19 +55,16 @@ public class SigningResource extends BaseResource {
         this.asyncTransactionService = asyncTransactionService;
     }
 
+
     @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Object> signPDF(@RequestParam MultipartFile file, SigningVM<PDFSigningContentVM> signingVM) {
+    public ResponseEntity<Object> signPDF(@RequestBody SigningRequest<VisibleRequestContent> signingRequest) {
         log.info(" --- signPDF --- ");
         try {
-            byte[] fileData = file.getBytes();
-            SignRequest<PDFSignContent> signRequest = signingVM.getDTO(PDFSignContent.class);
-            signRequest.getSignElements().get(0).getContent().setFileData(fileData);
-            PDFSigningDataRes signResponse = signService.signPDFFile(signRequest);
-            ByteArrayResource resource = new ByteArrayResource(signResponse.getContent());
+            PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
+            String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName() + ".pdf")
-                .contentLength(resource.contentLength()) //
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + signingRequest.getSigningRequestContents().get(0).getDocumentName() + "_signed" + ".pdf")
                 .body(resource);
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
@@ -77,7 +79,6 @@ public class SigningResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
-
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
         log.info(" --- signHash --- ");
@@ -123,7 +124,7 @@ public class SigningResource extends BaseResource {
     }
 
     @PostMapping(value = "/office")
-    public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest signingRequest) {
+    public ResponseEntity<BaseResponseVM> signOffice(@RequestBody SigningRequest<SigningRequestContent> signingRequest) {
         log.info(" --- signOffice --- ");
         try {
             SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
@@ -144,7 +145,7 @@ public class SigningResource extends BaseResource {
     }
 
     @PostMapping(value = "/xml")
-    public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest signingRequest) {
+    public ResponseEntity<BaseResponseVM> signXML(@RequestBody SigningRequest<SigningRequestContent> signingRequest) {
         log.info(" --- signXML --- ");
         try {
             SigningResponse signingDataResponse = xmlSigningService.sign(signingRequest);
@@ -165,7 +166,7 @@ public class SigningResource extends BaseResource {
     }
 
     @PostMapping(value = "/invisiblePdf")
-    public ResponseEntity<BaseResponseVM> invisibleSignPdf(@RequestBody SigningRequest signingRequest) {
+    public ResponseEntity<BaseResponseVM> invisibleSignPdf(@RequestBody SigningRequest<SigningRequestContent> signingRequest) {
         log.info(" --- invisiblePdf --- ");
         try {
             SigningResponse signingDataResponse = pdfSigningService.invisibleSign(signingRequest);
