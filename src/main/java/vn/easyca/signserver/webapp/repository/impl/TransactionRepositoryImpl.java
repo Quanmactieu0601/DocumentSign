@@ -105,11 +105,10 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Override
     public List findAllTransaction(LocalDateTime startDate, LocalDateTime endDate, TransactionType type) {
         Map<String, Object> params = new HashMap<>();
-        StringBuilder sqlBuilderExport = new StringBuilder("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, " +
-            " CASE WHEN b.firstName is null THEN b.lastName " +
-            "      WHEN b.lastName is null THEN b.firstName " +
-            "      else concat(b.lastName, ' ', b.firstName) " +
-            "      end as fullName ");
+        StringBuilder sqlBuilderExport = new StringBuilder("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, ");
+        sqlBuilderExport.append("CASE WHEN b.firstName is null THEN b.lastName ");
+        sqlBuilderExport.append(" WHEN b.lastName is null THEN b.firstName ");
+        sqlBuilderExport.append("else concat(b.lastName, ' ', b.firstName) end as fullName ");
         sqlBuilderExport.append("from Transaction a ");
         sqlBuilderExport.append("left join UserEntity b ");
         sqlBuilderExport.append("on a.createdBy = b.login ");
