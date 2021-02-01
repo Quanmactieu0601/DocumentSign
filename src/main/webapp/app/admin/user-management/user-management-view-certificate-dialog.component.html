@@ -2,7 +2,7 @@
 
 <form name="certificateView">
   <div class="modal-header">
-    <h4 class="modal-title" jhiTranslate="entity.viewCer.title">Certificate</h4>
+    <h6 class="modal-title"><span class="title-custom" jhiTranslate="entity.viewCer.title">Certificate</span></h6>
 
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true" (click)="close()">&times;</button>
   </div>
@@ -35,8 +35,8 @@
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button type="button" class="btn btn-danger" data-dismiss="modal" (click)="close()">
+  <div class="modal-footer footer-custom">
+    <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal" (click)="close()">
       <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Close</span>
     </button>
   </div>

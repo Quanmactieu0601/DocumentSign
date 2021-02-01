@@ -4,6 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.Transaction;
+import vn.easyca.signserver.webapp.enm.TransactionStatus;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 
 import java.math.BigInteger;
@@ -22,7 +23,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
                                          @Param("endDate") LocalDateTime endDate, @Param("type") TransactionType type);
 
 
-    @Query(value = " SELECT COUNT( CASE WHEN t.code='200' THEN 1 END )AS TotalSuccess ,COUNT( CASE WHEN  t.code<>'200' THEN 1 END) AS TotalFail FROM transaction_log t WHERE t.trigger_time BETWEEN :startDate AND :endDate AND t.type=:type ", nativeQuery = true)
+    @Query(value = "SELECT COUNT(CASE WHEN t.status = true THEN 1 END)  AS TotalSuccess, " +
+        "                  COUNT(CASE WHEN t.status = false THEN 1 END) AS TotalFail " +
+        "FROM transaction_log t " +
+        "WHERE (t.trigger_time >= :startDate or :startDate is null) " +
+        "AND (t.trigger_time <= :endDate or :endDate is null) " +
+        "AND (t.type = :type or :type is null); ", nativeQuery = true)
     Map<String, BigInteger> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
                                                           @Param("endDate") LocalDateTime endDate, @Param("type") String type);
 

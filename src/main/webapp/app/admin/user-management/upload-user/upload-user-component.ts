@@ -6,10 +6,12 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { AccountService } from '../../../core/auth/account.service';
 import { Subscription } from 'rxjs';
 import { Account } from '../../../core/user/account.model';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'jhi-upload-user',
   templateUrl: './upload-user-component.html',
+  styleUrls: ['./upload-user.component.scss'],
 })
 export class UploadUserComponent implements OnInit {
   @Output() isUploadedSucessfully = new EventEmitter<boolean>();
@@ -17,8 +19,10 @@ export class UploadUserComponent implements OnInit {
   progress = 0;
   currentFile: any;
   account: Account | null = null;
+  fileName: any = this.translateService.instant('userManagement.chooseFile');
   authSubscription?: Subscription;
   constructor(
+    public activeModal: NgbActiveModal,
     private toastrService: ToastrService,
     private translateService: TranslateService,
     private userService: UserService,
@@ -34,6 +38,8 @@ export class UploadUserComponent implements OnInit {
       this.toastrService.error(this.translateService.instant('userManagement.alert.fail.sizeErr'));
       this.selectFiles = [];
     }
+    const file = event.target.files[0];
+    this.fileName = file.name;
   }
 
   upload(): void {
@@ -46,23 +52,45 @@ export class UploadUserComponent implements OnInit {
         } else if (res instanceof HttpResponse) {
           if (res.body.status === 200) {
             this.toastrService.success(this.translateService.instant('userManagement.alert.success.uploaded'));
-            this.transformVariable(true);
+            this.cancel();
           } else if (res.body.status === 417) {
-            this.toastrService.error(this.translateService.instant('userManagement.alert.fail.uploaded'));
-          } else if (res.body.status === 400) {
-            this.toastrService.error(res.body.msg, '', {
-              enableHtml: true,
-            });
+            this.toastrService.error(res.body.msg);
           }
         }
       });
     }
   }
-  transformVariable(agreed: boolean): void {
-    this.isUploadedSucessfully.emit(agreed);
-  }
+
   onInputClick = (event: any) => {
     const element = event.target as HTMLInputElement;
     element.value = '';
   };
+
+  downLoadFileTemplate(): void {
+    this.userService.downLoadTemplateFile().subscribe(
+      res => {
+        const bindData = [];
+        bindData.push(res.data);
+        const url = window.URL.createObjectURL(
+          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        );
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.setAttribute('target', 'blank');
+        a.href = url;
+        a.download = 'templateFile';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
+  cancel(): void {
+    this.activeModal.dismiss();
+  }
 }

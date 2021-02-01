@@ -167,17 +167,11 @@ public class UserApplicationService {
 
     public UserEntity registerUser(UserDTO userDTO, String password) {
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
-            boolean removed = removeNonActivatedUser(existingUser);
-            if (!removed) {
                 throw new UsernameAlreadyUsedException();
-            }
         });
-        if (userDTO.getEmail() != null) {
+        if (!Strings.isNullOrEmpty(userDTO.getEmail())) {
             userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
-                boolean removed = removeNonActivatedUser(existingUser);
-                if (!removed) {
                     throw new EmailAlreadyUsedException();
-                }
             });
         }
         UserEntity newUserEntity = new UserEntity();
@@ -288,7 +282,7 @@ public class UserApplicationService {
         log.debug("Created Information for User: {}", newUserEntity);
         return newUserEntity;
     }
-    
+
     /**
      * Update all information for a specific user, and return the modified user.
      *

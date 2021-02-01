@@ -14,7 +14,11 @@
         "question": "Are you sure you want to delete Transaction {{ id }}?"
       },
       "detail": {
+        "detail": "Detail",
         "title": "Transaction"
+      },
+      "transactionReport": {
+        "transactionReport": "Report Transaction"
       },
       "api": "Api",
       "triggerTime": "Trigger Time",
@@ -22,7 +26,6 @@
       "message": "Message",
       "data": "Data",
       "type": "Type",
-      "transactionReport": "Report Transaction",
       "host": "Host",
       "method": "Method",
       "fullName": "Full Name",
@@ -30,10 +33,9 @@
       "endDate": "End Date",
       "action": "Action",
       "extension": "Extension",
-      "ALL": "ALL",
       "STATUS": {
-        "FAIL": "FAIL",
-        "SUCCESS": "SUCCESS"
+        "FAIL": "fail",
+        "SUCCESS": "success"
       },
       "TYPE": {
         "SYSTEM": "SYSTEM",
@@ -57,8 +59,13 @@
         "CSR": "CSR",
         "CERT": "CERT",
         "HASH": "HASH",
+        "SIGN_TEMPLATE": "SIGN_TEMPLATE",
+        "SIGN_IMAGE": "SIGN_IMAGE",
+        "ACCOUNT": "ACCOUNT",
+        "QR_CODE": "QR_CODE",
         "NONE": "NONE"
-      }
+      },
+      "search": "Search"
     }
   }
 }

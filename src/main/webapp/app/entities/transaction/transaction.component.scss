@@ -1,7 +1,55 @@
-.btn_report {
-  float: right;
-  margin-right: 30px;
+.ext-pdf {
+  background-color: #0bd59d;
 }
-.headerReportTransaction {
-  display: flex !important;
+
+.ext-xml {
+  background-color: #3a8bf8;
+}
+
+.ext-raw {
+  color: white;
+  background-color: #1a174d;
+}
+
+.ext-hash {
+  background-color: #3abaf4;
+}
+
+.ext-xml {
+  background-color: #4dd0e1;
+}
+
+.ext-ooml {
+  color: white;
+  background-color: #19361f;
+}
+
+.ext-csr {
+  color: white;
+  background-color: #533f03;
+}
+
+.ext-cert {
+  background-color: #745af3;
+}
+
+.ext-sign-template {
+  color: whitesmoke;
+  background-color: #66bb6a;
+}
+
+.ext-sign-image {
+  background-color: #4b6987;
+}
+
+.ext-account {
+  background-color: #006fe4;
+}
+
+.ext-qr-code {
+  background-color: #9e9e9e;
+}
+
+.ext-none {
+  display: none;
 }

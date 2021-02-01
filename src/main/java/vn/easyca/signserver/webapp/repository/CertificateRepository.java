@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface CertificateRepository extends JpaRepository<Certificate, Long>, CertificateRepositoryCustom {
     List<Certificate> findByOwnerId(String ownerId);
     Optional<Certificate> findOneBySerial(String serial);
+    Optional<Certificate> findOneBySerialAndActiveStatus(String serial, Integer activeStatus);
 }

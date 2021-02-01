@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver';
 @Component({
   selector: 'jhi-user-mgmt-kl',
   templateUrl: './user-management-key-length.component.html',
+  styleUrls: ['./user-management-key-length.component.scss'],
 })
 export class UserManagementKeyLengthComponent {
   keyLength: any;

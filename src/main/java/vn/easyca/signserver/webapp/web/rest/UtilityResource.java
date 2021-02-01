@@ -59,6 +59,9 @@ public class UtilityResource {
             Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
             if (!certificateOptional.isPresent())
                 return "-- Certificate is not found --";
+            if (certificateOptional.get().getActiveStatus() == 0) {
+                return "-- Certificate is in-active";
+            }
             CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
             cryptoTokenProxy.getCryptoToken().checkInitialized();

@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ChartType, ChartOptions } from 'chart.js';
+import { ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { HttpResponse } from '@angular/common/http';
 import { TransactionService } from 'app/entities/transaction/transaction.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { Type } from 'app/shared/constants/transaction.constants';
 
 @Component({
   selector: 'jhi-transaction-report',
@@ -13,12 +16,15 @@ import { FormBuilder } from '@angular/forms';
 })
 export class TransactionReportComponent implements OnInit {
   userSearch = this.fb.group({
-    startDate: '',
-    endDate: '',
-    type: '',
+    startDate: [''],
+    endDate: [''],
+    type: [''],
   });
-  totalsuccess = '';
-  totalfail = '';
+
+  type = Type;
+
+  totalSuccess = '';
+  totalFail = '';
   public pieChartOptions: ChartOptions = {
     responsive: true,
     legend: {
@@ -30,7 +36,7 @@ export class TransactionReportComponent implements OnInit {
     },
   };
   public show = false;
-  public showAlert = false;
+  // public showAlert = false;
   public pieChartLabels: Label[] = [['Tổng số lỗi'], ['Tổng số requet thành công']];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
@@ -42,7 +48,12 @@ export class TransactionReportComponent implements OnInit {
     },
   ];
 
-  constructor(protected transactionService: TransactionService, private fb: FormBuilder) {}
+  constructor(
+    protected transactionService: TransactionService,
+    private fb: FormBuilder,
+    private toastService: ToastrService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -54,8 +65,7 @@ export class TransactionReportComponent implements OnInit {
     const hours = ('0' + dateTime.getHours()).slice(-2);
     const minutes = ('0' + dateTime.getMinutes()).slice(-2);
     const seconds = ('0' + dateTime.getSeconds()).slice(-2);
-    const time = year + month + date + ' ' + hours + minutes + seconds;
-    return time;
+    return year + month + date + ' ' + hours + minutes + seconds;
   }
 
   ExportDPF(): void {
@@ -65,34 +75,29 @@ export class TransactionReportComponent implements OnInit {
       type: this.userSearch.get(['type'])!.value,
     };
     this.transactionService.exportPDFfromjasper(dataExport.startDate, dataExport.endDate, dataExport.type).subscribe(res => {
-      const blob = new Blob([res], { type: 'application/pdf' });
+      // const blob = new Blob([res], { type: 'application/pdf' });
       const downloadURL = window.URL.createObjectURL(res);
       const link = document.createElement('a');
       link.href = downloadURL;
       link.download = 'Transaction Report ' + this.getTime() + '.pdf';
       link.click();
-      this.showAlert = true;
-      setTimeout(() => {
-        this.showAlert = false;
-      }, 4000);
+      this.toastService.success(this.translate.instant('webappApp.transactionReport.success'));
+      // this.showAlert = true;
+      // setTimeout(() => {
+      //   this.showAlert = false;
+      // }, 4000);
     });
   }
 
-  alertNotification(): void {
-    this.showAlert = false;
-  }
-
   searchUser(): void {
-    const data = {
-      startDate: this.userSearch.get(['startDate'])!.value,
-      endDate: this.userSearch.get(['endDate'])!.value,
-      type: this.userSearch.get(['type'])!.value,
-    };
+    const startDate = this.userSearch.get(['startDate'])!.value;
+    const endDate = this.userSearch.get(['endDate'])!.value;
+    const type = this.userSearch.get(['type'])!.value;
     this.show = true;
-    this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe((res: HttpResponse<any>) => {
-      this.totalsuccess = res.body.TotalSuccess;
-      this.totalfail = res.body.TotalFail;
-      this.pieChartData = [parseInt(this.totalfail, 10), parseInt(this.totalsuccess, 10)];
+    this.transactionService.queryTransaction(startDate, endDate, type).subscribe((res: HttpResponse<any>) => {
+      this.totalSuccess = res.body.TotalSuccess;
+      this.totalFail = res.body.TotalFail;
+      this.pieChartData = [parseInt(this.totalFail, 10), parseInt(this.totalSuccess, 10)];
     });
   }
 }

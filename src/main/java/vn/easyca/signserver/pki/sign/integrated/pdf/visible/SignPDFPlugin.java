@@ -45,7 +45,7 @@ public class SignPDFPlugin {
         //add info to hash
         hash = new DigestCreator().digestWithSHA1Info(hash);
         RawSigner rawSigner = new RawSigner();
-        byte[] sig = rawSigner.signHashPdf(hash, dto.getKey());
+        byte[] sig = rawSigner.signHashWithoutDigestInfo(hash, dto.getKey());
         insertSignature(sessionKey, sig, dto.getSignField(), dto.getOutPath());
     }
 
