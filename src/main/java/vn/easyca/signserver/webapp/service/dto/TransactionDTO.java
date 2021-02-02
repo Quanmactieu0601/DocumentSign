@@ -140,15 +140,6 @@ public class TransactionDTO implements Serializable {
         this.type = type;
     }
 
-    public String getTypeStr() {
-        return this.type.toString();
-    }
-
-    public String getStatusStr(){
-
-        return this.status.toString();
-    }
-
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.api = transaction.getApi();
