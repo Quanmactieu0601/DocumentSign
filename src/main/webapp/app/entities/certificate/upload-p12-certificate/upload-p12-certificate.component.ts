@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { saveAs } from 'file-saver';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'jhi-upload-p12-certificate',
   templateUrl: './upload-p12-certificate.component.html',
@@ -16,7 +17,13 @@ export class UploadP12CertificateComponent implements OnInit {
   currentFile: any;
   progress = 0;
   fileInfos: Observable<any> = new Observable<any>();
-  constructor(private certificateService: CertificateService, private toastService: ToastrService, private translate: TranslateService) {}
+  fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
+  constructor(
+    private certificateService: CertificateService,
+    private toastService: ToastrService,
+    private translate: TranslateService,
+    public activeModal: NgbActiveModal
+  ) {}
 
   ngOnInit(): void {}
   selectFile(event: any): void {
@@ -26,6 +33,7 @@ export class UploadP12CertificateComponent implements OnInit {
       this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
       this.selectedFiles = [];
     }
+    this.fileName = this.selectedFiles[0].name;
   }
   upload(): void {
     this.progress = 0;

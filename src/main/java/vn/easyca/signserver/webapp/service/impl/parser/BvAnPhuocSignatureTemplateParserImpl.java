@@ -8,13 +8,13 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
 public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplateParseService {
+    String regexCN = "CN=([^\",]+)";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
         try {
-            String regexCN = "CN=([^\",]+)";
             String regexT = ", T=([^,]+)";
-            String CN = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
+            String CN = getSigner(subjectDN);
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
@@ -30,5 +30,10 @@ public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplatePa
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s - ex: %s", subjectDN, ex.getMessage()), ex);
         }
 
+    }
+
+    @Override
+    public String getSigner(String subjectDN) throws ApplicationException {
+        return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
     }
 }

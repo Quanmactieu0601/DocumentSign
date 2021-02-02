@@ -1,6 +1,8 @@
 {
   "webappApp": {
     "certificate": {
+      "chooseFile": "Choose File",
+      "chooseSignatureImage": "Choose Signature Image(s)",
       "home": {
         "title": "Certificates",
         "createLabel": "Create a new Certificate",

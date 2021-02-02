@@ -8,11 +8,11 @@
       "type": "Type",
       "search": "Search",
       "exportPDF ": "Export PDF",
-      "totalRequetsFail": "Total Request Fail",
-      "totalRequestSuccess": "Total Request Success",
       "figure1": "Figure 1 :",
       "Chart": "Digital Request Transaction Statistics Chart",
-      "success": "Download successfully"
+      "success": "Download successfully",
+      "requestFail": "Fail",
+      "requestSuccess": "Success"
     }
   }
 }
