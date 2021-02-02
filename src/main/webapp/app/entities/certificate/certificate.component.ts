@@ -20,6 +20,7 @@ import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.c
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
+import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -105,12 +106,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.certificate = certificate;
   }
 
-  updateStatus(id: any): void {
-    this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
-      if (res.ok) {
-        this.searchCertificate();
-      }
-    });
+  updateStatus(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertificateDeactiveDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
   }
 
   sort(): string[] {
