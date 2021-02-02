@@ -5,18 +5,14 @@ import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 
 import java.util.List;
 
-public class SigningRequest {
-    private List<SigningRequestContent> signingRequestContents;
+public class SigningRequest<T> {
+    private List<T> signingRequestContents;
     private TokenInfoDTO tokenInfo;
     private OptionalDTO optional;
 
-    public List<SigningRequestContent> getSigningRequestContents() {
-        return signingRequestContents;
-    }
+    public List<T> getSigningRequestContents() { return signingRequestContents; }
 
-    public void setSigningRequestContents(List<SigningRequestContent> signingRequestContents) {
-        this.signingRequestContents = signingRequestContents;
-    }
+    public void setSigningRequestContents(List<T> signingRequestContents) { this.signingRequestContents = signingRequestContents; }
 
     public TokenInfoDTO getTokenInfo() {
         return tokenInfo;
