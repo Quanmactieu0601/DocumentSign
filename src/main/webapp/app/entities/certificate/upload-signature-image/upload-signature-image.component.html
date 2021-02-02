@@ -1,29 +1,51 @@
-<div *ngIf="imageFileImport" class="progress">
-    <div
-        class="progress-bar progress-bar-info progress-bar-striped"
-        role="progressbar"
-        attr.aria-valuenow="{{ progress }}"
-        aria-valuemin="0"
-        aria-valuemax="100"
-        [ngStyle]="{ width: progress + '%' }">
-        {{ progress }}%
+<div class="modal-header header-custom">
+    <h5 class="modal-title">Upload certificate</h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <div *ngIf="successFile && listImageFiles" class="progress">
+        <div
+            class="progress-bar progress-bar-info progress-bar-striped"
+            role="progressbar"
+            attr.aria-valuenow="{{ progress }}"
+            aria-valuemin="0"
+            aria-valuemax="100"
+            [ngStyle]="{ width: progress + '%' }">
+            {{ progress }}%
+        </div>
+    </div>
+<!--    <label class="btn btn-default lblUpload">-->
+<!--        <label>Success File: </label>-->
+<!--        <input type="file" (change)="selectedSuccessFile($event)" (click)="onInputClick($event)" class="inputFile"/>-->
+<!--    </label>-->
+    <div class="form-group col-md-12 uploadFormGroup">
+        <div>Success File: </div>
+        <div class="input-group mb-3">
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" (change)="selectedSuccessFile($event)" (click)="onInputClick($event)"/>
+                <label class="custom-file-label">{{this.fileName}}</label>
+            </div>
+        </div>
+    </div>
+
+<!--    <label class="btn btn-default lblUpload">-->
+<!--        <label>Image Files: </label>-->
+<!--        <input type="file" (change)="selectedImageFiles($event)" (click)="onInputClick($event)" class="inputFile" multiple />-->
+<!--    </label>-->
+    <div class="form-group col-md-12 uploadFormGroup">
+        <div>Image Files: </div>
+        <div class="input-group mb-3">
+            <div class="custom-file" >
+                <input type="file" class="custom-file-input"  (change)="selectedImageFiles($event)" (click)="onInputClick($event)" multiple/>
+                <label class="custom-file-label overflow-hidden">{{this.signatureImageName}}</label>
+            </div>
+        </div>
     </div>
 </div>
-
-
-
-<div style="padding-bottom: 10px">
-    <label class="btn btn-default lblUpload">
-        <label>Success File</label>
-        <input type="file" (change)="selectedSuccessFile($event)" (click)="onInputClick($event)" class="inputFile"/>
-    </label>
-
-    <label class="btn btn-default lblUpload">
-        <label>Image Files</label>
-        <input type="file" (change)="selectedImageFiles($event)" (click)="onInputClick($event)" class="inputFile" multiple />
-    </label>
-
-    <button class="btn btn-success" [disabled]="this.successFile == null || this.listImageFiles == null" (click)="upload()">
-        Upload
-    </button>
+<div class="modal-footer footer-custom">
+    <button class="btn btn-success btn-sm float-right mr-1" [disabled]="!this.successFile == null || this.listImageFiles == null" (click)="upload()">
+        Upload</button>
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">Hủy</button>
 </div>

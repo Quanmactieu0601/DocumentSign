@@ -8,6 +8,8 @@
         "notFound": "No Certificates found",
         "searchCertificates": "Tìm kiếm chứng thư số"
       },
+      "chooseFile": "Chọn tệp",
+      "chooseSignatureImage": "Chọn tệp ảnh",
       "created": "Một Certificate mới được tạo với định danh {{ param }}",
       "updated": "Một Certificate cập nhật với định danh {{ param }}",
       "deleted": "Một Certificate đã xóa với định danh {{ param }}",
