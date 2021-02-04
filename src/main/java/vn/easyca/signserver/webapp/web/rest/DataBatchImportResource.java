@@ -355,11 +355,11 @@ public class DataBatchImportResource {
         StringBuilder result = new StringBuilder();
         result.append("cmnd, serial \n");
         for (CertImportSuccessDTO cert : importSuccessList) {
-            Optional<Certificate> certId = certificateService.findOne(Long.valueOf(cert.getCertId()));
+            Optional<Certificate> certificate = certificateService.findOne(Long.valueOf(cert.getCertId()));
             String cmnd = cert.getPersonIdentity();
             result.append("=\"").append(cmnd).append("\"").append(", ");
-            if (certId.isPresent()) {
-                String serial = certId.get().getSerial();
+            if (certificate.isPresent()) {
+                String serial = certificate.get().getSerial();
                 result.append(serial).append("\n");
             } else {
                 result.append("Certificate not found");
