@@ -362,7 +362,7 @@ public class DataBatchImportResource {
                 String serial = certificate.get().getSerial();
                 result.append(serial).append("\n");
             } else {
-                result.append("Certificate not found");
+                result.append("Certificate not found \n");
             }
         }
         byte[] resultByte = result.toString().getBytes();
