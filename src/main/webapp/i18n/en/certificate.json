@@ -69,7 +69,12 @@
           "newPIN": "Your new PIN is required",
           "confirmPIN": "Your confirm PIN is required"
         }
-      }
+      },
+      "uploadCert": "Upload CERT",
+      "uploadP12Cert": "Upload P12 CERT",
+      "uploadSignatureImage": "Upload Signature Image",
+      "search": "Search",
+      "exportSerial": "Export Serial"
     }
   }
 }

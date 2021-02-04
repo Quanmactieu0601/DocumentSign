@@ -20,6 +20,7 @@ import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.c
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
+import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -173,6 +174,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   openModalUploadSignatureImage(): void {
     this.modalRef = this.modalService.open(UploadSignatureImageComponent, { size: 'md' });
+  }
+
+  openModalExportSerial(): void {
+    this.modalRef = this.modalService.open(ExportSerialComponent, { size: 'md' });
   }
 
   isUploadedSucessfully(agreed: boolean): void {
