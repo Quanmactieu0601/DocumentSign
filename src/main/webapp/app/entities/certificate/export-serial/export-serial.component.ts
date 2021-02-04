@@ -37,8 +37,8 @@ export class ExportSerialComponent implements OnInit {
 
     this.certificateService.exportSerial(this.currentFile).subscribe((response: any) => {
       if (response.type !== 0) {
-        saveAs(new Blob([response.body], { type: 'application/zip' }), 'ExportSerial.csv');
-        this.toastService.success('thành công');
+        saveAs(new Blob([response.body]), 'ExportSerial.csv');
+        this.toastService.success(this.translate.instant('webappApp.certificate.success'));
         this.activeModal.close();
       }
     });

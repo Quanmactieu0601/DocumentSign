@@ -354,10 +354,16 @@ public class DataBatchImportResource {
         CertImportSuccessDTO[] importSuccessList = gson.fromJson(jsonCertSuccessMapping, CertImportSuccessDTO[].class);
         StringBuilder result = new StringBuilder();
         result.append("cmnd, serial \n");
-        for (CertImportSuccessDTO cert: importSuccessList) {
-           String serial = certificateService.findOne(Long.valueOf(cert.getCertId())).get().getSerial();
-           String cmnd = cert.getPersonIdentity();
-           result.append("=\"").append(cmnd).append("\"").append(", ").append(serial).append("\n");
+        for (CertImportSuccessDTO cert : importSuccessList) {
+            Optional<Certificate> certId = certificateService.findOne(Long.valueOf(cert.getCertId()));
+            String cmnd = cert.getPersonIdentity();
+            result.append("=\"").append(cmnd).append("\"").append(", ");
+            if (certId.isPresent()) {
+                String serial = certId.get().getSerial();
+                result.append(serial).append("\n");
+            } else {
+                result.append("Certificate not found");
+            }
         }
         byte[] resultByte = result.toString().getBytes();
         InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(resultByte));
