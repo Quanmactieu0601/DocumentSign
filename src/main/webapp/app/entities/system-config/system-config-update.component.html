@@ -16,7 +16,8 @@
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
 
             <div>
-                <jhi-alert-error></jhi-alert-error>
+
+<!--                <jhi-alert-error></jhi-alert-error>-->
 
                 <div class="form-group" [hidden]="!editForm.get('id')!.value">
                     <label for="id" jhiTranslate="global.field.id">ID</label>
@@ -24,7 +25,7 @@
                            readonly/>
                 </div>
 
-                <div class="form-group" [hidden]="true">
+                <div class="form-group" >
                     <label class="form-control-label" jhiTranslate="webappApp.systemConfig.comId"
                            for="field_comId">Com Id</label>
                     <input type="number" class="form-control form-control-sm" name="comId" id="field_comId"

@@ -40,7 +40,12 @@
       },
       "Action": "Hành động",
       "create": "Tạo mới",
-      "edit": "Chỉnh sửa"
+      "edit": "Chỉnh sửa",
+      "CreateStatus": {
+        "Success": "Tạo mới cấu hình hệ thống thành công",
+        "Error": "{{ key }} của mã doanh nghiêp {{ comId }} đã tồn tại",
+        "valueNull": "Giá trị không được để trống"
+      }
     }
   }
 }

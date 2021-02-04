@@ -8,6 +8,8 @@ import { ISystemConfig, SystemConfig } from 'app/shared/model/system-config.mode
 import { SystemConfigService } from './system-config.service';
 import { SystemConfigCategoryService} from "app/entities/system-config-category/system-config-category.service";
 import {ISystemConfigCategory, SystemConfigCategory} from "app/shared/model/system-config-category.model";
+import {ToastrService} from "ngx-toastr";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'jhi-system-config-update',
@@ -29,7 +31,9 @@ export class SystemConfigUpdateComponent implements OnInit {
   });
 
 
-  constructor(protected systemConfigService: SystemConfigService, protected systemConfigCategoryService: SystemConfigCategoryService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder) {}
+  constructor(protected systemConfigService: SystemConfigService, protected systemConfigCategoryService: SystemConfigCategoryService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder,
+              private toastService: ToastrService,
+              private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ systemConfig }) => {
@@ -73,10 +77,12 @@ export class SystemConfigUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     this.createFromForm(this.systemConfig);
-    if (this.systemConfig.id !== undefined) {
+    if (this.systemConfig.value === '') this.valueIsNull();
+    else if (this.systemConfig.id !== undefined) {
       this.subscribeToSaveResponse(this.systemConfigService.update(this.systemConfig));
     } else {
       this.subscribeToSaveResponse(this.systemConfigService.create(this.systemConfig));
+
     }
   }
 
@@ -111,5 +117,11 @@ export class SystemConfigUpdateComponent implements OnInit {
 
   protected onSaveError(): void {
     this.isSaving = false;
+    this.toastService.error(this.translate.instant('webappApp.systemConfig.CreateStatus.Error', {key: this.systemConfig.key, comId: this.systemConfig.comId}));
+  }
+
+  protected valueIsNull(): void {
+    this.isSaving = false;
+    this.toastService.error(this.translate.instant('webappApp.systemConfig.CreateStatus.valueNull'))
   }
 }

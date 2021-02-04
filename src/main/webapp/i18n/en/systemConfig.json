@@ -39,7 +39,12 @@
       },
       "Action": "Action",
       "create": "Create",
-      "edit": "Edit"
+      "edit": "Edit",
+      "CreateStatus": {
+        "Success": "Success",
+        "Error": "{{ key }} of comId {{ comId }} has existed",
+        "valueNull": "Value cannot be empty"
+      }
     }
   }
 }
