@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { IUser } from 'app/core/user/user.model';
 
 @Component({
   selector: 'jhi-login',
@@ -16,7 +17,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   form: any = {};
   isLoggedIn = false;
-  roles: string[] = [];
 
   constructor(
     private loginService: LoginService,
@@ -40,10 +40,16 @@ export class LoginComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit(): void {
+    const username = this.usernameEl?.nativeElement.value;
     this.loginService.login(this.form).subscribe(
-      () => {
-        // this.authenticationError = false;
-        this.router.navigate(['/home']);
+      (response: any) => {
+        this.accountService.isFirstLogin(username).subscribe(() => {
+          if (response.remindChangePassword === false) {
+            this.router.navigate(['/account/password']);
+          } else {
+            this.router.navigate(['/home']);
+          }
+        });
         if (
           this.router.url === '/account/register' ||
           this.router.url.startsWith('/account/activate') ||

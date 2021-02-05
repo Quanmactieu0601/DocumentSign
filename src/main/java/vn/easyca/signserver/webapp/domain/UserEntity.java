@@ -114,6 +114,9 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "csr_status")
     private int csrStatus;
 
+    @Column(name = "remind_change_password")
+    private Boolean remindChangePassword;
+
     //TODO: Chang fetch_type;
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
@@ -131,6 +134,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getRemindChangePassword() {
+        return remindChangePassword;
+    }
+
+    public void setRemindChangePassword(Boolean remindChangePassword) {
+        this.remindChangePassword = remindChangePassword;
     }
 
     public String getLogin() {

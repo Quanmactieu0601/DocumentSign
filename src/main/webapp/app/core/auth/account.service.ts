@@ -98,4 +98,8 @@ export class AccountService {
   getCurrentLoggedAccount(): Account | null {
     return this.userIdentity;
   }
+
+  isFirstLogin(username: string | undefined): Observable<{}> {
+    return this.http.post(SERVER_API_URL + '/api/account/first-login', { username });
+  }
 }

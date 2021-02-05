@@ -1,7 +1,8 @@
 package vn.easyca.signserver.webapp.service;
 
 import com.google.common.base.Strings;
-import vn.easyca.signserver.core.exception.ApplicationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -23,9 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.error.*;
-import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -227,6 +226,7 @@ public class UserApplicationService {
         userDTO.setLogin(username);
         userDTO.setFirstName(fullName);
         userDTO.setPassword(password);
+        userDTO.setRemindChangePassword(false);
         Set<String> authorities = new HashSet<>();
         authorities.add(AuthoritiesConstants.USER);
         userDTO.setAuthorities(authorities);
@@ -375,8 +375,14 @@ public class UserApplicationService {
                 String encryptedPassword = passwordEncoder.encode(newPassword);
                 user.setPassword(encryptedPassword);
                 this.clearUserCaches(user);
+                user.setRemindChangePassword(true);
                 log.debug("Changed password for User: {}", user);
             });
+    }
+
+    public ResponseEntity remindChangePassword(String login){
+       Boolean isFirstLogin = userRepository.findOneByLogin(login).get().getRemindChangePassword();
+        return new ResponseEntity<>(isFirstLogin,HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)

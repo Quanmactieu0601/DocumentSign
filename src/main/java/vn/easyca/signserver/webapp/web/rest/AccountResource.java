@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.springframework.http.ResponseEntity;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -13,6 +14,7 @@ import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.*;
 import vn.easyca.signserver.webapp.web.rest.vm.KeyAndPasswordVM;
+import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 import vn.easyca.signserver.webapp.web.rest.vm.ManagedUserVM;
 
 import org.apache.commons.lang3.StringUtils;
@@ -167,6 +169,11 @@ public class AccountResource {
             asyncTransactionService.newThread("/api/account/change-password", TransactionType.SYSTEM, Action.MODIFY, Extension.NONE, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         }
+    }
+
+    @PostMapping(path = "/account/first-login")
+    public ResponseEntity remindChangePassword(@RequestBody LoginVM login) {
+        return userApplicationService.remindChangePassword(login.getUsername());
     }
 
     /**
