@@ -299,8 +299,8 @@ public class SignatureVerificationService {
         return certificateVfDTO;
     }
 
-    public VerificationResponseDTO verifyDocx(File file) throws IOException, InvalidFormatException, ApplicationException {
-        OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
+    public VerificationResponseDTO verifyDocx(InputStream stream) throws IOException, InvalidFormatException, ApplicationException {
+        OPCPackage pkg = OPCPackage.open(stream);
         try{
             if (provider == null) {
                 provider = new BouncyCastleProvider();
@@ -314,7 +314,7 @@ public class SignatureVerificationService {
 
             VerificationResponseDTO result = new VerificationResponseDTO();
 
-            VerificationResponseDTO verificationResponseDTO = new VerificationResponseDTO();
+//            VerificationResponseDTO verificationResponseDTO = new VerificationResponseDTO();
             List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
             List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
 //            List<X509Certificate> result = new ArrayList<>();

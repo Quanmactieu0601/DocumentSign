@@ -104,13 +104,7 @@ public class SignatureVerificationResource extends BaseResource {
     @PostMapping(value = "/doc")
     public ResponseEntity<BaseResponseVM> verifyDoc(@RequestParam("file") MultipartFile file) {
         try {
-            File convFile = new File(file.getOriginalFilename());
-            convFile.createNewFile();
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-
-            VerificationResponseDTO result = verificationService.verifyDocx(convFile);
+            VerificationResponseDTO result = verificationService.verifyDocx(file.getInputStream());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
@@ -122,7 +116,7 @@ public class SignatureVerificationResource extends BaseResource {
             log.error(message, e);
             return ResponseEntity.ok(new BaseResponseVM(-1, null, message));
         } finally {
-            asyncTransactionService.newThread("/api/doc", TransactionType.BUSINESS, Action.VERIFY, Extension.PDF, Method.POST,
+            asyncTransactionService.newThread("/api/verification/doc", TransactionType.BUSINESS, Action.VERIFY, Extension.OOXML, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
