@@ -18,6 +18,41 @@
       },
       "signatureImage": "Signature Image",
       "userId": "User Id"
+    },
+    "signatureVerify": {
+      "title": "Verify Signature",
+      "verify": "Verify",
+      "coverWholeDocument": "Cover Whole Document",
+      "revision": "Revision",
+      "totalRevision": "Total Revision",
+      "signTime": "Sign Time",
+      "integrity": "Integrity",
+      "certificate": {
+        "title": "Certificate",
+        "issuer": "Issuer",
+        "subjectDn": "SubjectDn",
+        "validFrom": "Valid From",
+        "validTo": "Valid To",
+        "revocationStatus": {
+          "title": "Revocation Status",
+          "UNCHECKED": "UNCHECKED",
+          "CANT_VERIFY": "CANT_VERIFY",
+          "REVOKED": "REVOKED",
+          "GOOD": "GOOD"
+        },
+        "currentStatus": {
+          "title": "Current Status",
+          "VALID": "VALID",
+          "EXPIRED": "EXPIRED",
+          "INVALID": "INVALID"
+        },
+        "signtimeStatus": {
+          "title": "Signtime Status",
+          "VALID": "VALID",
+          "EXPIRED": "EXPIRED",
+          "INVALID": "INVALID"
+        }
+      }
     }
   }
 }

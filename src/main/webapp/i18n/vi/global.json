@@ -54,6 +54,10 @@
         },
         "question": "Câu hỏi thường gặp"
       },
+      "user": {
+        "main": "Người dùng",
+        "verifySignature": "Xác thực chứng thư"
+      },
       "language": "Ngôn ngữ"
     },
     "form": {

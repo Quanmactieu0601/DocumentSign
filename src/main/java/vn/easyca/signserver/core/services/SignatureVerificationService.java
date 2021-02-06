@@ -3,9 +3,20 @@ package vn.easyca.signserver.core.services;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfReader;
 import com.itextpdf.signatures.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import sun.security.provider.certpath.OCSP;
+import sun.security.x509.X509CertImpl;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.verification.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -19,12 +30,15 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.Security;
+import java.security.*;
 import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -231,4 +245,123 @@ public class SignatureVerificationService {
             throw new ApplicationException("Has error when verify PDF file", ex);
         }
     }
+
+    private CertificateVfDTO getCertificateInfoDoc(X509Certificate cert, Date signDate) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, ApplicationException, CertPathValidatorException {
+        CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Universal"));
+
+        CertStatus signTimeStatus = null;
+        CertStatus currentStatus = null;
+        try {
+            cert.checkValidity(signDate);
+            signTimeStatus = CertStatus.VALID;
+        } catch (CertificateExpiredException e) {
+            signTimeStatus = CertStatus.EXPIRED;
+        } catch (CertificateNotYetValidException e) {
+            signTimeStatus = CertStatus.INVALID;
+        }
+
+        // Check if a certificate is still valid now
+        try {
+            cert.checkValidity();
+            currentStatus = CertStatus.VALID;
+        } catch (CertificateExpiredException e) {
+            currentStatus = CertStatus.EXPIRED;
+        } catch (CertificateNotYetValidException e) {
+            currentStatus = CertStatus.INVALID;
+        }
+        RevocationStatus revocationStatus = RevocationStatus.UNCHECKED;
+//        if (isSigningCert)
+//            revocationStatus = checkRevocation(pkcs7, cert, issuerCert, signDate);
+        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        ks.load(null, null);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
+        ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
+//        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"));
+        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
+        if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
+            revocationStatus = RevocationStatus.REVOKED;
+        else if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
+            revocationStatus = RevocationStatus.GOOD;
+        else if(revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
+            revocationStatus = RevocationStatus.CANT_VERIFY;
+
+        certificateVfDTO.setIssuer(cert.getIssuerDN().toString());
+        certificateVfDTO.setSubjectDn(cert.getSubjectDN().toString());
+        certificateVfDTO.setValidFrom(simpleDateFormat.format(cert.getNotBefore()));
+        certificateVfDTO.setValidTo(simpleDateFormat.format(cert.getNotAfter()));
+        certificateVfDTO.setCurrentStatus(currentStatus);
+        certificateVfDTO.setSignTimeStatus(signTimeStatus);
+        certificateVfDTO.setRevocationStatus(revocationStatus);
+        return certificateVfDTO;
+    }
+
+    public VerificationResponseDTO verifyDocx(File file) throws IOException, InvalidFormatException, ApplicationException {
+        OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ);
+        try{
+            if (provider == null) {
+                provider = new BouncyCastleProvider();
+                Security.addProvider(provider);
+            }
+
+            SignatureConfig sic = new SignatureConfig();
+            sic.setOpcPackage(pkg);
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
+
+            VerificationResponseDTO result = new VerificationResponseDTO();
+
+            VerificationResponseDTO verificationResponseDTO = new VerificationResponseDTO();
+            List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
+            List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
+//            List<X509Certificate> result = new ArrayList<>();
+
+            for(SignatureInfo.SignaturePart sp : si.getSignatureParts()){
+                if(sp.validate()){
+                    InputStream inputStream = new ByteArrayInputStream(sp.getSignatureDocument().toString().getBytes());
+                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document doc = db.parse(inputStream);
+                    doc.getDocumentElement().normalize();
+
+                    NodeList nodeList = doc.getElementsByTagName("mdssi:SignatureTime");
+                    Node node = nodeList.item(0);
+                    Element element = (Element) node;
+
+                    String dateStr = element.getElementsByTagName("mdssi:Value").item(0).getTextContent();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Universal"));
+                    Date date = simpleDateFormat.parse(dateStr);
+                    String signTime = DateTimeUtils.format(date, DateTimeUtils.HHmmss_ddMMyyyy);
+
+                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                    signatureVfDTO.setIntegrity(si.verifySignature());
+                    signatureVfDTO.setSignTime(signTime);
+                    X509Certificate signer = sp.getSigner();
+                    certificateVfDTOList.add(getCertificateInfoDoc(signer, DateTimeUtils.parse(dateStr)));
+                    signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+
+
+//                    result.add(sp.getSigner());
+                    signatureVfDTOList.add(signatureVfDTO);
+                    result.setSignatureVfDTOs(signatureVfDTOList);
+                }
+            }
+//            X509Certificate signer = result.get(0);
+//            System.out.println( "signer: " + signer.getSubjectX500Principal());
+//            boolean b = si.verifySignature();
+//            System.out.println("test-file: " + b);
+
+            pkg.revert();
+            return result;
+        }catch (Exception ex){
+            throw new ApplicationException("Has error when verify Docx file", ex);
+        }finally {
+            pkg.close();
+        }
+    }
+
 }

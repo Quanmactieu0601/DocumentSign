@@ -14,6 +14,7 @@ import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.CertificateService;
@@ -112,6 +113,67 @@ public class P12ImportService {
         } catch (Exception ignored) {
             log.error("Create user error" + input.getOwnerId(), ignored);
         }
+        return result;
+    }
+
+    public CertificateDTO insertP12(ImportP12FileDTO input) throws ApplicationException {
+
+        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthoritiesByLogin(input.getOwnerId());
+        boolean check = userEntity.isPresent();
+        if(!check) throw new ApplicationException("Don't have valid account");
+
+        P12CryptoToken p12CryptoToken = new P12CryptoToken();
+        try {
+            p12CryptoToken.initPkcs12(input.getP12Base64(), input.getPin());
+        } catch (InitCryptoTokenException e) {
+            throw new CertificateAppException(e);
+        }
+        String alias = null;
+        try {
+            alias = getAlias(input.getAliasName(), p12CryptoToken);
+        } catch (CryptoTokenException e) {
+            throw new CertificateAppException("Can not get alias from certificate", e);
+        }
+
+        X509Certificate x509Certificate = null;
+        try {
+            x509Certificate = (X509Certificate) p12CryptoToken.getCertificate(alias);
+        } catch (KeyStoreException e) {
+            throw new CertificateAppException("certificate has error", e);
+        }
+        String serial = x509Certificate.getSerialNumber().toString(16);
+        Optional<Certificate> certBySerial = certificateRepository.findOneBySerial(serial);
+        if (certBySerial.isPresent())
+            throw new ApplicationException(-1, "Certificate is already exist");
+        String base64Cert = null;
+        try {
+            base64Cert = CertUtils.encodeBase64X509(x509Certificate);
+        } catch (CertificateEncodingException e) {
+            throw new CertificateAppException("certificate encoding exception", e);
+        }
+        CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.setRawData(base64Cert);
+        certificateDTO.setOwnerId(input.getOwnerId());
+        certificateDTO.setSerial(serial);
+        certificateDTO.setAlias(alias);
+        certificateDTO.setTokenType(CertificateDTO.PKCS_12);
+        // Lưu thêm mã pin khi tạo cert
+        certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
+        TokenInfo tokenInfo = new TokenInfo();
+        tokenInfo.setData(input.getP12Base64());
+        certificateDTO.setTokenInfo(tokenInfo);
+        certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
+        certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
+        certificateDTO.setActiveStatus(1);
+
+        CertificateDTO result = certificateService.save(certificateDTO);
+
+//        try {
+//            boolean check = userApplicationService.createUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());
+//            if (!check) throw new ApplicationException("Don't have this ownerid");
+//        } catch (Exception ignored) {
+//            log.error("Create user error" + input.getOwnerId(), ignored);
+//        }
         return result;
     }
 

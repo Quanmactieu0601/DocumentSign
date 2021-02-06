@@ -218,7 +218,6 @@ public class UserApplicationService {
         return true;
     }
 
-
     public boolean createUser(String username, String password, String fullName) {
         Optional<UserEntity> userEntity = this.getUserWithAuthoritiesByLogin(username);
         if (userEntity.isPresent())

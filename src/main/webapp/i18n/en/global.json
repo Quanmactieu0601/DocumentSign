@@ -54,6 +54,10 @@
         },
         "question": "Frequently asked questions"
       },
+      "user": {
+        "main": "User",
+        "verifySignature": "Verify Signature"
+      },
       "language": "Language"
     },
     "form": {
