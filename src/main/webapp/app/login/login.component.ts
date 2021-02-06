@@ -42,10 +42,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
   onSubmit(): void {
     const username = this.usernameEl?.nativeElement.value;
     this.loginService.login(this.form).subscribe(
-      (response: any) => {
-        this.accountService.isFirstLogin(username).subscribe(() => {
-          if (response.remindChangePassword === false) {
+      () => {
+        this.accountService.isFirstLogin(username).subscribe((response: any) => {
+          if (response === true) {
             this.router.navigate(['/account/password']);
+            this.toastrService.error(this.translateService.instant('login.remindChangePassword'));
           } else {
             this.router.navigate(['/home']);
           }

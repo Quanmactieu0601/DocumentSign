@@ -226,7 +226,7 @@ public class UserApplicationService {
         userDTO.setLogin(username);
         userDTO.setFirstName(fullName);
         userDTO.setPassword(password);
-        userDTO.setRemindChangePassword(false);
+        userDTO.setRemindChangePassword(true);
         Set<String> authorities = new HashSet<>();
         authorities.add(AuthoritiesConstants.USER);
         userDTO.setAuthorities(authorities);
@@ -375,7 +375,7 @@ public class UserApplicationService {
                 String encryptedPassword = passwordEncoder.encode(newPassword);
                 user.setPassword(encryptedPassword);
                 this.clearUserCaches(user);
-                user.setRemindChangePassword(true);
+                user.setRemindChangePassword(false);
                 log.debug("Changed password for User: {}", user);
             });
     }
