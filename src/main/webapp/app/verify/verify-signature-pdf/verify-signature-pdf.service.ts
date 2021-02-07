@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 
 @Injectable({ providedIn: 'root' })
-export class VerifySignatureService {
+export class VerifySignaturePdfService {
   public resourceUrl = SERVER_API_URL + 'api/verification';
 
   constructor(protected http: HttpClient) {}
@@ -23,15 +23,5 @@ export class VerifySignatureService {
     return this.http.request(req);
   }
 
-  verifyDoc(file: File): Observable<any> {
-    const formData: FormData = new FormData();
-    formData.append('file', file);
 
-    const req = new HttpRequest('POST', `${this.resourceUrl}/doc`, formData, {
-      reportProgress: true,
-      responseType: 'json',
-    });
-
-    return this.http.request(req);
-  }
 }

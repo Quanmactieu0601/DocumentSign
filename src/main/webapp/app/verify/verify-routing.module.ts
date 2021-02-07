@@ -1,16 +1,26 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {HomeLayoutComponent} from 'app/layouts/home-layout/home-layout.component';
 
 @NgModule({
   imports: [
     RouterModule.forChild([
       {
-        path: 'verify-signature',
+        path: '',
         component: HomeLayoutComponent,
-        loadChildren: () => import('./verify-signature/verify-signature.module').then(m => m.VerifySignatureModule),
+        children: [
+          {
+            path: 'verify-signature-pdf',
+            loadChildren: () => import('./verify-signature-pdf/verify-signature-pdf.module').then(m => m.VerifySignaturePdfModule),
+          },
+          {
+            path: 'verify-signature-doc',
+            loadChildren: () => import('./verify-signature-doc/verify-signature-doc.module').then(m => m.VerifySignatureDocModule)
+          }
+        ]
       },
     ]),
   ],
 })
-export class VerifyRoutingModule {}
+export class VerifyRoutingModule {
+}

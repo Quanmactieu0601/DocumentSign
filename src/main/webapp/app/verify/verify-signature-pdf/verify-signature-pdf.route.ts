@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { User, IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-import { VerifySignatureComponent } from 'app/verify/verify-signature/verify-signature.component';
+import { VerifySignaturePdfComponent } from 'app/verify/verify-signature-pdf/verify-signature-pdf.component';
 
 @Injectable({ providedIn: 'root' })
 export class VerifySignatureResolve implements Resolve<IUser> {
@@ -19,9 +19,9 @@ export class VerifySignatureResolve implements Resolve<IUser> {
   }
 }
 
-export const verifySignatureRoute: Routes = [
+export const verifySignaturePdfRoute: Routes = [
   {
     path: '',
-    component: VerifySignatureComponent,
+    component: VerifySignaturePdfComponent,
   },
 ];
