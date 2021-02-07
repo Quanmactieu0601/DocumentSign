@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { IUser } from 'app/core/user/user.model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-password-first-login/confirm-change-password.component';
 
 @Component({
   selector: 'jhi-login',
@@ -23,7 +24,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private router: Router,
     private accountService: AccountService,
     private toastrService: ToastrService,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    protected modalService: NgbModal
   ) {}
 
   ngAfterViewInit(): void {
@@ -43,12 +45,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
     const username = this.usernameEl?.nativeElement.value;
     this.loginService.login(this.form).subscribe(
       () => {
+        this.router.navigate(['/home']);
         this.accountService.isFirstLogin(username).subscribe((response: any) => {
           if (response === true) {
-            this.router.navigate(['/account/password']);
-            this.toastrService.error(this.translateService.instant('login.remindChangePassword'));
-          } else {
-            this.router.navigate(['/home']);
+            this.modalService.open(ConfirmChangePasswordComponent, { size: '300', backdrop: 'static' });
           }
         });
         if (

@@ -166,11 +166,11 @@ public class UserApplicationService {
 
     public UserEntity registerUser(UserDTO userDTO, String password) {
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
-                throw new UsernameAlreadyUsedException();
+            throw new UsernameAlreadyUsedException();
         });
         if (!Strings.isNullOrEmpty(userDTO.getEmail())) {
             userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
-                    throw new EmailAlreadyUsedException();
+                throw new EmailAlreadyUsedException();
             });
         }
         UserEntity newUserEntity = new UserEntity();
@@ -226,7 +226,6 @@ public class UserApplicationService {
         userDTO.setLogin(username);
         userDTO.setFirstName(fullName);
         userDTO.setPassword(password);
-        userDTO.setRemindChangePassword(true);
         Set<String> authorities = new HashSet<>();
         authorities.add(AuthoritiesConstants.USER);
         userDTO.setAuthorities(authorities);
@@ -274,6 +273,7 @@ public class UserApplicationService {
         newUserEntity.setActivated(true);
         // new user gets registration key
         newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+        newUserEntity.setRemindChangePassword(true);
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUserEntity.setAuthorities(authorities);
@@ -380,9 +380,13 @@ public class UserApplicationService {
             });
     }
 
-    public ResponseEntity remindChangePassword(String login){
-       Boolean isFirstLogin = userRepository.findOneByLogin(login).get().getRemindChangePassword();
-        return new ResponseEntity<>(isFirstLogin,HttpStatus.OK);
+    public ResponseEntity remindChangePassword(String login) {
+        Boolean isFirstLogin = userRepository.findOneByLogin(login).get().getRemindChangePassword();
+        return new ResponseEntity<>(isFirstLogin, HttpStatus.OK);
+    }
+
+    public UserEntity defaultRemindChangePassword(String login) {
+        return userRepository.setDefaultRemindChangePassword(login);
     }
 
     @Transactional(readOnly = true)
