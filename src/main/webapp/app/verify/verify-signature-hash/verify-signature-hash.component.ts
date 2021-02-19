@@ -13,10 +13,10 @@ import {ICertificate} from "app/shared/model/certificate.model";
 
 @Component({
   selector: 'jhi-verify-signature',
-  templateUrl: './verify-signature-raw.component.html',
+  templateUrl: './verify-signature-hash.component.html',
   styleUrls: [],
 })
-export class VerifySignatureRawComponent implements OnInit {
+export class VerifySignatureHashComponent implements OnInit {
   progress = 0;
   account: Account | null = null;
   authSubscription?: Subscription;
@@ -71,11 +71,11 @@ export class VerifySignatureRawComponent implements OnInit {
   //   this.fileName = event.target.files[0].name;
   // }
 
-  verifyRaw(): void {
+  verifyHash(): void {
     this.progress = 0;
     this.signatureVfVM = this.createFromForm();
     if (this.account != null) {
-      this.verifySignatureService.verifyRaw(this.signatureVfVM).subscribe((res: any) => {
+      this.verifySignatureService.verifyHash(this.signatureVfVM).subscribe((res: any) => {
         if (res.type === HttpEventType.UploadProgress) {
           this.bar = true;
           this.progress = Math.round((100 * res.loaded) / res.total);

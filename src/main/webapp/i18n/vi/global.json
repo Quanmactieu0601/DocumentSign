@@ -43,7 +43,8 @@
           "pdf": "Xác thực PDF",
           "ooxml": "Xác thực Office",
           "raw": "Xác thực Raw",
-          "xml": "Xác thực XML"
+          "xml": "Xác thực XML",
+          "hash": "Xác thực Hash"
         },
         "signing": {
           "main": "Ký số",

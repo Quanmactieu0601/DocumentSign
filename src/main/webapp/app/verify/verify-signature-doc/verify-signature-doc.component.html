@@ -17,25 +17,20 @@
                 </div>
             </div>
 
-            <!--            <div>-->
-            <!--                <input id="pdf" type="radio" value="pdf" name="type" (change)="changeGender($event)" checked>-->
-            <!--                <label for="pdf">.pdf</label>-->
-            <!--                <input id="doc" type="radio" value="doc" name="type" (change)="changeGender($event)">-->
-            <!--                <label for="doc">.doc/docx</label>-->
-            <!--            </div>-->
+            <div class="row">
+                <div class="custom-file col-11">
+                    <input type="file" class="custom-file-input" id="validatedCustomFile" (change)="selectFile($event)">
+                    <label class="custom-file-label overflow-hidden" for="validatedCustomFile">{{fileName}}</label>
+                </div>
 
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="validatedCustomFile" (change)="selectFile($event)">
-                <label class="custom-file-label overflow-hidden" for="validatedCustomFile">{{fileName}}</label>
+                <button
+                    class="btn btn-success col-1"
+                    [disabled]="!selectFiles || this.selectFiles.length == 0"
+                    (click)="verifyDoc()"
+                >
+                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
+                </button>
             </div>
-
-            <button
-                class="btn btn-success"
-                [disabled]="!selectFiles || this.selectFiles.length == 0"
-                (click)="verifyDoc()"
-            >
-                <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
-            </button>
         </div>
     </div>
 </div>
@@ -43,17 +38,17 @@
     <div class="card-body">
         <div *ngIf="signatureVfDTOs">
             <ul *ngFor="let signatureVfDTO of signatureVfDTOs">
-<!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
-<!--                                                   jhiTranslate="webappApp.signatureVerify.coverWholeDocument">coverWholeDocument</span>:-->
-<!--                    <fa-icon *ngIf="signatureVfDTO.coverWholeDocument" icon="check" class="text-success"></fa-icon>-->
-<!--                    <fa-icon *ngIf="!signatureVfDTO.coverWholeDocument" icon="times" class="text-success"></fa-icon>-->
-<!--                </li>-->
-<!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
-<!--                                                   jhiTranslate="webappApp.signatureVerify.revision">revision</span>: {{ signatureVfDTO.revision }}-->
-<!--                </li>-->
-<!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
-<!--                                                   jhiTranslate="webappApp.signatureVerify.totalRevision">total revision</span>: {{signatureVfDTO.totalRevision}}-->
-<!--                </li>-->
+                <!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
+                <!--                                                   jhiTranslate="webappApp.signatureVerify.coverWholeDocument">coverWholeDocument</span>:-->
+                <!--                    <fa-icon *ngIf="signatureVfDTO.coverWholeDocument" icon="check" class="text-success"></fa-icon>-->
+                <!--                    <fa-icon *ngIf="!signatureVfDTO.coverWholeDocument" icon="times" class="text-success"></fa-icon>-->
+                <!--                </li>-->
+                <!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
+                <!--                                                   jhiTranslate="webappApp.signatureVerify.revision">revision</span>: {{ signatureVfDTO.revision }}-->
+                <!--                </li>-->
+                <!--                <li *ngIf="typeVf !== 'doc'"><span class="font-weight-bold"-->
+                <!--                                                   jhiTranslate="webappApp.signatureVerify.totalRevision">total revision</span>: {{signatureVfDTO.totalRevision}}-->
+                <!--                </li>-->
                 <li><span class="font-weight-bold"
                           jhiTranslate="webappApp.signatureVerify.signTime">sign time</span>: {{signatureVfDTO.signTime}}
                 </li>

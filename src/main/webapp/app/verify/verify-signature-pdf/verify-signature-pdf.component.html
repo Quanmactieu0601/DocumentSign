@@ -5,41 +5,27 @@
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
             <div *ngIf="currentFile" class="progress mb-2">
-                <div
-                    class="progress-bar progress-bar-info progress-bar-striped"
-                    role="progressbar"
-                    attr.aria-valuenow="{{ progress }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
-                    [ngStyle]="{ width: progress + '%' }"
-                >
+                <div class="progress-bar progress-bar-info progress-bar-striped"
+                     role="progressbar"
+                     attr.aria-valuenow="{{ progress }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100"
+                     [ngStyle]="{ width: progress + '%' }">
                     {{ progress }}%
                 </div>
             </div>
-
-            <!--            <div>-->
-            <!--                <input id="pdf" type="radio" value="pdf" name="type" (change)="changeGender($event)" checked>-->
-            <!--                <label for="pdf">.pdf</label>-->
-            <!--                <input id="doc" type="radio" value="doc" name="type" (change)="changeGender($event)">-->
-            <!--                <label for="doc">.doc/docx</label>-->
-            <!--            </div>-->
             <div class="row">
-                <div class="col-11">
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="validatedCustomFile"
-                               (change)="selectFile($event)">
-                        <label class="custom-file-label overflow-hidden" for="validatedCustomFile">{{fileName}}</label>
-                    </div>
+                <div class="custom-file col-11">
+                    <input type="file" class="custom-file-input" id="validatedCustomFile"
+                           (change)="selectFile($event)">
+                    <label class="custom-file-label overflow-hidden" for="validatedCustomFile">{{fileName}}</label>
                 </div>
-                <div class="col-1">
-                    <button
-                        class="btn btn-success"
-                        [disabled]="!selectFiles || this.selectFiles.length == 0"
-                        (click)="verifyPdf()"
-                    >
-                        <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
-                    </button>
-                </div>
+                <button
+                    class="btn btn-success col-1"
+                    [disabled]="!selectFiles || this.selectFiles.length == 0"
+                    (click)="verifyPdf()">
+                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
+                </button>
             </div>
         </div>
     </div>
@@ -99,7 +85,6 @@
                             <span
                                 jhiTranslate="webappApp.signatureVerify.certificate.signtimeStatus.{{certificateVfDTO.signTimeStatus}}"></span>
                         </li>
-
                         <br>
                     </ul>
                 </li>

@@ -4,13 +4,13 @@ import {Subscription} from 'rxjs';
 import {AccountService} from 'app/core/auth/account.service';
 import {ToastrService} from 'ngx-toastr';
 import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {VerifySignaturePdfService} from 'app/verify/verify-signature-pdf/verify-signature-pdf.service';
 import {ISignatureVfDTO} from 'app/shared/model/signatureVfDTO.model';
+import {VerifySignatureService} from "app/verify/verify-signature.service";
 
 @Component({
   selector: 'jhi-verify-signature',
   templateUrl: './verify-signature-pdf.component.html',
-  styleUrls: ['./verify-signature-pdf.component.scss'],
+  styleUrls: [],
 })
 export class VerifySignaturePdfComponent implements OnInit {
   selectFiles: any;
@@ -23,7 +23,7 @@ export class VerifySignaturePdfComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private verifySignatureService: VerifySignaturePdfService,
+    private verifySignatureService: VerifySignatureService,
     private toastrService: ToastrService
   ) {
   }
@@ -50,7 +50,7 @@ export class VerifySignaturePdfComponent implements OnInit {
           console.error(res.body.data);
           if (res.status === 200) {
             this.signatureVfDTOs = res.body.data.signatureVfDTOs;
-            if (this.signatureVfDTOs == null) this.toastrService.error('Chưa được ký');
+            if (this.signatureVfDTOs == null) this.toastrService.error('False');
           } else {
             this.toastrService.error('Error');
           }

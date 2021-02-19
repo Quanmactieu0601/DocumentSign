@@ -43,7 +43,8 @@
           "pdf": "PDF File",
           "ooxml": "Office File",
           "raw": "Raw Data",
-          "xml": "XML File"
+          "xml": "XML File",
+          "hash": "Hash"
         },
         "signing": {
           "main": "Signing",

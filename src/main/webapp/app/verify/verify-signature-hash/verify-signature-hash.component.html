@@ -1,6 +1,6 @@
 <div class="card mb-1">
     <div class="card-header">
-        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span><span> Raw</span>
+        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span><span> Hash</span>
     </div>
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
@@ -34,7 +34,7 @@
                 </div>
                 <button
                     class="btn btn-success"
-                    (click)="verifyRaw()">
+                    (click)="verifyHash()">
                     <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
                 </button>
             </form>

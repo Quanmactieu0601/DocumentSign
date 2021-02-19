@@ -20,6 +20,10 @@ import {HomeLayoutComponent} from 'app/layouts/home-layout/home-layout.component
           {
             path: 'verify-signature-raw',
             loadChildren: () => import('./verify-signature-raw/verify-signature-raw.module').then(m => m.VerifySignatureRawModule)
+          },
+          {
+            path: 'verify-signature-hash',
+            loadChildren: () => import('./verify-signature-hash/verify-signature-hash.module').then(m => m.VerifySignatureHashModule)
           }
         ]
       },

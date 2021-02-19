@@ -21,6 +21,10 @@
     },
     "signatureVerify": {
       "title": "Verify Signature",
+      "signature": "Base64 Signature",
+      "originalData": "Original Data",
+      "serial": "Serial",
+      "result": "Result",
       "verify": "Verify",
       "coverWholeDocument": "Cover Whole Document",
       "revision": "Revision",
