@@ -116,7 +116,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     //TODO: Chang fetch_type;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
