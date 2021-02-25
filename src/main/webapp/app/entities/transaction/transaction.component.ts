@@ -113,8 +113,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
 
   sort(): string[] {
     const result = [this.predicate + ',' + (this.ascending ? 'asc' : 'desc')];
-    if (this.predicate !== 'id') {
-      result.push('id');
+    if (this.predicate !== 'a.id') {
+      result.push('a.id');
     }
     return result;
   }

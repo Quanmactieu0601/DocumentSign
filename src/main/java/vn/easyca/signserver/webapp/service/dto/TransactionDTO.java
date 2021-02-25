@@ -168,6 +168,24 @@ public class TransactionDTO implements Serializable {
         return id != null && id.equals(((TransactionDTO) o).id);
     }
 
+
+    public TransactionDTO(Long id, String api, LocalDateTime triggerTime, TransactionStatus status, String message,
+                          String data, TransactionType type,
+                          Method method, String host, Action action, Extension extension, String fullName) {
+        this.id = id;
+        this.api = api;
+        this.triggerTime = triggerTime;
+        this.status = status;
+        this.message = message;
+        this.data = data;
+        this.type = type;
+        this.host = host;
+        this.method = method;
+        this.fullName = fullName;
+        this.action = action;
+        this.extension = extension;
+    }
+
     @Override
     public int hashCode() {
         return 31;

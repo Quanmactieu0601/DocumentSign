@@ -32,7 +32,7 @@ public class ParserUtils {
             InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
             Tidy tidy = new Tidy();
             org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-            Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
+            Java2DRenderer renderer = new Java2DRenderer(doc, 355, 130);
             BufferedImage img = renderer.getImage();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(img, "png", os);
