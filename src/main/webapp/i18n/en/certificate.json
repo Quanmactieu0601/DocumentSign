@@ -69,6 +69,13 @@
           "newPIN": "Your new PIN is required",
           "confirmPIN": "Your confirm PIN is required"
         }
+      },
+      "confirmDeactive": {
+        "success": "Successfully",
+        "question": "Do you want to deactivate certificate {{id}}",
+        "title": "Confirm",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
       }
     }
   }
