@@ -48,7 +48,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         log.debug("Request to save SystemConfig : {}", systemConfigDTO);
         SystemConfig systemConfig = systemConfigMapper.toEntity(systemConfigDTO);
         Optional<SystemConfigDTO> temp = this.findByComIdAndKey(systemConfigDTO.getComId(), systemConfigDTO.getKey());
-        if (temp.isPresent()){
+        if (temp.isPresent() && systemConfigDTO.getId() == null){
             throw new ApplicationException("Duplicate ComId and Key!");
         }
         else systemConfig = systemConfigRepository.save(systemConfig);
