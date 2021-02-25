@@ -1,0 +1,24 @@
+{
+  "webappApp": {
+    "systemConfigCategory": {
+      "home": {
+        "title": "System Config Categories",
+        "createLabel": "Thêm mới một System Config Category",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật System Config Category",
+        "notFound": "No System Config Categories found"
+      },
+      "created": "Một System Config Category mới được tạo với định danh {{ param }}",
+      "updated": "Một System Config Category cập nhật với định danh {{ param }}",
+      "deleted": "Một System Config Category đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa System Config Category {{ id }}?"
+      },
+      "detail": {
+        "title": "System Config Category"
+      },
+      "configKey": "Config Key",
+      "dataType": "Data Type",
+      "description": "Description"
+    }
+  }
+}
