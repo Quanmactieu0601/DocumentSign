@@ -380,13 +380,12 @@ public class UserApplicationService {
             });
     }
 
-    public ResponseEntity remindChangePassword(String login) {
-        Boolean isFirstLogin = userRepository.findOneByLogin(login).get().getRemindChangePassword();
-        return new ResponseEntity<>(isFirstLogin, HttpStatus.OK);
+    public Boolean remindChangePassword(String login) {
+        return userRepository.findOneByLogin(login).get().getRemindChangePassword();
     }
 
-    public UserEntity defaultRemindChangePassword(String login) {
-        return userRepository.setDefaultRemindChangePassword(login);
+    public void setDefaultOfRemindChangePassword(String login) {
+        userRepository.setDefaultOfRemindChangePassword(login);
     }
 
     @Transactional(readOnly = true)

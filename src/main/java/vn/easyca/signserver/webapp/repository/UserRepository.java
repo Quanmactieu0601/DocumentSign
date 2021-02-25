@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -33,10 +34,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
 
     Optional<UserEntity> findOneByLogin(String login);
 
-    @Query(value = "update jhi_user " +
-        "set remind_change_password = false " +
-        "WHERE login = :login ", nativeQuery = true)
-    UserEntity setDefaultRemindChangePassword(@Param("login") String login);
+    @Modifying
+    @Query(value = "UPDATE UserEntity " +
+        "SET remindChangePassword = false " +
+        "WHERE login = :login ")
+    void setDefaultOfRemindChangePassword(@Param("login") String login);
 
     @EntityGraph(attributePaths = "authorities")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)
