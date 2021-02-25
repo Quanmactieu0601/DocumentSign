@@ -66,7 +66,20 @@
           "newPIN": "Mã PIN mới của bạn là bắt buộc",
           "confirmPIN": "Mã PIN xác nhận của bạn là bắt buộc"
         }
-      }
+      },
+      "confirmDeactive": {
+        "success": "Thành công",
+        "question": "Bạn có muốn hủy kích hoạt chứng thư số {{id}}",
+        "title": "Xác nhận",
+        "cancel": "Hủy bỏ",
+        "confirm": "Xác nhận"
+      },
+      "uploadCert": "Tải chứng thư số",
+      "uploadP12Cert": "Tải chứng thư số P12",
+      "uploadSignatureImage": "Tải ảnh chữ kí",
+      "search": "Tìm kiếm",
+      "exportSerial": "Xuất Serial",
+      "success": "Thành công"
     }
   }
 }

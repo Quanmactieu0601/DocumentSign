@@ -90,12 +90,14 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query transactionDTOQuery = entityManager.createQuery("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, " +
-                "CASE WHEN b.firstName is null THEN b.lastName " +
-                "     WHEN b.lastName is null THEN b.firstName " +
-                "     else concat(b.lastName, ' ', b.firstName) " +
-                "     end as fullName " + sqlBuilder.toString() + sort)
-                .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
+            StringBuilder mainQuery = new StringBuilder();
+            mainQuery.append("select new vn.easyca.signserver.webapp.service.dto.TransactionDTO");
+            mainQuery.append("(a.id, a.api, a.triggerTime, a.status, a.message, a.data, a.type, a.method, a.host, a.action, a.extension, ");
+            mainQuery.append("  CASE WHEN b.firstName is null THEN b.lastName ");
+            mainQuery.append("  WHEN b.lastName is null THEN b.firstName ");
+            mainQuery.append("  else concat(b.lastName, ' ', b.firstName) ");
+            mainQuery.append("  end) ").append(sqlBuilder.toString()).append(sort);
+            TypedQuery<TransactionDTO> transactionDTOQuery = entityManager.createQuery(mainQuery.toString(), TransactionDTO.class);
             QueryUtils.setParamsWithPageable(transactionDTOQuery, params, pageable, total);
             transactionList = transactionDTOQuery.getResultList();
         }
@@ -105,10 +107,13 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Override
     public List findAllTransaction(LocalDateTime startDate, LocalDateTime endDate, TransactionType type) {
         Map<String, Object> params = new HashMap<>();
-        StringBuilder sqlBuilderExport = new StringBuilder("select a.id as id, a.api as api, a.triggerTime as triggerTime, a.status as status, a.message as message, a.data as data, a.type as type, a.method as method, a.host as host, a.action as action, a.extension as extension, ");
-        sqlBuilderExport.append("CASE WHEN b.firstName is null THEN b.lastName ");
-        sqlBuilderExport.append(" WHEN b.lastName is null THEN b.firstName ");
-        sqlBuilderExport.append("else concat(b.lastName, ' ', b.firstName) end as fullName ");
+        StringBuilder sqlBuilderExport = new StringBuilder();
+        sqlBuilderExport.append("select new vn.easyca.signserver.webapp.service.dto.TransactionDTO");
+        sqlBuilderExport.append("(a.id, a.api, a.triggerTime, a.status, a.message, a.data, a.type, a.method, a.host, a.action, a.extension, ");
+        sqlBuilderExport.append("  CASE WHEN b.firstName is null THEN b.lastName ");
+        sqlBuilderExport.append("  WHEN b.lastName is null THEN b.firstName ");
+        sqlBuilderExport.append("  else concat(b.lastName, ' ', b.firstName) ");
+        sqlBuilderExport.append("  end) ");
         sqlBuilderExport.append("from Transaction a ");
         sqlBuilderExport.append("left join UserEntity b ");
         sqlBuilderExport.append("on a.createdBy = b.login ");
@@ -128,8 +133,7 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             params.put("type", type);
         }
 
-        Query transactionDTOQuery = entityManager.createQuery(sqlBuilderExport.toString())
-            .unwrap(org.hibernate.query.Query.class).setResultTransformer(Transformers.aliasToBean(TransactionDTO.class));
+        TypedQuery<TransactionDTO> transactionDTOQuery = entityManager.createQuery(sqlBuilderExport.toString(), TransactionDTO.class);
         QueryUtils.setParams(transactionDTOQuery, params);
 
         return transactionDTOQuery.getResultList();

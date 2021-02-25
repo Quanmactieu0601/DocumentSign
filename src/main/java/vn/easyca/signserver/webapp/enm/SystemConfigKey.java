@@ -15,6 +15,7 @@ public enum SystemConfigKey {
      */
     USE_OTP,
 
+
     /**
      * SYMMETRIC_KEY
      * key to encrypt sensitive data in database
@@ -27,5 +28,6 @@ public enum SystemConfigKey {
      * when using otp authen and use this configuration, the system will save OTP code once request and check its valid time base on the value of this config
      *
      */
+
     OTP_LIFE_TIME_SECOND
 }

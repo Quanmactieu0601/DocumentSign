@@ -1,62 +1,241 @@
-<div class="row justify-content-center">
-    <div class="col-8">
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item" aria-current="page"><a href="./home/system-config"><span
+        jhiTranslate="webappApp.systemConfig.home.title">System Configs</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page" *ngIf="!editForm.get('id')!.value"><span
+        jhiTranslate="webappApp.systemConfig.create">Create</span></li>
+    <li class="breadcrumb-item active" aria-current="page" *ngIf="editForm.get('id')!.value"><span
+        jhiTranslate="webappApp.systemConfig.edit">Edit</span></li>
+</ol>
+
+<div class="card mb-1">
+    <h2 class="card-header" id="jhi-system-config-heading"
+        jhiTranslate="webappApp.systemConfig.home.createOrEditLabel">Create or edit a System Config</h2>
+    <div class="card-body">
+
         <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-            <h2 id="jhi-system-config-heading" jhiTranslate="webappApp.systemConfig.home.createOrEditLabel">Create or edit a System Config</h2>
 
             <div>
-                <jhi-alert-error></jhi-alert-error>
+
+<!--                <jhi-alert-error></jhi-alert-error>-->
 
                 <div class="form-group" [hidden]="!editForm.get('id')!.value">
                     <label for="id" jhiTranslate="global.field.id">ID</label>
-                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                    <input type="text" class="form-control form-control-sm" id="id" name="id" formControlName="id"
+                           readonly/>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.comId" for="field_comId">Com Id</label>
-                    <input type="number" class="form-control" name="comId" id="field_comId"
+                <div class="form-group" >
+                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.comId"
+                           for="field_comId">Com Id</label>
+                    <input type="number" class="form-control form-control-sm" name="comId" id="field_comId"
                            formControlName="comId"/>
                 </div>
+                <div class="row">
+                    <div class="form-group col-6">
+                        <label class="form-control-label" jhiTranslate="webappApp.systemConfig.key"
+                               for="field_key">Key</label>
+                        <!--                    <input type="text" class="form-control form-control-sm" name="key" id="field_key" formControlName="key"-->
+                        <!--                           jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}" >-->
+                        <div *ngIf="editForm.get('id')!.value">
+                            <input type="text" class="form-control form-control-sm" name="key" formControlName="key"
+                                   jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}"
+                                   readonly/>
+                        </div>
+                        <div *ngIf="!editForm.get('id')!.value">
+                            <select class="form-control form-control-sm" id="field_key" name="key" formControlName="key"
+                                    [ngModel]="systemConfig" (ngModelChange)="change($event)">
+                                <option class="form-control form-control-sm"
+                                        *ngFor="let systemConfigCategory of systemConfigCategories"
+                                        [ngValue]="systemConfigCategory"><span
+                                    jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfigCategory.configKey}}">{{systemConfigCategory.configKey}}</span>
+                                </option>
+                            </select>
+                        </div>
+                        <!--                    <td jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</td>-->
+                        <!--                    <select class="form-control" id="field_key" name="key" formControlName="key">-->
+                        <!--                        <option *ngFor="let key of keys" [ngValue]="key" jhiTranslate="webappApp.systemConfig.KEYS.{{key}}" selected>{{key}}</option>-->
+                        <!--                    </select>-->
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.key" for="field_key">Key</label>
-                    <input type="text" class="form-control" name="key" id="field_key"
-                           formControlName="key"/>
+                    <div class="form-group col-6">
+                        <label class="form-control-label" jhiTranslate="webappApp.systemConfig.dataType"
+                               for="field_dataType">Data Type</label>
+                        <input class="form-control form-control-sm" name="dataType" id="field_dataType"
+                               formControlName="dataType" [ngModel]="systemConfig.dataType"
+                               jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}"
+                               readonly/>
+                        <!--                                        <select class="form-control" id="field_dataType" name="dataType" formControlName="dataType" ngModel (ngModelChange)="changeDataType($event)" disabled>-->
+                        <!--                                            <option *ngFor="let dataType of dataTypes" [ngValue]="dataType" jhiTranslate="webappApp.systemConfig.DATATYPES.{{dataType}}" selected >{{dataType}}</option>-->
+                        <!--                                        </select>-->
+                    </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="webappApp.systemConfig.value" for="field_value">Value</label>
-                    <input type="text" class="form-control" name="value" id="field_value"
-                           formControlName="value"/>
+                    <!--                    <input type="{{valueDataType}}" class="form-control" name="value" id="field_value"-->
+                    <!--                           formControlName="value" />-->
+                    <!--                    <div [ngSwitch]="systemConfig.value" id="field_value">-->
+                    <!--                        <div *ngSwitchCase="0">-->
+                    <!--                            <input type="checkbox" class="form-control" [ngModel]="false" name="value"-->
+                    <!--                                   formControlName="value">-->
+                    <!--                        </div>-->
+                    <!--                        <div *ngSwitchCase="1">-->
+                    <!--                            <input type="checkbox" class="form-control" checked="checked" name="value"-->
+                    <!--                                   formControlName="value">-->
+                    <!--                        </div>-->
+                    <!--                        <div *ngSwitchDefault>-->
+                    <!--                            <input type="text" value="{{systemConfig.value}}" class="form-control form-control-sm"-->
+                    <!--                                   name="value"-->
+                    <!--                                   formControlName="value">-->
+                    <!--                        </div>-->
+                    <!--                    </div>-->
+                    <span [ngSwitch]="systemConfig.dataType" id="field_value">
+                        <input *ngSwitchCase="'BOOLEAN'" type="checkbox" name="value" formControlName="value"
+                               [ngModel]="isCheck">
+                        <div *ngSwitchCase="'STRING'">
+                            <input type="text" name="value" formControlName="value"
+                                   class="form-control form-control-sm">
+                        </div>
+                        <div *ngSwitchCase="'NUMERIC'">
+                            <input type="number" name="value" formControlName="value"
+                                   class="form-control form-control-sm">
+                        </div>
+                    </span>
+                </div>
+
+                <!--                <label class="form-control form-control-sm" name="dataType" id="field_dataType"-->
+                <!--                       formControlName="dataType" [ngModel]="systemConfig.dataType"-->
+                <!--                       jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}" readonly>{{systemConfig.dataType}}</label>-->
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.description"
+                           for="field_description">Description</label>
+                    <input class="form-control form-control-sm" name="description" id="field_description"
+                           formControlName="description" [ngModel]="systemConfig.description"
+                           readonly/>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.description" for="field_description">Description</label>
-                    <input type="text" class="form-control" name="description" id="field_description"
-                           formControlName="description"/>
-                </div>
+                    <!--                            <label class="form-check-label" jhiTranslate="webappApp.systemConfig.activated"-->
+                    <!--                                   for="field_activated">Activated-->
+                    <!--                            <input type="checkbox" class="form-check-input" name="activated" id="field_activated"-->
+                    <!--                                   formControlName="activated"/></label>-->
 
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.dataType" for="field_dataType">Data Type</label>
-                    <input type="text" class="form-control" name="dataType" id="field_dataType"
-                           formControlName="dataType"/>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.activated" for="field_activated">Activated</label>
-                    <input type="checkbox" class="form-control" name="activated" id="field_activated"
-                           formControlName="activated"/>
+                    <div class="form-group">
+                        <label class="form-check-label" for="activated">
+                            <span jhiTranslate="webappApp.systemConfig.activated"
+                                  class="font-weight-bold">Activated</span>
+                        </label>
+                        <input type="checkbox" id="activated" name="activated"
+                               formControlName="activated"/>
+                    </div>
                 </div>
             </div>
 
             <div>
-                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                <button type="button" id="cancel-save" class="btn btn-secondary btn-sm" (click)="previousState()">
                     <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
                 </button>
 
-                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving"
+                        class="btn btn-primary btn-sm">
                     <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
                 </button>
             </div>
         </form>
     </div>
 </div>
+
+
+<!--<div class="row justify-content-center">-->
+<!--    <div class="col-8">-->
+<!--        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">-->
+<!--            <h2 id="jhi-system-config-heading" jhiTranslate="webappApp.systemConfig.home.createOrEditLabel">Create or-->
+<!--                edit a System Config</h2>-->
+
+<!--            <div>-->
+<!--                <jhi-alert-error></jhi-alert-error>-->
+
+<!--                <div class="form-group" [hidden]="!editForm.get('id')!.value">-->
+<!--                    <label for="id" jhiTranslate="global.field.id">ID</label>-->
+<!--                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly/>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.comId" for="field_comId">Com-->
+<!--                        Id</label>-->
+<!--                    <input type="number" class="form-control" name="comId" id="field_comId"-->
+<!--                           formControlName="comId" readonly/>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.key"-->
+<!--                           for="field_key">Key</label>-->
+<!--                    <label class="form-control" name="key" id="field_key" formControlName="key"-->
+<!--                           jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}" readonly>-->
+<!--                        <span> {{systemConfig.key}} </span></label>-->
+<!--                    &lt;!&ndash;                    <td jhiTranslate="webappApp.systemConfig.KEYS.{{systemConfig.key}}">{{ systemConfig.key }}</td>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                    <select class="form-control" id="field_key" name="key" formControlName="key">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        <option *ngFor="let key of keys" [ngValue]="key" jhiTranslate="webappApp.systemConfig.KEYS.{{key}}" selected>{{key}}</option>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                    </select>&ndash;&gt;-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.dataType"-->
+<!--                           for="field_dataType">Data Type</label>-->
+<!--                    <label class="form-control" name="dataType" id="field_dataType" formControlName="dataType"-->
+<!--                           jhiTranslate="webappApp.systemConfig.DATATYPES.{{systemConfig.dataType}}"-->
+<!--                           readonly>{{systemConfig.dataType}}</label>-->
+<!--                    &lt;!&ndash;                    <select class="form-control" id="field_dataType" name="dataType" formControlName="dataType" ngModel (ngModelChange)="changeDataType($event)" disabled>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        <option *ngFor="let dataType of dataTypes" [ngValue]="dataType" jhiTranslate="webappApp.systemConfig.DATATYPES.{{dataType}}" selected >{{dataType}}</option>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                    </select>&ndash;&gt;-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.value" for="field_value">Value</label>-->
+<!--                    &lt;!&ndash;                    <input type="{{valueDataType}}" class="form-control" name="value" id="field_value"&ndash;&gt;-->
+<!--                    &lt;!&ndash;                           formControlName="value" />&ndash;&gt;-->
+<!--                    <div [ngSwitch]="systemConfig.value" id="field_value">-->
+<!--                        <div *ngSwitchCase="0">-->
+<!--                            <input type="checkbox" class="form-control" [ngModel]="false" name="value"-->
+<!--                                   formControlName="value">-->
+<!--                        </div>-->
+<!--                        <div *ngSwitchCase="1">-->
+<!--                            <input type="checkbox" class="form-control" checked="checked" name="value"-->
+<!--                                   formControlName="value">-->
+<!--                        </div>-->
+<!--                        <div *ngSwitchDefault>-->
+<!--                            <input type="text" value="{{systemConfig.value}}" class="form-control" name="value"-->
+<!--                                   formControlName="value">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.description"-->
+<!--                           for="field_description">Description</label>-->
+<!--                    <input type="text" class="form-control" name="description" id="field_description"-->
+<!--                           formControlName="description" readonly/>-->
+<!--                </div>-->
+
+<!--                <div class="form-group">-->
+<!--                    <label class="form-control-label" jhiTranslate="webappApp.systemConfig.activated"-->
+<!--                           for="field_activated">Activated</label>-->
+<!--                    <input type="checkbox" class="form-control" name="activated" id="field_activated"-->
+<!--                           formControlName="activated"/>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--            <div>-->
+<!--                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">-->
+<!--                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>-->
+<!--                </button>-->
+
+<!--                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving"-->
+<!--                        class="btn btn-primary">-->
+<!--                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>-->
+<!--                </button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</div>-->

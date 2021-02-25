@@ -14,10 +14,5 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface OtpHistoryRepository extends JpaRepository<OtpHistory, Long> {
-
-    // TODO: change this query string when change DB system
-    @Query(value = "select * from otp_history a where a.user_id = :userId and a.secret_key = :secretKey and a.otp = :otp and a.action_time <= :authenTime and a.expire_time >= :authenTime ORDER BY a.action_time desc LIMIT 1", nativeQuery = true)
-    Optional<OtpHistory> findTop1By(@Param("userId") Long userId, @Param("secretKey") String secretKey, @Param("otp") String otp,
-                                   @Param("authenTime") LocalDateTime authenTime);
+public interface OtpHistoryRepository extends JpaRepository<OtpHistory, Long>, OtpHistoryRepositoryCustom {
 }

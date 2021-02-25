@@ -1,0 +1,21 @@
+<form *ngIf="certificate" (ngSubmit)="confirmDeactive(certificate?.id!)">
+    <div class="modal-header">
+        <h5 class="modal-title" jhiTranslate="webappApp.certificate.confirmDeactive.title"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="cancel()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+        <p jhiTranslate="webappApp.certificate.confirmDeactive.question" [translateValues]="{ id: certificate.serial }"></p>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light btn-sm" data-dismiss="modal" (click)="cancel()">
+            <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="webappApp.certificate.confirmDeactive.cancel">Cancel</span>
+        </button>
+
+        <button id="jhi-confirm-delete-certificate" type="submit" class="btn btn-success btn-sm">
+            <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="webappApp.certificate.confirmDeactive.confirm">Confirm</span>
+        </button>
+    </div>
+</form>
