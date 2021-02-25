@@ -13,7 +13,7 @@
             <i class="fas fa-home"></i>
             <span jhiTranslate="global.menu.home">Trang chủ</span></a>
     </li>
-    <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"  [hidden]="true">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap0"
            aria-expanded="true" aria-controls="collapseBootstrap0">
             <i class="fas fa-edit"></i>
@@ -38,11 +38,11 @@
         <div id="collapseBootstrap1" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.xml">Xác thực XML</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
+                <a class="collapse-item" routerLink="/developing" routerLinkActive="active" [hidden]="true"><span jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-pdf" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-doc" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-hash" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.hash">Xác thực Hash</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-raw" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
             </div>
         </div>
     </li>

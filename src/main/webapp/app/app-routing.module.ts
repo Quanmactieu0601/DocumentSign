@@ -30,6 +30,14 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
           loadChildren: () => import('./entities/entity.module').then(m => m.WebappEntityModule),
         },
         {
+          path: 'verify',
+          data: {
+            authorities: [Authority.USER],
+          },
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
+        },
+        {
           path: 'account',
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule),
         },

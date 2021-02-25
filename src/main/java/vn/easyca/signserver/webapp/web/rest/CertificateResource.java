@@ -44,8 +44,10 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.*;
+import java.util.Base64;
+import java.util.List;
 import java.io.ByteArrayInputStream;
-import java.util.*;
 
 @Scope("request")
 @RestController
@@ -114,14 +116,47 @@ public class CertificateResource extends BaseResource {
             log.info("--- importP12File ---");
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
-            status = TransactionStatus.SUCCESS;
+
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
-        } catch (ApplicationException e) {
+        } catch (ApplicationException  e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e));
         } finally {
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @PostMapping("/import/p12file")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importP12File2(@RequestParam("file") MultipartFile file, @RequestParam String ownerId, @RequestParam String pin) {
+        try {
+            String base64File = "";
+            base64File = Base64.getEncoder().encodeToString(file.getBytes());
+
+            P12ImportVM p12ImportVM = new P12ImportVM();
+            p12ImportVM.setP12Base64(base64File);
+            p12ImportVM.setOwnerId(ownerId);
+            p12ImportVM.setPin(pin);
+
+            log.info("importP12File: {}", p12ImportVM);
+            ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+            p12ImportService.insertP12(serviceInput);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/import/p12file", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }

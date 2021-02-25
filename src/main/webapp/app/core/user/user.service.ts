@@ -4,13 +4,16 @@ import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
-import { IUser } from './user.model';
+import { IUser, User } from './user.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   public resourceUrl = SERVER_API_URL + 'api/users';
+  public updateP12Url = SERVER_API_URL + 'api/certificate';
   public listId: number[] = [];
+  public users: User[] | null = null;
+
   constructor(private http: HttpClient) {}
 
   //TODO : add password to request body
@@ -55,6 +58,19 @@ export class UserService {
     });
     return this.http.request(req);
   }
+
+  uploadP12(file: File, pin: string): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    formData.append('pin', pin);
+    if (this.users !== null && this.users.length >= 1 && this.users[0].login !== undefined) formData.append('ownerId', this.users[0].login);
+    const req = new HttpRequest('POST', `${this.updateP12Url}/import/p12file`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+    });
+    return this.http.request(req);
+  }
+
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
   }
@@ -66,6 +82,11 @@ export class UserService {
   getListId(): any {
     return this.listId;
   }
+
+  setUsers(user: User[]): void {
+    this.users = user;
+  }
+
   downLoadTemplateFile(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
       map(response => {

@@ -43,7 +43,8 @@
           "pdf": "Xác thực PDF",
           "ooxml": "Xác thực Office",
           "raw": "Xác thực Raw",
-          "xml": "Xác thực XML"
+          "xml": "Xác thực XML",
+          "hash": "Xác thực Hash"
         },
         "signing": {
           "main": "Ký số",
@@ -53,6 +54,10 @@
           "xml": "Ký số XML"
         },
         "question": "Câu hỏi thường gặp"
+      },
+      "user": {
+        "main": "Người dùng",
+        "verifySignature": "Xác thực chứng thư"
       },
       "language": "Ngôn ngữ"
     },

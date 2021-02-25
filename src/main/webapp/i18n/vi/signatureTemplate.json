@@ -18,6 +18,48 @@
       },
       "signatureImage": "Signature Image",
       "userId": "User Id"
+    },
+    "signatureVerify": {
+      "title": "Xác thực kí số",
+      "signature": "Chữ ký base64",
+      "originalData": "Nội dung gốc",
+      "serial": "Số serial",
+      "result": "Kết quả",
+      "verify": "Xác thực",
+      "coverWholeDocument": "Kí toàn bộ văn bản",
+      "revision": "Lần sửa đổi",
+      "totalRevision": "Tổng số lần sửa đổi",
+      "signTime": "Thời gian kí",
+      "integrity": "Toàn vẹn",
+      "certificate": {
+        "title": "Chứng thư số",
+        "issuer": "Nhà cung cấp chứng thư",
+        "subjectDn": "SubjectDn",
+        "validFrom": "Có hiệu lực từ",
+        "validTo": "Có hiệu lực đến",
+        "revocationStatus": "Trạng thái thu hồi",
+        "currentStatus": "Trạng thái chữ kí thời điểm hiện tại",
+        "signtimeStatus": "Trạng thái chứ kí thời điểm kí",
+        "revocationStatus": {
+          "title": "Trạng thái thu hồi",
+          "UNCHECKED": "Không kiểm tra",
+          "CANT_VERIFY": "Không kiểm tra được",
+          "REVOKED": "Đã thu hồi",
+          "GOOD": "Đang hoạt động"
+        },
+        "currentStatus": {
+          "title": "Trạng thái chữ kí thời điểm hiện tại",
+          "VALID": "Hợp lệ",
+          "EXPIRED": "Đã hết hạn",
+          "INVALID": "Không hợp lệ"
+        },
+        "signtimeStatus": {
+          "title": "Trạng thái chứ kí thời điểm kí",
+          "VALID": "Hợp lệ",
+          "EXPIRED": "Đã hết hạn",
+          "INVALID": "Không hợp lệ"
+        }
+      }
     }
   }
 }
