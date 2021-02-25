@@ -117,4 +117,3 @@ export class SystemConfigComponent implements OnInit, OnDestroy {
     this.ngbPaginationPage = this.page ?? 1;
   }
 }
-

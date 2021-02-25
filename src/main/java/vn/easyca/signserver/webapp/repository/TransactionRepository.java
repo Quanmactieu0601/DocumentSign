@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.Transaction;
-import vn.easyca.signserver.webapp.enm.TransactionStatus;
 import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -16,19 +16,14 @@ import java.util.Map;
  * Spring Data  repository for the Transaction entity.
  */
 
-@SuppressWarnings({"unused", "JpaQlInspection"})
+
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, TransactionRepositoryCustom {
-    @Query(value = " FROM Transaction t WHERE t.triggerTime BETWEEN :startDate  AND :endDate  AND t.type = :type")
-    List<Transaction> findAllTransaction(@Param("startDate") LocalDateTime startDate,
-                                         @Param("endDate") LocalDateTime endDate, @Param("type") TransactionType type);
-
-
-    @Query(value = "SELECT COUNT(CASE WHEN t.status = true THEN 1 END)  AS TotalSuccess, " +
-        "                  COUNT(CASE WHEN t.status = false THEN 1 END) AS TotalFail " +
-        "FROM transaction_log t " +
-        "WHERE (t.trigger_time >= :startDate or :startDate is null) " +
-        "AND (t.trigger_time <= :endDate or :endDate is null) " +
-        "AND (t.type = :type or :type is null); ", nativeQuery = true)
+    @Query(value = "SELECT SUM(CASE when t.status = vn.easyca.signserver.webapp.enm.TransactionStatus.SUCCESS THEN 1 ELSE 0 END)  AS TotalSuccess, " +
+        "                  SUM(CASE WHEN t.status = vn.easyca.signserver.webapp.enm.TransactionStatus.FAIL THEN 1 ELSE 0 END) AS TotalFail " +
+        "FROM Transaction t " +
+        "WHERE (t.triggerTime >= :startDate or :startDate is null) " +
+        "AND (t.triggerTime <= :endDate or :endDate is null) " +
+        "AND (t.type = :type or :type is null) ")
     Map<String, BigInteger> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
                                                           @Param("endDate") LocalDateTime endDate, @Param("type") String type);
 

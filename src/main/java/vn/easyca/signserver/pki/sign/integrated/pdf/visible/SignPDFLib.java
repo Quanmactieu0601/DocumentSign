@@ -171,7 +171,7 @@ public class SignPDFLib {
         PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
         PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
         appearance.setSignDate(getSigningDate(signDTO.getSignDate()));
-        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleWidth());
+        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleHeight());
         appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
         BaseFont signatureBaseFont = BaseFont.createFont(getFontURLFromResource(), "Identity-H", false);
         float fontSize = 10.0F;
@@ -206,7 +206,7 @@ public class SignPDFLib {
         PdfTemplate layer20 = appearance.getLayer(2);
         Image bg = Image.getInstance(Base64.getDecoder().decode(DEFAULT_BG));
         bg.scaleToFit(50,35);
-        bg.setAbsolutePosition(2,30);
+        bg.setAbsolutePosition(signDTO.getVisibleWidth() - 40,10);
         layer20.addImage(bg);
         rectangle = appearance.getRect();
         layer20.setLineWidth(1);

@@ -40,6 +40,5 @@
     "languages": ["en", "vi"],
     "blueprints": [],
     "lastLiquibaseTimestamp": 1611030034000
-
   }
 }

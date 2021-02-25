@@ -1,4 +1,4 @@
-import {Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
@@ -6,10 +6,10 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ISystemConfig, SystemConfig } from 'app/shared/model/system-config.model';
 import { SystemConfigService } from './system-config.service';
-import { SystemConfigCategoryService} from "app/entities/system-config-category/system-config-category.service";
-import {ISystemConfigCategory, SystemConfigCategory} from "app/shared/model/system-config-category.model";
-import {ToastrService} from "ngx-toastr";
-import {TranslateService} from "@ngx-translate/core";
+import { SystemConfigCategoryService } from 'app/entities/system-config-category/system-config-category.service';
+import { ISystemConfigCategory, SystemConfigCategory } from 'app/shared/model/system-config-category.model';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-system-config-update',
@@ -30,10 +30,14 @@ export class SystemConfigUpdateComponent implements OnInit {
     activated: [],
   });
 
-
-  constructor(protected systemConfigService: SystemConfigService, protected systemConfigCategoryService: SystemConfigCategoryService, protected activatedRoute: ActivatedRoute, private fb: FormBuilder,
-              private toastService: ToastrService,
-              private translate: TranslateService) {}
+  constructor(
+    protected systemConfigService: SystemConfigService,
+    protected systemConfigCategoryService: SystemConfigCategoryService,
+    protected activatedRoute: ActivatedRoute,
+    private fb: FormBuilder,
+    private toastService: ToastrService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ systemConfig }) => {
@@ -46,8 +50,9 @@ export class SystemConfigUpdateComponent implements OnInit {
   }
 
   listSystemConfig(): void {
-    this.systemConfigCategoryService.query().subscribe(
-      (res: HttpResponse<ISystemConfigCategory[]>) => (this.systemConfigCategories = res.body || []));
+    this.systemConfigCategoryService
+      .query()
+      .subscribe((res: HttpResponse<ISystemConfigCategory[]>) => (this.systemConfigCategories = res.body || []));
   }
 
   updateForm(systemConfig: ISystemConfig): void {
@@ -60,7 +65,7 @@ export class SystemConfigUpdateComponent implements OnInit {
       dataType: systemConfig.dataType,
       activated: systemConfig.activated,
     });
-    if (systemConfig.dataType==='BOOLEAN'){
+    if (systemConfig.dataType === 'BOOLEAN') {
       this.isCheck = systemConfig.value !== '0';
     }
   }
@@ -82,20 +87,18 @@ export class SystemConfigUpdateComponent implements OnInit {
       this.subscribeToSaveResponse(this.systemConfigService.update(this.systemConfig));
     } else {
       this.subscribeToSaveResponse(this.systemConfigService.create(this.systemConfig));
-
     }
   }
 
   private createFromForm(systemConfig: SystemConfig): void {
     systemConfig.id = this.editForm.get(['id'])!.value;
     systemConfig.comId = this.editForm.get(['comId'])!.value;
-    if (this.editForm.get(['id'])!.value){
+    if (this.editForm.get(['id'])!.value) {
       systemConfig.key = this.editForm.get(['key'])!.value;
-    }
-    else systemConfig.key = this.editForm.get(['key'])!.value.configKey;
-    if(this.editForm.get(['value'])!.value.toString() === 'true'){
+    } else systemConfig.key = this.editForm.get(['key'])!.value.configKey;
+    if (this.editForm.get(['value'])!.value.toString() === 'true') {
       systemConfig.value = '1';
-    } else if(this.editForm.get(['value'])!.value.toString() === 'false'){
+    } else if (this.editForm.get(['value'])!.value.toString() === 'false') {
       systemConfig.value = '0';
     } else systemConfig.value = this.editForm.get(['value'])!.value.toString();
     systemConfig.description = this.editForm.get(['description'])!.value;
@@ -117,11 +120,13 @@ export class SystemConfigUpdateComponent implements OnInit {
 
   protected onSaveError(): void {
     this.isSaving = false;
-    this.toastService.error(this.translate.instant('webappApp.systemConfig.CreateStatus.Error', {key: this.systemConfig.key, comId: this.systemConfig.comId}));
+    this.toastService.error(
+      this.translate.instant('webappApp.systemConfig.CreateStatus.Error', { key: this.systemConfig.key, comId: this.systemConfig.comId })
+    );
   }
 
   protected valueIsNull(): void {
     this.isSaving = false;
-    this.toastService.error(this.translate.instant('webappApp.systemConfig.CreateStatus.valueNull'))
+    this.toastService.error(this.translate.instant('webappApp.systemConfig.CreateStatus.valueNull'));
   }
 }

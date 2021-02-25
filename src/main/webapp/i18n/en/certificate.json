@@ -1,6 +1,8 @@
 {
   "webappApp": {
     "certificate": {
+      "chooseFile": "Choose File",
+      "chooseSignatureImage": "Choose Signature Image(s)",
       "home": {
         "title": "Certificates",
         "createLabel": "Create a new Certificate",
@@ -67,7 +69,20 @@
           "newPIN": "Your new PIN is required",
           "confirmPIN": "Your confirm PIN is required"
         }
-      }
+      },
+      "confirmDeactive": {
+        "success": "Successfully",
+        "question": "Do you want to deactivate certificate {{id}}",
+        "title": "Confirm",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "uploadCert": "Upload CERT",
+      "uploadP12Cert": "Upload P12 CERT",
+      "uploadSignatureImage": "Upload Signature Image",
+      "search": "Search",
+      "exportSerial": "Export Serial",
+      "success": "Successfully"
     }
   }
 }

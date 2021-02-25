@@ -12,18 +12,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ParserUtils {
-    public static String getElementContentNameInCertificate(String contentInformation, String regex) {
-
-        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-        final Matcher matcher = pattern.matcher(contentInformation);
-        String CN = null;
-        while (matcher.find()) {
-            CN = matcher.group(1);
+    public static String getElementContentNameInCertificate(String contentInformation, String regex) throws ApplicationException {
+        try {
+            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+            final Matcher matcher = pattern.matcher(contentInformation);
+            String CN = null;
+            while (matcher.find()) {
+                CN = matcher.group(1);
+            }
+            return CN;
+        } catch (Exception ex) {
+            throw new ApplicationException(String.format("Parse CN has error: [content: %s, regex: %s]", contentInformation, regex), ex);
         }
-        return CN;
     }
-
-
 
     public static String convertHtmlContentToBase64(String htmlContent) throws ApplicationException {
         //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
@@ -31,8 +32,7 @@ public class ParserUtils {
             InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
             Tidy tidy = new Tidy();
             org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
-
-            Java2DRenderer renderer = new Java2DRenderer(doc, 400, 150);
+            Java2DRenderer renderer = new Java2DRenderer(doc, 355, 130);
             BufferedImage img = renderer.getImage();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(img, "png", os);

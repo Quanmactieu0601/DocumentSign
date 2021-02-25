@@ -1,22 +1,19 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
+import { saveAs } from 'file-saver';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-
 @Component({
-  selector: 'jhi-upload-certificate',
-  templateUrl: './upload-certificate.component.html',
-  styleUrls: ['./upload-certificate.component.scss'],
+  selector: 'jhi-upload-p12-certificate',
+  templateUrl: './export-serial.component.html',
 })
-export class UploadCertificateComponent implements OnInit {
+export class ExportSerialComponent implements OnInit {
   @Output() isUploadedSucessfully = new EventEmitter<boolean>();
   selectedFiles: any;
   currentFile: any;
   progress = 0;
-  fileInfos: Observable<any> = new Observable<any>();
+  // fileInfos: Observable<any> = new Observable<any>();
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
   constructor(
     private certificateService: CertificateService,
@@ -36,27 +33,17 @@ export class UploadCertificateComponent implements OnInit {
     this.fileName = this.selectedFiles[0].name;
   }
   upload(): void {
-    this.progress = 0;
+    this.currentFile = this.selectedFiles;
 
-    this.currentFile = this.selectedFiles.item(0);
-
-    this.certificateService.upload(this.currentFile).subscribe((res: any) => {
-      if (res.type === HttpEventType.UploadProgress) {
-        this.progress = Math.round((100 * res.loaded) / res.total);
-      } else if (res instanceof HttpResponse) {
-        if (res.body.status === 200) {
-          this.toastService.success(this.translate.instant('userManagement.alert.success.uploaded'));
-          this.transformVariable(true);
-        } else if (res.body.status === 417) {
-          this.toastService.error(this.translate.instant('userManagement.alert.fail.uploaded'));
-        }
+    this.certificateService.exportSerial(this.currentFile).subscribe((response: any) => {
+      if (response.type !== 0) {
+        saveAs(new Blob([response.body]), 'ExportSerial.csv');
+        this.toastService.success(this.translate.instant('webappApp.certificate.success'));
+        this.activeModal.close();
       }
     });
   }
 
-  transformVariable(agreed: boolean): void {
-    this.isUploadedSucessfully.emit(agreed);
-  }
   onInputClick = (event: any) => {
     const element = event.target as HTMLInputElement;
     element.value = '';
