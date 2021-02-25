@@ -107,8 +107,11 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
 
   updateStatus(certificate: ICertificate): void {
-    const modalRef = this.modalService.open(CertificateDeactiveDialogComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef = this.modalService.open(CertificateDeactiveDialogComponent, { size: 'md', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+    modalRef.result.then((isSuccess: boolean) => {
+      if (isSuccess) certificate.activeStatus = 0;
+    });
   }
 
   sort(): string[] {

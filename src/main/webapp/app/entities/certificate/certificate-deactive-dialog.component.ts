@@ -24,10 +24,9 @@ export class CertificateDeactiveDialogComponent {
   }
 
   confirmDeactive(id: number): void {
-    this.certificateService.updateActiveStatus(id).subscribe(() => {
-      this.activeModal.close();
+    this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
+      this.activeModal.close(res.ok);
       this.toastService.success(this.translate.instant('webappApp.certificate.confirmDeactive.success'));
-      location.reload();
     });
   }
 }
