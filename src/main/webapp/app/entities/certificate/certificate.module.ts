@@ -13,6 +13,7 @@ import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
 import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
+import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -27,6 +28,7 @@ import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/cer
     UploadSignatureImageComponent,
     CertPINComponent,
     CertificateDeactiveDialogComponent,
+    ExportSerialComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

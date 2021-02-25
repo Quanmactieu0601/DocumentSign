@@ -73,7 +73,13 @@
         "title": "Xác nhận",
         "cancel": "Hủy bỏ",
         "confirm": "Xác nhận"
-      }
+      },
+      "uploadCert": "Tải chứng thư số",
+      "uploadP12Cert": "Tải chứng thư số P12",
+      "uploadSignatureImage": "Tải ảnh chữ kí",
+      "search": "Tìm kiếm",
+      "exportSerial": "Xuất Serial",
+      "success": "Thành công"
     }
   }
 }

@@ -108,6 +108,20 @@ export class CertificateService {
     return this.http.request(req);
   }
 
+  exportSerial(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('successFiles', file);
+    });
+
+    const req = new HttpRequest('POST', `api/data/exportSerial`, formData, {
+      responseType: 'arraybuffer' as 'arraybuffer',
+    });
+
+    return this.http.request(req);
+  }
+
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
   }

@@ -76,7 +76,13 @@
         "title": "Confirm",
         "cancel": "Cancel",
         "confirm": "Confirm"
-      }
+      },
+      "uploadCert": "Upload CERT",
+      "uploadP12Cert": "Upload P12 CERT",
+      "uploadSignatureImage": "Upload Signature Image",
+      "search": "Search",
+      "exportSerial": "Export Serial",
+      "success": "Successfully"
     }
   }
 }
