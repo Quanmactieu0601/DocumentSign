@@ -1,19 +1,46 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDateTime;
 
 /**
  * A DTO for the {@link vn.easyca.signserver.webapp.domain.SignatureTemplate} entity.
  */
 public class SignatureTemplateDTO implements Serializable {
-    
+
     private Long id;
 
     private String signatureImage;
 
     private Long userId;
 
-    
+    private String createdBy;
+
+    private LocalDateTime createdDate;
+
+    private String coreParser;
+
+    public String getCoreParser() { return coreParser; }
+
+    public void setCoreParser(String coreParser) { this.coreParser = coreParser; }
+
+    public String getHtmlTemplate() { return htmlTemplate; }
+
+    public void setHtmlTemplate(String htmlTemplate) { this.htmlTemplate = htmlTemplate; }
+
+    public String getCreatedBy() { return createdBy; }
+
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public LocalDateTime getCreatedDate() { return createdDate; }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    private String htmlTemplate;
+
     public Long getId() {
         return id;
     }

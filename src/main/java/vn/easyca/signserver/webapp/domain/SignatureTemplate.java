@@ -7,6 +7,7 @@ import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * A SignatureTemplate.
@@ -24,6 +25,9 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
 
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "created_date")
+    private LocalDateTime createdDate;
 
     @Column(name = "type")
     private Integer type;
@@ -46,6 +50,14 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     public String getHtmlTemplate() {
         // todo : resolve template with individual parser
         return htmlTemplate;
+    }
+
+    @Override
+    public LocalDateTime getCreatedDate() { return createdDate; }
+
+    @Override
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public void setHtmlTemplate(String htmlTemplate) {
