@@ -21,7 +21,6 @@ import { UploadCertificateComponent } from './upload-certificate/upload-certific
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
 import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
-import { ISignatureImage } from 'app/shared/model/signature-image.model';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 
