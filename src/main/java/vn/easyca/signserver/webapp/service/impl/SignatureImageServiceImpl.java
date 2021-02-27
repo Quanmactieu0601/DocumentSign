@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.webapp.service.SignatureImageService;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.Base64;
 import java.util.Optional;
 
 /**
@@ -86,4 +89,10 @@ public class SignatureImageServiceImpl implements SignatureImageService {
         log.debug("Request to delete SignatureImage : {}", id);
         signatureImageRepository.deleteById(id);
     }
+
+    @Override
+    public String getBase64Image(Long id) {
+        return signatureImageRepository.getSignatureImageById(id).get().getImgData();
+    }
+
 }

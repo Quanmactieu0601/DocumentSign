@@ -43,4 +43,7 @@ public interface SignatureImageService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    String getBase64Image(Long id);
+
 }

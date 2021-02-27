@@ -17,7 +17,13 @@
         "title": "Signature Image"
       },
       "imgData": "Img Data",
-      "userId": "User Id"
+      "userId": "User Id",
+      "showImageSign": {
+        "showImageSign": "Show image sign",
+        "modify": "Save",
+        "cancel": "Cancel",
+        "showAlert": "Certificate doesn't have signature image"
+      }
     }
   }
 }

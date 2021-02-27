@@ -1,0 +1,20 @@
+<div class="modal-header header-custom">
+    <h5 class="modal-title" jhiTranslate="webappApp.signatureImage.showImageSign.showImageSign"></h5>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+            (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body">
+    <h3 *ngIf="showAlert == true" jhiTranslate="webappApp.signatureImage.showImageSign.showAlert"></h3>
+    <img *ngIf="showAlert == false" class="img-thumbnail" [src]="base64Img">
+    <input #Image type="file" (change)="choose($event)"/>
+</div>
+<div class="modal-footer footer-custom">
+    <button class="btn btn-success btn-sm float-right mr-1" (click)="save()"
+            jhiTranslate="webappApp.signatureImage.showImageSign.modify">
+    </button>
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')"
+            jhiTranslate="webappApp.signatureImage.showImageSign.cancel">
+    </button>
+</div>

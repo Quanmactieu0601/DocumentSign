@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
@@ -34,5 +34,16 @@ export class SignatureImageService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  getBase64(id: number | undefined): any {
+    return this.http.get(`${this.resourceUrl}/getBase64Image/${id}`, { observe: 'response', responseType: 'text' });
+  }
+
+  saveImage(files: File[], certId: any | undefined): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('files', files[0]);
+    formData.append('certId', certId);
+    return this.http.post(`${this.resourceUrl}/saveBase64Image`, formData, { responseType: 'arraybuffer' as 'arraybuffer' });
   }
 }

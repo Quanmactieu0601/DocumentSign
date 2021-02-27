@@ -20,6 +20,8 @@ import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.c
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
+import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
+import { ISignatureImage } from 'app/shared/model/signature-image.model';
 
 @Component({
   selector: 'jhi-certificate',
@@ -209,5 +211,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
+  }
+
+  showImageSign(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertificateSignatureComponent, { size: '300px', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
   }
 }

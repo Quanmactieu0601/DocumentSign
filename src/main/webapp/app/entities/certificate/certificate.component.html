@@ -147,6 +147,11 @@
 <!--                                <span class="d-none d-md-inline"-->
 <!--                                      jhiTranslate="webappApp.certificate.changeCertPIN.changePIN">Change Password</span>-->
                             </button>
+
+                            <button type="button" (click)="showImageSign(certificate)"
+                                    class="btn btn-secondary btn-sm" ngbTooltip="{{ 'webappApp.signatureImage.showImageSign.showImageSign' | translate}}">
+                                <fa-icon icon="eye"></fa-icon>
+                            </button>
                         </div>
                     </td>
                 </tr>
