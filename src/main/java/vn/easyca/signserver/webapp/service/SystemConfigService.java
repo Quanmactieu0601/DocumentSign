@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.enm.SystemConfigKey;
 import vn.easyca.signserver.webapp.service.dto.SystemConfigDTO;
 
 import org.springframework.data.domain.Page;
@@ -19,7 +21,7 @@ public interface SystemConfigService {
      * @param systemConfigDTO the entity to save.
      * @return the persisted entity.
      */
-    SystemConfigDTO save(SystemConfigDTO systemConfigDTO);
+    SystemConfigDTO save(SystemConfigDTO systemConfigDTO) throws ApplicationException;
 
     /**
      * Get all the systemConfigs.
@@ -40,6 +42,8 @@ public interface SystemConfigService {
      * @return the entity.
      */
     Optional<SystemConfigDTO> findOne(Long id);
+
+    Optional<SystemConfigDTO> findByComIdAndKey(Long comId, SystemConfigKey key);
 
     /**
      * Delete the "id" systemConfig.
