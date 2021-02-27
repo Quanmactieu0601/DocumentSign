@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpResponse } from '@angular/common/http';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
@@ -7,6 +7,9 @@ import { Observable } from 'rxjs';
 
 import { ISignatureTemplate, SignatureTemplate } from 'app/shared/model/signature-template.model';
 import { SignatureTemplateService } from './signature-template.service';
+import { UserService } from 'app/core/user/user.service';
+import { IUser, User } from 'app/core/user/user.model';
+import { ISystemConfig } from 'app/shared/model/system-config.model';
 
 @Component({
   selector: 'jhi-signature-template-update',
@@ -14,30 +17,44 @@ import { SignatureTemplateService } from './signature-template.service';
 })
 export class SignatureTemplateUpdateComponent implements OnInit {
   isSaving = false;
-
+  users?: IUser[] | null;
   editForm = this.fb.group({
     id: [],
-    signatureImage: [],
+    // signatureImage: [],
+    createdDate: [],
+    createdBy: [],
+    coreParser: [],
     userId: [],
+    htmlTemplate: [],
   });
 
   constructor(
     protected signatureTemplateService: SignatureTemplateService,
     protected activatedRoute: ActivatedRoute,
+    private userService: UserService,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ signatureTemplate }) => {
       this.updateForm(signatureTemplate);
+      this.userService.getAllUsers().subscribe((res: HttpResponse<IUser[]>) => {
+        this.users = res.body;
+      });
     });
+  }
+  protected onSuccess(data: IUser[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
+    this.users = data || [];
   }
 
   updateForm(signatureTemplate: ISignatureTemplate): void {
     this.editForm.patchValue({
       id: signatureTemplate.id,
-      signatureImage: signatureTemplate.signatureImage,
       userId: signatureTemplate.userId,
+      createdDate: signatureTemplate.createdDate,
+      createdBy: signatureTemplate.createdBy,
+      coreParser: signatureTemplate.coreParser,
+      htmlTemplate: signatureTemplate.htmlTemplate,
     });
   }
 
@@ -59,7 +76,7 @@ export class SignatureTemplateUpdateComponent implements OnInit {
     return {
       ...new SignatureTemplate(),
       id: this.editForm.get(['id'])!.value,
-      signatureImage: this.editForm.get(['signatureImage'])!.value,
+      // signatureImage: this.editForm.get(['signatureImage'])!.value,
       userId: this.editForm.get(['userId'])!.value,
     };
   }

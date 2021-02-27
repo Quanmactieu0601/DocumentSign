@@ -6,11 +6,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.repository.UserRepositoryCustom;
+import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Repository
@@ -65,7 +70,18 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             userEntityList = query.getResultList();
         }
         return new PageImpl<>(userEntityList, pageable, total.longValue());
-
     }
 
+    @Override
+    public List getAllUserForDropdown() {
+        Map<String, Object> params = new HashMap<>();
+        StringBuilder sqlBuilderExport = new StringBuilder();
+        sqlBuilderExport.append("select new vn.easyca.signserver.webapp.service.dto.UserDropdownDTO");
+        sqlBuilderExport.append(" (a.id, a.login) ");
+        sqlBuilderExport.append("from UserEntity a");
+        sqlBuilderExport.append(" WHERE 1=1 ");
+        TypedQuery<UserDropdownDTO> typedQuery = entityManager.createQuery(sqlBuilderExport.toString(), UserDropdownDTO.class);
+
+        return typedQuery.getResultList();
+    }
 }

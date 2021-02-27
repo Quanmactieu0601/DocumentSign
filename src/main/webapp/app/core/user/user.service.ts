@@ -36,6 +36,10 @@ export class UserService {
     return this.http.get<IUser[]>(this.resourceUrl, { params: options, observe: 'response' });
   }
 
+  getAllUsers(): Observable<HttpResponse<IUser[]>> {
+    return this.http.get<IUser[]>(this.resourceUrl + '/getAll', { observe: 'response' });
+  }
+
   delete(login: string): Observable<{}> {
     return this.http.delete(`${this.resourceUrl}/${login}`);
   }

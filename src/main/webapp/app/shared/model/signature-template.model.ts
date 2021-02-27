@@ -4,6 +4,7 @@ export interface ISignatureTemplate {
   coreParser?: string;
   createdDate?: Date;
   htmlTemplate?: string;
+  fullName?: string;
   userId?: number;
 }
 
@@ -14,6 +15,7 @@ export class SignatureTemplate implements ISignatureTemplate {
     public userId?: number,
     public createdDate?: Date,
     public createdBy?: string,
+    public fullName?: string,
     public coreParser?: string
   ) {}
 }

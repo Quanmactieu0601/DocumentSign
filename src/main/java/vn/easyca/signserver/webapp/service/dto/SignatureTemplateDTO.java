@@ -21,6 +21,13 @@ public class SignatureTemplateDTO implements Serializable {
 
     private String coreParser;
 
+    private String fullName;
+
+    public String getFullName() { return fullName; }
+
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+
     public String getCoreParser() { return coreParser; }
 
     public void setCoreParser(String coreParser) { this.coreParser = coreParser; }

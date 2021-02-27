@@ -2,7 +2,7 @@
     <h2 id="page-heading">
         <span jhiTranslate="webappApp.signatureTemplate.home.title">Signature Templates</span>
 
-        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-signature-template" [routerLink]="['/signature-template/new']">
+        <button id="jh-create-entity" class="btn btn-primary float-right jh-create-entity create-signature-template" [routerLink]="['./new']">
             <fa-icon icon="plus"></fa-icon>
             <span  jhiTranslate="webappApp.signatureTemplate.home.createLabel">
             Create a new Signature Template
@@ -22,17 +22,23 @@
         <table class="table table-striped" aria-describedby="page-heading">
             <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="signatureImage"><span jhiTranslate="webappApp.signatureTemplate.signatureImage">Signature Image</span> <fa-icon icon="sort"></fa-icon></th>
-                    <th scope="col"  jhiSortBy="userId"><span jhiTranslate="webappApp.signatureTemplate.userId">User Id</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th hidden scope="col"  jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="signatureImage"><span>Signature Temple</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="userId"><span>Full Name</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="userId"><span>Created By</span> <fa-icon icon="sort"></fa-icon></th>
+                    <th scope="col"  jhiSortBy="userId"><span>Created Date</span> <fa-icon icon="sort"></fa-icon></th>
                     <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr *ngFor="let signatureTemplate of signatureTemplates ;trackBy: trackId">
-                    <td><a [routerLink]="['/signature-template', signatureTemplate.id, 'view']">{{ signatureTemplate.id }}</a></td>
-                    <td>{{ signatureTemplate.htmlTemplate }}</td>
-                    <td>{{ signatureTemplate.userId }}</td>
+                    <td hidden><a [routerLink]="['/signature-template', signatureTemplate.id, 'view']">{{ signatureTemplate.id }}</a></td>
+<!--                    <td>{{ signatureTemplate.htmlTemplate }}</td>-->
+<!--                    <td>{{ signatureTemplate.htmlTemplate }}</td>-->
+                    <td> <div [innerHTML]="signatureTemplate.htmlTemplate"></div></td>
+                    <td>{{ signatureTemplate.fullName }}</td>
+                    <td>{{signatureTemplate.createdBy}}</td>
+                    <td>{{signatureTemplate.createdDate}}</td>
                     <td class="text-right">
                         <div class="btn-group">
                             <button type="submit"

@@ -15,6 +15,7 @@ import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.MailService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
+import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.service.error.InfoFromCNToCountryNotFoundException;
 import vn.easyca.signserver.webapp.service.error.InvalidCountryColumnLength;
 import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
@@ -217,6 +218,9 @@ public class UserResource extends BaseResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    @GetMapping("users/getAll")
+    public List<UserDropdownDTO> getAllUsers() { return  userApplicationService.getAllUsers(); }
 
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")

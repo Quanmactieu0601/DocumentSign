@@ -22,6 +22,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.service.error.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -382,6 +383,11 @@ public class UserApplicationService {
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDropdownDTO> getAllUsers() {
+        return userRepository.getAllUserForDropdown();
     }
 
     @Transactional(readOnly = true)
