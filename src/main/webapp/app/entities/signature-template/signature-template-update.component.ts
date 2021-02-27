@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 
 import { ISignatureTemplate, SignatureTemplate } from 'app/shared/model/signature-template.model';
 import { SignatureTemplateService } from './signature-template.service';
 import { UserService } from 'app/core/user/user.service';
-import { IUser, User } from 'app/core/user/user.model';
-import { ISystemConfig } from 'app/shared/model/system-config.model';
+import { IUser } from 'app/core/user/user.model';
+import { ICoreParser } from 'app/shared/model/core-parser.model';
+import { CoreParserService } from 'app/entities/core-parser/core-parser.service';
 
 @Component({
   selector: 'jhi-signature-template-update',
@@ -18,6 +19,7 @@ import { ISystemConfig } from 'app/shared/model/system-config.model';
 export class SignatureTemplateUpdateComponent implements OnInit {
   isSaving = false;
   users?: IUser[] | null;
+  coreParsers?: ICoreParser[] | null;
   editForm = this.fb.group({
     id: [],
     // signatureImage: [],
@@ -32,6 +34,7 @@ export class SignatureTemplateUpdateComponent implements OnInit {
     protected signatureTemplateService: SignatureTemplateService,
     protected activatedRoute: ActivatedRoute,
     private userService: UserService,
+    private CoreParserService: CoreParserService,
     private fb: FormBuilder
   ) {}
 
@@ -41,10 +44,11 @@ export class SignatureTemplateUpdateComponent implements OnInit {
       this.userService.getAllUsers().subscribe((res: HttpResponse<IUser[]>) => {
         this.users = res.body;
       });
+
+      this.CoreParserService.findAll().subscribe((res: HttpResponse<ICoreParser[]>) => {
+        this.coreParsers = res.body;
+      });
     });
-  }
-  protected onSuccess(data: IUser[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
-    this.users = data || [];
   }
 
   updateForm(signatureTemplate: ISignatureTemplate): void {

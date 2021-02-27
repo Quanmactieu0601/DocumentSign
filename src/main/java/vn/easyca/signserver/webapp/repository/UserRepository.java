@@ -42,7 +42,4 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     Optional<UserEntity> findOneWithAuthoritiesByEmailIgnoreCase(String email);
 
     Page<UserEntity> findAllByLoginNot(Pageable pageable, String login);
-
-    @Query(value = "select u.id, u.login from UserEntity u")
-    List<UserDropdownDTO> findAllUsers();
 }
