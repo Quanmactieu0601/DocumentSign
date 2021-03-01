@@ -48,10 +48,9 @@ public class SystemConfigServiceImpl implements SystemConfigService {
         log.debug("Request to save SystemConfig : {}", systemConfigDTO);
         SystemConfig systemConfig = systemConfigMapper.toEntity(systemConfigDTO);
         Optional<SystemConfigDTO> temp = this.findByComIdAndKey(systemConfigDTO.getComId(), systemConfigDTO.getKey());
-        if (temp.isPresent()){
+        if (temp.isPresent() && systemConfigDTO.getId() == null) {
             throw new ApplicationException("Duplicate ComId and Key!");
-        }
-        else systemConfig = systemConfigRepository.save(systemConfig);
+        } else systemConfig = systemConfigRepository.save(systemConfig);
         return systemConfigMapper.toDto(systemConfig);
 
     }
@@ -88,7 +87,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
     @Override
     @Transactional(readOnly = true)
     public Optional<SystemConfigDTO> findByComIdAndKey(Long comId, SystemConfigKey key) {
-        log.debug("Request to get SystemConfig : {} ", comId, " and ",key);
+        log.debug("Request to get SystemConfig : {} ", comId, " and ", key);
         return systemConfigRepository.findByComIdAndKey(comId, key)
             .map(systemConfigMapper::toDto);
     }

@@ -11,6 +11,7 @@ import { PasswordResetInitComponent } from './password-reset/init/password-reset
 import { PasswordResetFinishComponent } from './password-reset/finish/password-reset-finish.component';
 import { SettingsComponent } from './settings/settings.component';
 import { accountState } from './account.route';
+import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-password-first-login/confirm-change-password.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(accountState)],
@@ -22,6 +23,7 @@ import { accountState } from './account.route';
     PasswordResetInitComponent,
     PasswordResetFinishComponent,
     SettingsComponent,
+    ConfirmChangePasswordComponent,
   ],
 })
 export class AccountModule {}
