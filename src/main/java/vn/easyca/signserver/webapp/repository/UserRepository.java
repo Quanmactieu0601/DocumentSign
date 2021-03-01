@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -8,7 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 
 import java.util.*;
 import java.time.LocalDateTime;
@@ -32,6 +33,12 @@ public interface UserRepository extends JpaRepository<UserEntity, Long>, UserRep
     Optional<UserEntity> findOneByEmailIgnoreCase(String email);
 
     Optional<UserEntity> findOneByLogin(String login);
+
+    @Modifying
+    @Query(value = "UPDATE UserEntity " +
+        "SET remindChangePassword = false " +
+        "WHERE login = :login ")
+    void setDefaultOfRemindChangePassword(@Param("login") String login);
 
     @EntityGraph(attributePaths = "authorities")
     @Cacheable(cacheNames = USERS_BY_LOGIN_CACHE)

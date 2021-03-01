@@ -20,7 +20,7 @@ public class UserDTO {
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     private String login;
-
+ 
     @Size(max = 200)
     private String firstName;
 
@@ -49,7 +49,7 @@ public class UserDTO {
     private String phone;
 
     @Email
-    @Size( max = 254)
+    @Size(max = 254)
     private String email;
 
     @Size(max = 256)
@@ -72,6 +72,16 @@ public class UserDTO {
     private LocalDateTime lastModifiedDate;
 
     private Set<String> authorities;
+
+    private Boolean remindChangePassword;
+
+    public Boolean getRemindChangePassword() {
+        return remindChangePassword;
+    }
+
+    public void setRemindChangePassword(Boolean remindChangePassword) {
+        this.remindChangePassword = remindChangePassword;
+    }
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -103,11 +113,17 @@ public class UserDTO {
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+        this.remindChangePassword = userEntity.getRemindChangePassword();
     }
 
-    public String getCurrentPassword() { return currentPassword; }
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
 
-    public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -299,6 +315,7 @@ public class UserDTO {
             ", stateName=" + stateName +
             ", country=" + country +
             ", phone=" + phone +
+            ", remindChangePassword" + remindChangePassword +
             "}";
     }
 }

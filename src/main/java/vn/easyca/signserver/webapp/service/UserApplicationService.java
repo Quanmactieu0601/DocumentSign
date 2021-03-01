@@ -1,7 +1,8 @@
 package vn.easyca.signserver.webapp.service;
 
 import com.google.common.base.Strings;
-import vn.easyca.signserver.core.exception.ApplicationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -24,9 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.service.error.*;
-import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -168,11 +167,11 @@ public class UserApplicationService {
 
     public UserEntity registerUser(UserDTO userDTO, String password) {
         userRepository.findOneByLogin(userDTO.getLogin().toLowerCase()).ifPresent(existingUser -> {
-                throw new UsernameAlreadyUsedException();
+            throw new UsernameAlreadyUsedException();
         });
         if (!Strings.isNullOrEmpty(userDTO.getEmail())) {
             userRepository.findOneByEmailIgnoreCase(userDTO.getEmail()).ifPresent(existingUser -> {
-                    throw new EmailAlreadyUsedException();
+                throw new EmailAlreadyUsedException();
             });
         }
         UserEntity newUserEntity = new UserEntity();
@@ -275,6 +274,7 @@ public class UserApplicationService {
         newUserEntity.setActivated(true);
         // new user gets registration key
         newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
+        newUserEntity.setRemindChangePassword(true);
         Set<Authority> authorities = new HashSet<>();
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUserEntity.setAuthorities(authorities);
@@ -376,8 +376,17 @@ public class UserApplicationService {
                 String encryptedPassword = passwordEncoder.encode(newPassword);
                 user.setPassword(encryptedPassword);
                 this.clearUserCaches(user);
+                user.setRemindChangePassword(false);
                 log.debug("Changed password for User: {}", user);
             });
+    }
+
+    public Boolean remindChangePassword(String login) {
+        return userRepository.findOneByLogin(login).get().getRemindChangePassword();
+    }
+
+    public void setDefaultOfRemindChangePassword(String login) {
+        userRepository.setDefaultOfRemindChangePassword(login);
     }
 
     @Transactional(readOnly = true)
