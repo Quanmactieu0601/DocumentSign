@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.web.rest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
@@ -42,7 +43,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/signature-images")
 public class SignatureImageResource {
-
     private final AsyncTransactionService asyncTransactionService;
 
     private final UserApplicationService userApplicationService;
@@ -174,15 +174,25 @@ public class SignatureImageResource {
 
     @PostMapping("/saveBase64Image")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public void saveSignImage(@RequestParam("files") MultipartFile[] file, @RequestParam("certId") Long certId) throws IOException {
+    public ResponseEntity saveSignImage(@RequestParam("files") MultipartFile[] file, @RequestParam("certId") Long certId) throws IOException {
         String base64Image = Base64.getEncoder().encodeToString(file[0].getBytes());
         Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
         Long userId = userEntity.get().getId();
         SignatureImage signatureImage = new SignatureImage();
+        Optional<Certificate> certificate = certificateService.findOne(certId);
+        Long signatureImageId = certificate.get().getSignatureImageId();
+        if (signatureImageId != null) {
+            Optional<SignatureImageDTO> signatureImageOptional = signatureImageService.findOne(signatureImageId);
+            if (signatureImageOptional.isPresent()) {
+                Long id = signatureImageOptional.get().getId();
+                signatureImage.setId(id);
+            }
+        }
         signatureImage.setImgData(base64Image);
         signatureImage.setUserId(userId);
         SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
         dto = signatureImageService.save(dto);
         certificateService.updateSignatureImageInCert(dto.getId(), certId);
+        return new ResponseEntity<>(dto.getId(), HttpStatus.OK);
     }
 }

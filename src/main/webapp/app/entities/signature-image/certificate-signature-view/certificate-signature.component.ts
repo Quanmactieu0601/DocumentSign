@@ -3,20 +3,26 @@ import { ICertificate } from 'app/shared/model/certificate.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { SignatureImageService } from 'app/entities/signature-image/signature-image.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'jhi-imagesign',
   templateUrl: './certificate-signature.component.html',
+  styleUrls: ['../signature-image.component.scss'],
 })
 export class CertificateSignatureComponent implements OnInit {
   certificate?: ICertificate;
   base64Img?: SafeResourceUrl;
   showAlert = false;
-
-  imageUrl: any;
+  fileName: any = this.translate.instant('webappApp.signatureImage.showImageSign.chooseImage');
   imageFiles: any;
 
-  constructor(public activeModal: NgbActiveModal, private sanitizer: DomSanitizer, private signatureImageService: SignatureImageService) {}
+  constructor(
+    public activeModal: NgbActiveModal,
+    private translate: TranslateService,
+    private sanitizer: DomSanitizer,
+    private signatureImageService: SignatureImageService
+  ) {}
 
   getImage(id?: number | undefined): any {
     this.signatureImageService.getBase64(id).subscribe((res: any) => {
@@ -34,17 +40,18 @@ export class CertificateSignatureComponent implements OnInit {
 
   choose(_event: any): any {
     this.imageFiles = _event.target.files;
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      this.imageUrl = event.target.result;
-    };
+    // const reader = new FileReader();
+    // reader.onload = (event: any) => {
+    //   this.imageUrl = event.target.result;
+    // }
+    // reader.readAsDataURL(this.imageFiles);
+    this.fileName = this.imageFiles[0].name;
   }
 
   save(): any {
     this.signatureImageService.saveImage(this.imageFiles, this.certificate?.id).subscribe((res: any) => {
-      console.error(res);
+      this.activeModal.close(res.body);
     });
-    this.activeModal.close();
   }
 
   cancel(): void {

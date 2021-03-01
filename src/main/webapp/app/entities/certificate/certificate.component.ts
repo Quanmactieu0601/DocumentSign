@@ -23,6 +23,7 @@ import { UploadSignatureImageComponent } from './upload-signature-image/upload-s
 import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
+import { ISignatureImage } from 'app/shared/model/signature-image.model';
 
 @Component({
   selector: 'jhi-certificate',
@@ -60,8 +61,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected accountService: AccountService
   ) {}
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    const pageToLoad: number = page || this.page || 1;
+  loadPage(page?: number): void {
     this.searchCertificate(page);
   }
 
@@ -188,6 +188,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
       this.loadLastestRecord();
     }
   }
+
   loadLastestRecord(): void {
     const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
 
@@ -219,7 +220,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
   }
 
   showImageSign(certificate: ICertificate): void {
-    const modalRef = this.modalService.open(CertificateSignatureComponent, { size: '300px', backdrop: 'static' });
+    const modalRef = this.modalService.open(CertificateSignatureComponent, { size: 'sm', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
+    modalRef.result.then((result: any) => {
+      certificate.signatureImageId = result;
+    });
   }
 }

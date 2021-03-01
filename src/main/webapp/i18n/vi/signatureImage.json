@@ -22,7 +22,8 @@
         "showImageSign": "Hiện thị ảnh chữ kí",
         "modify": "Lưu",
         "cancel": "Hủy",
-        "showAlert": "Chứng thư số không có ảnh chữ kí"
+        "showAlert": "Chứng thư số không có ảnh chữ kí",
+        "chooseImage": "Chọn ảnh"
       }
     }
   }

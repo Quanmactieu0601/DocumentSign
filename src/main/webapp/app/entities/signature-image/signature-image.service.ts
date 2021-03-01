@@ -44,6 +44,6 @@ export class SignatureImageService {
     const formData: FormData = new FormData();
     formData.append('files', files[0]);
     formData.append('certId', certId);
-    return this.http.post(`${this.resourceUrl}/saveBase64Image`, formData, { responseType: 'arraybuffer' as 'arraybuffer' });
+    return this.http.post(`${this.resourceUrl}/saveBase64Image`, formData, { observe: 'response' });
   }
 }

@@ -22,7 +22,8 @@
         "showImageSign": "Show image sign",
         "modify": "Save",
         "cancel": "Cancel",
-        "showAlert": "Certificate doesn't have signature image"
+        "showAlert": "Certificate doesn't have signature image",
+        "chooseImage": "Choose image"
       }
     }
   }
