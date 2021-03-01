@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ICoreParser } from 'app/shared/model/core-parser.model';
-import { IUser } from 'app/core/user/user.model';
 
 type EntityResponseType = HttpResponse<ICoreParser>;
 type EntityArrayResponseType = HttpResponse<ICoreParser[]>;

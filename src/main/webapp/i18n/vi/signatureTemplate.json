@@ -2,7 +2,7 @@
   "webappApp": {
     "signatureTemplate": {
       "home": {
-        "title": "Signature Templates",
+        "title": "Danh sách mẫu chữ ký",
         "createLabel": "Thêm mới một Signature Template",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Signature Template",
         "notFound": "No Signature Templates found"
@@ -13,11 +13,18 @@
       "delete": {
         "question": "Bạn có chắc là muốn xóa Signature Template {{ id }}?"
       },
+      "preview": "Xem mẫu",
+      "width": "Chiều dài",
+      "height": "Chiều cao",
       "detail": {
         "title": "Signature Template"
       },
       "signatureImage": "Signature Image",
-      "userId": "User Id"
+      "userId": "User Id",
+      "signatureTemplate": "Mẫu chứ ký",
+      "fullName": "Tên công ty",
+      "createdBy": "Người tạo",
+      "createdDate": "Ngày tạo"
     }
   }
 }

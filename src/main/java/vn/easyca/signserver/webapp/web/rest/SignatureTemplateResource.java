@@ -1,9 +1,15 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.poi.ss.extractor.ExcelExtractor;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.FileIOHelper;
+import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 
@@ -19,9 +25,14 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +41,14 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api")
-public class SignatureTemplateResource {
+public class SignatureTemplateResource extends BaseResource {
 
     private final AsyncTransactionService asyncTransactionService;
 
     private final Logger log = LoggerFactory.getLogger(SignatureTemplateResource.class);
 
     private static final String ENTITY_NAME = "signatureTemplate";
+
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
@@ -140,5 +152,43 @@ public class SignatureTemplateResource {
         asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.DELETE, Extension.NONE, Method.DELETE,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    @GetMapping("/signature-templates/signExample")
+    public ResponseEntity<BaseResponseVM> getSignExample(@RequestParam(required = false) String htmlTemplate, @RequestParam(required = false) String signer, @RequestParam(required = false) String signingDate, @RequestParam(required = false) String signingImage, @RequestParam(required = false) Integer width, @RequestParam(required = false) Integer height) {
+        try {
+            String fileName = "src/main/resources/templates/signature/signature.html";
+            String imageFilePath = "src/main/resources/templates/signature/SigningImageExam.jpg";
+
+
+            htmlTemplate = htmlTemplate == null ? new String(Files.readAllBytes(Paths.get(fileName))) : java.net.URLDecoder.decode(htmlTemplate, StandardCharsets.UTF_8.name());
+            signer = signer == null ? "Nguyễn Văn A" : signer;
+            signingImage = signingImage == null ? new String(Base64.encodeBase64(Files.readAllBytes(Paths.get(imageFilePath))), "UTF-8") : signingImage;
+            width = width == null ? 355 : width;
+            height = height == null ? 130 : height;
+
+
+            String htmlContent = htmlTemplate
+                .replaceFirst("signer", signer)
+                .replaceFirst("position", "Giám đốc")
+                .replaceFirst("address", "Hà Nội")
+                .replaceFirst("signatureImage", signingImage)
+                .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+
+
+            String imageBase64 = ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(imageBase64));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/signature-templates/signExample", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
     }
 }
