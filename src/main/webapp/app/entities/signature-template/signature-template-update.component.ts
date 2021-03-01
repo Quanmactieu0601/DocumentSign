@@ -1,6 +1,5 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -10,7 +9,6 @@ import { UserService } from 'app/core/user/user.service';
 import { IUser } from 'app/core/user/user.model';
 import { ICoreParser } from 'app/shared/model/core-parser.model';
 import { CoreParserService } from 'app/entities/core-parser/core-parser.service';
-import { TranslateService } from '@ngx-translate/core';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { AccountService } from 'app/core/auth/account.service';
 
@@ -18,7 +16,7 @@ import { AccountService } from 'app/core/auth/account.service';
   selector: 'jhi-signature-template-update',
   templateUrl: './signature-template-update.component.html',
 })
-export class SignatureTemplateUpdateComponent implements OnInit {
+export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
   @ViewChild('width') width: ElementRef | undefined;
   @ViewChild('height') height: ElementRef | undefined;
   @ViewChild('signatureImage') signatureImage: ElementRef | undefined;
