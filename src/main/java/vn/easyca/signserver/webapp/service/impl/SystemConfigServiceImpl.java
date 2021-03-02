@@ -1,7 +1,9 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import org.springframework.cache.annotation.CacheEvict;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.SystemConfigKey;
+import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.SystemConfigService;
 import vn.easyca.signserver.webapp.domain.SystemConfig;
 import vn.easyca.signserver.webapp.repository.SystemConfigRepository;
@@ -32,6 +34,7 @@ public class SystemConfigServiceImpl implements SystemConfigService {
 
     private final SystemConfigMapper systemConfigMapper;
 
+
     public SystemConfigServiceImpl(SystemConfigRepository systemConfigRepository, SystemConfigMapper systemConfigMapper) {
         this.systemConfigRepository = systemConfigRepository;
         this.systemConfigMapper = systemConfigMapper;
@@ -52,7 +55,6 @@ public class SystemConfigServiceImpl implements SystemConfigService {
             throw new ApplicationException("Duplicate ComId and Key!");
         } else systemConfig = systemConfigRepository.save(systemConfig);
         return systemConfigMapper.toDto(systemConfig);
-
     }
 
     /**

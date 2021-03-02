@@ -8,6 +8,8 @@ public class OptionalVM {
 
     private boolean returnInputData;
 
+    private String otpCode;
+
     public String getHashAlgorithm() {
         return hashAlgorithm;
     }
@@ -30,6 +32,14 @@ public class OptionalVM {
 
     public void setReturnInputData(boolean returnInputData) {
         this.returnInputData = returnInputData;
+    }
+
+    public String getOtpCode() {
+        return otpCode;
+    }
+
+    public void setOtpCode(String otpCode) {
+        this.otpCode = otpCode;
     }
 
     @Override
