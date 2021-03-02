@@ -223,7 +223,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(CertificateSignatureComponent, { size: 'sm', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.result.then((result: any) => {
-      certificate.signatureImageId = result;
+      if (result != null) {
+        certificate.signatureImageId = result;
+      }
     });
   }
 }

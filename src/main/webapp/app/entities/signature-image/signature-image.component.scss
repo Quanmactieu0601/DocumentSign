@@ -3,3 +3,12 @@
   background-color: #398bf8 !important;
   color: #ffffff;
 }
+.custom-file-input:lang(vi) ~ .custom-file-label::after {
+  content: 'Chọn';
+}
+.img-size {
+  width: 266px;
+  height: 150px;
+  display: flex;
+  //border: 1px solid #7A7C7B;
+}

@@ -19,11 +19,12 @@
       "imgData": "Img Data",
       "userId": "User Id",
       "showImageSign": {
-        "showImageSign": "Show image sign",
+        "showImageSign": "Signature image",
         "modify": "Save",
         "cancel": "Cancel",
         "showAlert": "Certificate doesn't have signature image",
-        "chooseImage": "Choose image"
+        "chooseImage": "Update image",
+        "success": "Save successfully"
       }
     }
   }

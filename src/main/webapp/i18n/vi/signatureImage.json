@@ -19,11 +19,12 @@
       "imgData": "Img Data",
       "userId": "User Id",
       "showImageSign": {
-        "showImageSign": "Hiện thị ảnh chữ kí",
+        "showImageSign": "Ảnh chữ kí",
         "modify": "Lưu",
         "cancel": "Hủy",
         "showAlert": "Chứng thư số không có ảnh chữ kí",
-        "chooseImage": "Chọn ảnh"
+        "chooseImage": "Cập nhật ảnh",
+        "success": "Lưu thành công"
       }
     }
   }

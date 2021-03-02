@@ -1,25 +1,27 @@
 <div class="modal-header header-custom">
-    <h5 class="modal-title" jhiTranslate="webappApp.signatureImage.showImageSign.showImageSign"></h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-            (click)="activeModal.dismiss('Cross click')">
+    <h6 class="modal-title" jhiTranslate="webappApp.signatureImage.showImageSign.showImageSign"></h6>
+    <a class="close" data-dismiss="modal" aria-label="Close"
+       (click)="cancel()">
         <span aria-hidden="true">&times;</span>
-    </button>
+    </a>
 </div>
 <div class="modal-body">
-    <h5 *ngIf="showAlert == true" class="text-danger" jhiTranslate="webappApp.signatureImage.showImageSign.showAlert"></h5>
-    <img *ngIf="showAlert == false" class="img-thumbnail mb-2" [src]="base64Img">
-        <div class="input-group">
-            <div class="custom-file overflow-hidden" id="custom-file" >
-                <input type="file" class="custom-file-input" id="form-control" (change)="choose($event)"/>
-                <label class="custom-file-label">{{this.fileName}}</label>
-            </div>
+    <div class="img-thumbnail mb-2 img-size">
+        <img *ngIf="showAlert == true" [src]="imageUrl" width="100%" alt="">
+        <img *ngIf="showAlert == false" [src]="base64Img" width="100%" alt="">
+    </div>
+    <div class="input-group">
+        <div class="custom-file overflow-hidden" id="custom-file">
+            <input type="file" class="custom-file-input" id="form-control" (change)="choose($event)"/>
+            <label class="custom-file-label">{{this.fileName}}</label>
         </div>
+    </div>
 </div>
 <div class="modal-footer footer-custom">
     <button class="btn btn-success btn-sm float-right mr-1" [disabled]="this.imageFiles == null" (click)="save()"
             jhiTranslate="webappApp.signatureImage.showImageSign.modify">
     </button>
-    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')"
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="cancel()"
             jhiTranslate="webappApp.signatureImage.showImageSign.cancel">
     </button>
 </div>
