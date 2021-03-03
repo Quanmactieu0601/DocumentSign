@@ -6,11 +6,10 @@
     </a>
 </div>
 <div class="modal-body">
-    <div class="img-thumbnail mb-2 img-size">
-        <img *ngIf="showAlert == true" [src]="imageUrl" width="100%" alt="">
-        <img *ngIf="showAlert == false" [src]="base64Img" width="100%" alt="">
+    <div hidden class="img-thumbnail mb-2 img-size" #imageUpload  >
+        <img [src]="image" width="100%" alt="">
     </div>
-    <div class="input-group">
+        <div class="input-group">
         <div class="custom-file overflow-hidden" id="custom-file">
             <input type="file" class="custom-file-input" id="form-control" (change)="choose($event)"/>
             <label class="custom-file-label">{{this.fileName}}</label>

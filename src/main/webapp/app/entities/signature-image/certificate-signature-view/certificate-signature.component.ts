@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer } from '@angular/platform-browser';
 import { SignatureImageService } from 'app/entities/signature-image/signature-image.service';
 import { TranslateService } from '@ngx-translate/core';
 import { ToastrService } from 'ngx-toastr';
@@ -12,9 +12,10 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['../signature-image.component.scss'],
 })
 export class CertificateSignatureComponent implements OnInit {
+  @ViewChild('imageUpload') imageUpload: ElementRef | undefined;
+
   certificate?: ICertificate;
-  base64Img?: SafeResourceUrl;
-  showAlert = false;
+  image?: any;
   fileName: any = this.translateService.instant('webappApp.signatureImage.showImageSign.chooseImage');
   imageFiles: any;
   results: any | null;
@@ -31,10 +32,11 @@ export class CertificateSignatureComponent implements OnInit {
   getImage(id?: number | undefined): any {
     this.signatureImageService.getBase64(id).subscribe((res: any) => {
       if (res.body === '') {
-        this.showAlert = true;
         this.toastrService.error(this.translateService.instant('webappApp.signatureImage.showImageSign.showAlert'));
+        this.imageUpload?.nativeElement?.addAttribute('hidden');
       } else {
-        this.base64Img = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64, ' + res.body);
+        this.imageUpload?.nativeElement?.removeAttribute('hidden');
+        this.image = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64, ' + res.body);
       }
     });
   }
@@ -47,8 +49,9 @@ export class CertificateSignatureComponent implements OnInit {
     this.imageFiles = _event.target.files;
     const reader = new FileReader();
     reader.onload = (event: any) => {
-      this.imageUrl = event.target.result;
+      this.image = event.target.result;
     };
+    this.imageUpload?.nativeElement?.removeAttribute('hidden');
     reader.readAsDataURL(this.imageFiles[0]);
     this.fileName = this.imageFiles[0].name;
   }
