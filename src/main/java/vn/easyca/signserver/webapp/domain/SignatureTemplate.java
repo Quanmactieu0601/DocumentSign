@@ -39,6 +39,20 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @Column(name = "core_parser")
     private SignatureTemplateParserType coreParser;
 
+    @Column(name = "width")
+    private Integer width;
+
+    public Integer getWidth() { return width; }
+
+    public void setWidth(Integer width) { this.width = width; }
+
+    public Integer getHeight() { return height; }
+
+    public void setHeight(Integer height) { this.height = height; }
+
+    @Column(name = "height")
+    private Integer height;
+
     public Integer getType() {
         return type;
     }

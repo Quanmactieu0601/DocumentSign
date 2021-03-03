@@ -15,10 +15,9 @@ import { AccountService } from 'app/core/auth/account.service';
 @Component({
   selector: 'jhi-signature-template-update',
   templateUrl: './signature-template-update.component.html',
+  styleUrls: ['./signature-template-update.component.scss'],
 })
 export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
-  @ViewChild('width') width: ElementRef | undefined;
-  @ViewChild('height') height: ElementRef | undefined;
   @ViewChild('signatureImage') signatureImage: ElementRef | undefined;
   @ViewChild('userDropdown') userDropdown: ElementRef | undefined;
   @ViewChild('coreParserDropdown') coreParserDropdown: ElementRef | undefined;
@@ -36,6 +35,8 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     coreParser: [],
     userId: [],
     htmlTemplate: [],
+    width: [],
+    height: [],
   });
 
   constructor(
@@ -77,6 +78,8 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
       createdBy: signatureTemplate.createdBy,
       coreParser: signatureTemplate.coreParser,
       htmlTemplate: signatureTemplate.htmlTemplate,
+      width: signatureTemplate.width ? signatureTemplate.width : 355,
+      height: signatureTemplate.height ? signatureTemplate.height : 130,
     });
   }
 
@@ -122,8 +125,8 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
 
   getSignatureImage(): void {
     const signatureImageCustom = {
-      width: this.width === undefined ? 355 : this.width?.nativeElement?.value,
-      height: this.height === undefined ? 130 : this.height.nativeElement?.value,
+      width: this.editForm.get(['width'])?.value ? this.editForm.get(['width'])!.value : 355,
+      height: this.editForm.get(['width'])?.value ? this.editForm.get(['height'])!.value : 130,
       htmlTemplate: encodeURIComponent(this.editForm.get(['htmlTemplate'])!.value),
     };
     this.signatureTemplateService.getSignatureImageExamp(signatureImageCustom).subscribe((res: any) => {
@@ -139,6 +142,8 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     signatureTemplate.coreParser = this.coreParserDropdown?.nativeElement.value;
     signatureTemplate.userId = this.userDropdown?.nativeElement.value;
     signatureTemplate.htmlTemplate = this.editForm.get(['htmlTemplate'])!.value;
+    signatureTemplate.width = this.editForm.get(['width'])?.value ? this.editForm.get(['width'])!.value : 355;
+    signatureTemplate.height = this.editForm.get(['width'])?.value ? 130 : this.editForm.get(['height'])!.value;
     signatureTemplate.createdDate = new Date();
   }
 

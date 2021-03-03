@@ -23,6 +23,10 @@ public class SignatureTemplateDTO implements Serializable {
 
     private String fullName;
 
+    private Integer width;
+
+    private Integer height;
+
     public String getFullName() { return fullName; }
 
     public void setFullName(String fullName) { this.fullName = fullName; }
@@ -67,6 +71,14 @@ public class SignatureTemplateDTO implements Serializable {
     public Long getUserId() {
         return userId;
     }
+
+    public Integer getWidth() { return width; }
+
+    public void setWidth(Integer width) { this.width = width; }
+
+    public Integer getHeight() { return height; }
+
+    public void setHeight(Integer height) { this.height = height; }
 
     public void setUserId(Long userId) {
         this.userId = userId;

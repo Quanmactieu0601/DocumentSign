@@ -6,6 +6,8 @@ export interface ISignatureTemplate {
   htmlTemplate?: string;
   fullName?: string;
   userId?: number;
+  width?: number;
+  height?: number;
 }
 
 export class SignatureTemplate implements ISignatureTemplate {
@@ -16,6 +18,8 @@ export class SignatureTemplate implements ISignatureTemplate {
     public createdDate?: Date,
     public createdBy?: string,
     public fullName?: string,
-    public coreParser?: string
+    public coreParser?: string,
+    public width?: number,
+    public height?: number
   ) {}
 }

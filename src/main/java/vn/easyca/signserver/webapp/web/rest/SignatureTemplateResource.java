@@ -155,7 +155,7 @@ public class SignatureTemplateResource extends BaseResource {
     }
 
     @GetMapping("/signature-templates/signExample")
-    public ResponseEntity<BaseResponseVM> getSignExample(@RequestParam(required = false) String htmlTemplate, @RequestParam(required = false) String signer, @RequestParam(required = false) String signingDate, @RequestParam(required = false) String signingImage, @RequestParam(required = false) Integer width, @RequestParam(required = false) Integer height) {
+    public ResponseEntity<BaseResponseVM> getSignExample(@RequestParam(required = false) String htmlTemplate, @RequestParam(required = false) String signer, @RequestParam(required = false) String signingImage, @RequestParam(required = false) Integer width, @RequestParam(required = false) Integer height) {
         try {
             String fileName = "src/main/resources/templates/signature/signature.html";
             String imageFilePath = "src/main/resources/templates/signature/SigningImageExam.jpg";
