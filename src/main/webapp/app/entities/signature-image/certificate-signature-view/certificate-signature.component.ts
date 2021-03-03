@@ -47,13 +47,19 @@ export class CertificateSignatureComponent implements OnInit {
 
   choose(_event: any): any {
     this.imageFiles = _event.target.files;
-    const reader = new FileReader();
-    reader.onload = (event: any) => {
-      this.image = event.target.result;
-    };
-    this.imageUpload?.nativeElement?.removeAttribute('hidden');
-    reader.readAsDataURL(this.imageFiles[0]);
-    this.fileName = this.imageFiles[0].name;
+    const sizeFile = _event.target.files.item(0).size / 102400;
+    if (sizeFile > 1) {
+      this.toastrService.error(this.translateService.instant('webappApp.signatureImage.showImageSign.alert'));
+      this.imageFiles = [];
+    } else {
+      const reader = new FileReader();
+      reader.onload = (event: any) => {
+        this.image = event.target.result;
+      };
+      this.imageUpload?.nativeElement?.removeAttribute('hidden');
+      reader.readAsDataURL(this.imageFiles[0]);
+      this.fileName = this.imageFiles[0].name;
+    }
   }
 
   save(): any {

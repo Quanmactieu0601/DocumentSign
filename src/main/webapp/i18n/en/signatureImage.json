@@ -24,7 +24,8 @@
         "cancel": "Cancel",
         "showAlert": "Certificate doesn't have signature image",
         "chooseImage": "Update image",
-        "success": "Save successfully"
+        "success": "Save successfully",
+        "alert": "Upload image size must be less than 100KB"
       }
     }
   }
