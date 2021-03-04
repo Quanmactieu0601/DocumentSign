@@ -1,1 +1,2 @@
-alter table jhi_user alter column remind_change_password set default false;
+alter table jhi_user
+	add remind_change_password bit default false null;
