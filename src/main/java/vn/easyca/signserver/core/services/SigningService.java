@@ -107,6 +107,7 @@ public class SigningService {
         try {
             signPDFPlugin.sign(signPDFDto);
             byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
+            file.delete();
             return new PDFSigningDataRes(res);
         } catch (Exception exception) {
             throw new SigningAppException("Sign PDF occurs error", exception);
