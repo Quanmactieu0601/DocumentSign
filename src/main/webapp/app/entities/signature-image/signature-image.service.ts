@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
 import { ISignatureImage } from 'app/shared/model/signature-image.model';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 type EntityResponseType = HttpResponse<ISignatureImage>;
 type EntityArrayResponseType = HttpResponse<ISignatureImage[]>;
@@ -36,8 +37,8 @@ export class SignatureImageService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
-  getBase64(id: number | undefined): any {
-    return this.http.get(`${this.resourceUrl}/getBase64Image/${id}`, { observe: 'response', responseType: 'text' });
+  getBase64(id: number | undefined): Observable<ResponseBody> {
+    return this.http.get<ResponseBody>(`${this.resourceUrl}/getBase64Image/${id}`, { observe: 'response', responseType: 'json' });
   }
 
   saveImage(files: File[], certId: any | undefined): Observable<any> {

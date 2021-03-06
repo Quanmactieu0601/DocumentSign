@@ -36,7 +36,7 @@ export class CertificateSignatureComponent implements OnInit {
     } else {
       this.signatureImageService.getBase64(id).subscribe((res: any) => {
         this.imageUpload?.nativeElement?.removeAttribute('hidden');
-        this.image = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64, ' + res.body);
+        this.image = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64, ' + res.body['data']);
       });
     }
   }
@@ -64,7 +64,7 @@ export class CertificateSignatureComponent implements OnInit {
 
   save(): any {
     this.signatureImageService.saveImage(this.imageFiles, this.certificate?.id).subscribe((res: any) => {
-      this.results = res.body;
+      this.results = res.body['data'];
       this.toastrService.success(this.translateService.instant('webappApp.signatureImage.showImageSign.success'));
     });
   }

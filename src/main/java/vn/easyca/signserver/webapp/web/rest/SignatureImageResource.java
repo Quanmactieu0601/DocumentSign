@@ -1,18 +1,13 @@
 package vn.easyca.signserver.webapp.web.rest;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
-import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
-import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
-import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SignatureImageService;
-import vn.easyca.signserver.webapp.service.UserApplicationService;
-import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
@@ -29,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -44,12 +40,6 @@ import java.util.Optional;
 public class SignatureImageResource {
     private final AsyncTransactionService asyncTransactionService;
 
-    private final UserApplicationService userApplicationService;
-
-    private final SignatureImageMapper signatureImageMapper;
-
-    private final CertificateService certificateService;
-
     private final Logger log = LoggerFactory.getLogger(SignatureImageResource.class);
 
     private static final String ENTITY_NAME = "signatureImage";
@@ -59,11 +49,8 @@ public class SignatureImageResource {
 
     private final SignatureImageService signatureImageService;
 
-    public SignatureImageResource(AsyncTransactionService asyncTransactionService, UserApplicationService userApplicationService, SignatureImageMapper signatureImageMapper, CertificateService certificateService, SignatureImageService signatureImageService) {
+    public SignatureImageResource(AsyncTransactionService asyncTransactionService, SignatureImageService signatureImageService) {
         this.asyncTransactionService = asyncTransactionService;
-        this.userApplicationService = userApplicationService;
-        this.signatureImageMapper = signatureImageMapper;
-        this.certificateService = certificateService;
         this.signatureImageService = signatureImageService;
     }
 
@@ -163,36 +150,29 @@ public class SignatureImageResource {
 
     @GetMapping("/getBase64Image/{id}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity getBase64Image(@PathVariable Long id) {
-        String base64Image = signatureImageService.getBase64Image(id);
-        return new ResponseEntity<>(base64Image, HttpStatus.OK);
+    public ResponseEntity<BaseResponseVM> getBase64Image(@PathVariable Long id) {
+        try {
+            String base64Image = signatureImageService.getBase64Image(id);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, applicationException.getMessage()));
+        }
     }
 
     @PostMapping("/saveBase64Image")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity saveSignImage(@RequestParam("files") MultipartFile[] file, @RequestParam("certId") Long certId) {
+    public ResponseEntity<BaseResponseVM> saveSignatureImageByCert(@RequestParam("files") MultipartFile[] files, @RequestParam("certId") Long certId) throws ApplicationException {
+        if (files == null) {
+            throw new ApplicationException("files is empty");
+        }
         try {
-            String base64Image = Base64.getEncoder().encodeToString(file[0].getBytes());
-            Optional<UserEntity> userEntity = userApplicationService.getUser();
-            Long userId = userEntity.get().getId();
-            SignatureImage signatureImage = new SignatureImage();
-            Optional<Certificate> certificate = certificateService.findOne(certId);
-            Long signatureImageId = certificate.get().getSignatureImageId();
-            if (signatureImageId != null) {
-                Optional<SignatureImageDTO> signatureImageOptional = signatureImageService.findOne(signatureImageId);
-                if (signatureImageOptional.isPresent()) {
-                    Long id = signatureImageOptional.get().getId();
-                    signatureImage.setId(id);
-                }
-            }
-            signatureImage.setImgData(base64Image);
-            signatureImage.setUserId(userId);
-            SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
-            dto = signatureImageService.save(dto);
-            certificateService.updateSignatureImageInCert(dto.getId(), certId);
-            return new ResponseEntity<>(dto.getId(), HttpStatus.OK);
+            String base64Image = Base64.getEncoder().encodeToString(files[0].getBytes());
+            SignatureImage signatureImage = signatureImageService.saveSignatureImageByCert(base64Image, certId);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signatureImage.getId()));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception exception) {
-            return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, exception.getMessage()));
         }
     }
 }

@@ -1,7 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
 import com.google.common.base.Strings;
-import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -23,9 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.error.*;
-import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.time.LocalDateTime;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -434,7 +431,7 @@ public class UserApplicationService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserEntity> getUser() {
+    public Optional<UserEntity> getUserEntity() {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
     }
 }
