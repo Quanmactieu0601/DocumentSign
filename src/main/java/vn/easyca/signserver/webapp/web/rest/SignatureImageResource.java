@@ -30,7 +30,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Base64;
@@ -164,35 +163,36 @@ public class SignatureImageResource {
 
     @GetMapping("/getBase64Image/{id}")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity getBase64Image(@PathVariable String id) {
-        if (id.equals("null")) {
-            return new ResponseEntity<>(null, HttpStatus.OK);
-        }
-        String base64Image = signatureImageService.getBase64Image(Long.valueOf(id));
+    public ResponseEntity getBase64Image(@PathVariable Long id) {
+        String base64Image = signatureImageService.getBase64Image(id);
         return new ResponseEntity<>(base64Image, HttpStatus.OK);
     }
 
     @PostMapping("/saveBase64Image")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity saveSignImage(@RequestParam("files") MultipartFile[] file, @RequestParam("certId") Long certId) throws IOException {
-        String base64Image = Base64.getEncoder().encodeToString(file[0].getBytes());
-        Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
-        Long userId = userEntity.get().getId();
-        SignatureImage signatureImage = new SignatureImage();
-        Optional<Certificate> certificate = certificateService.findOne(certId);
-        Long signatureImageId = certificate.get().getSignatureImageId();
-        if (signatureImageId != null) {
-            Optional<SignatureImageDTO> signatureImageOptional = signatureImageService.findOne(signatureImageId);
-            if (signatureImageOptional.isPresent()) {
-                Long id = signatureImageOptional.get().getId();
-                signatureImage.setId(id);
+    public ResponseEntity saveSignImage(@RequestParam("files") MultipartFile[] file, @RequestParam("certId") Long certId) {
+        try {
+            String base64Image = Base64.getEncoder().encodeToString(file[0].getBytes());
+            Optional<UserEntity> userEntity = userApplicationService.getUser();
+            Long userId = userEntity.get().getId();
+            SignatureImage signatureImage = new SignatureImage();
+            Optional<Certificate> certificate = certificateService.findOne(certId);
+            Long signatureImageId = certificate.get().getSignatureImageId();
+            if (signatureImageId != null) {
+                Optional<SignatureImageDTO> signatureImageOptional = signatureImageService.findOne(signatureImageId);
+                if (signatureImageOptional.isPresent()) {
+                    Long id = signatureImageOptional.get().getId();
+                    signatureImage.setId(id);
+                }
             }
+            signatureImage.setImgData(base64Image);
+            signatureImage.setUserId(userId);
+            SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
+            dto = signatureImageService.save(dto);
+            certificateService.updateSignatureImageInCert(dto.getId(), certId);
+            return new ResponseEntity<>(dto.getId(), HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(exception.getMessage(), HttpStatus.OK);
         }
-        signatureImage.setImgData(base64Image);
-        signatureImage.setUserId(userId);
-        SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
-        dto = signatureImageService.save(dto);
-        certificateService.updateSignatureImageInCert(dto.getId(), certId);
-        return new ResponseEntity<>(dto.getId(), HttpStatus.OK);
     }
 }

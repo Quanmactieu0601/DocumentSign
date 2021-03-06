@@ -25,7 +25,7 @@
         "showAlert": "Certificate doesn't have signature image",
         "chooseImage": "Update image",
         "success": "Save successfully",
-        "alert": "Upload image size must be less than 100KB"
+        "alert": "Image size have to less than 100kb"
       }
     }
   }

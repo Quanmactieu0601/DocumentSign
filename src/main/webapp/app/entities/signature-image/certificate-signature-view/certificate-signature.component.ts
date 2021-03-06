@@ -29,16 +29,16 @@ export class CertificateSignatureComponent implements OnInit {
     private toastrService: ToastrService
   ) {}
 
-  getImage(id?: number | undefined): any {
-    this.signatureImageService.getBase64(id).subscribe((res: any) => {
-      if (res.body === '') {
-        this.toastrService.error(this.translateService.instant('webappApp.signatureImage.showImageSign.showAlert'));
-        this.imageUpload?.nativeElement?.addAttribute('hidden');
-      } else {
+  getImage(id: number | undefined): any {
+    if (id === null) {
+      this.toastrService.error(this.translateService.instant('webappApp.signatureImage.showImageSign.showAlert'));
+      this.imageUpload?.nativeElement?.addAttribute('hidden');
+    } else {
+      this.signatureImageService.getBase64(id).subscribe((res: any) => {
         this.imageUpload?.nativeElement?.removeAttribute('hidden');
         this.image = this.sanitizer.bypassSecurityTrustResourceUrl('data:image/png;base64, ' + res.body);
-      }
-    });
+      });
+    }
   }
 
   ngOnInit(): void {

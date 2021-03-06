@@ -432,4 +432,9 @@ public class UserApplicationService {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(userEntity.getEmail());
         }
     }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> getUser() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
+    }
 }

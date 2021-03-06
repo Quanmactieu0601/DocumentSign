@@ -25,7 +25,7 @@
         "showAlert": "Chứng thư số không có ảnh chữ kí",
         "chooseImage": "Cập nhật ảnh",
         "success": "Lưu thành công",
-        "alert": "Dung lượng ảnh tải lên phải nhỏ hơn 100KB"
+        "alert": "Dung lượng ảnh phải nhỏ hơn 100KB"
       }
     }
   }
