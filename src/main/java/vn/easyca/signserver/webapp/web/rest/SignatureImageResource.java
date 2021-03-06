@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/signature-images")
-public class SignatureImageResource {
+public class SignatureImageResource extends BaseResource {
     private final AsyncTransactionService asyncTransactionService;
 
     private final Logger log = LoggerFactory.getLogger(SignatureImageResource.class);
@@ -168,11 +168,17 @@ public class SignatureImageResource {
         try {
             String base64Image = Base64.getEncoder().encodeToString(files[0].getBytes());
             SignatureImage signatureImage = signatureImageService.saveSignatureImageByCert(base64Image, certId);
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signatureImage.getId()));
         } catch (ApplicationException applicationException) {
+            message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception exception) {
+            message = exception.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, exception.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/signature-images/saveBase64Image", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 }
