@@ -245,4 +245,8 @@ public class CertificateService {
             throw new ApplicationException("KeyStoreException | CertificateException", e);
         }
     }
+
+    public void updateSignatureImageInCert(Long signatureImageId, Long certId) {
+        certificateRepository.updateSignatureImageInCert(signatureImageId, certId);
+    }
 }

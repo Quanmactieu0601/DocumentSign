@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 
 import { User, IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-import { VerifySignatureDocComponent } from "app/verify/verify-signature-doc/verify-signature-doc.component";
+import { VerifySignatureDocComponent } from 'app/verify/verify-signature-doc/verify-signature-doc.component';
 
 @Injectable({ providedIn: 'root' })
 export class VerifySignatureResolve implements Resolve<IUser> {

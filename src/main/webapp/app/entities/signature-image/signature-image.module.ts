@@ -7,6 +7,7 @@ import { SignatureImageDetailComponent } from './signature-image-detail.componen
 import { SignatureImageUpdateComponent } from './signature-image-update.component';
 import { SignatureImageDeleteDialogComponent } from './signature-image-delete-dialog.component';
 import { signatureImageRoute } from './signature-image.route';
+import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(signatureImageRoute)],
@@ -15,6 +16,7 @@ import { signatureImageRoute } from './signature-image.route';
     SignatureImageDetailComponent,
     SignatureImageUpdateComponent,
     SignatureImageDeleteDialogComponent,
+    CertificateSignatureComponent,
   ],
   entryComponents: [SignatureImageDeleteDialogComponent],
 })

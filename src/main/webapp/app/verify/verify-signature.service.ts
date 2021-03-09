@@ -1,17 +1,15 @@
-import {Injectable} from '@angular/core';
-import {HttpClient, HttpRequest} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-import {SERVER_API_URL} from 'app/app.constants';
-import {ISignatureVfVM} from "app/shared/model/signatureVfVM.model";
+import { SERVER_API_URL } from 'app/app.constants';
+import { ISignatureVfVM } from 'app/shared/model/signatureVfVM.model';
 
-
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class VerifySignatureService {
   public resourceUrl = SERVER_API_URL + 'api/verification';
 
-  constructor(protected http: HttpClient) {
-  }
+  constructor(protected http: HttpClient) {}
 
   verifyDoc(file: File): Observable<any> {
     const formData: FormData = new FormData();
@@ -39,11 +37,10 @@ export class VerifySignatureService {
   }
 
   verifyRaw(signatureVfVM: ISignatureVfVM): Observable<any> {
-    return this.http.post<ISignatureVfVM>(this.resourceUrl + '/raw', signatureVfVM, { observe: 'response'});
+    return this.http.post<ISignatureVfVM>(this.resourceUrl + '/raw', signatureVfVM, { observe: 'response' });
   }
 
   verifyHash(signatureVfVM: ISignatureVfVM): Observable<any> {
-    return this.http.post<ISignatureVfVM>(this.resourceUrl + '/hash', signatureVfVM, { observe: 'response'});
+    return this.http.post<ISignatureVfVM>(this.resourceUrl + '/hash', signatureVfVM, { observe: 'response' });
   }
-
 }

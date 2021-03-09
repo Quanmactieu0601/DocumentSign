@@ -17,7 +17,16 @@
         "title": "Signature Image"
       },
       "imgData": "Img Data",
-      "userId": "User Id"
+      "userId": "User Id",
+      "showImageSign": {
+        "showImageSign": "Signature image",
+        "modify": "Save",
+        "cancel": "Cancel",
+        "showAlert": "Certificate doesn't have signature image",
+        "chooseImage": "Update image",
+        "success": "Save successfully",
+        "alert": "Image size have to less than 100kb"
+      }
     }
   }
 }
