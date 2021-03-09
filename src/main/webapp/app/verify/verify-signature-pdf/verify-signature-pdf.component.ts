@@ -1,61 +1,84 @@
-import {Component, OnInit} from '@angular/core';
-import {Account} from 'app/core/user/account.model';
-import {Subscription} from 'rxjs';
-import {AccountService} from 'app/core/auth/account.service';
-import {ToastrService} from 'ngx-toastr';
-import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {ISignatureVfDTO} from 'app/shared/model/signatureVfDTO.model';
-import {VerifySignatureService} from "app/verify/verify-signature.service";
+import { Component, OnInit } from '@angular/core';
+import { Account } from 'app/core/user/account.model';
+import { Subscription } from 'rxjs';
+import { AccountService } from 'app/core/auth/account.service';
+import { ToastrService } from 'ngx-toastr';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
+import { VerifySignatureService } from 'app/verify/verify-signature.service';
+import { ICaptchaModel } from 'app/shared/model/captcha.model';
+import { CaptchaService } from 'app/shared/services/captcha.service';
+import { Md5 } from 'ts-md5';
 
 @Component({
   selector: 'jhi-verify-signature',
   templateUrl: './verify-signature-pdf.component.html',
-  styleUrls: [],
+  styleUrls: ['./verify-signature-pdf.component.scss'],
 })
 export class VerifySignaturePdfComponent implements OnInit {
-  selectFiles: any;
+  selectFiles: File[] = [];
   progress = 0;
-  currentFile: any;
+  currentFile?: File;
   account: Account | null = null;
   authSubscription?: Subscription;
   fileName: string | undefined;
   signatureVfDTOs?: ISignatureVfDTO[];
+  captcha?: ICaptchaModel | null;
+  text = '';
+  img?: any;
 
   constructor(
     private accountService: AccountService,
     private verifySignatureService: VerifySignatureService,
-    private toastrService: ToastrService
-  ) {
-  }
+    private toastrService: ToastrService,
+    private captchaService: CaptchaService
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
+    this.reloadCaptcha();
+  }
+
+  reloadCaptcha(): void {
+    this.captchaService.generateCaptcha().subscribe(res => {
+      this.captcha = res.body;
+      this.img = this.captcha?.captchaImg;
+    });
   }
 
   selectFile(event: any): void {
-    this.selectFiles = event.target.files;
-    this.fileName = event.target.files[0].name;
+    if (this.selectFiles.length !== 0) this.removeFile(event);
+    this.selectFiles.push(...event.addedFiles);
+    this.fileName = this.selectFiles[0].name;
+  }
+
+  removeFile(event: any): void {
+    this.selectFiles.splice(this.selectFiles.indexOf(event), 1);
   }
 
   verifyPdf(): void {
-    this.progress = 0;
-    this.currentFile = this.selectFiles.item(0);
-    if (!this.currentFile.name.endsWith('pdf')
-      && !(this.currentFile.name.endsWith('pdf'))) this.toastrService.error("Select a pdf");
-    else if (this.account != null) {
-      this.verifySignatureService.verifyPdf(this.currentFile).subscribe((res: any) => {
-        if (res.type === HttpEventType.UploadProgress) {
-          this.progress = Math.round((100 * res.loaded) / res.total);
-        } else if (res instanceof HttpResponse) {
-          console.error(res.body.data);
-          if (res.status === 200) {
-            this.signatureVfDTOs = res.body.data.signatureVfDTOs;
-            if (this.signatureVfDTOs == null) this.toastrService.error('False');
-          } else {
-            this.toastrService.error('Error');
+    if (Md5.hashStr(this.text) === this.captcha?.captchaText) {
+      this.reloadCaptcha();
+      this.progress = 0;
+      this.currentFile = this.selectFiles[0];
+      if (this.account != null) {
+        this.verifySignatureService.verifyPdf(this.currentFile).subscribe((res: any) => {
+          if (res.type === HttpEventType.UploadProgress) {
+            this.progress = Math.round((100 * res.loaded) / res.total);
+          } else if (res instanceof HttpResponse) {
+            console.error(res.body.data);
+            if (res.status === 200) {
+              this.signatureVfDTOs = res.body.data.signatureVfDTOs;
+              if (this.signatureVfDTOs == null) this.toastrService.error('False');
+            } else {
+              this.toastrService.error('Error');
+            }
           }
-        }
-      });
+        });
+      }
+    } else {
+      this.toastrService.error('Sai captcha');
+      this.reloadCaptcha();
     }
   }
 

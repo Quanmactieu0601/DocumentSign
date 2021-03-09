@@ -87,6 +87,7 @@ describe('Service Tests', () => {
         service.authenticate(expectedResult);
 
         // THEN
+        // @ts-ignore
         expect(userIdentity).toEqual(expectedResult);
         expect(service.isAuthenticated()).toBe(true);
       });

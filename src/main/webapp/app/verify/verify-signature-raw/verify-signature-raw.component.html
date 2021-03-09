@@ -1,7 +1,11 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span>&nbsp;<span> Raw</span>
+    </li>
+</ol>
+
 <div class="card mb-1">
-    <div class="card-header">
-        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span><span> Raw</span>
-    </div>
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
             <div *ngIf="bar" class="progress mb-2">
@@ -31,6 +35,14 @@
                         <option class="form-control" jhiTranslate="webappApp.signatureVerify.serial" selected>Serial</option>
                         <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
                     </select>
+                </div>
+                <div class="form-group">
+                    <label class="captcha-text-label" for="captcha-text">Captcha</label>
+                    <div class="captcha">
+                        <img alt="captcha" src="{{img}}"/>
+                        <div class="reload" (click)="reloadCaptcha()"><fa-icon icon="sync"></fa-icon></div>
+                        <input id="captcha-text" type="text" class="form-control" formControlName="text" style="margin-left: 105px;width: 200px;"/>
+                    </div>
                 </div>
                 <button
                     class="btn btn-success"
