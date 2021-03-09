@@ -63,14 +63,6 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
         return htmlTemplate;
     }
 
-    @Override
-    public LocalDateTime getCreatedDate() { return createdDate; }
-
-    @Override
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public void setHtmlTemplate(String htmlTemplate) {
         this.htmlTemplate = htmlTemplate;
     }
