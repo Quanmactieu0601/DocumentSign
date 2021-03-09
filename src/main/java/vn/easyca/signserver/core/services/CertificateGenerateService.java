@@ -19,6 +19,7 @@ import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -215,6 +216,20 @@ public class CertificateGenerateService {
         return csr;
     }
 
+    public String createCSR(CryptoToken cryptoToken, String alias, String subjectDN, int keyLength) throws CryptoTokenException, CSRGenerator.CSRGeneratorException {
+//        String alias = CertUtils.genRandomAlias();
+        KeyPair keyPair = cryptoToken.genKeyPair(alias, keyLength);
+        String csr = new CSRGenerator().genCsr(
+            subjectDN,
+            cryptoToken.getProviderName(),
+            keyPair.getPrivate(),
+            keyPair.getPublic(),
+            "SHA256withRSA",
+            false,
+            false);
+        return csr;
+    }
+
     /**
      * Tạo cert từ CSR
      *
@@ -252,7 +267,7 @@ public class CertificateGenerateService {
         Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUserId());
         if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
-            CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
+            CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                 user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), dto.getKeyLen());
             result.setCsr(createCSR(certificateGenerateDTO));
 //            result.setUser(CertificateGenerateResult.User(user.getLogin(), null, UserCreator.RESULT_EXIST));
@@ -278,7 +293,7 @@ public class CertificateGenerateService {
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
                 try {
-                    CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
+                    CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                         user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), keyLength);
                     crs = createCSR(cryptoToken, certificateGenerateDTO);
                     certDto = new CertDTO(userId, user.getLogin(), crs, null);
@@ -301,10 +316,22 @@ public class CertificateGenerateService {
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
                 // TODO: viet lai ham luu cert
-                saveNewCertificate(new RawCertificate(dto.getSerial(), dto.getCert()), dto.getOwnerId(), new SubjectDN(user.getCommonName(), user.getOrganizationUnit(),
+                saveNewCertificate(new RawCertificate(dto.getSerial(), dto.getCert()), dto.getOwnerId(), new SubjectDN(user.getCommonName(), null, user.getOrganizationUnit(),
                     user.getOrganizationName(), user.getLocalityName(), user.getStateName(), user.getCountry()).toString(), cryptoToken);
                 //TODO: update csr status of user here
             }
+        }
+    }
+
+    public void generateBulkCSR(List<CertRequestInfoDTO> certRequestInfoDTOs) throws Exception {
+        CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
+        int keyLength = 2048;
+        for(int i = 0; i < certRequestInfoDTOs.size(); i++) {
+            String alias = CommonUtils.genRandomAlias();
+            String subjectDN = certRequestInfoDTOs.get(i).getSubjectDN();
+            String csr = createCSR(cryptoToken, alias, subjectDN, keyLength);
+            certRequestInfoDTOs.get(i).setAlias(alias);
+            certRequestInfoDTOs.get(i).setCsrValue(csr);
         }
     }
 }
