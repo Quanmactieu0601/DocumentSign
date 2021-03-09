@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.springframework.http.ResponseEntity;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -13,6 +14,7 @@ import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.*;
 import vn.easyca.signserver.webapp.web.rest.vm.KeyAndPasswordVM;
+import vn.easyca.signserver.webapp.web.rest.vm.LoginVM;
 import vn.easyca.signserver.webapp.web.rest.vm.ManagedUserVM;
 
 import org.apache.commons.lang3.StringUtils;
@@ -169,7 +171,18 @@ public class AccountResource {
         }
     }
 
-    /**
+    @PostMapping(path = "/account/first-login")
+    public ResponseEntity remindChangePasswordInFirstLogin(@RequestBody LoginVM login) {
+         Boolean isFirstLogin = userApplicationService.remindChangePassword(login.getUsername());
+        return new ResponseEntity<>(isFirstLogin, HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/account/default-remind")
+    public void setDefaultOfRemindChangePassword() {
+         userApplicationService.setDefaultOfRemindChangePassword(AccountUtils.getLoggedAccount());
+    }
+
+    /**PutMapping
      * {@code POST   /account/reset-password/init} : Send an email to reset the password of the user.
      *
      * @param mail the mail of the user.

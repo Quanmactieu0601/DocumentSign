@@ -50,6 +50,8 @@ public class CryptoTokenProxyFactory {
     public CryptoTokenProxy resolveCryptoTokenProxy(CertificateDTO certificateDTO, String pin, String otp) throws ApplicationException {
         if (certificateDTO == null)
             throw new ApplicationException("Certificate is not null");
+        if (StringUtils.isEmpty(certificateDTO.getSecretKey()))
+            throw new ApplicationException("OTP is not configured");
 
         boolean useOTP = systemConfigCachingService.getConfig().getUseOTP();
         if (useOTP) {

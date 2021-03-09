@@ -20,6 +20,9 @@ import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.SignatureVerificationVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.File;
+import java.io.FileOutputStream;
+
 @Scope("request")
 @Controller
 @RequestMapping("/api/verification")
@@ -54,7 +57,7 @@ public class SignatureVerificationResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
-
+// @RequestParam("file") MultipartFile file
     @PostMapping(value = "/raw")
     public ResponseEntity<BaseResponseVM> verifyRaw(@RequestBody SignatureVerificationVM signatureVerificationVM) {
         log.info(" --- verifyRaw ---");
@@ -94,6 +97,26 @@ public class SignatureVerificationResource extends BaseResource {
             return ResponseEntity.ok(new BaseResponseVM(-1, null, message));
         } finally {
             asyncTransactionService.newThread("/api/verification/pdf", TransactionType.BUSINESS, Action.VERIFY, Extension.PDF, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @PostMapping(value = "/doc")
+    public ResponseEntity<BaseResponseVM> verifyDoc(@RequestParam("file") MultipartFile file) {
+        try {
+            VerificationResponseDTO result = verificationService.verifyDocx(file.getInputStream());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
+        } catch (ApplicationException applicationException) {
+            message = applicationException.getMessage();
+            log.error(message, applicationException);
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, message));
+        } catch (Exception e) {
+            message = e.getMessage();
+            log.error(message, e);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, message));
+        } finally {
+            asyncTransactionService.newThread("/api/verification/doc", TransactionType.BUSINESS, Action.VERIFY, Extension.OOXML, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }

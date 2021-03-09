@@ -41,6 +41,7 @@ import {
   faQrcode,
   faInfo,
   faInfoCircle,
+  faCheck,
   // jhipster-needle-add-icon-import
   faCogs,
   faExclamationCircle,
@@ -92,6 +93,7 @@ export const fontAwesomeIcons = [
   faQrcode,
   faInfo,
   faInfoCircle,
+  faCheck,
   // jhipster-needle-add-icon-import
   faCogs,
   faExclamationCircle,

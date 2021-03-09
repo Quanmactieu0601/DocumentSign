@@ -1,5 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpResponse, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { HttpResponse, HttpHeaders, HttpEventType } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
@@ -46,6 +46,16 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   listId: number[] = [];
   ngbPaginationPage = 1;
+
+  // Update p12
+  selectFiles: any;
+  progress = 0;
+  currentFile: any;
+  account: Account | null = null;
+  authSubscription?: Subscription;
+  pin: string | undefined;
+  fileName: string | undefined;
+
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -61,12 +71,56 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    //  Update p12
+    this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
+
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     this.userListSubscription = this.eventManager.subscribe('userListModification', () => {
       this.loadAll();
     });
     this.handleNavigation();
+    this.fileName = 'Choose file ...';
   }
+
+  // Update p12
+  selectFile(event: any): void {
+    this.selectFiles = event.target.files;
+    const sizeFile = event.target.files.item(0).size / 1024000;
+    if (sizeFile > 1) {
+      this.toastrService.error(this.translateService.instant('userManagement.alert.fail.sizeErr'));
+      this.selectFiles = [];
+    }
+    this.fileName = event.target.files[0].name;
+  }
+
+  uploadP12File(): void {
+    this.progress = 0;
+    this.currentFile = this.selectFiles.item(0);
+    if (this.pin === undefined || this.pin === '') {
+      this.toastrService.error('Must input pin');
+    } else if (this.account != null) {
+      if (this.pin === undefined) this.pin = '';
+      this.userService.uploadP12(this.currentFile, this.pin).subscribe((res: any) => {
+        if (res.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round((100 * res.loaded) / res.total);
+        } else if (res instanceof HttpResponse) {
+          if (res.body.status === 200) {
+            this.toastrService.success(this.translateService.instant('userManagement.alert.success.uploaded'));
+            this.isUploadedSucessfully(true);
+          } else {
+            this.toastrService.error(res.body.msg, '', {
+              enableHtml: true,
+            });
+          }
+        }
+      });
+    }
+  }
+  onInputClick = (event: any) => {
+    const element = event.target as HTMLInputElement;
+    element.value = '';
+  };
+  /**/
 
   ngOnDestroy(): void {
     if (this.userListSubscription) {
@@ -211,6 +265,40 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   showUploadComponent(): void {
     this.modalRef = this.modalService.open(UploadUserComponent, { size: 'lg' });
+  }
+
+  downLoadFileTemplate(): void {
+    this.userService.downLoadTemplateFile().subscribe(
+      res => {
+        const bindData = [];
+        bindData.push(res.data);
+        const url = window.URL.createObjectURL(
+          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        );
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.setAttribute('target', 'blank');
+        a.href = url;
+        a.download = 'templateFile';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'md' });
+    this.userService.setListId(this.listId);
+    let userFilter: User[];
+    if (this.users?.filter(user => this.listId.includes(user.id)) !== undefined) {
+      userFilter = this.users?.filter(user => this.listId.includes(user.id));
+      this.userService.setUsers(userFilter);
+    }
   }
   isUploadedSucessfully(agreed: boolean): void {
     if (agreed) {
