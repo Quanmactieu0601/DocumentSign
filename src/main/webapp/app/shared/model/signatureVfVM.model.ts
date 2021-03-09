@@ -8,12 +8,7 @@ export interface ISignatureVfVM {
 }
 
 export class SignatureVfVM implements ISignatureVfVM {
-  constructor(
-    public base64Certificate?: string,
-    public elements?: ElementVM[],
-    public serial?: string,
-    public hashAlgorithm?: string,
-  ) {
+  constructor(public base64Certificate?: string, public elements?: ElementVM[], public serial?: string, public hashAlgorithm?: string) {
     this.hashAlgorithm = this.hashAlgorithm || 'SHA1';
   }
 }

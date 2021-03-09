@@ -20,6 +20,7 @@ import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.c
 import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
+import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 
@@ -59,8 +60,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected accountService: AccountService
   ) {}
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    const pageToLoad: number = page || this.page || 1;
+  loadPage(page?: number): void {
     this.searchCertificate(page);
   }
 
@@ -187,6 +187,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
       this.loadLastestRecord();
     }
   }
+
   loadLastestRecord(): void {
     const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
 
@@ -215,5 +216,15 @@ export class CertificateComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
+  }
+
+  showImageSign(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertificateSignatureComponent, { size: 'sm', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.result.then((result: any) => {
+      if (result != null) {
+        certificate.signatureImageId = result;
+      }
+    });
   }
 }

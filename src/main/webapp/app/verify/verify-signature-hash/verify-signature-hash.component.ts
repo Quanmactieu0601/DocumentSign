@@ -1,15 +1,15 @@
-import {Component, OnInit} from '@angular/core';
-import {Account} from 'app/core/user/account.model';
-import {Subscription} from 'rxjs';
-import {AccountService} from 'app/core/auth/account.service';
-import {ToastrService} from 'ngx-toastr';
-import {VerifySignatureService} from "app/verify/verify-signature.service";
-import {ISignatureVfVM, SignatureVfVM} from "app/shared/model/signatureVfVM.model";
-import {HttpEventType, HttpResponse} from "@angular/common/http";
-import {FormBuilder} from "@angular/forms";
-import {ElementVM, IElementVM} from "app/shared/model/elementVM.model";
-import {CertificateService} from "app/entities/certificate/certificate.service";
-import {ICertificate} from "app/shared/model/certificate.model";
+import { Component, OnInit } from '@angular/core';
+import { Account } from 'app/core/user/account.model';
+import { Subscription } from 'rxjs';
+import { AccountService } from 'app/core/auth/account.service';
+import { ToastrService } from 'ngx-toastr';
+import { VerifySignatureService } from 'app/verify/verify-signature.service';
+import { ISignatureVfVM, SignatureVfVM } from 'app/shared/model/signatureVfVM.model';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { FormBuilder } from '@angular/forms';
+import { ElementVM, IElementVM } from 'app/shared/model/elementVM.model';
+import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ICertificate } from 'app/shared/model/certificate.model';
 
 @Component({
   selector: 'jhi-verify-signature',
@@ -24,12 +24,12 @@ export class VerifySignatureHashComponent implements OnInit {
   signatureVfVM: ISignatureVfVM | undefined;
   elementVM: IElementVM | undefined;
   result = false;
-  bar=false;
+  bar = false;
   listCertificate?: ICertificate[];
   editForm = this.fb.group({
     base64Signature: [],
     base64OriginalData: [],
-    serial: []
+    serial: [],
   });
   constructor(
     private accountService: AccountService,
@@ -37,8 +37,7 @@ export class VerifySignatureHashComponent implements OnInit {
     private toastrService: ToastrService,
     private certificateService: CertificateService,
     private fb: FormBuilder
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
@@ -46,25 +45,24 @@ export class VerifySignatureHashComponent implements OnInit {
   }
 
   getListCertificate(): void {
-    this.certificateService.query().subscribe(
-      (res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
-}
+    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+  }
 
   private createFromForm(): ISignatureVfVM {
     return {
       ...new SignatureVfVM(),
-      elements: [{
-        ...new ElementVM(),
-        base64Signature: this.editForm.get(['base64Signature'])!.value,
-        base64OriginalData: btoa(this.editForm.get(['base64OriginalData'])!.value),
-        key: '123',
-      }],
+      elements: [
+        {
+          ...new ElementVM(),
+          base64Signature: this.editForm.get(['base64Signature'])!.value,
+          base64OriginalData: btoa(this.editForm.get(['base64OriginalData'])!.value),
+          key: '123',
+        },
+      ],
       hashAlgorithm: 'SHA1',
       serial: this.editForm.get(['serial'])!.value,
     };
   }
-
-
 
   // selectFile(event: any): void {
   //   this.selectFiles = event.target.files;

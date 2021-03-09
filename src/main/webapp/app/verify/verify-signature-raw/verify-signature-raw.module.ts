@@ -3,7 +3,7 @@ import { WebappSharedModule } from 'app/shared/shared.module';
 
 import { VerifySignatureRawComponent } from './verify-signature-raw.component';
 import { RouterModule } from '@angular/router';
-import {verifySignatureRawRoute} from "app/verify/verify-signature-raw/verify-signature-raw.route";
+import { verifySignatureRawRoute } from 'app/verify/verify-signature-raw/verify-signature-raw.route';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(verifySignatureRawRoute)],

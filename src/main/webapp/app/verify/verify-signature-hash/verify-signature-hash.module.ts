@@ -3,7 +3,7 @@ import { WebappSharedModule } from 'app/shared/shared.module';
 
 import { VerifySignatureHashComponent } from './verify-signature-hash.component';
 import { RouterModule } from '@angular/router';
-import {verifySignatureHashRoute} from "app/verify/verify-signature-hash/verify-signature-hash.route";
+import { verifySignatureHashRoute } from 'app/verify/verify-signature-hash/verify-signature-hash.route';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(verifySignatureHashRoute)],

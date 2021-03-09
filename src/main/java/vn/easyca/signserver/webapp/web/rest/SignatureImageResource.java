@@ -1,6 +1,11 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.multipart.MultipartFile;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.enm.*;
+import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.SignatureImageService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
@@ -19,9 +24,11 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,9 +36,8 @@ import java.util.Optional;
  * REST controller for managing {@link vn.easyca.signserver.webapp.domain.SignatureImage}.
  */
 @RestController
-@RequestMapping("/api")
-public class SignatureImageResource {
-
+@RequestMapping("/api/signature-images")
+public class SignatureImageResource extends BaseResource {
     private final AsyncTransactionService asyncTransactionService;
 
     private final Logger log = LoggerFactory.getLogger(SignatureImageResource.class);
@@ -55,7 +61,7 @@ public class SignatureImageResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new signatureImageDTO, or with status {@code 400 (Bad Request)} if the signatureImage has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PostMapping("/signature-images")
+    @PostMapping("/")
     public ResponseEntity<SignatureImageDTO> createSignatureImage(@RequestBody SignatureImageDTO signatureImageDTO) throws URISyntaxException {
         log.debug("REST request to save SignatureImage : {}", signatureImageDTO);
         if (signatureImageDTO.getId() != null) {
@@ -80,7 +86,7 @@ public class SignatureImageResource {
      * or with status {@code 500 (Internal Server Error)} if the signatureImageDTO couldn't be updated.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
-    @PutMapping("/signature-images")
+    @PutMapping("/")
     public ResponseEntity<SignatureImageDTO> updateSignatureImage(@RequestBody SignatureImageDTO signatureImageDTO) throws URISyntaxException {
         log.debug("REST request to update SignatureImage : {}", signatureImageDTO);
         if (signatureImageDTO.getId() == null) {
@@ -102,7 +108,7 @@ public class SignatureImageResource {
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of signatureImages in body.
      */
-    @GetMapping("/signature-images")
+    @GetMapping("/")
     public ResponseEntity<List<SignatureImageDTO>> getAllSignatureImages(Pageable pageable) {
         log.debug("REST request to get a page of SignatureImages");
         Page<SignatureImageDTO> page = signatureImageService.findAll(pageable);
@@ -118,7 +124,7 @@ public class SignatureImageResource {
      * @param id the id of the signatureImageDTO to retrieve.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the signatureImageDTO, or with status {@code 404 (Not Found)}.
      */
-    @GetMapping("/signature-images/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<SignatureImageDTO> getSignatureImage(@PathVariable Long id) {
         log.debug("REST request to get SignatureImage : {}", id);
         Optional<SignatureImageDTO> signatureImageDTO = signatureImageService.findOne(id);
@@ -133,12 +139,46 @@ public class SignatureImageResource {
      * @param id the id of the signatureImageDTO to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/signature-images/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSignatureImage(@PathVariable Long id) {
         log.debug("REST request to delete SignatureImage : {}", id);
         signatureImageService.delete(id);
         asyncTransactionService.newThread("/api/signature-images/{id}", TransactionType.BUSINESS, Action.DELETE, Extension.NONE, Method.DELETE,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
+    }
+
+    @GetMapping("/getBase64Image/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> getBase64Image(@PathVariable Long id) {
+        try {
+            String base64Image = signatureImageService.getBase64Image(id);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException applicationException) {
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, applicationException.getMessage()));
+        }
+    }
+
+    @PostMapping("/saveBase64Image")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> saveSignatureImageByCert(@RequestParam("files") MultipartFile[] files, @RequestParam("certId") Long certId) throws ApplicationException {
+        if (files == null) {
+            throw new ApplicationException("files is empty");
+        }
+        try {
+            String base64Image = Base64.getEncoder().encodeToString(files[0].getBytes());
+            SignatureImage signatureImage = signatureImageService.saveSignatureImageByCert(base64Image, certId);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signatureImage.getId()));
+        } catch (ApplicationException applicationException) {
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception exception) {
+            message = exception.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, exception.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/signature-images/saveBase64Image", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
     }
 }

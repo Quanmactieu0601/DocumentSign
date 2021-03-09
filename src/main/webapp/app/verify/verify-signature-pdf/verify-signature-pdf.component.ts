@@ -1,11 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {Account} from 'app/core/user/account.model';
-import {Subscription} from 'rxjs';
-import {AccountService} from 'app/core/auth/account.service';
-import {ToastrService} from 'ngx-toastr';
-import {HttpEventType, HttpResponse} from '@angular/common/http';
-import {ISignatureVfDTO} from 'app/shared/model/signatureVfDTO.model';
-import {VerifySignatureService} from "app/verify/verify-signature.service";
+import { Component, OnInit } from '@angular/core';
+import { Account } from 'app/core/user/account.model';
+import { Subscription } from 'rxjs';
+import { AccountService } from 'app/core/auth/account.service';
+import { ToastrService } from 'ngx-toastr';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
+import { VerifySignatureService } from 'app/verify/verify-signature.service';
 
 @Component({
   selector: 'jhi-verify-signature',
@@ -25,8 +25,7 @@ export class VerifySignaturePdfComponent implements OnInit {
     private accountService: AccountService,
     private verifySignatureService: VerifySignatureService,
     private toastrService: ToastrService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
@@ -40,8 +39,7 @@ export class VerifySignaturePdfComponent implements OnInit {
   verifyPdf(): void {
     this.progress = 0;
     this.currentFile = this.selectFiles.item(0);
-    if (!this.currentFile.name.endsWith('pdf')
-      && !(this.currentFile.name.endsWith('pdf'))) this.toastrService.error("Select a pdf");
+    if (!this.currentFile.name.endsWith('pdf') && !this.currentFile.name.endsWith('pdf')) this.toastrService.error('Select a pdf');
     else if (this.account != null) {
       this.verifySignatureService.verifyPdf(this.currentFile).subscribe((res: any) => {
         if (res.type === HttpEventType.UploadProgress) {

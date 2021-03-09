@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.repository;
 
+import org.springframework.data.repository.query.Param;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 
 import org.springframework.data.jpa.repository.*;
@@ -14,4 +15,6 @@ import java.util.Optional;
 @Repository
 public interface SignatureImageRepository extends JpaRepository<SignatureImage, Long> {
     Optional<SignatureImage> findOneByUserId(Long userId);
+
+    Optional<SignatureImage> getSignatureImageById(Long id);
 }

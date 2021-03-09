@@ -1,6 +1,6 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {HomeLayoutComponent} from 'app/layouts/home-layout/home-layout.component';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 
 @NgModule({
   imports: [
@@ -15,20 +15,19 @@ import {HomeLayoutComponent} from 'app/layouts/home-layout/home-layout.component
           },
           {
             path: 'verify-signature-doc',
-            loadChildren: () => import('./verify-signature-doc/verify-signature-doc.module').then(m => m.VerifySignatureDocModule)
+            loadChildren: () => import('./verify-signature-doc/verify-signature-doc.module').then(m => m.VerifySignatureDocModule),
           },
           {
             path: 'verify-signature-raw',
-            loadChildren: () => import('./verify-signature-raw/verify-signature-raw.module').then(m => m.VerifySignatureRawModule)
+            loadChildren: () => import('./verify-signature-raw/verify-signature-raw.module').then(m => m.VerifySignatureRawModule),
           },
           {
             path: 'verify-signature-hash',
-            loadChildren: () => import('./verify-signature-hash/verify-signature-hash.module').then(m => m.VerifySignatureHashModule)
-          }
-        ]
+            loadChildren: () => import('./verify-signature-hash/verify-signature-hash.module').then(m => m.VerifySignatureHashModule),
+          },
+        ],
       },
     ]),
   ],
 })
-export class VerifyRoutingModule {
-}
+export class VerifyRoutingModule {}

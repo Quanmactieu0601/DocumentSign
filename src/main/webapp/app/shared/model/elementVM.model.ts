@@ -5,9 +5,5 @@ export interface IElementVM {
 }
 
 export class ElementVM implements IElementVM {
-  constructor(
-    public base64Signature?: string,
-    public base64OriginalData?: string,
-    public key?: string
-  ) {}
+  constructor(public base64Signature?: string, public base64OriginalData?: string, public key?: string) {}
 }

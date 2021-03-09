@@ -1,8 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
 import com.google.common.base.Strings;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -439,5 +438,10 @@ public class UserApplicationService {
         if (userEntity.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(userEntity.getEmail());
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> getUserEntity() {
+        return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
     }
 }
