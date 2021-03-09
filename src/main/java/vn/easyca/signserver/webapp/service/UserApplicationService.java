@@ -1,11 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
 import com.google.common.base.Strings;
-<<<<<<< HEAD
-=======
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
->>>>>>> f528bd2f44c1116b19cdc00fc9f1d1681f019c2e
+
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
