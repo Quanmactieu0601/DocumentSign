@@ -31,10 +31,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
 
     @Column(name = "type")
     private Integer type;
-
-    @Column(name = "html_template")
-    private String htmlTemplate;
-
+    
     @Enumerated(EnumType.STRING)
     @Column(name = "core_parser")
     private SignatureTemplateParserType coreParser;
