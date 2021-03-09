@@ -24,6 +24,9 @@ public class CoreParser implements Serializable {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
+    private String description;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
         return id;
@@ -46,6 +49,10 @@ public class CoreParser implements Serializable {
         this.name = name;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
 
     @Override
     public boolean equals(Object o) {
