@@ -63,11 +63,13 @@ public class CertificateResource extends BaseResource {
     private final UserApplicationService userApplicationService;
     private final SignatureTemplateService signatureTemplateService;
     private final SignatureImageMapper signatureImageMapper;
+    private final ExcelUtils excelUtils;
 
     public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
-                               SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper) {
+                               SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper,
+                               ExcelUtils excelUtils) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
@@ -76,6 +78,7 @@ public class CertificateResource extends BaseResource {
         this.userApplicationService = userApplicationService;
         this.signatureTemplateService = signatureTemplateService;
         this.signatureImageMapper = signatureImageMapper;
+        this.excelUtils = excelUtils;
     }
 
     @GetMapping()
@@ -258,7 +261,7 @@ public class CertificateResource extends BaseResource {
         try {
             log.info("--- exportCsr ---");
             List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
-            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
+            byte[] byteData = excelUtils.exportCsrFileFormat1(csrResult);
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok()
