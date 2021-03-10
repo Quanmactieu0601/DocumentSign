@@ -29,8 +29,13 @@ export class GenerateCsrComponent implements OnInit {
   }
   upload(): void {
     this.currentFile = this.selectedFiles;
-    this.certificateService.uploadFileCSR(this.currentFile).subscribe();
-    this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+    this.certificateService.uploadFileCSR(this.currentFile).subscribe((res: any) => {
+      if (res == null) {
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+      } else {
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      }
+    });
   }
 
   downloadSampleFile(): void {

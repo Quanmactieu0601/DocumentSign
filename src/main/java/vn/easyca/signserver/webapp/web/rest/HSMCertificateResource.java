@@ -66,7 +66,7 @@ public class HSMCertificateResource extends BaseResource{
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
-            return null;
+            return ResponseEntity.ok().body(null);
         } finally {
             asyncTransactionService.newThread("/api/hsm-certificate/generate-bulk-csr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
