@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { saveAs } from 'file-saver';
+import { DatePipe } from '@angular/common';
 @Component({
   selector: 'jhi-generate-csr',
   templateUrl: './generate-csr.component.html',
@@ -13,6 +14,8 @@ export class GenerateCsrComponent implements OnInit {
   currentFile: any;
   progress = 0;
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
+  now = new Date();
+  currentDay = this.datepipe.transform(this.now, 'dd/MM/yyyy');
 
   constructor(
     private certificateService: CertificateService,
@@ -20,7 +23,8 @@ export class GenerateCsrComponent implements OnInit {
     private translate: TranslateService,
     public activeModal: NgbActiveModal,
     private translateService: TranslateService,
-    private toastrService: ToastrService
+    private toastrService: ToastrService,
+    private datepipe: DatePipe
   ) {}
 
   ngOnInit(): void {}
@@ -34,7 +38,7 @@ export class GenerateCsrComponent implements OnInit {
       // if (res.body['status'] === -1) {
       //   this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
       // } else {
-      saveAs(new Blob([res.body]), 'Certificate-Request-Information.xlsx');
+      saveAs(new Blob([res.body]), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
       this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       // }
     });
