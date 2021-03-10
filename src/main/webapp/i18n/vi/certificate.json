@@ -79,7 +79,11 @@
       "uploadSignatureImage": "Tải ảnh chữ kí",
       "search": "Tìm kiếm",
       "exportSerial": "Xuất Serial",
-      "success": "Thành công"
+      "success": "Thành công",
+      "generateCsr": "Tạo CSR",
+      "cancel": "Hủy",
+      "upload": "Tải lên",
+      "sampleFile": "Thư mục mẫu"
     }
   }
 }

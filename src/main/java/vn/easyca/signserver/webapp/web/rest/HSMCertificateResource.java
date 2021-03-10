@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,6 +16,7 @@ import vn.easyca.signserver.core.services.CertificateGenerateService;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
+import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -22,6 +24,7 @@ import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 @Scope("request")
@@ -33,11 +36,15 @@ public class HSMCertificateResource extends BaseResource{
     private final CertificateGenerateService p11GeneratorService;
     private final AsyncTransactionService asyncTransactionService;
     private final ExcelUtils excelUtils;
+    private final FileResourceService fileResourceService;
 
-    public HSMCertificateResource(CertificateGenerateService p11GeneratorService, AsyncTransactionService asyncTransactionService, ExcelUtils excelUtils) {
+    public HSMCertificateResource(CertificateGenerateService p11GeneratorService,
+                                  AsyncTransactionService asyncTransactionService,
+                                  ExcelUtils excelUtils, FileResourceService fileResourceService) {
         this.p11GeneratorService = p11GeneratorService;
         this.asyncTransactionService = asyncTransactionService;
         this.excelUtils = excelUtils;
+        this.fileResourceService = fileResourceService;
     }
 
     @PostMapping("/generate-bulk-csr")
@@ -47,7 +54,7 @@ public class HSMCertificateResource extends BaseResource{
             log.info("--- generate-bulk-csr ---");
             String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
-            p11GeneratorService.generateBulkCSR(dtos);
+//            p11GeneratorService.generateBulkCSR(dtos);
             byte[] byteData = excelUtils.exportCsrFileFormat2(dtos);
             InputStreamResource result = new InputStreamResource(new ByteArrayInputStream(byteData));
             status = TransactionStatus.SUCCESS;
@@ -63,6 +70,20 @@ public class HSMCertificateResource extends BaseResource{
         } finally {
             asyncTransactionService.newThread("/api/hsm-certificate/generate-bulk-csr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @GetMapping("/download-templateFile")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<Object> getTemplateFileUpload() {
+        try {
+            InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
+            byte[] isr = new byte[inputStream.available()];
+            inputStream.read(isr);
+            return new ResponseEntity<>(isr, null, HttpStatus.OK);
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         }
     }
 }

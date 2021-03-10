@@ -139,4 +139,14 @@ export class CertificateService {
   savePIN(serial: string | undefined, oldPIN: string, newPIN: string): Observable<{}> {
     return this.http.post(`${this.resourceUrl}/changeCertPIN`, { serial, oldPIN, newPIN });
   }
+
+  sampleFile(): Observable<any> {
+    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-templateFile', { observe: 'response', responseType: 'blob' });
+  }
+
+  uploadFileCSR(file: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file[0]);
+    return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, { responseType: 'text' });
+  }
 }
