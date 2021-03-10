@@ -82,7 +82,6 @@
       "success": "Thành công",
       "generateCsr": "Tạo CSR",
       "cancel": "Hủy",
-      "upload": "Tải lên",
       "sampleFile": "Thư mục mẫu",
       "errorGenerateCsr": "Tệp không được tải lên"
     }

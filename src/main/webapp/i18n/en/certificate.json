@@ -85,7 +85,6 @@
       "success": "Successfully",
       "generateCsr": "Generate CSR",
       "cancel": "Cancel",
-      "upload": "Upload",
       "sampleFile": "Sample File",
       "errorGenerateCsr": "The file was not uploaded"
     }

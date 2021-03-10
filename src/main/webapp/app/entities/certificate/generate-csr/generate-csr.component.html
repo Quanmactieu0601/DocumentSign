@@ -20,8 +20,8 @@
         <fa-icon icon="download"></fa-icon>
         <span jhiTranslate="webappApp.certificate.sampleFile"></span>
     </button>
-    <button jhiTranslate="webappApp.certificate.upload"
-        class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">
+    <button jhiTranslate="webappApp.certificate.generateCsr"
+        class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="genCsrOfCertificate()">
         </button>
     <button jhiTranslate="webappApp.certificate.cancel"
         type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">Hủy</button>

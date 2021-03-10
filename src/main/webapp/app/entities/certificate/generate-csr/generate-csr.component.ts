@@ -3,6 +3,7 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'jhi-generate-csr',
   templateUrl: './generate-csr.component.html',
@@ -27,28 +28,21 @@ export class GenerateCsrComponent implements OnInit {
     this.selectedFiles = event.target.files;
     this.fileName = this.selectedFiles[0].name;
   }
-  upload(): void {
+  genCsrOfCertificate(): void {
     this.currentFile = this.selectedFiles;
-    this.certificateService.uploadFileCSR(this.currentFile).subscribe((res: any) => {
-      if (res == null) {
-        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
-      } else {
-        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
-      }
+    this.certificateService.generateCertificateRequestInformation(this.currentFile).subscribe((res: any) => {
+      // if (res.body['status'] === -1) {
+      //   this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+      // } else {
+      saveAs(new Blob([res.body]), 'Certificate-Request-Information_%s.xlsx');
+      this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      // }
     });
   }
 
   downloadSampleFile(): void {
-    this.certificateService.sampleFile().subscribe((res: any) => {
-      const bindData = [];
-      bindData.push(res.body);
-      const url = window.URL.createObjectURL(
-        new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-      );
-      const templateFile = document.createElement('a');
-      templateFile.href = url;
-      templateFile.download = 'Certificate-Request-Information';
-      templateFile.click();
+    this.certificateService.downloadSampleFileCertificate().subscribe((res: any) => {
+      saveAs(new Blob([res.body]), 'Certificate-Sample.xlsx');
       this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
     });
   }

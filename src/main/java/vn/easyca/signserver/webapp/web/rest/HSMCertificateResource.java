@@ -49,7 +49,7 @@ public class HSMCertificateResource extends BaseResource{
 
     @PostMapping("/generate-bulk-csr")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public  ResponseEntity<Resource> generateBulkCSR(@RequestParam("file") MultipartFile file) {
+    public  ResponseEntity<Object> generateBulkCSR(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- generate-bulk-csr ---");
             String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
@@ -66,16 +66,16 @@ public class HSMCertificateResource extends BaseResource{
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
-            return ResponseEntity.ok().body(null);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
             asyncTransactionService.newThread("/api/hsm-certificate/generate-bulk-csr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
 
-    @GetMapping("/download-templateFile")
+    @GetMapping("/download-certificate-request-information")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Object> getTemplateFileUpload() {
+    public ResponseEntity<Object> getTemplateFileCertificate() {
         try {
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
             byte[] isr = new byte[inputStream.available()];
