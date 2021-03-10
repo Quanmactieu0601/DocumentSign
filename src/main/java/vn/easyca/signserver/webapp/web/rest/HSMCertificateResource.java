@@ -54,7 +54,7 @@ public class HSMCertificateResource extends BaseResource{
             log.info("--- generate-bulk-csr ---");
             String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
-//            p11GeneratorService.generateBulkCSR(dtos);
+            p11GeneratorService.generateBulkCSR(dtos);
             byte[] byteData = excelUtils.exportCsrFileFormat2(dtos);
             InputStreamResource result = new InputStreamResource(new ByteArrayInputStream(byteData));
             status = TransactionStatus.SUCCESS;

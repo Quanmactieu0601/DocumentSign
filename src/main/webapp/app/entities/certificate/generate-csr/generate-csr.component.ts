@@ -34,7 +34,7 @@ export class GenerateCsrComponent implements OnInit {
       // if (res.body['status'] === -1) {
       //   this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
       // } else {
-      saveAs(new Blob([res.body]), 'Certificate-Request-Information_%s.xlsx');
+      saveAs(new Blob([res.body]), 'Certificate-Request-Information.xlsx');
       this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       // }
     });
@@ -42,7 +42,7 @@ export class GenerateCsrComponent implements OnInit {
 
   downloadSampleFile(): void {
     this.certificateService.downloadSampleFileCertificate().subscribe((res: any) => {
-      saveAs(new Blob([res.body]), 'Certificate-Sample.xlsx');
+      saveAs(new Blob([res.body]), 'Sample-Certificate-Request-Information.xlsx');
       this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
     });
   }
