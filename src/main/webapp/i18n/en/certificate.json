@@ -82,7 +82,11 @@
       "uploadSignatureImage": "Upload Signature Image",
       "search": "Search",
       "exportSerial": "Export Serial",
-      "success": "Successfully"
+      "success": "Successfully",
+      "generateCsr": "Generate CSR",
+      "cancel": "Cancel",
+      "sampleFile": "Sample File",
+      "errorGenerateCsr": "The file was not uploaded"
     }
   }
 }

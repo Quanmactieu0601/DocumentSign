@@ -1,15 +1,15 @@
 <div class="modal-header header-custom">
     <h5 class="modal-title">Export Serial</h5>
-    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
-    </button>
+    </a>
 </div>
 <div class="modal-body">
 
     <div class="form-group col-md-12 uploadFormGroup">
         <div class="input-group mb-3">
             <div class="custom-file" id="custom-file" >
-                <input type="file" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)" (click)="onInputClick($event)"/>
+                <input type="file" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
                 <label class="custom-file-label">{{this.fileName}}</label>
             </div>
         </div>
