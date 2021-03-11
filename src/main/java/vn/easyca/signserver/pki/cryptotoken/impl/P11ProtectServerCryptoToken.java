@@ -54,9 +54,8 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
             if (modulePin.isEmpty())
                 throw new InitCryptoTokenException("modulePin is required");
             // init provider
-            ByteArrayInputStream confStream = new ByteArrayInputStream(pkcs11Config.getBytes());
             SAFENETProvider sAFENETProvider = new SAFENETProvider();
-            Security.addProvider((Provider)sAFENETProvider);
+            Security.addProvider(sAFENETProvider);
             this.providerName = sAFENETProvider.getName();
 
             // load keystore

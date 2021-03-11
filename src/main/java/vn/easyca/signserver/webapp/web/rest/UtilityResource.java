@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import io.github.jhipster.web.util.ResponseUtil;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -10,10 +12,14 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
+import vn.easyca.signserver.webapp.service.dto.CaptchaDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
+import vn.easyca.signserver.webapp.utils.CaptchaUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @RestController
@@ -31,6 +37,7 @@ public class UtilityResource {
         this.mapper = mapper;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.systemConfigCachingService = systemConfigCachingService;
+
     }
 
     private boolean matchSecretKey(String secretKey) {
@@ -82,5 +89,11 @@ public class UtilityResource {
         } catch (Exception ex) {
             return String.format("-- Co loi xay ra: %s --", ex.getMessage());
         }
+    }
+
+    @GetMapping("/captcha")
+    public ResponseEntity<CaptchaDTO> getCaptcha() throws IOException, NoSuchAlgorithmException {
+        Optional<CaptchaDTO> captchaDTO = Optional.of(CaptchaUtils.generateCaptcha());
+        return ResponseUtil.wrapOrNotFound(captchaDTO);
     }
 }

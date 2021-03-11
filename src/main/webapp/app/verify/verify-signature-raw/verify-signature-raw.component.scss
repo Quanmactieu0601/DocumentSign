@@ -1,0 +1,22 @@
+* {
+  font-family: Nunito;
+}
+.captcha {
+  position: relative;
+}
+img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 5px;
+}
+.reload {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  background-image: none;
+}
+.captcha:hover .reload {
+  opacity: 1;
+}

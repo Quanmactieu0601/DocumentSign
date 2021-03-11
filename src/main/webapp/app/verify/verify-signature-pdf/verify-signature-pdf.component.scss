@@ -1,9 +1,12 @@
 .drop-zone {
   font-size: 1.25rem; /* 20 */
-  background-color: #c8dadf;
+  background-color: #ffffff;
   position: relative;
-  padding: 100px 20px;
-
+  padding: inherit;
+  border: 1px dashed #3a3b45;
+  border-radius: 12px;
+  margin-left: 50px;
+  margin-right: 200px;
   .dragndrop,
   .icon {
     display: none;
@@ -62,4 +65,48 @@
       color: #39bfd3;
     }
   }
+}
+
+.drop-zone-preview {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0px !important;
+  padding: 0px !important;
+  background-image: none !important;
+}
+
+.captcha {
+  position: relative;
+}
+img {
+  position: absolute;
+  border-radius: 5px;
+}
+input {
+  position: absolute;
+  top: 60px;
+  width: 100px;
+}
+.verify {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  height: inherit;
+  width: 180px;
+}
+
+.reload {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  background-image: none;
+}
+button {
+  position: absolute;
+  top: 120px;
+  margin: auto;
+  width: 100px;
+}
+.captcha:hover .reload {
+  opacity: 1;
 }

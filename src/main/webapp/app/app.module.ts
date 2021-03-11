@@ -6,7 +6,7 @@ import './vendor';
 import { WebappSharedModule } from 'app/shared/shared.module';
 import { WebappCoreModule } from 'app/core/core.module';
 import { WebappAppRoutingModule } from './app-routing.module';
-
+import { NgxDropzoneModule } from 'ngx-dropzone';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { MainComponent } from './layouts/main/main.component';
 import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
@@ -23,6 +23,7 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
     WebappCoreModule,
     LoadingBarHttpClientModule,
     LoadingBarModule,
+    NgxDropzoneModule,
     // jhipster-needle-angular-add-module JHipster will add new module here,
     WebappAppRoutingModule,
     BrowserAnimationsModule,
