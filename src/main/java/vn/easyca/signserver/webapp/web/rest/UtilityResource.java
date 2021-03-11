@@ -30,16 +30,14 @@ public class UtilityResource {
     private final CertificateMapper mapper;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final SystemConfigCachingService systemConfigCachingService;
-    private final CaptchaUtils captchaUtils;
 
-
-    public UtilityResource(SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, CertificateMapper mapper, CryptoTokenProxyFactory cryptoTokenProxyFactory, SystemConfigCachingService systemConfigCachingService, CaptchaUtils captchaUtils) {
+    public UtilityResource(SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, CertificateMapper mapper, CryptoTokenProxyFactory cryptoTokenProxyFactory, SystemConfigCachingService systemConfigCachingService) {
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.systemConfigCachingService = systemConfigCachingService;
-        this.captchaUtils = captchaUtils;
+
     }
 
     private boolean matchSecretKey(String secretKey) {
@@ -95,7 +93,7 @@ public class UtilityResource {
 
     @GetMapping("/captcha")
     public ResponseEntity<CaptchaDTO> getCaptcha() throws IOException, NoSuchAlgorithmException {
-        Optional<CaptchaDTO> captchaDTO = Optional.ofNullable(captchaUtils.generateCaptcha());
+        Optional<CaptchaDTO> captchaDTO = Optional.of(CaptchaUtils.generateCaptcha());
         return ResponseUtil.wrapOrNotFound(captchaDTO);
     }
 }

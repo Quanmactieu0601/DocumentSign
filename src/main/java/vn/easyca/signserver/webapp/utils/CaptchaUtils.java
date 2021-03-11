@@ -13,7 +13,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 
-@Component
 public class CaptchaUtils {
 
 //    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
@@ -23,16 +22,14 @@ public class CaptchaUtils {
 //        System.out.println(captchaDTO.getCaptchaImg());
 //    }
 
-    public CaptchaDTO generateCaptcha() throws NoSuchAlgorithmException, IOException {
-        CaptchaUtils captchaUtils = new CaptchaUtils();
-        String text = captchaUtils.randomCaptchaText();
-//        System.out.println(text);
-        String captchaText = captchaUtils.hashCaptchaText(text);
-        String captchaImg = captchaUtils.drawCaptchaImgFromText(text);
+    public static CaptchaDTO generateCaptcha() throws NoSuchAlgorithmException, IOException {
+        String text = randomCaptchaText();
+        String captchaText = hashCaptchaText(text);
+        String captchaImg = drawCaptchaImgFromText(text);
         return new CaptchaDTO(captchaText, captchaImg);
     }
 
-    public String hashCaptchaText(String text) throws NoSuchAlgorithmException {
+    public static String hashCaptchaText(String text) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("MD5");
         byte[] result = md.digest(text.getBytes());
         StringBuffer sb = new StringBuffer();
@@ -42,7 +39,7 @@ public class CaptchaUtils {
         return sb.toString();
     }
 
-    public String randomCaptchaText(){
+    public static String randomCaptchaText(){
         String text="qwertyuiopasdfghjklzxcvbnm1234567890";
         Random random = new Random();
         String captchaText = "";
@@ -52,7 +49,7 @@ public class CaptchaUtils {
         return captchaText;
     }
 
-    public String drawCaptchaImgFromText(String text) throws IOException {
+    public static String drawCaptchaImgFromText(String text) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(100, 40, Transparency.OPAQUE);
         Graphics graphics = bufferedImage.createGraphics();
         graphics.setFont(new Font("Brush Script MT", Font.BOLD, 35));

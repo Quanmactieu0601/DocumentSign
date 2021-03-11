@@ -8,17 +8,6 @@
 <div class="card mb-1">
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
-            <div *ngIf="bar" class="progress mb-2">
-                <div class="progress-bar progress-bar-info progress-bar-striped"
-                     role="progressbar"
-                     attr.aria-valuenow="{{ progress }}"
-                     aria-valuemin="0"
-                     aria-valuemax="100"
-                     [ngStyle]="{ width: progress + '%' }">
-                    {{ progress }}%
-                </div>
-            </div>
-
             <form name="editForm" [formGroup]="editForm">
                 <div class="form-group">
                     <label class="form-control-label" for="field_base64Signature" jhiTranslate="webappApp.signatureVerify.signature">Base 64 Signature</label>
@@ -53,7 +42,7 @@
         </div>
     </div>
 </div>
-<div class="card mb-1" *ngIf="result||certificate">
+<div class="card mb-1" *ngIf="result">
     <div class="card-body">
         <ul>
             <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>: {{certificate}}</li>

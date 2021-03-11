@@ -9,6 +9,7 @@ import { VerifySignatureService } from 'app/verify/verify-signature.service';
 import { ICaptchaModel } from 'app/shared/model/captcha.model';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { Md5 } from 'ts-md5';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'jhi-verify-signature',
@@ -17,7 +18,6 @@ import { Md5 } from 'ts-md5';
 })
 export class VerifySignaturePdfComponent implements OnInit {
   selectFiles: File[] = [];
-  progress = 0;
   currentFile?: File;
   account: Account | null = null;
   authSubscription?: Subscription;
@@ -26,12 +26,14 @@ export class VerifySignaturePdfComponent implements OnInit {
   captcha?: ICaptchaModel | null;
   text = '';
   img?: any;
+  disable = false;
 
   constructor(
     private accountService: AccountService,
     private verifySignatureService: VerifySignatureService,
     private toastrService: ToastrService,
-    private captchaService: CaptchaService
+    private captchaService: CaptchaService,
+    private translateService: TranslateService
   ) {}
 
   ngOnInit(): void {
@@ -56,33 +58,31 @@ export class VerifySignaturePdfComponent implements OnInit {
     this.selectFiles.splice(this.selectFiles.indexOf(event), 1);
   }
 
-  verifyPdf(): void {
-    if (Md5.hashStr(this.text) === this.captcha?.captchaText) {
-      this.reloadCaptcha();
-      this.progress = 0;
-      this.currentFile = this.selectFiles[0];
-      if (this.account != null) {
-        this.verifySignatureService.verifyPdf(this.currentFile).subscribe((res: any) => {
-          if (res.type === HttpEventType.UploadProgress) {
-            this.progress = Math.round((100 * res.loaded) / res.total);
-          } else if (res instanceof HttpResponse) {
-            console.error(res.body.data);
-            if (res.status === 200) {
-              this.signatureVfDTOs = res.body.data.signatureVfDTOs;
-              if (this.signatureVfDTOs == null) this.toastrService.error('False');
-            } else {
-              this.toastrService.error('Error');
-            }
-          }
-        });
-      }
-    } else {
-      this.toastrService.error('Sai captcha');
-      this.reloadCaptcha();
-    }
+  isValidCaptcha(): boolean {
+    const currentCaptcha = this.captcha?.captchaText;
+    this.reloadCaptcha();
+    return Md5.hashStr(this.text) === currentCaptcha;
   }
 
-  // changeGender(event: any): void {
-  //   this.typeVf = event.target.value;
-  // }
+  verifyPdf(): void {
+    if (!this.isValidCaptcha()) {
+      this.toastrService.error(this.translateService.instant('error.validCaptcha'));
+      return;
+    }
+    this.currentFile = this.selectFiles[0];
+    if (this.account != null) {
+      this.verifySignatureService.verifyPdf(this.currentFile).subscribe((res: any) => {
+        if (res instanceof HttpResponse) {
+          console.error(res.body.data);
+          if (res.body.status === 0) {
+            this.signatureVfDTOs = res.body.data.signatureVfDTOs;
+            if (!this.signatureVfDTOs?.length) this.toastrService.error(this.translateService.instant('error.verifySign'));
+            else this.disable = true;
+          } else {
+            this.toastrService.error(res.body.msg);
+          }
+        }
+      });
+    }
+  }
 }
