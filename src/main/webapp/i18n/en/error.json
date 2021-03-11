@@ -10,6 +10,8 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "currentPassNotMatch": "Current Password does not match"
+    "currentPassNotMatch": "Current Password does not match",
+    "validCaptcha": "Incorrect captcha, please enter again",
+    "verifySign": "Incorrect signature, please check again"
   }
 }

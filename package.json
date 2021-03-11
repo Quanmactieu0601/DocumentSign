@@ -42,7 +42,9 @@
     "rxjs": "6.5.5",
     "swagger-ui-dist": "3.25.1",
     "tslib": "1.11.1",
-    "zone.js": "0.10.3"
+    "zone.js": "0.10.3",
+    "ngx-dropzone": "^2.5.0",
+    "ts-md5": "^1.2.7"
   },
   "devDependencies": {
     "@angular/cli": "9.1.3",
