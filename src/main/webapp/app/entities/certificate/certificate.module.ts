@@ -14,6 +14,7 @@ import { UploadSignatureImageComponent } from './upload-signature-image/upload-s
 import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
+import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -29,6 +30,7 @@ import { ExportSerialComponent } from 'app/entities/certificate/export-serial/ex
     CertPINComponent,
     CertificateDeactiveDialogComponent,
     ExportSerialComponent,
+    GenerateCsrComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

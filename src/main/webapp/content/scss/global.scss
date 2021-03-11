@@ -267,3 +267,11 @@ input.form-control {
 .modal-footer.footer-custom {
   padding: 0.25rem 0.25rem !important;
 }
+.custom-file-label::after {
+  font-family: 'Nunito' !important;
+  background-color: #398bf8 !important;
+  color: #ffffff;
+}
+.custom-file-input:lang(vi) ~ .custom-file-label::after {
+  content: 'Chọn';
+}

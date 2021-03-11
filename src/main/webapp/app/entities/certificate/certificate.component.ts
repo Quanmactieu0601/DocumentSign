@@ -23,6 +23,7 @@ import { UploadSignatureImageComponent } from './upload-signature-image/upload-s
 import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
+import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -179,6 +180,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   openModalExportSerial(): void {
     this.modalRef = this.modalService.open(ExportSerialComponent, { size: 'md' });
+  }
+
+  openModalGenerateCSR(): void {
+    this.modalRef = this.modalService.open(GenerateCsrComponent, { size: 'md' });
   }
 
   isUploadedSucessfully(agreed: boolean): void {

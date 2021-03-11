@@ -43,9 +43,4 @@ export class ExportSerialComponent implements OnInit {
       }
     });
   }
-
-  onInputClick = (event: any) => {
-    const element = event.target as HTMLInputElement;
-    element.value = '';
-  };
 }
