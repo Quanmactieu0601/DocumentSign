@@ -15,7 +15,7 @@ export class GenerateCsrComponent implements OnInit {
   progress = 0;
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
   now = new Date();
-  currentDay = this.datepipe.transform(this.now, 'dd/MM/yyyy');
+  currentDay = this.datepipe.transform(this.now, 'dd-MM-yyyy');
 
   constructor(
     private certificateService: CertificateService,
