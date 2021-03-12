@@ -15,7 +15,7 @@ export class GenerateCsrComponent implements OnInit {
   progress = 0;
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
   now = new Date();
-  currentDay = this.datepipe.transform(this.now, 'dd/MM/yyyy');
+  currentDay = this.datePipe.transform(this.now, 'dd-MM-yyyy');
 
   constructor(
     private certificateService: CertificateService,
@@ -24,7 +24,7 @@ export class GenerateCsrComponent implements OnInit {
     public activeModal: NgbActiveModal,
     private translateService: TranslateService,
     private toastrService: ToastrService,
-    private datepipe: DatePipe
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {}
@@ -35,19 +35,23 @@ export class GenerateCsrComponent implements OnInit {
   genCsrOfCertificate(): void {
     this.currentFile = this.selectedFiles;
     this.certificateService.generateCertificateRequestInformation(this.currentFile).subscribe((res: any) => {
-      // if (res.body['status'] === -1) {
-      //   this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
-      // } else {
-      saveAs(new Blob([res.body]), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
-      this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
-      // }
+      if (res.body.type === 'application/json') {
+        saveAs(new Blob([res.body]), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      } else {
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+      }
     });
   }
 
   downloadSampleFile(): void {
     this.certificateService.downloadSampleFileCertificate().subscribe((res: any) => {
-      saveAs(new Blob([res.body]), 'Sample-Certificate-Request-Information.xlsx');
-      this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      if (res.body.type === 'application/json') {
+        saveAs(new Blob([res.body]), 'Sample-Certificate-Request-Information.xlsx');
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      } else {
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+      }
     });
   }
 }
