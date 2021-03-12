@@ -4,10 +4,7 @@ import vn.easyca.signserver.webapp.WebappApp;
 import vn.easyca.signserver.webapp.domain.CoreParser;
 import vn.easyca.signserver.webapp.repository.CoreParserRepository;
 import vn.easyca.signserver.webapp.service.CoreParserService;
-import vn.easyca.signserver.webapp.service.dto.CoreParserDTO;
 import vn.easyca.signserver.webapp.service.mapper.CoreParserMapper;
-import vn.easyca.signserver.webapp.service.dto.CoreParserCriteria;
-import vn.easyca.signserver.webapp.service.CoreParserQueryService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +16,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -46,8 +42,6 @@ public class CoreParserResourceIT {
     @Autowired
     private CoreParserService coreParserService;
 
-    @Autowired
-    private CoreParserQueryService coreParserQueryService;
 
     @Autowired
     private EntityManager em;
@@ -98,7 +92,7 @@ public class CoreParserResourceIT {
             .andExpect(jsonPath("$.[*].id").value(hasItem(coreParser.getId().intValue())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)));
     }
-    
+
     @Test
     @Transactional
     public void getCoreParser() throws Exception {

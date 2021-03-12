@@ -1,8 +1,10 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.ss.extractor.ExcelExtractor;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
@@ -27,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -157,13 +160,13 @@ public class SignatureTemplateResource extends BaseResource {
     @GetMapping("/signature-templates/signExample")
     public ResponseEntity<BaseResponseVM> getSignExample(@RequestParam(required = false) String htmlTemplate, @RequestParam(required = false) String signer, @RequestParam(required = false) String signingImage, @RequestParam(required = false) Integer width, @RequestParam(required = false) Integer height) {
         try {
-            String fileName = "src/main/resources/templates/signature/signature.html";
-            String imageFilePath = "src/main/resources/templates/signature/SigningImageExam.jpg";
+            String imageFilePath = new File("src/main/resources/templates/signature/SigningImageExam.jpg").getAbsolutePath();
+            String fileName = new File("src/main/resources/templates/signature/signature.html").getAbsolutePath();
 
 
-            htmlTemplate = htmlTemplate == null ? new String(Files.readAllBytes(Paths.get(fileName))) : java.net.URLDecoder.decode(htmlTemplate, StandardCharsets.UTF_8.name());
+            htmlTemplate = htmlTemplate == null ? new String(FileUtils.getFileAsBytes(fileName)) : java.net.URLDecoder.decode(htmlTemplate, StandardCharsets.UTF_8.name());
             signer = signer == null ? "Nguyễn Văn A" : signer;
-            signingImage = signingImage == null ? new String(Base64.encodeBase64(Files.readAllBytes(Paths.get(imageFilePath))), "UTF-8") : signingImage;
+            signingImage = signingImage == null ? new String(Base64.encodeBase64(FileUtils.getFileAsBytes(imageFilePath)), "UTF-8") : signingImage;
             width = width == null ? 355 : width;
             height = height == null ? 130 : height;
 

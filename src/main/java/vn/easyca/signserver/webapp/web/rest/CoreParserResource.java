@@ -3,8 +3,6 @@ package vn.easyca.signserver.webapp.web.rest;
 import vn.easyca.signserver.webapp.domain.CoreParser;
 import vn.easyca.signserver.webapp.service.CoreParserService;
 import vn.easyca.signserver.webapp.service.dto.CoreParserDTO;
-import vn.easyca.signserver.webapp.service.dto.CoreParserCriteria;
-import vn.easyca.signserver.webapp.service.CoreParserQueryService;
 
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -31,39 +29,12 @@ public class CoreParserResource {
 
     private final CoreParserService coreParserService;
 
-    private final CoreParserQueryService coreParserQueryService;
 
-    public CoreParserResource(CoreParserService coreParserService, CoreParserQueryService coreParserQueryService) {
+
+    public CoreParserResource(CoreParserService coreParserService) {
         this.coreParserService = coreParserService;
-        this.coreParserQueryService = coreParserQueryService;
     }
 
-    /**
-     * {@code GET  /core-parsers} : get all the coreParsers.
-     *
-     * @param pageable the pagination information.
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of coreParsers in body.
-     */
-    @GetMapping("/core-parsers")
-    public ResponseEntity<List<CoreParserDTO>> getAllCoreParsers(CoreParserCriteria criteria, Pageable pageable) {
-        log.debug("REST request to get CoreParsers by criteria: {}", criteria);
-        Page<CoreParserDTO> page = coreParserQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }
-
-    /**
-     * {@code GET  /core-parsers/count} : count all the coreParsers.
-     *
-     * @param criteria the criteria which the requested entities should match.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.
-     */
-    @GetMapping("/core-parsers/count")
-    public ResponseEntity<Long> countCoreParsers(CoreParserCriteria criteria) {
-        log.debug("REST request to count CoreParsers by criteria: {}", criteria);
-        return ResponseEntity.ok().body(coreParserQueryService.countByCriteria(criteria));
-    }
 
     /**
      * {@code GET  /core-parsers/:id} : get the "id" coreParser.

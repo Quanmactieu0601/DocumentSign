@@ -13,5 +13,4 @@ import java.util.List;
 @SuppressWarnings("unused")
 @Repository
 public interface CoreParserRepository extends JpaRepository<CoreParser, Long>, JpaSpecificationExecutor<CoreParser> {
-    List<CoreParser> findAll();
 }
