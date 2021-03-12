@@ -10,6 +10,8 @@
       "cancel": "Hủy",
       "exportCSR": "Tạo tệp CSR"
     },
+    "chooseUser": "Chọn người dùng",
+    "chooseParser": "Chọn bộ chuyển đổi",
     "created": "Tạo tài khoản mới thành công",
     "updated": "Cập nhật tài khoản thành công",
     "updated-err": "Bạn cần thêm ít nhất một giá trị từ trường Tên Chung đến trường Quốc Gia",

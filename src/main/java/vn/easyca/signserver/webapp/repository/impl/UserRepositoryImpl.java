@@ -6,11 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
-import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.repository.UserRepositoryCustom;
-import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
-import vn.easyca.signserver.webapp.service.dto.UserDTO;
-import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
@@ -24,7 +20,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
+    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone, boolean activated) {
         Map<String, Object> params = new HashMap<>();
         List<UserEntity> userEntityList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -60,6 +56,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             sqlBuilder.append("AND a.phone like :phone ");
             params.put("phone", "%" + phone + "%");
         }
+        if (activated) {
+            sqlBuilder.append("And a.activated = true ");
+        }
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
@@ -70,18 +69,5 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             userEntityList = query.getResultList();
         }
         return new PageImpl<>(userEntityList, pageable, total.longValue());
-    }
-
-    @Override
-    public List getAllUserForDropdown() {
-        Map<String, Object> params = new HashMap<>();
-        StringBuilder sqlBuilderExport = new StringBuilder();
-        sqlBuilderExport.append("select new vn.easyca.signserver.webapp.service.dto.UserDropdownDTO");
-        sqlBuilderExport.append(" (a.id, a.login) ");
-        sqlBuilderExport.append("from UserEntity a");
-        sqlBuilderExport.append(" WHERE 1=1 ");
-        TypedQuery<UserDropdownDTO> typedQuery = entityManager.createQuery(sqlBuilderExport.toString(), UserDropdownDTO.class);
-
-        return typedQuery.getResultList();
     }
 }

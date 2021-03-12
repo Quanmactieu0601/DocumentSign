@@ -23,7 +23,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.service.dto.UserDropdownDTO;
 import vn.easyca.signserver.webapp.service.error.*;
 
 import java.time.LocalDateTime;
@@ -394,19 +393,21 @@ public class UserApplicationService {
         return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
     }
 
-    @Transactional(readOnly = true)
-    public List<UserDropdownDTO> getAllUsers() {
-        return userRepository.getAllUserForDropdown();
-    }
+
 
     @Transactional(readOnly = true)
-    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
-        return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone).map(UserDTO::new);
+    public Page<UserDTO> getByFilter(Pageable pageable, String account, String name, String email, String ownerId, String commonName, String country, String phone, boolean activated) {
+        return userRepository.findByFilter(pageable, Constants.ANONYMOUS_USER, account, name, email, ownerId, commonName, country, phone, activated).map(UserDTO::new);
     }
 
     @Transactional(readOnly = true)
     public Optional<UserEntity> getUserWithAuthoritiesByLogin(String login) {
         return userRepository.findOneWithAuthoritiesByLogin(login);
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<UserEntity> getUserById(Long id) {
+        return userRepository.findById(id);
     }
 
     @Transactional(readOnly = true)

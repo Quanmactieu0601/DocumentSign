@@ -26,7 +26,8 @@
       "createdBy": "Created By",
       "createdDate": "Created Date",
       "user": "User Account",
-      "coreParser": "Core Parser"
+      "coreParser": "Core Parser",
+      "chooseParser": "Choose parser"
     }
   }
 }

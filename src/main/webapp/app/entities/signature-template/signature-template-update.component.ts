@@ -6,11 +6,13 @@ import { Observable } from 'rxjs';
 import { ISignatureTemplate, SignatureTemplate } from 'app/shared/model/signature-template.model';
 import { SignatureTemplateService } from './signature-template.service';
 import { UserService } from 'app/core/user/user.service';
-import { IUser } from 'app/core/user/user.model';
+import { IUser, User } from 'app/core/user/user.model';
 import { ICoreParser } from 'app/shared/model/core-parser.model';
 import { CoreParserService } from 'app/entities/core-parser/core-parser.service';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { AccountService } from 'app/core/auth/account.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { UserPopupComponent } from 'app/entities/signature-template/user-popup/user-popup.component';
 
 @Component({
   selector: 'jhi-signature-template-update',
@@ -24,7 +26,7 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
 
   signatureTemplate!: SignatureTemplate;
   isSaving = false;
-  users?: IUser[] | null;
+  user?: IUser | null;
   coreParsers?: ICoreParser[] | null;
   signatureImageExam?: String | null;
   editForm = this.fb.group({
@@ -38,13 +40,14 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     width: [],
     height: [],
   });
-
+  modalRef: NgbModalRef | undefined;
   constructor(
     protected signatureTemplateService: SignatureTemplateService,
     protected activatedRoute: ActivatedRoute,
     private userService: UserService,
     private coreParserService: CoreParserService,
     protected accountService: AccountService,
+    private modalService: NgbModal,
     private fb: FormBuilder
   ) {}
 
@@ -54,9 +57,13 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
         this.signatureTemplate = signatureTemplate;
       }
       this.updateForm(signatureTemplate);
-      this.userService.getAllUsers().subscribe((res: HttpResponse<IUser[]>) => {
-        this.users = res.body;
-      });
+
+      if (signatureTemplate.userId) {
+        this.userService.findById(signatureTemplate.userId).subscribe(res => {
+          this.user = res;
+        });
+      }
+
       this.coreParserService.findAll().subscribe((res: HttpResponse<ICoreParser[]>) => {
         this.coreParsers = res.body;
       });
@@ -152,5 +159,17 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     const admin = this.accountService.hasAnyAuthority(Authority.ADMIN);
     if (user && !admin) return true;
     else return false;
+  }
+
+  showUserPopUp(): any {
+    this.modalRef = this.modalService.open(UserPopupComponent, { size: 'lg' });
+    // this.modalRef.componentInstance.userSelectEvent = this.userSelectEvent;
+    this.modalRef.result.then(value => {
+      this.user = value;
+    });
+  }
+
+  userSelectEvent(user: User): void {
+    this.user = user;
   }
 }
