@@ -40,7 +40,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URI;
@@ -217,7 +216,7 @@ public class UserResource extends BaseResource {
 
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException {
+    public ResponseEntity<byte[]> getTemplateFileUpload() {
         try {
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx");
             return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
