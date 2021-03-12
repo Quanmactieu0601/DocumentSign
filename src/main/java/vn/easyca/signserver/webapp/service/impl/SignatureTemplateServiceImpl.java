@@ -55,20 +55,6 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         return signatureTemplateMapper.toDto(signatureTemplate);
     }
 
-//    /**
-//     * Get all the signatureTemplates.
-//     *
-//     * @param pageable the pagination information.
-//     * @return the list of entities.
-//     */
-//    @Override
-//    @Transactional(readOnly = true)
-//    public Page<SignatureTemplateDTO> findAll(Pageable pageable) {
-//        log.debug("Request to get all SignatureTemplates");
-//        return signatureTemplateRepository.findAll(pageable)
-//            .map(signatureTemplateMapper::toDto);
-//    }
-
     /**
      * Get all the signatureTemplates.
      *
@@ -79,15 +65,9 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Transactional(readOnly = true)
     public Page<SignatureTemplateDTO> findAll(Pageable pageable) {
         log.debug("Request to get all SignatureTemplates");
-        return signatureTemplateRepository.findAll(pageable).map(signatureTemplateMapper::toDto).map(item -> {
-                Long idUser = item.getUserId();
-                String firstName = userRepository.findById(idUser).get().getFirstName();
-                String lastName = userRepository.findById(idUser).get().getLastName();
-                String fullName = !StringUtils.isNullOrEmpty(firstName)? (StringUtils.isNullOrEmpty(lastName) ? firstName : firstName + " " + lastName ) : (!StringUtils.isNullOrEmpty(lastName) ? lastName : "");
-                item.setFullName(fullName);
-                return item;
-        });
+        return signatureTemplateRepository.findAllSignatureTemplate(pageable);
     }
+
 
 
     /**

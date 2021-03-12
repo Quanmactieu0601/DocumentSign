@@ -73,6 +73,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     }
 
     public void setId(Long id) {
+
         this.id = id;
     }
 

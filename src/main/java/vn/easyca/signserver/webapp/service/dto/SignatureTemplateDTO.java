@@ -1,5 +1,9 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
+import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
+
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -9,9 +13,8 @@ import java.time.LocalDateTime;
  */
 public class SignatureTemplateDTO implements Serializable {
 
-    private Long id;
 
-    private String signatureImage;
+    private Long id;
 
     private Long userId;
 
@@ -27,10 +30,38 @@ public class SignatureTemplateDTO implements Serializable {
 
     private Integer height;
 
+    private String htmlTemplate;
+
+    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate, String htmlTemplate, SignatureTemplateParserType coreParser, Integer width, Integer height, String fullName) {
+        this.id = id;
+        this.userId = userId;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.coreParser = coreParser.toString();
+        this.fullName = fullName;
+        this.width = width;
+        this.height = height;
+        this.htmlTemplate = htmlTemplate;
+    }
+
+    public SignatureTemplateDTO() {
+
+    }
+
+    public SignatureTemplateDTO(SignatureTemplate signatureTemplate) {
+        this.id = signatureTemplate.getId();
+        this.userId = signatureTemplate.getUserId();
+        this.createdBy = signatureTemplate.getCreatedBy();
+        this.createdDate = signatureTemplate.getCreatedDate();
+        this.coreParser = signatureTemplate.getCoreParser().toString();
+        this.width = signatureTemplate.getWidth();
+        this.height = signatureTemplate.getHeight();
+        this.htmlTemplate = signatureTemplate.getHtmlTemplate();
+    }
+
     public String getFullName() { return fullName; }
 
     public void setFullName(String fullName) { this.fullName = fullName; }
-
 
     public String getCoreParser() { return coreParser; }
 
@@ -50,22 +81,12 @@ public class SignatureTemplateDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
-    private String htmlTemplate;
-
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getSignatureImage() {
-        return signatureImage;
-    }
-
-    public void setSignatureImage(String signatureImage) {
-        this.signatureImage = signatureImage;
     }
 
     public Long getUserId() {
@@ -106,7 +127,6 @@ public class SignatureTemplateDTO implements Serializable {
     public String toString() {
         return "SignatureTemplateDTO{" +
             "id=" + getId() +
-            ", signatureImage='" + getSignatureImage() + "'" +
             ", userId=" + getUserId() +
             "}";
     }
