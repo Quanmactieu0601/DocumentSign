@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -74,9 +75,7 @@ public class HSMCertificateResource extends BaseResource{
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try {
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
-            byte[] isr = new byte[inputStream.available()];
-            inputStream.read(isr);
-            return new ResponseEntity<>(isr, null, HttpStatus.OK);
+            return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
         } catch (Exception e) {
             log.debug(e.getMessage());
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
