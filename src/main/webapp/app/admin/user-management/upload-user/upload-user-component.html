@@ -1,46 +1,35 @@
-x
-<!-- Modal Upload User Excel File -->
-<!--<ng-template  let-c="close" let-d="dismiss" data-dismiss="modal">-->
-    <div class="modal-header header-custom">
-        <h6 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser" class="title-custom">Upload User</span></h6>
-<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">-->
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
-            <span aria-hidden="true">×</span>
-        </button>
-    </div>
-
-    <div class="modal-body uploadModalBody">
-        <div class="form-group col-md-12 uploadFormGroup">
-            <div class="input-group mb-3">
-                <div class="custom-file" id="custom-file" >
-                    <input type="file" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
-                    <label class="custom-file-label">{{this.fileName}}</label>
-                </div>
-
+<div class="modal-header header-custom">
+    <h6 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser" class="title-custom">Upload User</span></h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+<div class="modal-body uploadModalBody">
+    <div class="form-group col-md-12 uploadFormGroup">
+        <div class="input-group mb-3">
+            <div class="custom-file" id="custom-file">
+                <input type="file" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
+                <label class="custom-file-label">{{this.fileName}}</label>
             </div>
         </div>
     </div>
-
-    <div class="modal-footer footer-custom">
-        <button
-            class="btn btn-primary btn-sm"
-            (click)="upload()"
-        >
-            <fa-icon icon="upload"></fa-icon>&nbsp;
-            <span jhiTranslate="entity.action.upload">Upload</span>
+</div>
+<div class="modal-footer footer-custom">
+    <button class="btn btn-primary btn-sm" (click)="upload()">
+        <fa-icon icon="upload"></fa-icon>&nbsp;
+        <span jhiTranslate="entity.action.upload">Upload</span>
+    </button>
+    <button class="btn btn-warning btn-sm" (click)="downLoadFileTemplate()">
+        <fa-icon icon="download"></fa-icon>
+        <span jhiTranslate="userManagement.downloadFileTemp">Download file template</span>
+    </button>
+    <div class="float-right">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" (click)="cancel()">
+            <fa-icon icon="ban"></fa-icon>&nbsp;
+            <span jhiTranslate="userManagement.home.cancel">Cancel</span>
         </button>
-        <button class="btn btn-warning btn-sm" (click)="downLoadFileTemplate()">
-            <fa-icon icon="download"></fa-icon>
-            <span jhiTranslate="userManagement.downloadFileTemp">Download file template</span>
-        </button>
-
-        <div class="float-right">
-            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal"  (click)="cancel()">
-                <fa-icon icon="ban"></fa-icon>&nbsp;
-                <span jhiTranslate="userManagement.home.cancel">Cancel</span>
-            </button>
-        </div>
     </div>
+</div>
 
 
 

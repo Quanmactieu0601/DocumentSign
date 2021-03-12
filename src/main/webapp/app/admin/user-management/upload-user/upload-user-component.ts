@@ -3,10 +3,11 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserService } from 'app/core/user/user.service.ts';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { AccountService } from '../../../core/auth/account.service';
+import { AccountService } from 'app/core/auth/account.service';
 import { Subscription } from 'rxjs';
-import { Account } from '../../../core/user/account.model';
+import { Account } from 'app/core/user/account.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-upload-user',
@@ -61,33 +62,15 @@ export class UploadUserComponent implements OnInit {
     }
   }
 
-  onInputClick = (event: any) => {
-    const element = event.target as HTMLInputElement;
-    element.value = '';
-  };
-
   downLoadFileTemplate(): void {
-    this.userService.downLoadTemplateFile().subscribe(
-      res => {
-        const bindData = [];
-        bindData.push(res.data);
-        const url = window.URL.createObjectURL(
-          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
-        );
-        const a = document.createElement('a');
-        document.body.appendChild(a);
-        a.setAttribute('style', 'display: none');
-        a.setAttribute('target', 'blank');
-        a.href = url;
-        a.download = 'templateFile';
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-      },
-      error => {
-        console.error(error);
+    this.userService.downLoadTemplateFile().subscribe((res: any) => {
+      if (res.body.type === 'application/json') {
+        saveAs(new Blob([res.body]), 'User-Upload-Template.xlsx');
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+      } else {
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
       }
-    );
+    });
   }
 
   cancel(): void {
