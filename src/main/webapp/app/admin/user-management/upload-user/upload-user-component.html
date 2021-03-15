@@ -1,4 +1,5 @@
 <div class="modal-header header-custom">
+<<<<<<< HEAD
     <h6 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser" class="title-custom">Upload User</span>
     </h6>
     <a class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
@@ -6,19 +7,33 @@
     </a>
 </div>
 
+=======
+    <h6 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser" class="title-custom">Upload User</span></h6>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="cancel()">
+        <span aria-hidden="true">×</span>
+    </button>
+</div>
+>>>>>>> 8783459a2b77c78107961731fdd2e52c48d3f0a8
 <div class="modal-body uploadModalBody">
     <div class="form-group col-md-12 uploadFormGroup">
         <div class="input-group mb-3">
             <div class="custom-file" id="custom-file">
+<<<<<<< HEAD
                 <input type="file" class="custom-file-input" id="form-control inputGroupFile"
                        (change)="selectFile($event)"/>
+=======
+                <input type="file" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
+>>>>>>> 8783459a2b77c78107961731fdd2e52c48d3f0a8
                 <label class="custom-file-label">{{this.fileName}}</label>
             </div>
 
         </div>
     </div>
 </div>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8783459a2b77c78107961731fdd2e52c48d3f0a8
 <div class="modal-footer footer-custom">
     <button class="btn btn-primary btn-sm" (click)="upload()">
         <fa-icon icon="upload"></fa-icon>&nbsp;

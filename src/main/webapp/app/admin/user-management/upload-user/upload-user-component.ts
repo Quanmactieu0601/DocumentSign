@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-upload-user',

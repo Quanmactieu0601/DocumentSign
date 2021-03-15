@@ -150,11 +150,10 @@ public class UserResource extends BaseResource {
         } catch (ApplicationException e) {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
-        } catch (Exception e){
+        } catch (Exception e) {
             message = e.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null,e.getMessage()));
-        }
-         finally {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
+        } finally {
             asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
@@ -190,7 +189,7 @@ public class UserResource extends BaseResource {
             if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
                 asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
                     TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
-                throw new BadRequestAlertException("Current Password does not match","user","currentPassNotMatch");
+                throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
             }
         }
 

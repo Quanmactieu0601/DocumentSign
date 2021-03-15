@@ -62,7 +62,7 @@ public class HSMCertificateResource extends BaseResource {
         }
     }
 
-    @GetMapping("/download-certificate-request-information")
+    @GetMapping("/download-csr-template")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try {

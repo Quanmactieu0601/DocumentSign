@@ -141,10 +141,7 @@ export class CertificateService {
   }
 
   downloadSampleFileCertificate(): Observable<any> {
-    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-certificate-request-information', {
-      observe: 'response',
-      responseType: 'blob',
-    });
+    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-csr-template', { observe: 'response', responseType: 'blob' });
   }
 
   generateCertificateRequestInformation(file: File[]): Observable<any> {

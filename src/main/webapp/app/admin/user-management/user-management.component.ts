@@ -116,11 +116,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       });
     }
   }
-  onInputClick = (event: any) => {
-    const element = event.target as HTMLInputElement;
-    element.value = '';
-  };
-  /**/
 
   ngOnDestroy(): void {
     if (this.userListSubscription) {
