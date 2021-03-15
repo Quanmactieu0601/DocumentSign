@@ -151,8 +151,7 @@ export class CertificateService {
     const formData: FormData = new FormData();
     formData.append('file', file[0]);
     return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, {
-      observe: 'response',
-      responseType: 'blob',
+      observe: 'body',
     });
   }
 }
