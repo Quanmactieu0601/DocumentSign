@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -67,10 +66,10 @@ public class HSMCertificateResource extends BaseResource {
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try {
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
-            return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
         } catch (Exception e) {
             log.debug(e.getMessage());
-            return new ResponseEntity<>(null, null, HttpStatus.OK);
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
         }
     }
 }
