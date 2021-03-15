@@ -87,6 +87,7 @@
       "exportSerial": "Xuất Serial",
       "success": "Thành công",
       "generateCsr": "Tạo CSR",
+      "generateCsrHeader": "Tạo và tải file CSR",
       "cancel": "Hủy",
       "sampleFile": "Thư mục mẫu",
       "errorGenerateCsr": "Tệp không được tải lên"

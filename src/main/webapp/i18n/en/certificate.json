@@ -90,6 +90,7 @@
       "exportSerial": "Export Serial",
       "success": "Successfully",
       "generateCsr": "Generate CSR",
+      "generateCsrHeader": "Generate and download file CSR",
       "cancel": "Cancel",
       "sampleFile": "Sample File",
       "errorGenerateCsr": "The file was not uploaded"

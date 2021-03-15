@@ -11,7 +11,7 @@
     </div>
         <div class="input-group">
         <div class="custom-file overflow-hidden" id="custom-file">
-            <input type="file" class="custom-file-input" id="form-control" (change)="choose($event)"/>
+            <input type="file" accept="image/x-png,image/gif,image/jpeg" class="custom-file-input" id="form-control" (change)="choose($event)"/>
             <label class="custom-file-label">{{this.fileName}}</label>
         </div>
     </div>
