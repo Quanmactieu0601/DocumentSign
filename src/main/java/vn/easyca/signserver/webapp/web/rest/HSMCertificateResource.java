@@ -14,6 +14,7 @@ import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
+import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
@@ -32,13 +33,16 @@ public class HSMCertificateResource extends BaseResource {
     private final ExcelUtils excelUtils;
     private final FileResourceService fileResourceService;
     private final CertificateGenerateService p11GeneratorService;
+    private final UserApplicationService userApplicationService;
 
     public HSMCertificateResource(AsyncTransactionService asyncTransactionService, ExcelUtils excelUtils,
-                                  FileResourceService fileResourceService, CertificateGenerateService p11GeneratorService) {
+                                  FileResourceService fileResourceService, CertificateGenerateService p11GeneratorService,
+                                  UserApplicationService userApplicationService) {
         this.asyncTransactionService = asyncTransactionService;
         this.excelUtils = excelUtils;
         this.fileResourceService = fileResourceService;
         this.p11GeneratorService = p11GeneratorService;
+        this.userApplicationService = userApplicationService;
     }
 
     @PostMapping("/generate-bulk-csr")
@@ -55,7 +59,7 @@ public class HSMCertificateResource extends BaseResource {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
-            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(message));
         } finally {
             asyncTransactionService.newThread("/api/hsm-certificate/generate-bulk-csr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
@@ -66,11 +70,31 @@ public class HSMCertificateResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try {
+            log.info("--- download-certificate-request-template ---");
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
             return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
         } catch (Exception e) {
             log.debug(e.getMessage());
             return new ResponseEntity<>(null, null, HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/import-cert-to-hsm")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importCertToHSM(@RequestParam("file") MultipartFile file) {
+        try {
+            log.info("--- import-cert-to-hsm ---");
+            List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
+            String currentUser = AccountUtils.getLoggedAccount();
+            p11GeneratorService.installCertIntoHsm(dtos, currentUser);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+        } catch (Exception e) {
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(message));
+        } finally {
+            asyncTransactionService.newThread("/api/hsm-certificate/import-cert-to-hsm", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 }

@@ -5,6 +5,7 @@ import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 @Component({
   selector: 'jhi-upload-certificate',
@@ -18,6 +19,7 @@ export class UploadCertificateComponent implements OnInit {
   progress = 0;
   fileInfos: Observable<any> = new Observable<any>();
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
+
   constructor(
     private certificateService: CertificateService,
     private toastService: ToastrService,
@@ -26,30 +28,26 @@ export class UploadCertificateComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+
   selectFile(event: any): void {
     this.selectedFiles = event.target.files;
-    const sizeFile = event.target.files.item(0).size / 1024000;
+    const sizeFile = event.target.files.item(0).size / 10240000;
     if (sizeFile > 1) {
-      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
+      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 10MB');
       this.selectedFiles = [];
     }
     this.fileName = this.selectedFiles[0].name;
   }
+
   upload(): void {
     this.progress = 0;
-
     this.currentFile = this.selectedFiles.item(0);
-
-    this.certificateService.upload(this.currentFile).subscribe((res: any) => {
-      if (res.type === HttpEventType.UploadProgress) {
-        this.progress = Math.round((100 * res.loaded) / res.total);
-      } else if (res instanceof HttpResponse) {
-        if (res.body.status === 200) {
-          this.toastService.success(this.translate.instant('userManagement.alert.success.uploaded'));
-          this.transformVariable(true);
-        } else if (res.body.status === 417) {
-          this.toastService.error(this.translate.instant('userManagement.alert.fail.uploaded'));
-        }
+    this.certificateService.importCertToHsm(this.currentFile).subscribe((res: ResponseBody) => {
+      if (res.status === ResponseBody.SUCCESS) {
+        this.toastService.success(this.translate.instant('webappApp.certificate.uploadCert.alert.success'));
+        this.transformVariable(true);
+      } else {
+        this.toastService.error(this.translate.instant('webappApp.certificate.uploadCert.alert.error', { message: res.msg }));
       }
     });
   }
@@ -57,6 +55,7 @@ export class UploadCertificateComponent implements OnInit {
   transformVariable(agreed: boolean): void {
     this.isUploadedSucessfully.emit(agreed);
   }
+
   onInputClick = (event: any) => {
     const element = event.target as HTMLInputElement;
     element.value = '';

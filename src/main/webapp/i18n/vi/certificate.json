@@ -74,7 +74,13 @@
         "cancel": "Hủy bỏ",
         "confirm": "Xác nhận"
       },
-      "uploadCert": "Tải chứng thư số",
+      "uploadCert": {
+        "title": "Cài đặt CTS vào HSM",
+        "alert": {
+          "success": "Cài đặt CTS vào HSM thành công",
+          "error": "Cài đặt CTS vào HSM thất bại: {{message}}"
+        }
+      },
       "uploadP12Cert": "Tải chứng thư số P12",
       "uploadSignatureImage": "Tải ảnh chữ kí",
       "search": "Tìm kiếm",

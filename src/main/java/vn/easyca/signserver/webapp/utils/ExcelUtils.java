@@ -148,7 +148,7 @@ public class ExcelUtils {
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
         List<CertRequestInfoDTO> csrDTOs = new ArrayList<>();
-        CertRequestInfoDTO csrDTO = null;
+        CertRequestInfoDTO csrDTO;
         DataFormatter formatter = new DataFormatter(Locale.US);
         for (int i = 2; i < rows; i++) {
             Row row = sheet.getRow(i);
@@ -166,6 +166,9 @@ public class ExcelUtils {
                 csrDTO.setLocality(formatter.formatCellValue(row.getCell(10, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
                 csrDTO.setState(formatter.formatCellValue(row.getCell(11, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
                 csrDTO.setCountry(formatter.formatCellValue(row.getCell(12, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                csrDTO.setAlias(formatter.formatCellValue(row.getCell(13, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                csrDTO.setCsrValue(formatter.formatCellValue(row.getCell(14, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
+                csrDTO.setCertValue(formatter.formatCellValue(row.getCell(15, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
                 csrDTOs.add(csrDTO);
             }
         }

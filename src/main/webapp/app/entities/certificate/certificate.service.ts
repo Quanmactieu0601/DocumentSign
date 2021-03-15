@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { observable, Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
@@ -17,6 +17,7 @@ const httpOptions = {
 @Injectable({ providedIn: 'root' })
 export class CertificateService {
   public resourceUrl = SERVER_API_URL + 'api/certificate';
+  public hsmResourceUrl = SERVER_API_URL + 'api/hsm-certificate';
 
   constructor(protected http: HttpClient) {}
 
@@ -63,17 +64,13 @@ export class CertificateService {
   sendData(req?: any): Observable<any> {
     return this.http.post(this.resourceUrl + '/exportCsr', req, httpOptions);
   }
-  upload(file: File): Observable<HttpEvent<any>> {
+
+  importCertToHsm(file: File): Observable<any> {
     const formData: FormData = new FormData();
-
     formData.append('file', file);
-
-    const req = new HttpRequest('POST', `${this.resourceUrl}/uploadCert`, formData, {
-      reportProgress: true,
-      responseType: 'json',
+    return this.http.post(`${this.hsmResourceUrl}/import-cert-to-hsm`, formData, {
+      observe: 'body',
     });
-
-    return this.http.request(req);
   }
 
   uploadP12(files: File[]): Observable<any> {

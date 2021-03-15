@@ -77,7 +77,13 @@
         "cancel": "Cancel",
         "confirm": "Confirm"
       },
-      "uploadCert": "Upload CERT",
+      "uploadCert": {
+        "title": "Install CERT into HSM",
+        "alert": {
+          "success": "Install CERT into HSM successfully",
+          "error": "Install CERT into HSM failure: {{message}}"
+        }
+      },
       "uploadP12Cert": "Upload P12 CERT",
       "uploadSignatureImage": "Upload Signature Image",
       "search": "Search",

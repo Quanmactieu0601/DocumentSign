@@ -19,6 +19,8 @@ public class CertRequestInfoDTO {
     private String alias;
     private String csrValue;
 
+    private String certValue;
+
     public String getTaxCode() {
         return taxCode;
     }
@@ -129,6 +131,14 @@ public class CertRequestInfoDTO {
 
     public void setCsrValue(String csrValue) {
         this.csrValue = csrValue;
+    }
+
+    public String getCertValue() {
+        return certValue;
+    }
+
+    public void setCertValue(String certValue) {
+        this.certValue = certValue;
     }
 
     public String getSubjectDN() {
