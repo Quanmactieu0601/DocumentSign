@@ -66,5 +66,7 @@
         "sizeErr": "File size need smaller than 1 MB"
       }
     }
-  }
+  },
+  "success": "Successfully",
+  "error": "error"
 }

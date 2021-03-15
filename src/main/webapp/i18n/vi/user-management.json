@@ -66,5 +66,7 @@
         "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
     }
-  }
+  },
+  "success": "Thành công",
+  "error": "Có lỗi"
 }
