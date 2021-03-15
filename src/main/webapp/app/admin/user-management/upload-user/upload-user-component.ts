@@ -70,9 +70,9 @@ export class UploadUserComponent implements OnInit {
     this.userService.downLoadTemplateFile().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
         saveAs(this.base64toBlob(res.data), 'Sample-User-File.xlsx');
-        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+        this.toastrService.success(this.translateService.instant('userManagement.success'));
       } else {
-        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+        this.toastrService.error(res.msg);
       }
     });
   }

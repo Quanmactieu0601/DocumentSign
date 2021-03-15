@@ -67,6 +67,5 @@
       }
     }
   },
-  "success": "Successfully",
-  "error": "error"
+  "success": "Successfully"
 }
