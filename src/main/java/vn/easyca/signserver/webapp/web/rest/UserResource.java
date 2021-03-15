@@ -1,8 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import com.google.common.base.Strings;
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -12,18 +12,14 @@ import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
+import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.MailService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
-import vn.easyca.signserver.webapp.service.error.InfoFromCNToCountryNotFoundException;
-import vn.easyca.signserver.webapp.service.error.InvalidCountryColumnLength;
-import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
-import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
-import vn.easyca.signserver.webapp.web.rest.errors.CurrentPasswordNotMatchException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
 import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
 
@@ -45,7 +41,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URI;
@@ -86,14 +81,15 @@ public class UserResource extends BaseResource {
     private String applicationName;
 
     private final UserApplicationService userApplicationService;
-
+    private final FileResourceService fileResourceService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final AsyncTransactionService asyncTransactionService;
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, AsyncTransactionService asyncTransactionService) {
+    public UserResource(UserApplicationService userApplicationService, FileResourceService fileResourceService, UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, AsyncTransactionService asyncTransactionService) {
         this.userApplicationService = userApplicationService;
+        this.fileResourceService = fileResourceService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -220,23 +216,13 @@ public class UserResource extends BaseResource {
 
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException {
-        InputStream inputStream = null;
+    public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
         try {
-            inputStream = new ClassPathResource("templates/upload/UserUploadTemplate.xlsx").getInputStream();
-            byte[] isr = new byte[inputStream.available()];
-            inputStream.read(isr);
-            response.setContentType("application/vnd.ms-excel");
-
-            HttpHeaders respHeaders = new HttpHeaders();
-            respHeaders.setContentLength(isr.length);
-            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-
-            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
+            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx");
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
         }
     }
 

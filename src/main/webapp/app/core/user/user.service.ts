@@ -88,12 +88,6 @@ export class UserService {
   }
 
   downLoadTemplateFile(): Observable<any> {
-    return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
-      map(response => {
-        return {
-          data: response,
-        };
-      })
-    );
+    return this.http.get(`${this.resourceUrl}/templateFile`, { observe: 'body' });
   }
 }
