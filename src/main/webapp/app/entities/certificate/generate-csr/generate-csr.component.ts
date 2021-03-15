@@ -6,7 +6,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { saveAs } from 'file-saver';
 import { DatePipe } from '@angular/common';
 import { ResponseBody } from 'app/shared/model/response-body';
-import { UtilService } from 'app/shared/util/util-service';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
 
 @Component({
   selector: 'jhi-generate-csr',
@@ -41,7 +41,7 @@ export class GenerateCsrComponent implements OnInit {
     this.currentFile = this.selectedFiles;
     this.certificateService.generateCertificateRequestInformation(this.currentFile).subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(UtilService.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
+        saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
@@ -52,7 +52,7 @@ export class GenerateCsrComponent implements OnInit {
   downloadSampleFile(): void {
     this.certificateService.downloadSampleFileCertificate().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(UtilService.base64toBlob(res.data), 'Sample-Certificate-Request-Information.xlsx');
+        saveAs(FileDataUtil.base64toBlob(res.data), 'Sample-Certificate-Request-Information.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));

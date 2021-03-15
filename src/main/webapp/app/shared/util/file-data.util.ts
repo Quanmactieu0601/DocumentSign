@@ -1,4 +1,4 @@
-export class UtilService {
+export class FileDataUtil {
   static base64toBlob(base64Data: string): any {
     const sliceSize = 1024;
     const byteCharacters = atob(base64Data);
