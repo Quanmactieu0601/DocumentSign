@@ -6,6 +6,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { saveAs } from 'file-saver';
 import { DatePipe } from '@angular/common';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { UtilService } from 'app/shared/util/util-service';
 
 @Component({
   selector: 'jhi-generate-csr',
@@ -40,7 +41,7 @@ export class GenerateCsrComponent implements OnInit {
     this.currentFile = this.selectedFiles;
     this.certificateService.generateCertificateRequestInformation(this.currentFile).subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(this.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
+        saveAs(UtilService.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
@@ -48,30 +49,10 @@ export class GenerateCsrComponent implements OnInit {
     });
   }
 
-  base64toBlob(base64Data: string): any {
-    const sliceSize = 1024;
-    const byteCharacters = atob(base64Data);
-    const bytesLength = byteCharacters.length;
-    const slicesCount = Math.ceil(bytesLength / sliceSize);
-    const byteArrays = new Array(slicesCount);
-
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      const begin = sliceIndex * sliceSize;
-      const end = Math.min(begin + sliceSize, bytesLength);
-
-      const bytes = new Array(end - begin);
-      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-        bytes[i] = byteCharacters[offset].charCodeAt(0);
-      }
-      byteArrays[sliceIndex] = new Uint8Array(bytes);
-    }
-    return new Blob(byteArrays);
-  }
-
   downloadSampleFile(): void {
     this.certificateService.downloadSampleFileCertificate().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(this.base64toBlob(res.data), 'Sample-Certificate-Request-Information.xlsx');
+        saveAs(UtilService.base64toBlob(res.data), 'Sample-Certificate-Request-Information.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
