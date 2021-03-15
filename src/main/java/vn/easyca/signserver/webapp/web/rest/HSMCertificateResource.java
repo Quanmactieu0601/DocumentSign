@@ -31,18 +31,16 @@ import java.util.List;
 @Scope("request")
 @RestController
 @RequestMapping("/api/hsm-certificate")
-public class HSMCertificateResource extends BaseResource{
+public class HSMCertificateResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(HSMCertificateResource.class);
 
-    private final CertificateGenerateService p11GeneratorService;
     private final AsyncTransactionService asyncTransactionService;
     private final ExcelUtils excelUtils;
     private final FileResourceService fileResourceService;
 
-    public HSMCertificateResource(CertificateGenerateService p11GeneratorService,
-                                  AsyncTransactionService asyncTransactionService,
-                                  ExcelUtils excelUtils, FileResourceService fileResourceService) {
-        this.p11GeneratorService = p11GeneratorService;
+    public HSMCertificateResource(AsyncTransactionService asyncTransactionService,
+                                  ExcelUtils excelUtils,
+                                  FileResourceService fileResourceService) {
         this.asyncTransactionService = asyncTransactionService;
         this.excelUtils = excelUtils;
         this.fileResourceService = fileResourceService;
@@ -50,24 +48,25 @@ public class HSMCertificateResource extends BaseResource{
 
     @PostMapping("/generate-bulk-csr")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public  ResponseEntity<Object> generateBulkCSR(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Object> generateBulkCSR(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- generate-bulk-csr ---");
-            String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
+//            String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
-            p11GeneratorService.generateBulkCSR(dtos);
+//            p11GeneratorService.generateBulkCSR(dtos);
             byte[] byteData = excelUtils.exportCsrFileFormat2(dtos);
-            InputStreamResource result = new InputStreamResource(new ByteArrayInputStream(byteData));
+//            InputStreamResource result = new InputStreamResource(new ByteArrayInputStream(byteData));
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resultFileName)
-                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
-                .contentLength(byteData.length)
-                .body(result);
+//            return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resultFileName)
+//                .contentType(MediaType.parseMediaType("application/vnd.ms-excel"))
+//                .contentLength(byteData.length)
+//                .body(result);
+            return new ResponseEntity<>(byteData, null, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+            return new ResponseEntity<>(null, null, HttpStatus.OK);
         } finally {
             asyncTransactionService.newThread("/api/hsm-certificate/generate-bulk-csr", TransactionType.BUSINESS, Action.CREATE, Extension.CSR, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
@@ -82,7 +81,7 @@ public class HSMCertificateResource extends BaseResource{
             return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
         } catch (Exception e) {
             log.debug(e.getMessage());
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+            return new ResponseEntity<>(null, null, HttpStatus.OK);
         }
     }
 }
