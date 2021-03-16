@@ -1,7 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 
 import org.springframework.data.domain.Page;
@@ -48,6 +47,6 @@ public interface SignatureImageService {
 
     String getBase64Image(Long id) throws ApplicationException;
 
-    SignatureImage saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException;
+    SignatureImageDTO saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException;
 
 }
