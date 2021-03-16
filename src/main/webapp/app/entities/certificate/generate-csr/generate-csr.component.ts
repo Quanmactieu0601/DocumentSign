@@ -17,8 +17,6 @@ export class GenerateCsrComponent implements OnInit {
   currentFile: any;
   progress = 0;
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
-  now = new Date();
-  currentDay = this.datePipe.transform(this.now, 'dd-MM-yyyy');
 
   constructor(
     private certificateService: CertificateService,
@@ -41,7 +39,8 @@ export class GenerateCsrComponent implements OnInit {
     this.currentFile = this.selectedFiles;
     this.certificateService.generateCertificateRequestInformation(this.currentFile).subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
+        const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
+        saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + currentDay + '.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));

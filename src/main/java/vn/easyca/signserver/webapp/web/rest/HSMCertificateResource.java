@@ -52,7 +52,7 @@ public class HSMCertificateResource extends BaseResource {
 //            String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
             p11GeneratorService.generateBulkCSR(dtos);
-            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos);
+            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos, CertRequestInfoDTO.STEP_2);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(byteData));
         } catch (Exception e) {
@@ -86,8 +86,9 @@ public class HSMCertificateResource extends BaseResource {
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
             String currentUser = AccountUtils.getLoggedAccount();
             p11GeneratorService.installCertIntoHsm(dtos, currentUser);
+            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos, CertRequestInfoDTO.STEP_4);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(byteData));
         } catch (Exception e) {
             message = e.getMessage();
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(message));

@@ -3,6 +3,12 @@ package vn.easyca.signserver.webapp.service.dto;
 import org.apache.commons.lang3.StringUtils;
 
 public class CertRequestInfoDTO {
+    public static final int STEP_1 = 1;
+    public static final int STEP_2 = 2;
+    public static final int STEP_3 = 3;
+    public static final int STEP_4 = 4;
+
+    // step 1 - nguoi dung import thong tin step 1 len EasySign
     private String taxCode; //mst;
     private String companyName; // tenDoanhNghiep;
     private String organization; // toChuc;
@@ -16,10 +22,16 @@ public class CertRequestInfoDTO {
     private String state; // tinh/thanhPho;
     private String country; // quocGia;
 
+    // step 2 - import thong tin step 1 va nhan thong tin step 2
     private String alias;
     private String csrValue;
 
+    // step 3 - gui thong tin step 2 de RA tao thong tin step 3
     private String certValue;
+
+    // step 4 - import thong tin step 3 len EasySign va nhan thong tin step 4
+    private String serial;
+    private String pin;
 
     public String getTaxCode() {
         return taxCode;
@@ -139,6 +151,22 @@ public class CertRequestInfoDTO {
 
     public void setCertValue(String certValue) {
         this.certValue = certValue;
+    }
+
+    public String getSerial() {
+        return serial;
+    }
+
+    public void setSerial(String serial) {
+        this.serial = serial;
+    }
+
+    public String getPin() {
+        return pin;
+    }
+
+    public void setPin(String pin) {
+        this.pin = pin;
     }
 
     public String getSubjectDN() {

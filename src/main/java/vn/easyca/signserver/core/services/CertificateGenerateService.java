@@ -139,9 +139,10 @@ public class CertificateGenerateService {
             certificateDTO.setActiveStatus(1);
             certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
-            //TODO: export this pin to user
             // Create random password for hsm certificate
-            certificateDTO.setEncryptedPin(symmetricService.encrypt(CommonUtils.genRandomHsmCertPin()));
+            String rawPin = CommonUtils.genRandomHsmCertPin();
+            certificateDTO.setRawPin(rawPin);
+            certificateDTO.setEncryptedPin(symmetricService.encrypt(rawPin));
 
             TokenInfo tokenInfo = new TokenInfo()
                 .setName(hsmConfig.getName());
@@ -334,12 +335,12 @@ public class CertificateGenerateService {
     public void generateBulkCSR(List<CertRequestInfoDTO> certRequestInfoDTOs) throws Exception {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         int keyLength = 2048;
-        for(int i = 0; i < certRequestInfoDTOs.size(); i++) {
+        for(CertRequestInfoDTO dto : certRequestInfoDTOs) {
             String alias = CommonUtils.genRandomAlias();
-            String subjectDN = certRequestInfoDTOs.get(i).getSubjectDN();
+            String subjectDN = dto.getSubjectDN();
             String csr = createCSR(cryptoToken, alias, subjectDN, keyLength);
-            certRequestInfoDTOs.get(i).setAlias(alias);
-            certRequestInfoDTOs.get(i).setCsrValue(csr);
+            dto.setAlias(alias);
+            dto.setCsrValue(csr);
         }
     }
 
@@ -351,8 +352,10 @@ public class CertificateGenerateService {
      */
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
-        for (CertRequestInfoDTO dto : dtos) {
-            saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, dto.getSubjectDN(), cryptoToken);
+        for(CertRequestInfoDTO dto : dtos) {
+            CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, dto.getSubjectDN(), cryptoToken);
+            dto.setSerial(result.getSerial());
+            dto.setPin(result.getRawPin());
         }
     }
 }

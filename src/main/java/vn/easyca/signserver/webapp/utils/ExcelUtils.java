@@ -51,7 +51,7 @@ public class ExcelUtils {
         return bos.toByteArray();
     }
 
-    public byte[] exportCsrFileFormat2(List<CertRequestInfoDTO> dtos) throws IOException, ApplicationException {
+    public byte[] exportCsrFileFormat2(List<CertRequestInfoDTO> dtos, int step) throws IOException, ApplicationException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         try {
@@ -75,7 +75,10 @@ public class ExcelUtils {
                 row.createCell(11).setCellValue(dto.getState());
                 row.createCell(12).setCellValue(dto.getCountry());
                 row.createCell(13).setCellValue(dto.getAlias());
-                row.createCell(14).setCellValue(dto.getCsrValue());
+                row.createCell(14).setCellValue(step == CertRequestInfoDTO.STEP_2 ? dto.getCsrValue() : "");
+                row.createCell(15).setCellValue("");
+                row.createCell(16).setCellValue(step == CertRequestInfoDTO.STEP_4 ? dto.getSerial() : "");
+                row.createCell(17).setCellValue(step == CertRequestInfoDTO.STEP_4 ? dto.getPin() : "");
                 index++;
             }
             workbook.write(bos);

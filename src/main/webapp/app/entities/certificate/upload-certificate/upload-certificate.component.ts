@@ -6,6 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { saveAs } from 'file-saver';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'jhi-upload-certificate',
@@ -24,7 +27,8 @@ export class UploadCertificateComponent implements OnInit {
     private certificateService: CertificateService,
     private toastService: ToastrService,
     private translate: TranslateService,
-    public activeModal: NgbActiveModal
+    public activeModal: NgbActiveModal,
+    private datePipe: DatePipe
   ) {}
 
   ngOnInit(): void {}
@@ -44,8 +48,9 @@ export class UploadCertificateComponent implements OnInit {
     this.currentFile = this.selectedFiles.item(0);
     this.certificateService.importCertToHsm(this.currentFile).subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
+        const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
+        saveAs(FileDataUtil.base64toBlob(res.data), 'HSM_Serial_PIN_Result-' + currentDay + '.xlsx');
         this.toastService.success(this.translate.instant('webappApp.certificate.uploadCert.alert.success'));
-        this.transformVariable(true);
       } else {
         this.toastService.error(this.translate.instant('webappApp.certificate.uploadCert.alert.error', { message: res.msg }));
       }
