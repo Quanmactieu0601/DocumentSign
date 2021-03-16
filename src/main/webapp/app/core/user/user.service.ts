@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
 import { IUser, User } from './user.model';
-import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -88,12 +87,6 @@ export class UserService {
   }
 
   downLoadTemplateFile(): Observable<any> {
-    return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
-      map(response => {
-        return {
-          data: response,
-        };
-      })
-    );
+    return this.http.get(`${this.resourceUrl}/templateFile`, { observe: 'body' });
   }
 }

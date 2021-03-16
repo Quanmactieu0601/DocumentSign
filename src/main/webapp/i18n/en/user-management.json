@@ -65,6 +65,10 @@
         "uploaded": "Upload User file failure",
         "sizeErr": "File size need smaller than 1 MB"
       }
+    },
+    "downloadSampleFileUser": {
+      "success": "Download file successfully",
+      "error": "Download file failed"
     }
   }
 }

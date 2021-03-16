@@ -65,6 +65,10 @@
         "uploaded": "Tải lên tệp người dùng thất bại",
         "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
+    },
+    "downloadSampleFileUser": {
+      "success": "Tải thư mục thành công",
+      "error": "Tải thư mục thất bại"
     }
   }
 }
