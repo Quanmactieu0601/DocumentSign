@@ -1,16 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Account } from 'app/core/user/account.model';
-import { IUser, User } from 'app/core/user/user.model';
-import { combineLatest, Subscription } from 'rxjs';
+import { User } from 'app/core/user/user.model';
+import { Subscription } from 'rxjs';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { UserService } from 'app/core/user/user.service';
 import { AccountService } from 'app/core/auth/account.service';
-import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
+import { ActivatedRoute, Router } from '@angular/router';
+import { JhiEventManager } from 'ng-jhipster';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { FormBuilder } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
 import { UserManagementKeyLengthComponent } from 'app/admin/user-management/user-management-key-length.component';
@@ -79,7 +78,6 @@ export class UserPopupComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    const pageToLoad: number = page || this.page || 1;
 
     if (data.account != null) {
       data.account = data.account.trim();
@@ -144,7 +142,7 @@ export class UserPopupComponent implements OnInit {
   }
 
   createCSR(): void {
-    const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
+    this.modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
     this.userService.setListId(this.listId);
   }
 
