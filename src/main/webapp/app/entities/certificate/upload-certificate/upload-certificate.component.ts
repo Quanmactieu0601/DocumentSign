@@ -46,6 +46,7 @@ export class UploadCertificateComponent implements OnInit {
       if (res.status === ResponseBody.SUCCESS) {
         this.toastService.success(this.translate.instant('webappApp.certificate.uploadCert.alert.success'));
         this.transformVariable(true);
+        this.activeModal.dismiss();
       } else {
         this.toastService.error(this.translate.instant('webappApp.certificate.uploadCert.alert.error', { message: res.msg }));
       }
