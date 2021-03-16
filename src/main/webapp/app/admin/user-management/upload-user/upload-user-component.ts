@@ -9,6 +9,7 @@ import { Account } from 'app/core/user/account.model';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResponseBody } from 'app/shared/model/response-body';
 import { saveAs } from 'file-saver';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
 
 @Component({
   selector: 'jhi-upload-user',
@@ -69,32 +70,12 @@ export class UploadUserComponent implements OnInit {
   downLoadFileTemplate(): void {
     this.userService.downLoadTemplateFile().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        saveAs(this.base64toBlob(res.data), 'Sample-User-File.xlsx');
+        saveAs(FileDataUtil.base64toBlob(res.data), 'Sample-User-File.xlsx');
         this.toastrService.success(this.translateService.instant('userManagement.downloadSampleFileUser.success'));
       } else {
         this.toastrService.error(this.translateService.instant('userManagement.downloadSampleFileUser.error'));
       }
     });
-  }
-
-  base64toBlob(base64Data: string): any {
-    const sliceSize = 1024;
-    const byteCharacters = atob(base64Data);
-    const bytesLength = byteCharacters.length;
-    const slicesCount = Math.ceil(bytesLength / sliceSize);
-    const byteArrays = new Array(slicesCount);
-
-    for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-      const begin = sliceIndex * sliceSize;
-      const end = Math.min(begin + sliceSize, bytesLength);
-
-      const bytes = new Array(end - begin);
-      for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-        bytes[i] = byteCharacters[offset].charCodeAt(0);
-      }
-      byteArrays[sliceIndex] = new Uint8Array(bytes);
-    }
-    return new Blob(byteArrays);
   }
 
   cancel(): void {
