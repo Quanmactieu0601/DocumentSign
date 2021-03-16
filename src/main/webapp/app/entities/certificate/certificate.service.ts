@@ -138,17 +138,12 @@ export class CertificateService {
   }
 
   downloadSampleFileCertificate(): Observable<any> {
-    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-certificate-request-information', {
-      observe: 'response',
-      responseType: 'blob',
-    });
+    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-certificate-request-information', { observe: 'body' });
   }
 
   generateCertificateRequestInformation(file: File[]): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file[0]);
-    return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, {
-      observe: 'body',
-    });
+    return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, { observe: 'body' });
   }
 }
