@@ -43,6 +43,7 @@ export class GenerateCsrComponent implements OnInit {
       if (res.status === ResponseBody.SUCCESS) {
         saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + this.currentDay + '.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+        this.activeModal.dismiss();
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
       }
