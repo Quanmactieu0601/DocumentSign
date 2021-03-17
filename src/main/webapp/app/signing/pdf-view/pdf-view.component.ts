@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-
+import * as $ from 'jquery';
 @Component({
   selector: 'jhi-pdf-view',
   templateUrl: './pdf-view.component.html',
@@ -28,6 +28,13 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     const x = e.pageX + 2;
     const y = e.pageY;
     // (document.querySelector('#rectMove') as HTMLElement).style.transform = 'translate(10px, 0px)'
-    (document.querySelector('#rectMove') as HTMLElement).style.transform;
+    // (document.querySelector('#rectMove') as HTMLElement).style.transform;
+    $('#rectMove').animate(
+      {
+        left: x,
+        top: y,
+      },
+      0
+    );
   }
 }
