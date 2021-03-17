@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -19,5 +19,15 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   fileChangeEvent(event: any): void {
     const selectedFile = event.target.files;
     this.content = selectedFile[0];
+    // if(this.content) {
+    //
+    // }
+  }
+  @HostListener('document:mousemove', ['$event'])
+  onMouseMove(e: any): void {
+    const x = e.pageX + 2;
+    const y = e.pageY;
+    // (document.querySelector('#rectMove') as HTMLElement).style.transform = 'translate(10px, 0px)'
+    (document.querySelector('#rectMove') as HTMLElement).style.transform;
   }
 }
