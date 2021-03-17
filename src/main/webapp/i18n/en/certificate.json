@@ -77,12 +77,15 @@
         "cancel": "Cancel",
         "confirm": "Confirm"
       },
-      "uploadCert": {
+      "installCertIntoHsm": {
         "title": "Install CERT into HSM",
+        "notification": "File size must be less than 10MB",
         "alert": {
           "success": "Install CERT into HSM successfully",
           "error": "Install CERT into HSM failure: {{message}}"
-        }
+        },
+        "install": "Install",
+        "cancel": "Cancel"
       },
       "uploadP12Cert": "Upload P12 CERT",
       "uploadSignatureImage": "Upload Signature Image",

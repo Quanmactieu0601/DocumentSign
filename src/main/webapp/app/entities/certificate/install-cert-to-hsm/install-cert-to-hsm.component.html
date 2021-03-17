@@ -1,0 +1,24 @@
+<div class="modal-header header-custom">
+    <h5 jhiTranslate="webappApp.certificate.installCertIntoHsm.title" class="modal-title"></h5>
+    <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+        <span aria-hidden="true">&times;</span>
+    </a>
+</div>
+<div class="modal-body">
+    <div class="form-group col-md-12 uploadFormGroup">
+        <div class="input-group mb-3">
+            <div class="custom-file" id="custom-file" >
+                <input type="file" accept=".xlsx" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
+                <label class="custom-file-label">{{this.fileName}}</label>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer footer-custom">
+    <button jhiTranslate="webappApp.certificate.installCertIntoHsm.install"
+        class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">
+    </button>
+    <button jhiTranslate="webappApp.certificate.installCertIntoHsm.cancel"
+        type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">
+    </button>
+</div>

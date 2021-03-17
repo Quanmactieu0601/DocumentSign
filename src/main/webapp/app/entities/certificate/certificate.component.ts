@@ -17,7 +17,7 @@ import { ResponseBody } from 'app/shared/model/response-body';
 import { AccountService } from 'app/core/auth/account.service';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
-import { UploadCertificateComponent } from './upload-certificate/upload-certificate.component';
+import { InstallCertToHsmComponent } from './install-cert-to-hsm/install-cert-to-hsm.component';
 import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
 import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
 import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
@@ -167,7 +167,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.modalRef = this.modalService.open(content, { size: 'md' });
   }
   openModalUploadCert(): void {
-    this.modalRef = this.modalService.open(UploadCertificateComponent, { size: 'md' });
+    this.modalRef = this.modalService.open(InstallCertToHsmComponent, { size: 'md' });
   }
 
   openModalP12Upload(): void {

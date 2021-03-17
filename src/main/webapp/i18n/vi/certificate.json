@@ -74,12 +74,15 @@
         "cancel": "Hủy bỏ",
         "confirm": "Xác nhận"
       },
-      "uploadCert": {
+      "installCertIntoHsm": {
         "title": "Cài đặt CTS vào HSM",
+        "notification": "Dung lượng tệp tải lên phải nhỏ hơn 10MB",
         "alert": {
           "success": "Cài đặt CTS vào HSM thành công",
           "error": "Cài đặt CTS vào HSM thất bại: {{message}}"
-        }
+        },
+        "install": "Cài đặt",
+        "cancel": "Hủy bỏ"
       },
       "uploadP12Cert": "Tải chứng thư số P12",
       "uploadSignatureImage": "Tải ảnh chữ kí",
