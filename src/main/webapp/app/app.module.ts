@@ -15,7 +15,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { LoginComponent } from './login/login.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
-
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -27,9 +28,10 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
     // jhipster-needle-angular-add-module JHipster will add new module here,
     WebappAppRoutingModule,
     BrowserAnimationsModule,
+    NgxExtendedPdfViewerModule,
     ToastrModule.forRoot(),
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, PdfViewComponent],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

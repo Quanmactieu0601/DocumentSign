@@ -73,7 +73,17 @@ module.exports = (options) => ({
                 // (see the `jhipster.cors` common JHipster property in the `application-*.yml` configurations)
                 SERVER_API_URL: `''`
             }
-        }),
+        }), new CopyWebpackPlugin([
+        { from: './node_modules/swagger-ui-dist/*.{js,css,html,png}', to: 'swagger-ui', flatten: true, ignore: ['index.html']},
+        { from: './node_modules/axios/dist/axios.min.js', to: 'swagger-ui'},
+        { from: './src/main/webapp/swagger-ui/', to: 'swagger-ui' },
+        { from: './src/main/webapp/content/', to: 'content' },
+        { from: './src/main/webapp/favicon.ico', to: 'favicon.ico' },
+        { from: './src/main/webapp/manifest.webapp', to: 'manifest.webapp' },
+        // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
+        { from: './src/main/webapp/robots.txt', to: 'robots.txt' },
+        { from: "./node_modules/ngx-extended-pdf-viewer/assets", to: 'assets' },
+      ]),
         new CopyWebpackPlugin([
             { from: './node_modules/swagger-ui-dist/*.{js,css,html,png}', to: 'swagger-ui', flatten: true, ignore: ['index.html'] },
             { from: './node_modules/axios/dist/axios.min.js', to: 'swagger-ui' },

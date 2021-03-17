@@ -13,7 +13,7 @@
             <i class="fas fa-home"></i>
             <span jhiTranslate="global.menu.home">Trang chủ</span></a>
     </li>
-    <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"  [hidden]="true">
+    <li class="nav-item" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBootstrap0"
            aria-expanded="true" aria-controls="collapseBootstrap0">
             <i class="fas fa-edit"></i>
@@ -22,7 +22,7 @@
         <div id="collapseBootstrap0" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.pdf">Ký số PDF</span></a>
+                <a class="collapse-item" routerLink="/admin/pdfSigning" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.pdf">Ký số PDF</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.ooxml">Ký số Office</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.xml">Ký số XML</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.raw">Ký số dữ liệu raw</span></a>
