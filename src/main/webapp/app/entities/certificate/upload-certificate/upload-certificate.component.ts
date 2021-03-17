@@ -51,6 +51,7 @@ export class UploadCertificateComponent implements OnInit {
         const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
         saveAs(FileDataUtil.base64toBlob(res.data), 'HSM_Serial_PIN_Result-' + currentDay + '.xlsx');
         this.toastService.success(this.translate.instant('webappApp.certificate.uploadCert.alert.success'));
+        this.activeModal.dismiss();
       } else {
         this.toastService.error(this.translate.instant('webappApp.certificate.uploadCert.alert.error', { message: res.msg }));
       }

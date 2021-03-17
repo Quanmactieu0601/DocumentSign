@@ -42,6 +42,7 @@ export class GenerateCsrComponent implements OnInit {
         const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
         saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + currentDay + '.xlsx');
         this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+        this.activeModal.dismiss();
       } else {
         this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
       }
