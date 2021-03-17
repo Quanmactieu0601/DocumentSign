@@ -87,16 +87,24 @@
         "install": "Install",
         "cancel": "Cancel"
       },
+      "generateCSR": {
+        "generateCsr": "Generate CSR",
+        "title": "Generate and download file CSR",
+        "alertGenerateCsr": {
+          "success": "The file CSR was generated successfully",
+          "error": "CSR file generation failed"
+        },
+        "alertDownSampleFile": {
+          "success": "Download the Certificate sample file successfully",
+          "error": "Failed to download the Certificate template file"
+        },
+        "sampleFile": "Sample file",
+        "cancel": "Cancel"
+      },
       "uploadP12Cert": "Upload P12 CERT",
       "uploadSignatureImage": "Upload Signature Image",
       "search": "Search",
-      "exportSerial": "Export Serial",
-      "success": "Successfully",
-      "generateCsr": "Generate CSR",
-      "generateCsrHeader": "Generate and download file CSR",
-      "cancel": "Cancel",
-      "sampleFile": "Sample File",
-      "errorGenerateCsr": "The file was not uploaded"
+      "exportSerial": "Export Serial"
     }
   }
 }
