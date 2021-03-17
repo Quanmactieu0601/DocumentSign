@@ -57,10 +57,6 @@ export class UploadCertificateComponent implements OnInit {
     });
   }
 
-  transformVariable(agreed: boolean): void {
-    this.isUploadedSucessfully.emit(agreed);
-  }
-
   onInputClick = (event: any) => {
     const element = event.target as HTMLInputElement;
     element.value = '';
