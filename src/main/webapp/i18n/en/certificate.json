@@ -101,10 +101,17 @@
         "sampleFile": "Sample file",
         "cancel": "Cancel"
       },
+      "exportSerial": {
+        "exportSerial": "Export Serial",
+        "notification": "File size must be less than 1MB",
+        "alert": {
+          "success": "Export Serial successfully"
+        },
+        "cancel": "Cancel"
+      },
       "uploadP12Cert": "Upload P12 CERT",
       "uploadSignatureImage": "Upload Signature Image",
-      "search": "Search",
-      "exportSerial": "Export Serial"
+      "search": "Search"
     }
   }
 }

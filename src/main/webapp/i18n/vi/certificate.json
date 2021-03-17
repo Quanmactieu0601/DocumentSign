@@ -71,7 +71,7 @@
         "success": "Thành công",
         "question": "Bạn có muốn hủy kích hoạt chứng thư số {{id}}",
         "title": "Xác nhận",
-        "cancel": "Hủy bỏ",
+        "cancel": "Hủy",
         "confirm": "Xác nhận"
       },
       "installCertIntoHsm": {
@@ -82,7 +82,7 @@
           "error": "Cài đặt CTS vào HSM thất bại: {{message}}"
         },
         "install": "Cài đặt",
-        "cancel": "Hủy bỏ"
+        "cancel": "Hủy"
       },
       "generateCSR": {
         "generateCsr": "Tạo CSR",
@@ -96,12 +96,19 @@
           "error": "Tải tệp mẫu CTS thất bại"
         },
         "sampleFile": "Tệp mẫu",
-        "cancel": "Hủy bỏ"
+        "cancel": "Hủy"
+      },
+      "exportSerial": {
+        "exportSerial": "Xuất Serial",
+        "notification": "Dung lượng tệp tải lên phải nhỏ hơn 1MB",
+        "alert": {
+          "success": "Xuất Serial thành công"
+        },
+        "cancel": "Hủy"
       },
       "uploadP12Cert": "Tải chứng thư số P12",
       "uploadSignatureImage": "Tải ảnh chữ kí",
-      "search": "Tìm kiếm",
-      "exportSerial": "Xuất Serial"
+      "search": "Tìm kiếm"
     }
   }
 }

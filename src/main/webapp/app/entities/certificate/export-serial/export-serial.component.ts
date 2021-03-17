@@ -27,7 +27,7 @@ export class ExportSerialComponent implements OnInit {
     this.selectedFiles = event.target.files;
     const sizeFile = event.target.files.item(0).size / 1024000;
     if (sizeFile > 1) {
-      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
+      this.toastService.error(this.translate.instant('webappApp.certificate.exportSerial.notification'));
       this.selectedFiles = [];
     }
     this.fileName = this.selectedFiles[0].name;
@@ -38,7 +38,7 @@ export class ExportSerialComponent implements OnInit {
     this.certificateService.exportSerial(this.currentFile).subscribe((response: any) => {
       if (response.type !== 0) {
         saveAs(new Blob([response.body]), 'ExportSerial.csv');
-        this.toastService.success(this.translate.instant('webappApp.certificate.success'));
+        this.toastService.success(this.translate.instant('webappApp.certificate.alert.success'));
         this.activeModal.close();
       }
     });
