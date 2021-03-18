@@ -93,6 +93,7 @@ public class P12ImportService {
         certificateDTO.setSerial(serial);
         certificateDTO.setAlias(alias);
         certificateDTO.setTokenType(CertificateDTO.PKCS_12);
+        certificateDTO.setSubjectInfo(x509Certificate.getSubjectDN().toString());
         // Lưu thêm mã pin khi tạo cert
         if (dbConfiguration.getSaveTokenPassword())
             certificateDTO.setEncryptedPin(symmetricService.encrypt(input.getPin()));
@@ -152,6 +153,7 @@ public class P12ImportService {
             throw new CertificateAppException("certificate encoding exception", e);
         }
         CertificateDTO certificateDTO = new CertificateDTO();
+        certificateDTO.setSubjectInfo(x509Certificate.getSubjectDN().toString());
         certificateDTO.setRawData(base64Cert);
         certificateDTO.setOwnerId(input.getOwnerId());
         certificateDTO.setSerial(serial);
