@@ -16,14 +16,16 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   rectmoveW: any;
   rectmoveH: any;
   currentPage: any;
+  isCheckShow: any;
 
   constructor() {}
 
   ngOnInit(): void {
     $('#viewerContainer').on('click', function (): void {
-      alert(1);
+      if ($('#isShowRect').val() === '1') {
+        alert('bạn muốn ký');
+      }
     });
-
     // $('#viewerContainer').on("mouseleave", function () : void {
     //   // $("#rectMove").hide();
     //   $('#viewerContainer').css("background-color", "lightgray");
@@ -72,18 +74,15 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
       e.pageX - offsetX + this.rectW * this.scale > page!.clientWidth ||
       e.pageY * this.currentPage - offsetY < this.rectH * this.scale
     ) {
+      $('#isShowRect').val(0);
       $('#rectMove').hide();
+      this.isCheckShow = false;
       return;
     }
+    this.isCheckShow = true;
+    $('#isShowRect').val(1);
     $('#rectMove').show();
     this.handleMouseMove(e);
-    // $('#rectMove').animate(
-    //   {
-    //     left: x,
-    //     top: y,
-    //   },
-    //   0
-    // );
   }
 
   getInfoViewer(): void {
