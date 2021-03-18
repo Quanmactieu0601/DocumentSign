@@ -41,10 +41,10 @@ export class GenerateCsrComponent implements OnInit {
       if (res.status === ResponseBody.SUCCESS) {
         const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
         saveAs(FileDataUtil.base64toBlob(res.data), 'Certificate-Request-Information-' + currentDay + '.xlsx');
-        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.generateCSR.alertGenerateCsr.success'));
         this.activeModal.dismiss();
       } else {
-        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.generateCSR.alertGenerateCsr.error'));
       }
     });
   }
@@ -53,9 +53,9 @@ export class GenerateCsrComponent implements OnInit {
     this.certificateService.downloadSampleFileCertificate().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
         saveAs(FileDataUtil.base64toBlob(res.data), 'Sample-Certificate-Request-Information.xlsx');
-        this.toastrService.success(this.translateService.instant('webappApp.certificate.success'));
+        this.toastrService.success(this.translateService.instant('webappApp.certificate.generateCSR.alertDownSampleFile.success'));
       } else {
-        this.toastrService.error(this.translateService.instant('webappApp.certificate.errorGenerateCsr'));
+        this.toastrService.error(this.translateService.instant('webappApp.certificate.generateCSR.alertDownSampleFile.error'));
       }
     });
   }

@@ -1,7 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,16 +9,14 @@ import { FileDataUtil } from 'app/shared/util/file-data.util';
 import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'jhi-upload-certificate',
-  templateUrl: './upload-certificate.component.html',
-  styleUrls: ['./upload-certificate.component.scss'],
+  selector: 'jhi-install-cert-to-hsm',
+  templateUrl: './install-cert-to-hsm.component.html',
 })
-export class UploadCertificateComponent implements OnInit {
+export class InstallCertToHsmComponent implements OnInit {
   @Output() isUploadedSucessfully = new EventEmitter<boolean>();
   selectedFiles: any;
   currentFile: any;
   progress = 0;
-  fileInfos: Observable<any> = new Observable<any>();
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
 
   constructor(
@@ -37,7 +33,7 @@ export class UploadCertificateComponent implements OnInit {
     this.selectedFiles = event.target.files;
     const sizeFile = event.target.files.item(0).size / 10240000;
     if (sizeFile > 1) {
-      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 10MB');
+      this.toastService.error(this.translate.instant('webappApp.certificate.installCertIntoHsm.notification'));
       this.selectedFiles = [];
     }
     this.fileName = this.selectedFiles[0].name;
@@ -50,16 +46,11 @@ export class UploadCertificateComponent implements OnInit {
       if (res.status === ResponseBody.SUCCESS) {
         const currentDay = this.datePipe.transform(new Date(), 'yyyyMMdd');
         saveAs(FileDataUtil.base64toBlob(res.data), 'HSM_Serial_PIN_Result-' + currentDay + '.xlsx');
-        this.toastService.success(this.translate.instant('webappApp.certificate.uploadCert.alert.success'));
+        this.toastService.success(this.translate.instant('webappApp.certificate.installCertIntoHsm.alert.success'));
         this.activeModal.dismiss();
       } else {
-        this.toastService.error(this.translate.instant('webappApp.certificate.uploadCert.alert.error', { message: res.msg }));
+        this.toastService.error(this.translate.instant('webappApp.certificate.installCertIntoHsm.alert.error', { message: res.msg }));
       }
     });
   }
-
-  onInputClick = (event: any) => {
-    const element = event.target as HTMLInputElement;
-    element.value = '';
-  };
 }
