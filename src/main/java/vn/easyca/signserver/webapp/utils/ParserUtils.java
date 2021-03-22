@@ -43,4 +43,22 @@ public class ParserUtils {
             throw new ApplicationException("Error I/O when convert html to base64", e);
         }
     }
+
+    public static String convertHtmlContentToBase64Resize(String htmlContent, Integer width , Integer height) throws ApplicationException {
+        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
+        try {
+            InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+            Tidy tidy = new Tidy();
+            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
+            Java2DRenderer renderer = new Java2DRenderer(doc, width, height);
+            BufferedImage img = renderer.getImage();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(img, "png", os);
+            return Base64.getEncoder().encodeToString(os.toByteArray());
+        } catch (UnsupportedEncodingException e) {
+            throw new ApplicationException("Error encoding when convert html to base64", e);
+        } catch (IOException e) {
+            throw new ApplicationException("Error I/O when convert html to base64", e);
+        }
+    }
 }

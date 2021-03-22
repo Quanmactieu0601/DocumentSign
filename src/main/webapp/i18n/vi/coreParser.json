@@ -1,0 +1,22 @@
+{
+  "webappApp": {
+    "coreParser": {
+      "home": {
+        "title": "Core Parsers",
+        "createLabel": "Thêm mới một Core Parser",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Core Parser",
+        "notFound": "No Core Parsers found"
+      },
+      "created": "Một Core Parser mới được tạo với định danh {{ param }}",
+      "updated": "Một Core Parser cập nhật với định danh {{ param }}",
+      "deleted": "Một Core Parser đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Core Parser {{ id }}?"
+      },
+      "detail": {
+        "title": "Core Parser"
+      },
+      "name": "Name"
+    }
+  }
+}

@@ -10,6 +10,7 @@
       "cancel": "Cancel",
       "exportCSR": "Export CSR"
     },
+    "chooseUser": "Choose user",
     "created": "Create user success !",
     "updated": "Update user success !",
     "updated-err": "You must add at least one value from Common Name to Country !",

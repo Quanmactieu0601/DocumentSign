@@ -160,7 +160,9 @@ public class CertificateService {
 
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
         String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
-        return ParserUtils.convertHtmlContentToBase64(htmlContent);
+        Integer width = signatureTemplateDTO.get().getWidth();
+        Integer height = signatureTemplateDTO.get().getHeight();
+        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height);
     }
 
     public Optional<Certificate> findOne(Long id) {

@@ -1,43 +1,92 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-
 import { ISignatureTemplate, SignatureTemplate } from 'app/shared/model/signature-template.model';
 import { SignatureTemplateService } from './signature-template.service';
+import { UserService } from 'app/core/user/user.service';
+import { IUser, User } from 'app/core/user/user.model';
+import { ICoreParser } from 'app/shared/model/core-parser.model';
+import { CoreParserService } from 'app/entities/core-parser/core-parser.service';
+import { Authority } from 'app/shared/constants/authority.constants';
+import { AccountService } from 'app/core/auth/account.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { UserPopupComponent } from 'app/entities/signature-template/user-popup/user-popup.component';
 
 @Component({
   selector: 'jhi-signature-template-update',
   templateUrl: './signature-template-update.component.html',
+  styleUrls: ['./signature-template-update.component.scss'],
 })
-export class SignatureTemplateUpdateComponent implements OnInit {
-  isSaving = false;
+export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
+  @ViewChild('signatureImage') signatureImage: ElementRef | undefined;
+  @ViewChild('userDropdown') userDropdown: ElementRef | undefined;
+  @ViewChild('coreParserDropdown') coreParserDropdown: ElementRef | undefined;
 
+  signatureTemplate!: SignatureTemplate;
+  isSaving = false;
+  user?: IUser | null;
+  coreParsers?: ICoreParser[] | null;
+  signatureImageExam?: String | null;
   editForm = this.fb.group({
     id: [],
-    signatureImage: [],
+    // signatureImage: [],
+    createdDate: [],
+    createdBy: [],
+    coreParser: [],
     userId: [],
+    htmlTemplate: [],
+    width: [],
+    height: [],
   });
-
+  modalRef: NgbModalRef | undefined;
   constructor(
     protected signatureTemplateService: SignatureTemplateService,
     protected activatedRoute: ActivatedRoute,
+    private userService: UserService,
+    private coreParserService: CoreParserService,
+    protected accountService: AccountService,
+    private modalService: NgbModal,
     private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ signatureTemplate }) => {
+      if (signatureTemplate) {
+        this.signatureTemplate = signatureTemplate;
+      }
       this.updateForm(signatureTemplate);
+
+      if (signatureTemplate.userId) {
+        this.userService.findById(signatureTemplate.userId).subscribe(res => {
+          this.user = res;
+        });
+      }
+
+      this.coreParserService.findAll().subscribe((res: HttpResponse<ICoreParser[]>) => {
+        this.coreParsers = res.body;
+      });
+      this.getSignatureImage();
     });
+  }
+  ngAfterViewInit(): void {
+    if (this.isOnlyUser()) {
+      this.userDropdown?.nativeElement.setAttribute('readOnly', true);
+      this.userDropdown?.nativeElement.setAttribute('disabled', true);
+    }
   }
 
   updateForm(signatureTemplate: ISignatureTemplate): void {
     this.editForm.patchValue({
       id: signatureTemplate.id,
-      signatureImage: signatureTemplate.signatureImage,
       userId: signatureTemplate.userId,
+      createdDate: signatureTemplate.createdDate,
+      createdBy: signatureTemplate.createdBy,
+      coreParser: signatureTemplate.coreParser,
+      htmlTemplate: signatureTemplate.htmlTemplate,
+      width: signatureTemplate.width ? signatureTemplate.width : 355,
+      height: signatureTemplate.height ? signatureTemplate.height : 130,
     });
   }
 
@@ -48,6 +97,7 @@ export class SignatureTemplateUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const signatureTemplate = this.createFromForm();
+    this.updateSignatureTemplate(signatureTemplate);
     if (signatureTemplate.id !== undefined) {
       this.subscribeToSaveResponse(this.signatureTemplateService.update(signatureTemplate));
     } else {
@@ -59,7 +109,7 @@ export class SignatureTemplateUpdateComponent implements OnInit {
     return {
       ...new SignatureTemplate(),
       id: this.editForm.get(['id'])!.value,
-      signatureImage: this.editForm.get(['signatureImage'])!.value,
+      // signatureImage: this.editForm.get(['signatureImage'])!.value,
       userId: this.editForm.get(['userId'])!.value,
     };
   }
@@ -78,5 +128,48 @@ export class SignatureTemplateUpdateComponent implements OnInit {
 
   protected onSaveError(): void {
     this.isSaving = false;
+  }
+
+  getSignatureImage(): void {
+    const signatureImageCustom = {
+      width: this.editForm.get(['width'])?.value ? this.editForm.get(['width'])!.value : 355,
+      height: this.editForm.get(['width'])?.value ? this.editForm.get(['height'])!.value : 130,
+      htmlTemplate: encodeURIComponent(this.editForm.get(['htmlTemplate'])!.value),
+    };
+    this.signatureTemplateService.getSignatureImageExamp(signatureImageCustom).subscribe((res: any) => {
+      this.signatureImageExam = res.body;
+
+      this.signatureImage && this.signatureImage.nativeElement
+        ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.body.data)
+        : null;
+    });
+  }
+
+  private updateSignatureTemplate(signatureTemplate: SignatureTemplate): void {
+    signatureTemplate.coreParser = this.coreParserDropdown?.nativeElement.value;
+    signatureTemplate.userId = this.userDropdown?.nativeElement.value;
+    signatureTemplate.htmlTemplate = this.editForm.get(['htmlTemplate'])!.value;
+    signatureTemplate.width = this.editForm.get(['width'])?.value ? this.editForm.get(['width'])!.value : 355;
+    signatureTemplate.height = this.editForm.get(['width'])?.value ? 130 : this.editForm.get(['height'])!.value;
+    signatureTemplate.createdDate = new Date();
+  }
+
+  isOnlyUser(): boolean {
+    const user = this.accountService.hasAnyAuthority(Authority.USER);
+    const admin = this.accountService.hasAnyAuthority(Authority.ADMIN);
+    if (user && !admin) return true;
+    else return false;
+  }
+
+  showUserPopUp(): any {
+    this.modalRef = this.modalService.open(UserPopupComponent, { size: 'lg' });
+    // this.modalRef.componentInstance.userSelectEvent = this.userSelectEvent;
+    this.modalRef.result.then(value => {
+      this.user = value;
+    });
+  }
+
+  userSelectEvent(user: User): void {
+    this.user = user;
   }
 }

@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -46,6 +47,7 @@ import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing users.
@@ -213,6 +215,8 @@ public class UserResource extends BaseResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+
+
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
@@ -226,8 +230,8 @@ public class UserResource extends BaseResource {
     }
 
     @GetMapping("/users/search")
-    public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone) {
-        final Page<UserDTO> page = userApplicationService.getByFilter(pageable, account, name, email, ownerId, commonName, country, phone);
+    public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone, @RequestParam(required = false) boolean activated) {
+        final Page<UserDTO> page = userApplicationService.getByFilter(pageable, account, name, email, ownerId, commonName, country, phone, activated);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -255,6 +259,15 @@ public class UserResource extends BaseResource {
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
+    }
+
+
+    @GetMapping("/users/getById/{id:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        log.debug("REST request to get User : {}", id);
+        Optional<UserDTO> dto = userApplicationService.getUserById(id)
+            .map(user -> new UserDTO(user, true));
+        return ResponseUtil.wrapOrNotFound(dto);
     }
 
     /**

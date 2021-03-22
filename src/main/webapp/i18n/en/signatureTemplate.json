@@ -13,11 +13,21 @@
       "delete": {
         "question": "Are you sure you want to delete Signature Template {{ id }}?"
       },
+      "preview": "Preview",
+      "width": "Width",
+      "height": "Height",
       "detail": {
         "title": "Signature Template"
       },
       "signatureImage": "Signature Image",
-      "userId": "User Id"
+      "userId": "User Id",
+      "signatureTemplate": "Signature Template",
+      "fullName": "Customer Name",
+      "createdBy": "Created By",
+      "createdDate": "Created Date",
+      "user": "User Account",
+      "coreParser": "Core Parser",
+      "chooseParser": "Choose parser"
     },
     "signatureVerify": {
       "title": "Verify Signature",
