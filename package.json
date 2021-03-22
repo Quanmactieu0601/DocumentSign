@@ -43,6 +43,7 @@
     "ngx-webstorage": "5.0.0",
     "rxjs": "6.5.5",
     "swagger-ui-dist": "3.25.1",
+    "sweetalert": "^2.1.2",
     "ts-md5": "^1.2.7",
     "tslib": "1.11.1",
     "zone.js": "0.10.3"

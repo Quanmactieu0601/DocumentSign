@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import * as $ from 'jquery';
-import { doc } from 'prettier';
+import swal from 'sweetalert';
 @Component({
   selector: 'jhi-pdf-view',
   templateUrl: './pdf-view.component.html',
@@ -16,29 +16,15 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   rectmoveW: any;
   rectmoveH: any;
   currentPage: any;
-  isCheckShow: any;
+  public isCheckShow: any;
 
   constructor() {}
 
-  ngOnInit(): void {
-    $('#viewerContainer').on('click', function (): void {
-      if ($('#isShowRect').val() === '1') {
-        alert('bạn muốn ký');
-      }
-    });
-    // $('#viewerContainer').on("mouseleave", function () : void {
-    //   // $("#rectMove").hide();
-    //   $('#viewerContainer').css("background-color", "lightgray");
-    // });
-    //
-    // $('#viewerContainer').on("mouseenter", function () : void {
-    //   // $("#rectMove").show();
-    //   $('#viewerContainer').css("background-color", "green");
-    // });
-  }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    const test = 'ok';
+    $('#viewer').on('click', '.page', this.signWithServer.bind(this));
+    $('#viewerContainer').on('mousemove', '.page', this.onMouseMove.bind(this));
   }
 
   fileChangeEvent(event: any): void {
@@ -46,8 +32,32 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     this.content = selectedFile[0];
   }
 
-  @HostListener('document:mousemove', ['$event'])
-  onMouseMove(e: any): void {
+  signWithServer(e: any): any {
+    // const offset = $(this).offset();
+    const offsetX = e.currentTarget.getBoundingClientRect().x;
+    const offsetY = e.currentTarget.getBoundingClientRect().y;
+
+    if (offsetX < 0 || offsetX > e.currentTarget.clientWidth) {
+      return;
+    }
+
+    const positionX = e.pageX - offsetX;
+    const positionY = e.pageY - offsetY;
+
+    const xDifference = -3;
+    // const yDifference = 25;
+    const yDifference = 125;
+
+    const dpi = 96;
+    const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
+    const pdfPositionY = Math.round((((e.currentTarget.clientHeight! - positionY - 2 + yDifference) / this.scale) * 72) / dpi);
+    const pageNumber = this.currentPage;
+
+    alert(`x : ${pdfPositionX} --- y : ${pdfPositionY} --- page: ${pageNumber}`);
+  }
+
+  // @HostListener('document:mousemove', ['$event'])
+  public onMouseMove(e: any): void {
     const x = e.pageX + 2;
     const y = e.pageY;
 
