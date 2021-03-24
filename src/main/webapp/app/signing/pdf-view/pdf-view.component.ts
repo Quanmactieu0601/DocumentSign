@@ -27,6 +27,9 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     $('#viewer').on('click', '.page', this.signWithServer.bind(this));
     $('#viewerContainer').on('mousemove', '.page', this.onMouseMove.bind(this));
+    $("#scaleSelect option[value='page-fit']").remove();
+    $("#scaleSelect option[value='page-actual']").remove();
+    $("#scaleSelect option[value='page-width']").remove();
   }
 
   fileChangeEvent(event: any): void {
@@ -43,6 +46,16 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     };
   }
 
+  onZoomChange(event: any): void {
+    const rectmove = document.getElementById('rectMove');
+    if (event === 'auto') {
+      this.scale = 1.25;
+    } else this.scale = event / 100;
+
+    rectmove!.style.width = this.rectW * this.scale + 'px';
+    rectmove!.style.height = this.rectH * this.scale + 'px';
+  }
+
   signWithServer(e: any): any {
     // const offset = $(this).offset();
     const offsetX = e.currentTarget.getBoundingClientRect().x;
@@ -56,7 +69,7 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     const positionY = e.pageY - offsetY;
     const xDifference = -5;
     // const yDifference = 25;
-    const yDifference = 65;
+    const yDifference = 25;
 
     const dpi = 96;
     const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
@@ -77,39 +90,11 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // @HostListener('document:mousemove', ['$event'])
   public onMouseMove(e: any): void {
     const x = e.pageX + 2;
     const y = e.pageY;
 
-    // console.warn(`x = ${x}` + `y = ${y}`)
     this.getInfoViewer();
-
-    const rectmove = document.getElementById('rectMove');
-    rectmove!.style.width = this.rectmoveW + 'px';
-    rectmove!.style.height = this.rectmoveH + 'px';
-
-    // const page = document.querySelector<HTMLElement>('.page');
-    // let ofl;
-    // try {
-    //   ofl = page!.offsetLeft;
-    // } catch (exception) {
-    //   ofl = 0;
-    // }
-    // const comment = document.getElementById('comment-wrapper');
-    // const offsetX = ofl + page!.clientLeft + $('#mainContainer').offset()!.left;
-    // const offset = $('.page').offset();
-    // const offsetY = offset!.top + page!.clientTop;
-    // if (
-    //   // e.pageX - offsetX < 0 ||
-    //   // e.pageX - offsetX + this.rectW * this.scale > page!.clientWidth ||
-    //   e.pageY * this.currentPage - offsetY < this.rectH * this.scale
-    // ) {
-    //   $('#isShowRect').val(0);
-    //   $('#rectMove').hide();
-    //   this.isCheckShow = false;
-    //   return;
-    // }
 
     const checkShowSidebar = $('#sidebarToggle').get(0).getAttribute('class') === 'toolbarButton toggled';
 
@@ -136,8 +121,6 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   }
 
   getInfoViewer(): void {
-    this.scale = Number($('#scaleSelect').val()) ? Number($('#scaleSelect').val()) : 1.25;
-
     const clientW = 180;
     const clientH = 80;
     const baseH = 72;
@@ -172,15 +155,5 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
-  }
-
-  arrayBufferToBase64(buffer: any): string {
-    let binary = '';
-    const bytes = new Uint8Array(buffer);
-    const len = bytes.byteLength;
-    for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
   }
 }
