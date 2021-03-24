@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import * as $ from 'jquery';
 import swal from 'sweetalert';
+import { SigningService } from 'app/core/signing/signing.service';
+import { saveAs } from 'file-saver';
 @Component({
   selector: 'jhi-pdf-view',
   templateUrl: './pdf-view.component.html',
@@ -8,7 +10,7 @@ import swal from 'sweetalert';
 })
 export class PdfViewComponent implements OnInit, AfterViewInit {
   @ViewChild('viewer') viewer: ElementRef | undefined;
-  base64: any;
+  base64Content: any;
   content: any;
   scale: any = 1.25;
   rectW: any = 265;
@@ -18,7 +20,7 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   currentPage: any;
   public isCheckShow: any;
 
-  constructor() {}
+  constructor(private signingService: SigningService) {}
 
   ngOnInit(): void {}
 
@@ -30,6 +32,15 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   fileChangeEvent(event: any): void {
     const selectedFile = event.target.files;
     this.content = selectedFile[0];
+
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = () => {
+      // console.log(reader.result);
+      this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
+    };
   }
 
   signWithServer(e: any): any {
@@ -37,23 +48,33 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     const offsetX = e.currentTarget.getBoundingClientRect().x;
     const offsetY = e.currentTarget.getBoundingClientRect().y;
 
-    if (offsetX < 0 || offsetX > e.currentTarget.clientWidth) {
-      return;
-    }
+    // if (offsetX < 0 || offsetX > e.currentTarget.clientWidth) {
+    //   return;
+    // }
 
     const positionX = e.pageX - offsetX;
     const positionY = e.pageY - offsetY;
-
-    const xDifference = -3;
+    const xDifference = -5;
     // const yDifference = 25;
-    const yDifference = 125;
+    const yDifference = 65;
 
     const dpi = 96;
     const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
     const pdfPositionY = Math.round((((e.currentTarget.clientHeight! - positionY - 2 + yDifference) / this.scale) * 72) / dpi);
     const pageNumber = this.currentPage;
 
-    alert(`x : ${pdfPositionX} --- y : ${pdfPositionY} --- page: ${pageNumber}`);
+    // alert(`x : ${pdfPositionX} --- y : ${pdfPositionY} --- page: ${pageNumber}`);
+
+    const request = {
+      tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
+      signingRequestContents: [
+        { data: this.base64Content, location: { visibleX: pdfPositionX, visibleY: pdfPositionY }, extraInfo: { pageNum: pageNumber } },
+      ],
+    };
+    this.signingService.signPdf(request).subscribe(response => {
+      const byteArray = this.base64ToArrayBuffer(response);
+      saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
+    });
   }
 
   // @HostListener('document:mousemove', ['$event'])
@@ -68,27 +89,46 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     rectmove!.style.width = this.rectmoveW + 'px';
     rectmove!.style.height = this.rectmoveH + 'px';
 
+    // const page = document.querySelector<HTMLElement>('.page');
+    // let ofl;
+    // try {
+    //   ofl = page!.offsetLeft;
+    // } catch (exception) {
+    //   ofl = 0;
+    // }
+    // const comment = document.getElementById('comment-wrapper');
+    // const offsetX = ofl + page!.clientLeft + $('#mainContainer').offset()!.left;
+    // const offset = $('.page').offset();
+    // const offsetY = offset!.top + page!.clientTop;
+    // if (
+    //   // e.pageX - offsetX < 0 ||
+    //   // e.pageX - offsetX + this.rectW * this.scale > page!.clientWidth ||
+    //   e.pageY * this.currentPage - offsetY < this.rectH * this.scale
+    // ) {
+    //   $('#isShowRect').val(0);
+    //   $('#rectMove').hide();
+    //   this.isCheckShow = false;
+    //   return;
+    // }
+
+    const checkShowSidebar = $('#sidebarToggle').get(0).getAttribute('class') === 'toolbarButton toggled';
+
+    const offsetRight = checkShowSidebar
+      ? document.getElementById('accordionSidebar')!.offsetWidth +
+        document.getElementById('sidebarContent')!.offsetWidth +
+        $('.page').get(0).offsetLeft +
+        $('.page').get(0).offsetWidth
+      : document.getElementById('accordionSidebar')!.offsetWidth + $('.page').get(0).offsetLeft + $('.page').get(0).offsetWidth;
+
     const page = document.querySelector<HTMLElement>('.page');
-    let ofl;
-    try {
-      ofl = page!.offsetLeft;
-    } catch (exception) {
-      ofl = 0;
-    }
-    const comment = document.getElementById('comment-wrapper');
-    const offsetX = ofl + page!.clientLeft + $('#mainContainer').offset()!.left;
     const offset = $('.page').offset();
     const offsetY = offset!.top + page!.clientTop;
-    if (
-      e.pageX - offsetX < 0 ||
-      e.pageX - offsetX + this.rectW * this.scale > page!.clientWidth ||
-      e.pageY * this.currentPage - offsetY < this.rectH * this.scale
-    ) {
-      $('#isShowRect').val(0);
+
+    if (e.pageX + this.rectW * this.scale > offsetRight + 20 || e.pageY * this.currentPage - offsetY < this.rectH * this.scale) {
       $('#rectMove').hide();
-      this.isCheckShow = false;
       return;
     }
+
     this.isCheckShow = true;
     $('#isShowRect').val(1);
     $('#rectMove').show();
@@ -103,8 +143,8 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     const baseH = 72;
     const dpi = 96;
 
-    this.rectW = (clientW * dpi) / baseH;
-    this.rectH = (clientH * dpi) / baseH;
+    // this.rectW = (clientW * dpi) / baseH;
+    // this.rectH = (clientH * dpi) / baseH;
 
     this.rectmoveW = 265 * this.scale;
     this.rectmoveH = 65 * this.scale;
@@ -113,7 +153,7 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
 
   handleMouseMove(e: any): void {
     const rectmove = document.getElementById('rectMove');
-    const x = e.pageX;
+    const x = e.pageX + 2;
     const y = e.pageY - rectmove!.clientHeight + 170 - $('#viewerContainer').offset()!.top;
     $('#rectMove').animate(
       {
@@ -122,5 +162,25 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
       },
       0
     );
+  }
+
+  base64ToArrayBuffer(base64: any): ArrayBuffer {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
+  }
+
+  arrayBufferToBase64(buffer: any): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
   }
 }
