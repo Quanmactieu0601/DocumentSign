@@ -3,6 +3,8 @@ import * as $ from 'jquery';
 import swal from 'sweetalert';
 import { SigningService } from 'app/core/signing/signing.service';
 import { saveAs } from 'file-saver';
+import Swal from 'sweetalert2';
+import { FormBuilder, Validators } from '@angular/forms';
 @Component({
   selector: 'jhi-pdf-view',
   templateUrl: './pdf-view.component.html',
@@ -18,9 +20,15 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   rectmoveW: any;
   rectmoveH: any;
   currentPage: any;
+
+  certificateInfoForm = this.fb.group({
+    serial: ['', [Validators.required]],
+    pin: ['', [Validators.required]],
+  });
+
   public isCheckShow: any;
 
-  constructor(private signingService: SigningService) {}
+  constructor(private signingService: SigningService, private fb: FormBuilder) {}
 
   ngOnInit(): void {}
 
@@ -41,7 +49,6 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     reader.readAsDataURL(file);
 
     reader.onload = () => {
-      // console.log(reader.result);
       this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
     };
   }
@@ -57,37 +64,79 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
   }
 
   signWithServer(e: any): any {
-    // const offset = $(this).offset();
-    const offsetX = e.currentTarget.getBoundingClientRect().x;
-    const offsetY = e.currentTarget.getBoundingClientRect().y;
+    Swal.fire({
+      // title: 'Thông báo',
+      title: 'Mời bạn nhập thông tin chứng thư số',
+      icon: 'warning',
+      showCancelButton: true,
+      allowEnterKey: true,
+      html: `<form [formGroup]="certificateInfoForm">
+                <input type="text" id="serial" class="swal2-input" placeholder="Serial" formControlName="serial" (change)="test()">
 
-    // if (offsetX < 0 || offsetX > e.currentTarget.clientWidth) {
-    //   return;
-    // }
+                <div *ngIf="certificateInfoForm.get('serial')!.invalid && (certificateInfoForm.get('serial')!.dirty || certificateInfoForm.get('pin')!.touched)">
+                        <small
+                            class="form-text text-danger"
+                            *ngIf="certificateInfoForm.get('serial')?.error?.required"
+                         >
+                                This field is required.
+                        </small>
+                </div>
+                <input type="password" id="pin" class="swal2-input" placeholder="Pin" formControlName="pin">
+            </form> `,
+      confirmButtonText: 'Ký',
+      cancelButtonText: 'Thử lại',
+    }).then(result => {
+      if (result.value) {
+        const offsetX = e.currentTarget.getBoundingClientRect().x;
+        const offsetY = e.currentTarget.getBoundingClientRect().y;
+        const positionX = e.pageX - offsetX;
+        const positionY = e.pageY - offsetY;
+        const xDifference = -5;
+        const yDifference = 60;
+        const dpi = 96;
+        const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
+        const pdfPositionY = Math.round((((e.currentTarget.clientHeight! - positionY + yDifference - 2) / this.scale) * 72) / dpi);
+        const pageNumber = this.currentPage;
 
-    const positionX = e.pageX - offsetX;
-    const positionY = e.pageY - offsetY;
-    const xDifference = -5;
-    // const yDifference = 25;
-    const yDifference = 25;
-
-    const dpi = 96;
-    const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
-    const pdfPositionY = Math.round((((e.currentTarget.clientHeight! - positionY - 2 + yDifference) / this.scale) * 72) / dpi);
-    const pageNumber = this.currentPage;
-
-    // alert(`x : ${pdfPositionX} --- y : ${pdfPositionY} --- page: ${pageNumber}`);
-
-    const request = {
-      tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
-      signingRequestContents: [
-        { data: this.base64Content, location: { visibleX: pdfPositionX, visibleY: pdfPositionY }, extraInfo: { pageNum: pageNumber } },
-      ],
-    };
-    this.signingService.signPdf(request).subscribe(response => {
-      const byteArray = this.base64ToArrayBuffer(response);
-      saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
+        const request = {
+          tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
+          signingRequestContents: [
+            { data: this.base64Content, location: { visibleX: pdfPositionX, visibleY: pdfPositionY }, extraInfo: { pageNum: pageNumber } },
+          ],
+        };
+        this.signingService.signPdf(request).subscribe(response => {
+          const byteArray = this.base64ToArrayBuffer(response);
+          this.content = byteArray;
+          saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
+          Swal.fire(
+            // 'Thông báo',
+            // 'Tệp của bạn được ký thành công!',
+            // 'success',
+            {
+              title: 'Thông báo',
+              text: 'Tệp của bạn được ký thành công!',
+              icon: 'success',
+              showCancelButton: false,
+              showConfirmButton: true,
+              // confirmButtonText: 'Đồng ý',
+              confirmButtonText: 'Xem tệp',
+            }
+          );
+        });
+        // For more information about handling dismissals please visit
+        // https://sweetalert2.github.io/#handling-dismissals
+      } //else if (result.dismiss === Swal.DismissReason.cancel) {
+      //Swal.fire(
+      //'Cancelled',
+      //'Your imaginary file is safe :)',
+      //'error'
+      //)
+      //}
     });
+  }
+
+  test(): any {
+    alert('ok');
   }
 
   public onMouseMove(e: any): void {
@@ -125,9 +174,6 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
     const clientH = 80;
     const baseH = 72;
     const dpi = 96;
-
-    // this.rectW = (clientW * dpi) / baseH;
-    // this.rectH = (clientH * dpi) / baseH;
 
     this.rectmoveW = 265 * this.scale;
     this.rectmoveH = 65 * this.scale;

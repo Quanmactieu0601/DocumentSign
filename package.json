@@ -44,6 +44,7 @@
     "rxjs": "6.5.5",
     "swagger-ui-dist": "3.25.1",
     "sweetalert": "^2.1.2",
+    "sweetalert2": "^10.15.6",
     "ts-md5": "^1.2.7",
     "tslib": "1.11.1",
     "zone.js": "0.10.3"
