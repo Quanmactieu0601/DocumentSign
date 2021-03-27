@@ -2,15 +2,15 @@ package vn.easyca.signserver.webapp.web.rest;
 
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.poi.ss.extractor.ExcelExtractor;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
+import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
+import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
@@ -30,12 +30,10 @@ import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,21 +43,21 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api")
 public class SignatureTemplateResource extends BaseResource {
-
-    private final AsyncTransactionService asyncTransactionService;
-
     private final Logger log = LoggerFactory.getLogger(SignatureTemplateResource.class);
 
-    private static final String ENTITY_NAME = "signatureTemplate";
+    private final AsyncTransactionService asyncTransactionService;
+    private final FileResourceService fileResourceService;
 
+    private static final String ENTITY_NAME = "signatureTemplate";
 
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final SignatureTemplateService signatureTemplateService;
 
-    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, SignatureTemplateService signatureTemplateService) {
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, SignatureTemplateService signatureTemplateService) {
         this.asyncTransactionService = asyncTransactionService;
+        this.fileResourceService = fileResourceService;
         this.signatureTemplateService = signatureTemplateService;
     }
 
@@ -157,29 +155,24 @@ public class SignatureTemplateResource extends BaseResource {
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 
-    @GetMapping("/signature-templates/signExample")
-    public ResponseEntity<BaseResponseVM> getSignExample(@RequestParam(required = false) String htmlTemplate, @RequestParam(required = false) String signer, @RequestParam(required = false) String signingImage, @RequestParam(required = false) Integer width, @RequestParam(required = false) Integer height) {
+    @PostMapping("/signature-templates/signExample")
+    public ResponseEntity<BaseResponseVM> getSignExample(@RequestBody SignatureExampleDTO signatureExampleDTO) {
         try {
-            String imageFilePath = new File("src/main/resources/templates/signature/SigningImageExam.jpg").getAbsolutePath();
-            String fileName = new File("src/main/resources/templates/signature/signature.html").getAbsolutePath();
-
-
-            htmlTemplate = htmlTemplate == null ? new String(FileUtils.getFileAsBytes(fileName)) : java.net.URLDecoder.decode(htmlTemplate, StandardCharsets.UTF_8.name());
-            signer = signer == null ? "Nguyễn Văn A" : signer;
-            signingImage = signingImage == null ? new String(Base64.encodeBase64(FileUtils.getFileAsBytes(imageFilePath)), "UTF-8") : signingImage;
-            width = width == null ? 355 : width;
-            height = height == null ? 130 : height;
-
+            String htmlTemplate = signatureExampleDTO.getHtmlTemplate(fileResourceService);
+            String signer = signatureExampleDTO.getSigner();
+            String signingImageB64 = signatureExampleDTO.getSigningImage(fileResourceService);
+            int width = signatureExampleDTO.getWidth();
+            int height = signatureExampleDTO.getHeight();
+            boolean transparency = signatureExampleDTO.isTransparency();
 
             String htmlContent = htmlTemplate
                 .replaceFirst("signer", signer)
-                .replaceFirst("position", "Giám đốc")
+                .replaceFirst("position", "TPDV. ")
                 .replaceFirst("address", "Hà Nội")
-                .replaceFirst("signatureImage", signingImage)
+                .replaceFirst("signatureImage", signingImageB64)
                 .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
 
-
-            String imageBase64 = ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height);
+            String imageBase64 = ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, transparency);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(imageBase64));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);

@@ -36,7 +36,6 @@ export class SignatureTemplateService {
   }
 
   getSignatureImageExamp(req?: any): Observable<HttpResponse<any>> {
-    const options = createRequestOption(req);
-    return this.http.get<any>(this.resourceUrl + '/signExample', { params: options, observe: 'response' });
+    return this.http.post<any>(this.resourceUrl + '/signExample', req, { observe: 'response' });
   }
 }

@@ -21,6 +21,7 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -142,14 +143,15 @@ public class CertificateService {
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
-        if (!signatureTemplateDTO.isPresent()) {
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
+        if (!signatureTemplateOptional.isPresent()) {
             throw new ApplicationException("Signature template is not configured");
         }
+        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
 
         Long signImageId = certificateDTO.getSignatureImageId();
         String signatureImageData = "";
-        String signatureTemplate = signatureTemplateDTO.get().getHtmlTemplate();
+        String htmlTemplate = signatureTemplate.getHtmlTemplate();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
             if (signatureImage.isPresent())
@@ -158,11 +160,11 @@ public class CertificateService {
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
-        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
-        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
-        Integer width = signatureTemplateDTO.get().getWidth();
-        Integer height = signatureTemplateDTO.get().getHeight();
-        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height);
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
+        Integer width = signatureTemplate.getWidth();
+        Integer height = signatureTemplate.getHeight();
+        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
     }
 
     public Optional<Certificate> findOne(Long id) {

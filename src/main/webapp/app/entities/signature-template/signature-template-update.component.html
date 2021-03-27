@@ -1,22 +1,23 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span
+        jhiTranslate="webappApp.signatureTemplate.home.title">Signature Template</span>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"
+        *ngIf="isCreateNew"><span
+        jhiTranslate="userManagement.create">Create</span>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page" *ngIf="!isCreateNew"><span
+        jhiTranslate="userManagement.edit">Edit</span>
+    </li>
+</ol>
 <div class="card mb-3 searching">
     <div class="card-body">
         <div class="row justify-content-center">
             <div class="col-12">
                 <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-                    <ol class="breadcrumb in-page">
-                        <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page"><span
-                            jhiTranslate="webappApp.signatureTemplate.home.title">Signature Template</span>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page"
-                            *ngIf="this.signatureTemplate.id === undefined"><span
-                            jhiTranslate="userManagement.create">Create</span>
-                        </li>
-                        <li class="breadcrumb-item active" aria-current="page" *ngIf="this.signatureTemplate.id"><span
-                            jhiTranslate="userManagement.edit">Edit</span>
-                        </li>
-                    </ol>
+
                     <jhi-alert-error></jhi-alert-error>
 
                     <div class="form-group" [hidden]=true>
@@ -38,26 +39,60 @@
                                     <textarea rows="10" cols="100" class="form-control" spellcheck="false"
                                               formControlName="htmlTemplate"></textarea>
                                 </div>
-                                <div>
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <label class="form-control-label"
-                                                   jhiTranslate="webappApp.signatureTemplate.width">Width</label>
-                                            <input type="text" class="form-control form-control-sm" name="name"
-                                                   formControlName="width" #width/>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-4">
+                                                <label class="form-control-label"
+                                                       jhiTranslate="webappApp.signatureTemplate.width">Width</label>
+                                                <input type="text" class="form-control form-control-sm" name="name"
+                                                       formControlName="width" #width/>
+                                            </div>
+                                            <div class="col-4">
+                                                <label class="form-control-label"
+                                                       jhiTranslate="webappApp.signatureTemplate.height">Height</label>
+                                                <input type="text" class="form-control form-control-sm" name="name"
+                                                       formControlName="height" #height/>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check">
+                                                    <!--                                                <label class="form-control-label"-->
+                                                    <!--                                                       jhiTranslate="webappApp.signatureTemplate.transparency">Transparent-->
+                                                    <!--                                                    Background</label>-->
+                                                    <input type="checkbox" class="form-check-input" name="transparency"
+                                                           id="transparency"
+                                                           formControlName="transparency"/>
+                                                    <label class="form-control-label" for="transparency"
+                                                           jhiTranslate="webappApp.signatureTemplate.transparency">
+                                                        Transparent
+                                                        Background</label>
+                                                </div>
+
+                                            </div>
                                         </div>
-                                        <div class="col-6">
-                                            <label class="form-control-label"
-                                                   jhiTranslate="webappApp.signatureTemplate.height">Height</label>
-                                            <input type="text" class="form-control form-control-sm" name="name"
-                                                   formControlName="height" #height/>
-                                        </div>
+
                                     </div>
                                 </div>
+
                             </div>
-                            <div class="col-6">
-                                <div class="card mb-3 cardCustom" style="height: 273px;" >
-                                    <h5 class="card-header"><span jhiTranslate="webappApp.signatureTemplate.preview">Preview</span>
+                            <div class="col-1">
+                                <button type="button"
+                                        class="btn btn-primary btn-sm" (click)="getSignatureImage()"
+                                        style="margin-top: 30px">
+                                    <fa-icon icon="eye"></fa-icon>
+                                    <span jhiTranslate="webappApp.signatureTemplate.preview">Preview</span>
+                                </button>
+                                <button type="button"
+                                        class="btn btn-primary btn-sm" (click)="getSignatureImage()"
+                                        style="margin-top: 30px">
+                                    <fa-icon icon="eye"></fa-icon>
+                                    <span jhiTranslate="webappApp.signatureTemplate.previewInPDF">Preview</span>
+                                </button>
+                            </div>
+                            <div class="col-5">
+                                <div class="card mb-3 cardCustom" style="min-height: 273px;">
+                                    <h5 class="card-header"><span
+                                        jhiTranslate="webappApp.signatureTemplate.previewSection">previewSection</span>
                                     </h5>
                                     <div class="card-body" style="background-color: #fafafa">
                                         <div class="row">
@@ -67,38 +102,33 @@
                                         </div>
                                     </div>
                                 </div>
-                                    <button type="button"
-                                            class="btn btn-primary btn-sm" (click)="getSignatureImage()"
-                                            style="margin-top: 30px">
-                                        <fa-icon icon="eye"></fa-icon>
-                                        <span jhiTranslate="webappApp.signatureTemplate.preview">Preview</span>
-                                    </button>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label>User</label>
-                            <select class="form-control form-control-sm" name="user" #userDropdown (click)="showUserPopUp()">
-                                <option *ngIf="user; else elseBlock"
-                                        [value]="user.id"
-                                        >{{ user.login}}</option>
-                                <ng-template #elseBlock>
-                                    <option *ngIf="this.editForm.get(['id'])?.value === undefined" [value]=null
-                                            [selected]=true><span jhiTranslate="webappApp.userManagement.chooseUser">Choose user</span>
-                                    </option>
-                                </ng-template>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Core Parser</label>
-                            <select class="form-control form-control-sm" name="user" #coreParserDropdown>
-                                <option *ngIf="this.editForm.get(['id'])?.value === undefined" [value]=null
-                                        [selected]=true><span jhiTranslate="webappApp.signatureTemplate.chooseParser"></span>
-                                </option>
-                                <option *ngFor="let coreParser of coreParsers"
-                                        [value]="coreParser.name"
-                                        [selected]="coreParser.name === this.editForm.get('coreParser')?.value">{{ coreParser.name}}</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label>User</label>
+                                    <div class="input-group input-group-sm custom-group" (click)="showUserPopUp()">
+                                        <input type="hidden" class="form-control form-control-sm" name="userId" formControlName="userId">
+                                        <input type="text" class="form-control form-control-sm" [readOnly]="true" name="account" formControlName="account">
+                                        <div class="input-group-append input-group-sm">
+                                            <span class="input-group-text" id="basic-addon2"><fa-icon icon="id-card"></fa-icon></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label>Core Parser</label>
+                                    <select class="form-control form-control-sm" name="coreParser" formControlName="coreParser">
+                                        <option [selected]="true" [value]="undefined" [disabled]="true"><span
+                                            jhiTranslate="webappApp.signatureTemplate.chooseParser"></span>
+                                        </option>
+                                        <option *ngFor="let coreParser of coreParsers"
+                                                [value]="coreParser.name">{{ coreParser.name}}</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>

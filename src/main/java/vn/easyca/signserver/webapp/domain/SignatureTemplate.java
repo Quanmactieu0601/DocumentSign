@@ -39,6 +39,9 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @Column(name = "width")
     private Integer width;
 
+    @Column(name = "transparency")
+    private Boolean transparency;
+
     public Integer getWidth() { return width; }
 
     public void setWidth(Integer width) { this.width = width; }
@@ -90,7 +93,14 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public Boolean getTransparency() {
+        return transparency;
+    }
+
+    public void setTransparency(Boolean transparency) {
+        this.transparency = transparency;
+    }
 
     public SignatureTemplateParserType getCoreParser() {
         return coreParser;

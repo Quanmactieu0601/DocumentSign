@@ -138,23 +138,10 @@ export class UserPopupComponent implements OnInit {
 
   // change select event: add or remove into listId when click each checkbox element
   changeSelect(user: any): void {
-    this.cancel(user);
-  }
-
-  createCSR(): void {
-    this.modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
-    this.userService.setListId(this.listId);
-  }
-
-  showUploadComponent(): void {
-    this.modalRef = this.modalService.open(UploadUserComponent, { size: 'lg' });
-  }
-
-  cancel(user: User): void {
     this.activeModal.close(user);
   }
 
-  cancelEvent(): void {
-    this.activeModal.close();
+  cancel(): void {
+    this.activeModal.dismiss();
   }
 }

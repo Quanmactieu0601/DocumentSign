@@ -13,9 +13,12 @@
       "delete": {
         "question": "Bạn có chắc là muốn xóa Signature Template {{ id }}?"
       },
-      "preview": "Xem mẫu",
+      "preview": "Xem thử",
+      "previewInPDF": "Xem thử trên PDF",
+      "previewSection": "Hình ảnh chữ ký mẫu",
       "width": "Chiều dài",
       "height": "Chiều cao",
+      "transparency": "Nền trong suốt",
       "detail": {
         "title": "Signature Template"
       },
@@ -24,7 +27,21 @@
       "signatureTemplate": "Mẫu chứ ký",
       "fullName": "Tên khách hàng",
       "createdBy": "Người tạo",
-      "createdDate": "Ngày tạo"
+      "createdDate": "Ngày tạo",
+      "user": "Tài khoản người dùng",
+      "coreParser": "Trình chuyển đổi",
+      "chooseParser": "Chọn trình chuyển đổi",
+      "chooseUser": "Chọn tài khoản",
+      "alert": {
+        "success": {
+          "create": "Tạo mẫu chữ ký thành công",
+          "update": "Cập nhật mẫu chữ ký thành công"
+        },
+        "failure": {
+          "create": "Tạo mẫu chữ ký thất bại",
+          "update": "Cập nhật mẫu chữ ký thất bại"
+        }
+      }
     },
     "signatureVerify": {
       "title": "Xác thực kí số",

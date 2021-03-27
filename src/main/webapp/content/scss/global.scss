@@ -275,3 +275,8 @@ input.form-control {
 .custom-file-input:lang(vi) ~ .custom-file-label::after {
   content: 'Chọn';
 }
+
+.custom-group > .form-control:not(:last-child) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}

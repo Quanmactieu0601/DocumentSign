@@ -48,6 +48,7 @@ import {
   faCheckCircle,
   faCertificate,
   faFileArchive,
+  faIdCard,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -100,4 +101,5 @@ export const fontAwesomeIcons = [
   faCheckCircle,
   faCertificate,
   faFileArchive,
+  faIdCard,
 ];

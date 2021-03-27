@@ -14,8 +14,11 @@
         "question": "Are you sure you want to delete Signature Template {{ id }}?"
       },
       "preview": "Preview",
+      "previewInPDF": "Preview in PDF",
+      "previewSection": "Signature template image",
       "width": "Width",
       "height": "Height",
+      "transparency": "Transparency background",
       "detail": {
         "title": "Signature Template"
       },
@@ -27,7 +30,18 @@
       "createdDate": "Created Date",
       "user": "User Account",
       "coreParser": "Core Parser",
-      "chooseParser": "Choose parser"
+      "chooseParser": "Choose parser",
+      "chooseUser": "Choose account",
+      "alert": {
+        "success": {
+          "create": "Create new Signature template successfully",
+          "update": "Update Signature template successfully"
+        },
+        "failure": {
+          "create": "Create new Signature template has error",
+          "update": "Update Signature template has error"
+        }
+      }
     },
     "signatureVerify": {
       "title": "Verify Signature",

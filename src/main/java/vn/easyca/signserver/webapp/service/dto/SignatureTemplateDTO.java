@@ -32,7 +32,11 @@ public class SignatureTemplateDTO implements Serializable {
 
     private String htmlTemplate;
 
-    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate, String htmlTemplate, SignatureTemplateParserType coreParser, Integer width, Integer height, String fullName) {
+    private Boolean transparency;
+
+    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
+                                String htmlTemplate, SignatureTemplateParserType coreParser,
+                                Integer width, Integer height, String fullName) {
         this.id = id;
         this.userId = userId;
         this.createdBy = createdBy;
@@ -42,6 +46,21 @@ public class SignatureTemplateDTO implements Serializable {
         this.width = width;
         this.height = height;
         this.htmlTemplate = htmlTemplate;
+    }
+
+    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
+                                String htmlTemplate, SignatureTemplateParserType coreParser,
+                                Integer width, Integer height, String fullName, Boolean transparency) {
+        this.id = id;
+        this.userId = userId;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.coreParser = coreParser.toString();
+        this.fullName = fullName;
+        this.width = width;
+        this.height = height;
+        this.htmlTemplate = htmlTemplate;
+        this.transparency = transparency;
     }
 
     public SignatureTemplateDTO() {
@@ -57,6 +76,7 @@ public class SignatureTemplateDTO implements Serializable {
         this.width = signatureTemplate.getWidth();
         this.height = signatureTemplate.getHeight();
         this.htmlTemplate = signatureTemplate.getHtmlTemplate();
+        this.transparency = signatureTemplate.getTransparency();
     }
 
     public String getFullName() { return fullName; }
@@ -103,6 +123,14 @@ public class SignatureTemplateDTO implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public Boolean getTransparency() {
+        return transparency;
+    }
+
+    public void setTransparency(Boolean transparency) {
+        this.transparency = transparency;
     }
 
     @Override
