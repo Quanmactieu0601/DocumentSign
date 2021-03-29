@@ -17,6 +17,7 @@ import { LoginComponent } from './login/login.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
+import { AngularDraggableModule } from 'angular2-draggable';
 @NgModule({
   imports: [
     BrowserModule,
@@ -25,6 +26,7 @@ import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
     LoadingBarHttpClientModule,
     LoadingBarModule,
     NgxDropzoneModule,
+    AngularDraggableModule,
     // jhipster-needle-angular-add-module JHipster will add new module here,
     WebappAppRoutingModule,
     BrowserAnimationsModule,

@@ -1,5 +1,11 @@
 <input type="file" id="myfile" name="myfile" (change)="fileChangeEvent($event)" ><br><br>
-<ngx-extended-pdf-viewer #viewer height="80vh" [src]="content" (zoomChange)="onZoomChange($event)" [zoom]="100"></ngx-extended-pdf-viewer>
-<div id="rectMove" style="height: 80px;width: 180px;position: absolute;top:0;left: 0; border: #ff1d00 2px solid;z-index: 0;display: none" (mousemove)="onMouseMove($event)">
-</div>
+<!--<ngx-extended-pdf-viewer #viewer height="80vh" [src]="content" (zoomChange)="onZoomChange($event)" [zoom]="100"></ngx-extended-pdf-viewer>-->
+<ngx-extended-pdf-viewer #viewer height="80vh" [src]="content"></ngx-extended-pdf-viewer>
+<!--<div id="rectMove" style="height: 80px;width: 180px;position: absolute;top:0;left: 0; border: #ff1d00 2px solid;z-index: 0;display: none" (mousemove)="onMouseMove($event)">-->
+<!--</div>-->
 <input id="isShowRect" type="number" value="0" hidden>
+<div ngDraggable id="rect">
+    <div style="height: 80px;width: 180px;position: absolute;top:0;left: 0; border: #ff1d00 2px solid;z-index: 0;">
+        Mẫu chữ ký
+    </div>
+</div>
