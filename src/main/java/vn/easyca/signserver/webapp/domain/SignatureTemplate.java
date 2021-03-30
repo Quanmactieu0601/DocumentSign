@@ -99,7 +99,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     }
 
     public void setTransparency(Boolean transparency) {
-        this.transparency = transparency;
+        this.transparency = transparency == null ? false : transparency;
     }
 
     public SignatureTemplateParserType getCoreParser() {
