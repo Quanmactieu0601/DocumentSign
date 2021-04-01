@@ -5,7 +5,7 @@
             <div class="pdfv-control" *ngIf="renderText">
                 Search:
                 <input #queryInp id="pdfQueryInput" type="text" placeholder="Search..." [value]="pdfQuery"
-                       (input)="searchQueryChanged($event.target!)" (keyup.enter)="searchQueryChanged(queryInp.value)">
+                       (input)="searchQueryChanged(queryInp.value)" (keyup.enter)="searchQueryChanged(queryInp.value)">
             </div>
             <div class="pdfv-control">
                 Select PDF:
@@ -32,8 +32,8 @@
             </div>
             <div class="pdfv-control">
                 Chọn trang đặt chữ ký
-                <select name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage($event)">
-                    <option [value]="o" *ngFor="let o of renderTextModes" >{{o}}</option>
+                <select name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage(renderTextMode)">
+                    <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index" selected >{{i + 1}}</option>
                 </select>
                 <!-- <button (click)="renderTextMode = !renderTextMode">[render-text-mode]="{{renderTextMode}}"</button> -->
             </div>

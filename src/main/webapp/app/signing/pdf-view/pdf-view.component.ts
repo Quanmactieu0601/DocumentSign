@@ -17,12 +17,11 @@ export class PdfViewComponent implements OnInit {
   pdfSrc = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
 
   renderText = true;
-  originalSize = false;
+  originalSize = true;
   fitToPage = false;
   showAll = true;
   autoresize = false;
   showBorders = true;
-  renderTextModes = [1, 2, 3];
   renderTextMode = 1;
   rotation = 0;
   zoom = 1;
@@ -30,6 +29,8 @@ export class PdfViewComponent implements OnInit {
   zoomScales = ['page-width', 'page-fit', 'page-height'];
   pdfQuery = '';
   totalPages!: number;
+
+  heightPage = 900;
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
@@ -94,14 +95,13 @@ export class PdfViewComponent implements OnInit {
     console.warn('callBackFn', event);
     // Setting total number of pages
     this.totalPages = event._pdfInfo.numPages;
-    // const element = this.renderer.selectRootElement('canvas', true);
     const element = document.getElementsByClassName('pdfViewer')[0];
-    // const text = this.renderer.createText('Namaste!!!!!');
     const child = document.createElement('div');
     child.setAttribute('id', 'signature-box');
     (child as HTMLElement).style.backgroundColor = 'red';
     (child as HTMLElement).style.position = 'absolute';
-    (child as HTMLElement).style.top = '0px';
+    (child as HTMLElement).style.top = `${this.heightPage}px`;
+    (child as HTMLElement).style.left = '220px';
     (child as HTMLElement).style.zIndex = '9';
     (child as HTMLElement).style.width = '256px';
     (child as HTMLElement).style.height = '65px';
@@ -110,28 +110,33 @@ export class PdfViewComponent implements OnInit {
   }
   pageRendered(event: any): void {
     console.warn('pageRendered', event);
-
-    const element = document.getElementsByClassName('page')[0];
-
-    ($('#signature-box') as any).draggable({
-      containment: element,
-    });
+    this.setSignatureInPage(1);
   }
 
   setSignatureInPage(numberPage: any): void {
-    const element = document.getElementsByClassName('page')[numberPage.target.value - 1];
+    const element = document.getElementsByClassName('page')[Number(numberPage) - 1];
 
     ($('#signature-box') as any).draggable({
       containment: element,
     });
 
-    $('#signature-box').animate(
-      {
-        left: 300,
-        top: numberPage.target.value * 1100,
-      },
-      0
-    );
+    if (Number(numberPage) === 1) {
+      $('#signature-box').animate(
+        {
+          left: 300,
+          top: 20,
+        },
+        0
+      );
+    } else {
+      $('#signature-box').animate(
+        {
+          left: 300,
+          top: Number(numberPage) * this.heightPage,
+        },
+        0
+      );
+    }
   }
   textLayerRendered(event: any): void {
     console.warn('textLayerRendered', event);
