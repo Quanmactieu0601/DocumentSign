@@ -1,25 +1,35 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
-import * as $ from 'jquery';
-import swal from 'sweetalert';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { saveAs } from 'file-saver';
-import Swal from 'sweetalert2';
 import { FormBuilder, Validators } from '@angular/forms';
+import * as $ from 'jquery';
+import 'jquery-ui/ui/widgets/draggable.js';
+import { PdfViewerComponent } from 'ng2-pdf-viewer';
+
 @Component({
   selector: 'jhi-pdf-view',
   templateUrl: './pdf-view.component.html',
   styleUrls: ['./pdf-view.component.scss'],
 })
-export class PdfViewComponent implements OnInit, AfterViewInit {
-  @ViewChild('viewer') viewer: ElementRef | undefined;
-  base64Content: any;
-  content: any;
-  scale: any = 1.25;
-  rectW: any = 265;
-  rectH: any = 65;
-  rectmoveW: any;
-  rectmoveH: any;
-  currentPage: any;
+export class PdfViewComponent implements OnInit {
+  @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
+
+  title = 'angular-pdf-viewer-app';
+  pdfSrc = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
+
+  renderText = true;
+  originalSize = false;
+  fitToPage = false;
+  showAll = true;
+  autoresize = false;
+  showBorders = true;
+  renderTextModes = [1, 2, 3];
+  renderTextMode = 1;
+  rotation = 0;
+  zoom = 1;
+  zoomScale = 'page-width';
+  zoomScales = ['page-width', 'page-fit', 'page-height'];
+  pdfQuery = '';
+  totalPages!: number;
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
@@ -28,174 +38,108 @@ export class PdfViewComponent implements OnInit, AfterViewInit {
 
   public isCheckShow: any;
 
-  constructor(private signingService: SigningService, private fb: FormBuilder) {}
+  constructor(
+    private signingService: SigningService,
+    private fb: FormBuilder,
+    private elementRef: ElementRef,
+    private renderer: Renderer2
+  ) {}
 
   ngOnInit(): void {}
 
-  ngAfterViewInit(): void {
-    // $('#viewer').on('click', '.page', this.signWithServer.bind(this));
-    // $('#viewerContainer').on('mousemove', '.page', this.onMouseMove.bind(this));
-    $("#scaleSelect option[value='page-fit']").remove();
-    $("#scaleSelect option[value='page-actual']").remove();
-    $("#scaleSelect option[value='page-width']").remove();
+  zoomIn(): void {
+    this.zoom += 0.05;
   }
 
-  fileChangeEvent(event: any): void {
-    const selectedFile = event.target.files;
-    this.content = selectedFile[0];
-
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onload = () => {
-      this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
-    };
+  zoomOut(): void {
+    if (this.zoom > 0.05) this.zoom -= 0.05;
   }
 
-  // onZoomChange(event: any): void {
-  //   const rectmove = document.getElementById('rectMove');
-  //   if (event === 'auto') {
-  //     this.scale = 1.25;
-  //   } else this.scale = event / 100;
-  //
-  //   rectmove!.style.width = this.rectW * this.scale + 'px';
-  //   rectmove!.style.height = this.rectH * this.scale + 'px';
-  // }
+  rotateDoc(): void {
+    this.rotation += 90;
+  }
 
-  // signWithServer(e: any): any {
-  //   Swal.fire({
-  //     // title: 'Thông báo',
-  //     title: 'Mời bạn nhập thông tin chứng thư số',
-  //     icon: 'warning',
-  //     showCancelButton: true,
-  //     allowEnterKey: true,
-  //     html: `<form [formGroup]="certificateInfoForm">
-  //               <input type="text" id="serial" class="swal2-input" placeholder="Serial" formControlName="serial" (change)="test()">
-  //
-  //               <div *ngIf="certificateInfoForm.get('serial')!.invalid && (certificateInfoForm.get('serial')!.dirty || certificateInfoForm.get('pin')!.touched)">
-  //                       <small
-  //                           class="form-text text-danger"
-  //                           *ngIf="certificateInfoForm.get('serial')?.error?.required"
-  //                        >
-  //                               This field is required.
-  //                       </small>
-  //               </div>
-  //               <input type="password" id="pin" class="swal2-input" placeholder="Pin" formControlName="pin">
-  //           </form> `,
-  //     confirmButtonText: 'Ký',
-  //     cancelButtonText: 'Thử lại',
-  //   }).then(result => {
-  //     if (result.value) {
-  //       const offsetX = e.currentTarget.getBoundingClientRect().x;
-  //       const offsetY = e.currentTarget.getBoundingClientRect().y;
-  //       const positionX = e.pageX - offsetX;
-  //       const positionY = e.pageY - offsetY;
-  //       const xDifference = -5;
-  //       const yDifference = 60;
-  //       const dpi = 96;
-  //       const pdfPositionX = Math.round((((positionX + 1) / this.scale) * 72) / dpi) + xDifference;
-  //       const pdfPositionY = Math.round((((e.currentTarget.clientHeight! - positionY + yDifference - 2) / this.scale) * 72) / dpi);
-  //       const pageNumber = this.currentPage;
-  //
-  //       const request = {
-  //         tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
-  //         signingRequestContents: [
-  //           { data: this.base64Content, location: { visibleX: pdfPositionX, visibleY: pdfPositionY }, extraInfo: { pageNum: pageNumber } },
-  //         ],
-  //       };
-  //       this.signingService.signPdf(request).subscribe(response => {
-  //         const byteArray = this.base64ToArrayBuffer(response);
-  //         this.content = byteArray;
-  //         saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
-  //         Swal.fire(
-  //           // 'Thông báo',
-  //           // 'Tệp của bạn được ký thành công!',
-  //           // 'success',
-  //           {
-  //             title: 'Thông báo',
-  //             text: 'Tệp của bạn được ký thành công!',
-  //             icon: 'success',
-  //             showCancelButton: false,
-  //             showConfirmButton: true,
-  //             // confirmButtonText: 'Đồng ý',
-  //             confirmButtonText: 'Xem tệp',
-  //           }
-  //         );
-  //       });
-  //       // For more information about handling dismissals please visit
-  //       // https://sweetalert2.github.io/#handling-dismissals
-  //     } //else if (result.dismiss === Swal.DismissReason.cancel) {
-  //     //Swal.fire(
-  //     //'Cancelled',
-  //     //'Your imaginary file is safe :)',
-  //     //'error'
-  //     //)
-  //     //}
-  //   });
-  // }
+  // Event for search operation
+  searchQueryChanged(newQuery: any): void {
+    if (newQuery !== this.pdfQuery) {
+      this.pdfQuery = newQuery;
+      this.pdfComponent!.pdfFindController.executeCommand('find', {
+        query: this.pdfQuery,
+        highlightAll: true,
+      });
+    } else {
+      this.pdfComponent!.pdfFindController.executeCommand('findagain', {
+        query: this.pdfQuery,
+        highlightAll: true,
+      });
+    }
+  }
 
-  // public onMouseMove(e: any): void {
-  //   const x = e.pageX + 2;
-  //   const y = e.pageY;
-  //
-  //   this.getInfoViewer();
-  //
-  //   const checkShowSidebar = $('#sidebarToggle').get(0).getAttribute('class') === 'toolbarButton toggled';
-  //
-  //   const offsetRight = checkShowSidebar
-  //     ? document.getElementById('accordionSidebar')!.offsetWidth +
-  //       document.getElementById('sidebarContent')!.offsetWidth +
-  //       $('.page').get(0).offsetLeft +
-  //       $('.page').get(0).offsetWidth
-  //     : document.getElementById('accordionSidebar')!.offsetWidth + $('.page').get(0).offsetLeft + $('.page').get(0).offsetWidth;
-  //
-  //   const page = document.querySelector<HTMLElement>('.page');
-  //   const offset = $('.page').offset();
-  //   const offsetY = offset!.top + page!.clientTop;
-  //
-  //   if (e.pageX + this.rectW * this.scale > offsetRight + 20 || e.pageY * this.currentPage - offsetY < this.rectH * this.scale) {
-  //     $('#rectMove').hide();
-  //     return;
-  //   }
-  //
-  //   this.isCheckShow = true;
-  //   $('#isShowRect').val(1);
-  //   $('#rectMove').show();
-  //   this.handleMouseMove(e);
-  // }
+  // Event handler when new PDF file is selected
+  onFileSelected(): void {
+    const $pdf: any = document.querySelector('#file');
 
-  // getInfoViewer(): void {
-  //   const clientW = 180;
-  //   const clientH = 80;
-  //   const baseH = 72;
-  //   const dpi = 96;
-  //
-  //   this.rectmoveW = 265 * this.scale;
-  //   this.rectmoveH = 65 * this.scale;
-  //   this.currentPage = $('#pageNumber').val();
-  // }
+    if (typeof FileReader !== 'undefined') {
+      const reader = new FileReader();
 
-  // handleMouseMove(e: any): void {
-  //   const rectmove = document.getElementById('rectMove');
-  //   const x = e.pageX + 2;
-  //   const y = e.pageY - rectmove!.clientHeight + 170 - $('#viewerContainer').offset()!.top;
-  //   $('#rectMove').animate(
-  //     {
-  //       left: x,
-  //       top: y,
-  //     },
-  //     0
-  //   );
-  // }
+      reader.onload = (e: any) => {
+        this.pdfSrc = e.target.result;
+      };
 
-  // base64ToArrayBuffer(base64: any): ArrayBuffer {
-  //   const binaryString = window.atob(base64);
-  //   const len = binaryString.length;
-  //   const bytes = new Uint8Array(len);
-  //   for (let i = 0; i < len; i++) {
-  //     bytes[i] = binaryString.charCodeAt(i);
-  //   }
-  //   return bytes.buffer;
-  // }
+      reader.readAsArrayBuffer($pdf.files[0]);
+    }
+  }
+
+  callBackFn(event: any): void {
+    console.warn('callBackFn', event);
+    // Setting total number of pages
+    this.totalPages = event._pdfInfo.numPages;
+    // const element = this.renderer.selectRootElement('canvas', true);
+    const element = document.getElementsByClassName('pdfViewer')[0];
+    // const text = this.renderer.createText('Namaste!!!!!');
+    const child = document.createElement('div');
+    child.setAttribute('id', 'signature-box');
+    (child as HTMLElement).style.backgroundColor = 'red';
+    (child as HTMLElement).style.position = 'absolute';
+    (child as HTMLElement).style.top = '0px';
+    (child as HTMLElement).style.zIndex = '9';
+    (child as HTMLElement).style.width = '256px';
+    (child as HTMLElement).style.height = '65px';
+    // // this.renderer.setAttribute(child, 'ngDraggable','');
+    this.renderer.appendChild(element, child);
+  }
+  pageRendered(event: any): void {
+    console.warn('pageRendered', event);
+
+    const element = document.getElementsByClassName('page')[0];
+
+    ($('#signature-box') as any).draggable({
+      containment: element,
+    });
+  }
+
+  setSignatureInPage(numberPage: any): void {
+    const element = document.getElementsByClassName('page')[numberPage.target.value - 1];
+
+    ($('#signature-box') as any).draggable({
+      containment: element,
+    });
+
+    $('#signature-box').animate(
+      {
+        left: 300,
+        top: numberPage.target.value * 1100,
+      },
+      0
+    );
+  }
+  textLayerRendered(event: any): void {
+    console.warn('textLayerRendered', event);
+  }
+  onError(event: any): void {
+    console.warn('onError', event);
+  }
+  onProgress(event: any): void {
+    console.warn('onProgress', event);
+  }
 }

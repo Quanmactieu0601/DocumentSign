@@ -18,6 +18,7 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   imports: [
     BrowserModule,
@@ -32,6 +33,7 @@ import { AngularDraggableModule } from 'angular2-draggable';
     BrowserAnimationsModule,
     NgxExtendedPdfViewerModule,
     ToastrModule.forRoot(),
+    PdfViewerModule,
   ],
   declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, PdfViewComponent],
   bootstrap: [MainComponent],

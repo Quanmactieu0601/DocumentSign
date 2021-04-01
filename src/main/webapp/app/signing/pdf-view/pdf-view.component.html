@@ -1,11 +1,78 @@
-<input type="file" id="myfile" name="myfile" (change)="fileChangeEvent($event)" ><br><br>
-<!--<ngx-extended-pdf-viewer #viewer height="80vh" [src]="content" (zoomChange)="onZoomChange($event)" [zoom]="100"></ngx-extended-pdf-viewer>-->
-<ngx-extended-pdf-viewer #viewer height="80vh" [src]="content"></ngx-extended-pdf-viewer>
-<!--<div id="rectMove" style="height: 80px;width: 180px;position: absolute;top:0;left: 0; border: #ff1d00 2px solid;z-index: 0;display: none" (mousemove)="onMouseMove($event)">-->
-<!--</div>-->
-<input id="isShowRect" type="number" value="0" hidden>
-<div ngDraggable id="rect">
-    <div style="height: 80px;width: 180px;position: absolute;top:0;left: 0; border: #ff1d00 2px solid;z-index: 0;">
-        Mẫu chữ ký
+<div class="pdf-viewer-wrap">
+    <div class="pdf-viewer-controls-wrap">
+        <h2>PDF Viewer Controls</h2>
+        <div class="pdf-viewer-controls">
+            <div class="pdfv-control" *ngIf="renderText">
+                Search:
+                <input #queryInp id="pdfQueryInput" type="text" placeholder="Search..." [value]="pdfQuery"
+                       (input)="searchQueryChanged($event.target!)" (keyup.enter)="searchQueryChanged(queryInp.value)">
+            </div>
+            <div class="pdfv-control">
+                Select PDF:
+                <input (change)="onFileSelected()" type="file" id="file">
+                <div>Total Pages:{{totalPages}}</div>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="originalSize = !originalSize">[original-size]="{{originalSize}}"</button>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="fitToPage = !fitToPage">[fit-to-page]="{{fitToPage}}"</button>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="showAll = !showAll">[show-all]="{{showAll}}"</button>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="autoresize = !autoresize">[autoresize]="{{autoresize}}"</button>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="showBorders = !showBorders">[show-borders]="{{showBorders}}"</button>
+            </div>
+            <div class="pdfv-control">
+                <button (click)="renderText = !renderText">[render-text]="{{renderText}}"</button>
+            </div>
+            <div class="pdfv-control">
+                Chọn trang đặt chữ ký
+                <select name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage($event)">
+                    <option [value]="o" *ngFor="let o of renderTextModes" >{{o}}</option>
+                </select>
+                <!-- <button (click)="renderTextMode = !renderTextMode">[render-text-mode]="{{renderTextMode}}"</button> -->
+            </div>
+            <div class="pdfv-control">
+                <button (click)="zoomOut()">-</button>  <button (click)="zoomIn()">+</button>
+                zoom (*{{zoom}})
+            </div>
+            <div class="pdfv-control">
+                zoom-scale
+                <select name="zoomScales" [(ngModel)]="zoomScale">
+                    <option [value]="o" *ngFor="let o of zoomScales">{{o}}</option>
+                </select>
+            </div>
+
+            <div class="pdfv-control">
+                <button (click)="rotateDoc()"></button>
+                Rotation (*{{rotation}}°)
+            </div>
+        </div>
     </div>
+
+    <div class="pdf-viewer-viewer-window">
+<!--        <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"-->
+<!--                    [zoom]="zoom" [zoom-scale]="zoomScale" [original-size]="originalSize" [fit-to-page]="fitToPage"-->
+<!--                    [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"-->
+<!--                    (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"-->
+<!--                    (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)" (on-progress)="onProgress($event)">-->
+<!--        </pdf-viewer>-->
+
+        <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"
+                    [original-size]="originalSize" [fit-to-page]="fitToPage"
+                    [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"
+                    (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"
+                    (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)" (on-progress)="onProgress($event)">
+        </pdf-viewer>
+    </div>
+
 </div>
+
+
+
+
