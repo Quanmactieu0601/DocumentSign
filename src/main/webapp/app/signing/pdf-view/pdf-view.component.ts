@@ -4,6 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -25,11 +26,10 @@ export class PdfViewComponent implements OnInit {
   renderTextMode = 1;
   rotation = 0;
   zoom = 1;
-  zoomScale = 'page-width';
-  zoomScales = ['page-width', 'page-fit', 'page-height'];
   pdfQuery = '';
   totalPages!: number;
   heightPage = 900;
+  base64Content = '';
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
@@ -44,18 +44,6 @@ export class PdfViewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
-
-  zoomIn(): void {
-    this.zoom += 0.05;
-  }
-
-  zoomOut(): void {
-    if (this.zoom > 0.05) this.zoom -= 0.05;
-  }
-
-  rotateDoc(): void {
-    this.rotation += 90;
-  }
 
   // Event for search operation
   searchQueryChanged(newQuery: any): void {
@@ -73,7 +61,6 @@ export class PdfViewComponent implements OnInit {
     }
   }
 
-  // Event handler when new PDF file is selected
   onFileSelected(): void {
     const $pdf: any = document.querySelector('#file');
     if (typeof FileReader !== 'undefined') {
@@ -81,8 +68,9 @@ export class PdfViewComponent implements OnInit {
 
       reader.onload = (e: any) => {
         this.pdfSrc = e.target.result;
+        this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
       };
-      reader.readAsArrayBuffer($pdf.files[0]);
+      reader.readAsDataURL($pdf.files[0]);
     }
   }
 
@@ -111,7 +99,6 @@ export class PdfViewComponent implements OnInit {
 
   setSignatureInPage(numberPage: any): void {
     const pdfPage = document.getElementsByClassName('page')[Number(numberPage) - 1] as HTMLElement;
-    const pageHeight = pdfPage.clientHeight;
     const sig = document.getElementById('signature-box');
     const dpi = 96;
 
@@ -125,8 +112,10 @@ export class PdfViewComponent implements OnInit {
         const xPos = Math.floor(((left - boundX - 9) / dpi) * 72);
 
         const h = Math.floor((sig!.offsetHeight / dpi) * 72);
-        const yPos = pageHeight - Math.ceil(top - boundY) - h - 8;
-        console.warn(xPos + '---- Y: ' + yPos);
+        const yPos = 791 - Math.ceil(((top - boundY - 10) / dpi) * 72) - h;
+        // console.warn(xPos + '---- Y: ' + yPos);
+        $('#xPos').text(xPos);
+        $('#yPos').text(yPos);
       },
 
       stop(): void {},
@@ -149,7 +138,59 @@ export class PdfViewComponent implements OnInit {
         0
       );
     }
+
+    this.getPosition();
   }
+
+  getPosition(): void {
+    const pdfPage = document.getElementsByClassName('page')[Number(this.renderTextMode) - 1] as HTMLElement;
+    const sig = document.getElementById('signature-box');
+    const dpi = 96;
+
+    const boundX = pdfPage.offsetLeft;
+    const boundY = pdfPage.offsetTop;
+    const top = sig!.offsetTop;
+    const left = sig!.offsetLeft;
+    const xPos = Math.floor(((left - boundX - 9) / dpi) * 72);
+
+    const h = Math.floor((sig!.offsetHeight / dpi) * 72);
+    const yPos = 791 - Math.ceil(((top - boundY - 10) / dpi) * 72) - h;
+    // console.warn(xPos + '---- Y: ' + yPos);
+    $('#xPos').text(xPos);
+    $('#yPos').text(yPos);
+  }
+
+  sign(): void {
+    const request = {
+      tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
+      signingRequestContents: [
+        {
+          data: this.base64Content,
+          location: { visibleX: $('#xPos').text(), visibleY: $('#yPos').text() },
+          extraInfo: { pageNum: Number(this.renderTextMode) },
+        },
+      ],
+    };
+    this.signingService.signPdf(request).subscribe(response => {
+      // const byteArray = this.base64ToArrayBuffer(this.pdfSrc);
+      saveAs(new Blob([this.pdfSrc], { type: 'application/pdf' }), 'file_signed.pdf');
+      // Swal.fire(
+      //   // 'Thông báo',
+      //   // 'Tệp của bạn được ký thành công!',
+      //   // 'success',
+      //   {
+      //     title: 'Thông báo',
+      //     text: 'Tệp của bạn được ký thành công!',
+      //     icon: 'success',
+      //     showCancelButton: false,
+      //     showConfirmButton: true,
+      //     // confirmButtonText: 'Đồng ý',
+      //     confirmButtonText: 'Xem tệp',
+      //   }
+      // );
+    });
+  }
+
   textLayerRendered(event: any): void {
     console.warn('textLayerRendered', event);
   }

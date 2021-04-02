@@ -13,56 +13,27 @@
                 <div>Total Pages:{{totalPages}}</div>
             </div>
             <div class="pdfv-control">
-                <button (click)="originalSize = !originalSize">[original-size]="{{originalSize}}"</button>
-            </div>
-            <div class="pdfv-control">
-                <button (click)="fitToPage = !fitToPage">[fit-to-page]="{{fitToPage}}"</button>
-            </div>
-            <div class="pdfv-control">
-                <button (click)="showAll = !showAll">[show-all]="{{showAll}}"</button>
-            </div>
-            <div class="pdfv-control">
-                <button (click)="autoresize = !autoresize">[autoresize]="{{autoresize}}"</button>
-            </div>
-            <div class="pdfv-control">
-                <button (click)="showBorders = !showBorders">[show-borders]="{{showBorders}}"</button>
-            </div>
-            <div class="pdfv-control">
-                <button (click)="renderText = !renderText">[render-text]="{{renderText}}"</button>
-            </div>
-            <div class="pdfv-control">
                 Chọn trang đặt chữ ký
                 <select name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage(renderTextMode)">
                     <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index" selected >{{i + 1}}</option>
                 </select>
-                <!-- <button (click)="renderTextMode = !renderTextMode">[render-text-mode]="{{renderTextMode}}"</button> -->
-            </div>
-            <div class="pdfv-control">
-                <button (click)="zoomOut()">-</button>  <button (click)="zoomIn()">+</button>
-                zoom (*{{zoom}})
-            </div>
-            <div class="pdfv-control">
-                zoom-scale
-                <select name="zoomScales" [(ngModel)]="zoomScale">
-                    <option [value]="o" *ngFor="let o of zoomScales">{{o}}</option>
-                </select>
             </div>
 
-            <div class="pdfv-control">
-                <button (click)="rotateDoc()"></button>
-                Rotation (*{{rotation}}°)
+            <div class="pdfy-control">
+                Vị trí ký
+                <label id="xPos"></label>
+                <label id="yPos"></label>
             </div>
+
+                <div class="pdfy-control">
+                    <button type="submit" class="btn btn-primary btn-sm" (click)="sign()">
+                        <span jhiTranslate="sign.pdf.signFile"></span>
+                    </button>
+                </div>
         </div>
     </div>
 
     <div class="pdf-viewer-viewer-window">
-<!--        <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"-->
-<!--                    [zoom]="zoom" [zoom-scale]="zoomScale" [original-size]="originalSize" [fit-to-page]="fitToPage"-->
-<!--                    [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"-->
-<!--                    (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"-->
-<!--                    (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)" (on-progress)="onProgress($event)">-->
-<!--        </pdf-viewer>-->
-
         <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"
                     [original-size]="originalSize" [fit-to-page]="fitToPage"
                     [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"
