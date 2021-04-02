@@ -29,15 +29,12 @@ export class PdfViewComponent implements OnInit {
   zoomScales = ['page-width', 'page-fit', 'page-height'];
   pdfQuery = '';
   totalPages!: number;
-
   heightPage = 900;
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
     pin: ['', [Validators.required]],
   });
-
-  public isCheckShow: any;
 
   constructor(
     private signingService: SigningService,
@@ -79,14 +76,12 @@ export class PdfViewComponent implements OnInit {
   // Event handler when new PDF file is selected
   onFileSelected(): void {
     const $pdf: any = document.querySelector('#file');
-
     if (typeof FileReader !== 'undefined') {
       const reader = new FileReader();
 
       reader.onload = (e: any) => {
         this.pdfSrc = e.target.result;
       };
-
       reader.readAsArrayBuffer($pdf.files[0]);
     }
   }
@@ -108,16 +103,33 @@ export class PdfViewComponent implements OnInit {
     // // this.renderer.setAttribute(child, 'ngDraggable','');
     this.renderer.appendChild(element, child);
   }
+
   pageRendered(event: any): void {
     console.warn('pageRendered', event);
-    this.setSignatureInPage(1);
+    this.setSignatureInPage(this.renderTextMode);
   }
 
   setSignatureInPage(numberPage: any): void {
-    const element = document.getElementsByClassName('page')[Number(numberPage) - 1];
+    const pdfPage = document.getElementsByClassName('page')[Number(numberPage) - 1] as HTMLElement;
+    const pageHeight = pdfPage.clientHeight;
+    const sig = document.getElementById('signature-box');
+    const dpi = 96;
 
     ($('#signature-box') as any).draggable({
-      containment: element,
+      containment: pdfPage,
+      drag(): void {
+        const boundX = pdfPage.offsetLeft;
+        const boundY = pdfPage.offsetTop;
+        const top = sig!.offsetTop;
+        const left = sig!.offsetLeft;
+        const xPos = Math.floor(((left - boundX - 9) / dpi) * 72);
+
+        const h = Math.floor((sig!.offsetHeight / dpi) * 72);
+        const yPos = pageHeight - Math.ceil(top - boundY) - h - 8;
+        console.warn(xPos + '---- Y: ' + yPos);
+      },
+
+      stop(): void {},
     });
 
     if (Number(numberPage) === 1) {
