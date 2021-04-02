@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import * as FileSaver from 'file-saver';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -71,6 +71,7 @@ export class PdfViewComponent implements OnInit {
         this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
       };
       reader.readAsDataURL($pdf.files[0]);
+      this.renderTextMode = 1;
     }
   }
 
@@ -138,7 +139,6 @@ export class PdfViewComponent implements OnInit {
         0
       );
     }
-
     this.getPosition();
   }
 
@@ -155,7 +155,6 @@ export class PdfViewComponent implements OnInit {
 
     const h = Math.floor((sig!.offsetHeight / dpi) * 72);
     const yPos = 791 - Math.ceil(((top - boundY - 10) / dpi) * 72) - h;
-    // console.warn(xPos + '---- Y: ' + yPos);
     $('#xPos').text(xPos);
     $('#yPos').text(yPos);
   }
@@ -172,23 +171,19 @@ export class PdfViewComponent implements OnInit {
       ],
     };
     this.signingService.signPdf(request).subscribe(response => {
-      // const byteArray = this.base64ToArrayBuffer(this.pdfSrc);
-      saveAs(new Blob([this.pdfSrc], { type: 'application/pdf' }), 'file_signed.pdf');
-      // Swal.fire(
-      //   // 'Thông báo',
-      //   // 'Tệp của bạn được ký thành công!',
-      //   // 'success',
-      //   {
-      //     title: 'Thông báo',
-      //     text: 'Tệp của bạn được ký thành công!',
-      //     icon: 'success',
-      //     showCancelButton: false,
-      //     showConfirmButton: true,
-      //     // confirmButtonText: 'Đồng ý',
-      //     confirmButtonText: 'Xem tệp',
-      //   }
-      // );
+      const byteArray = this.base64ToArrayBuffer(response);
+      saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
     });
+  }
+
+  base64ToArrayBuffer(base64: any): ArrayBuffer {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes.buffer;
   }
 
   textLayerRendered(event: any): void {
