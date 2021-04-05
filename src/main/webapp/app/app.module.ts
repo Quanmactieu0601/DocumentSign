@@ -19,6 +19,9 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { SigningComponent } from './signing/signing.component';
+import { ArchwizardModule } from 'angular-archwizard';
+import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
 @NgModule({
   imports: [
     BrowserModule,
@@ -32,10 +35,12 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     WebappAppRoutingModule,
     BrowserAnimationsModule,
     NgxExtendedPdfViewerModule,
+    ArchwizardModule,
     ToastrModule.forRoot(),
     PdfViewerModule,
+    VerifySignatureDocModule,
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, PdfViewComponent],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, PdfViewComponent, SigningComponent],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

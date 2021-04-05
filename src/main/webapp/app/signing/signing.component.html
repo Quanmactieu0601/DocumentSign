@@ -1,1 +1,30 @@
-<p>signing works!</p>
+<aw-wizard>
+    <aw-wizard-step stepTitle="Chọn tệp ký">
+        Content of Step 1
+        <jhi-verify-signature-doc></jhi-verify-signature-doc>
+        <button type="button" class="btn btn-primary btn-sm" awNextStep>Next Step</button>
+        <button type="button" [awGoToStep]="{stepIndex: 2}">Go directly to third Step</button>
+    </aw-wizard-step>
+    <aw-wizard-step stepTitle="Chọn chứng thư số">
+        Content of Step 2
+        <button type="button" awPreviousStep>Go to previous step</button>
+        <button type="button" awNextStep>Go to next step</button>
+    </aw-wizard-step>
+    <aw-wizard-step stepTitle="Thông tin chứng thư số">
+        Content of Step 3
+        <button type="button" awPreviousStep>Go to previous step</button>
+        <button type="button" awNextStep>Go to next step</button>
+    </aw-wizard-step>
+
+    <aw-wizard-step stepTitle="Chọn vị trí ký">
+        Content of Step 4
+        <button type="button" awPreviousStep>Go to previous step</button>
+        <button type="button" awNextStep>Go to next step</button>
+    </aw-wizard-step>
+
+    <aw-wizard-step stepTitle="Kết quả ký">
+        <jhi-pdf-view></jhi-pdf-view>
+        <button type="button" awPreviousStep>Previous Step</button>
+        <button type="button" (click)="finishFunction()">Finish</button>
+    </aw-wizard-step>
+</aw-wizard>

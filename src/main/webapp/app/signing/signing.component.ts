@@ -9,4 +9,5 @@ export class SigningComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {}
+  finishFunction(): void {}
 }
