@@ -25,9 +25,7 @@ export class VerifySignatureService {
 
   verifyPdf(file: File): Observable<any> {
     const formData: FormData = new FormData();
-
     formData.append('file', file);
-
     const req = new HttpRequest('POST', `${this.resourceUrl}/pdf`, formData, {
       reportProgress: true,
       responseType: 'json',

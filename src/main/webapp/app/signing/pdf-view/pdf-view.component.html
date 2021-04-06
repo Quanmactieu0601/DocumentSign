@@ -1,36 +1,78 @@
 <div class="pdf-viewer-wrap">
     <div class="pdf-viewer-controls-wrap">
-        <h2>Ký tệp PDF</h2>
+<!--        <h2>Ký tệp PDF</h2>-->
         <div class="pdf-viewer-controls">
             <div class="pdfv-control" *ngIf="renderText">
-                Search:
-                <input #queryInp id="pdfQueryInput" type="text" placeholder="Search..." [value]="pdfQuery"
+                Tìm kiếm nội dung
+                <input class="form-control form-control-sm" #queryInp id="pdfQueryInput" type="text" placeholder="Search..." [value]="pdfQuery"
                        (input)="searchQueryChanged(queryInp.value)" (keyup.enter)="searchQueryChanged(queryInp.value)">
             </div>
+
             <div class="pdfv-control">
                 Select PDF:
                 <input (change)="onFileSelected()" type="file" id="file">
                 <div>Total Pages:{{totalPages}}</div>
             </div>
+
             <div class="pdfv-control">
                 Chọn trang đặt chữ ký
-                <select name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage(renderTextMode)">
+                <select class="form-control form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage(renderTextMode)">
                     <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index" selected >{{i + 1}}</option>
                 </select>
             </div>
 
-            <div class="pdfy-control">
+            <div class="pdfv-control">
                 Vị trí ký
                 <label id="xPos"></label>
                 <label id="yPos"></label>
             </div>
 
-                <div class="pdfy-control">
+            <div class="pdfv-control">
+                <form class="form" [formGroup]="signingForm">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.certificate.serial">Serial</span></label>
+                        <input type="text" class="form-control form-control-sm" name="serial" formControlName="serial">
+                        <div *ngIf="signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)">
+                            <small
+                                class="form-text text-danger"
+                                *ngIf="signingForm.get('serial')?.errors?.required"
+                                jhiTranslate="sign.messages.validate.serial.required"
+                            >
+                                Your serial is required.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.certificate.pin">Pin</span></label>
+                        <input type="password" class="form-control form-control-sm" name="pin" formControlName="pin">
+
+                        <div *ngIf="signingForm.get('pin')!.invalid && (signingForm.get('pin')!.dirty || signingForm.get('pin')!.touched)">
+                            <small
+                                class="form-text text-danger"
+                                *ngIf="signingForm.get('pin')?.errors?.required"
+                                jhiTranslate="sign.messages.validate.pin.required"
+                            >
+                                Your pin is required.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="pdfv-control">
                     <button type="submit" class="btn btn-primary btn-sm" (click)="sign()">
                         <span jhiTranslate="sign.pdf.signFile"></span>
                     </button>
-                </div>
+
+                    <button type="submit" class="btn btn btn-danger btn-sm" (click)="cancel()">
+                        <span jhiTranslate="sign.pdf.cancel"></span>
+                    </button>
+            </div>
         </div>
+
     </div>
     <div class="pdf-viewer-viewer-window">
         <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"

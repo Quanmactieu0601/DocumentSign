@@ -1,0 +1,24 @@
+<div class="form-group col-md-12 uploadFormGroup">
+    <form #f="ngForm">
+            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".pdf"
+                 [disableClick]="selectFiles.length!=0">
+                <ngx-dropzone-label style="font-family: Nunito">
+                    <i class="fas fa-upload fa-2x"></i>
+                    <br>
+                    Kéo thả file pdf cần ký vào đây hoặc click để chọn
+                </ngx-dropzone-label>
+
+                <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
+                                      (removed)="removeFile($event)">
+                    <ngx-dropzone-label>
+                        <i class="fas fa-file-word fa-2x"></i>
+                        <label style="font-family: Nunito; font-size-adjust: inherit">
+                            {{f.name}}
+                        </label>
+                    </ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </div>
+            <br>
+    </form>
+</div>
+

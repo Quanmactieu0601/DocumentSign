@@ -1,7 +1,19 @@
 {
   "sign": {
     "pdf": {
-      "signFile": "Ký điện tử"
+      "signFile": "Ký điện tử",
+      "cancel": "Hủy",
+      "next": "Tiếp theo"
+    },
+    "messages": {
+      "validate": {
+        "serial": {
+          "required": "Your serial is required."
+        },
+        "pin": {
+          "required": "Your pin is required"
+        }
+      }
     }
   }
 }

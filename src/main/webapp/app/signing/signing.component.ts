@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
+import { doc } from 'prettier';
+import printer = doc.printer;
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-signing',
@@ -6,8 +9,37 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./signing.component.scss'],
 })
 export class SigningComponent implements OnInit {
-  constructor() {}
+  FileToSign: any = null;
+  srcPdfResult: any;
+
+  @ViewChild('wizzard') wizzard: any;
+  constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {}
   finishFunction(): void {}
+
+  validateFileInput(FileToSign: File): any {
+    if (typeof FileReader !== 'undefined') {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.FileToSign = e.target.result;
+      };
+
+      if (FileToSign) reader.readAsDataURL(FileToSign);
+      else this.FileToSign = FileToSign;
+    }
+  }
+
+  cancel(): void {
+    this.wizzard.goToPreviousStep();
+  }
+  signResult(isSigned: boolean): void {
+    if (isSigned) {
+      this.wizzard.goToNextStep();
+    }
+  }
+
+  fileURL(): any {
+    return this.sanitizer.bypassSecurityTrustResourceUrl('file:///D:/view_signed.pdf');
+  }
 }

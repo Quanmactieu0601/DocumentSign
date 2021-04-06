@@ -1,6 +1,17 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
@@ -13,9 +24,14 @@ import { saveAs } from 'file-saver';
 })
 export class PdfViewComponent implements OnInit {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
-
+  @Input() pdfSrc = '';
+  @Output() cancelEvent = new EventEmitter();
+  @Output() signEvent = new EventEmitter<boolean>();
   title = 'angular-pdf-viewer-app';
-  pdfSrc = 'https://vadimdez.github.io/ng2-pdf-viewer/assets/pdf-test.pdf';
+  signingForm = this.fb.group({
+    serial: ['', Validators.required],
+    pin: ['', Validators.required],
+  });
 
   renderText = true;
   originalSize = true;
@@ -68,7 +84,6 @@ export class PdfViewComponent implements OnInit {
 
       reader.onload = (e: any) => {
         this.pdfSrc = e.target.result;
-        this.base64Content = reader.result!.toString().replace('data:application/pdf;base64,', '');
       };
       reader.readAsDataURL($pdf.files[0]);
       this.renderTextMode = 1;
@@ -114,7 +129,7 @@ export class PdfViewComponent implements OnInit {
 
         const h = Math.floor((sig!.offsetHeight / dpi) * 72);
         const yPos = 791 - Math.ceil(((top - boundY - 10) / dpi) * 72) - h;
-        // console.warn(xPos + '---- Y: ' + yPos);
+
         $('#xPos').text(xPos);
         $('#yPos').text(yPos);
       },
@@ -164,15 +179,17 @@ export class PdfViewComponent implements OnInit {
       tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
       signingRequestContents: [
         {
-          data: this.base64Content,
+          data: this.pdfSrc.toString().replace('data:application/pdf;base64,', ''),
           location: { visibleX: $('#xPos').text(), visibleY: $('#yPos').text() },
           extraInfo: { pageNum: Number(this.renderTextMode) },
         },
       ],
     };
+
     this.signingService.signPdf(request).subscribe(response => {
       const byteArray = this.base64ToArrayBuffer(response);
-      saveAs(new Blob([byteArray], { type: 'application/pdf' }), 'file_signed.pdf');
+      saveAs(new Blob([byteArray], { type: 'application/pdf' }), Date.now().toString());
+      this.signEvent.emit(true);
     });
   }
 
@@ -184,6 +201,10 @@ export class PdfViewComponent implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+
+  cancel(): void {
+    this.cancelEvent.emit();
   }
 
   textLayerRendered(event: any): void {

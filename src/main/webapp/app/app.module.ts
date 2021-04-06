@@ -22,6 +22,7 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { SigningComponent } from './signing/signing.component';
 import { ArchwizardModule } from 'angular-archwizard';
 import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
+import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -40,7 +41,15 @@ import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify
     PdfViewerModule,
     VerifySignatureDocModule,
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, PdfViewComponent, SigningComponent],
+  declarations: [
+    MainComponent,
+    ErrorComponent,
+    LoginComponent,
+    HomeLayoutComponent,
+    PdfViewComponent,
+    SigningComponent,
+    UploadDocComponent,
+  ],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

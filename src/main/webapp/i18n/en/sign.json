@@ -1,7 +1,19 @@
 {
   "sign": {
     "pdf": {
-      "signFile": "Sign"
+      "signFile": "Sign",
+      "cancel": "Cancel",
+      "next": "Next"
+    },
+    "messages": {
+      "validate": {
+        "serial": {
+          "required": "Your serial is required."
+        },
+        "pin": {
+          "required": "Your pin is required"
+        }
+      }
     }
   }
 }
