@@ -16,6 +16,7 @@ import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { saveAs } from 'file-saver';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -26,7 +27,7 @@ export class PdfViewComponent implements OnInit {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @Input() pdfSrc = '';
   @Output() cancelEvent = new EventEmitter();
-  @Output() signEvent = new EventEmitter<boolean>();
+  @Output() signEvent = new EventEmitter<any>();
   title = 'angular-pdf-viewer-app';
   signingForm = this.fb.group({
     serial: ['', Validators.required],
@@ -186,10 +187,10 @@ export class PdfViewComponent implements OnInit {
       ],
     };
 
-    this.signingService.signPdf(request).subscribe(response => {
-      const byteArray = this.base64ToArrayBuffer(response);
-      saveAs(new Blob([byteArray], { type: 'application/pdf' }), Date.now().toString());
-      this.signEvent.emit(true);
+    this.signingService.signPdf(request).subscribe((res: ResponseBody) => {
+      const byteArray = this.base64ToArrayBuffer(res);
+      // saveAs(new Blob([byteArray], { type: 'application/pdf' }), Date.now().toString());
+      this.signEvent.emit(byteArray);
     });
   }
 

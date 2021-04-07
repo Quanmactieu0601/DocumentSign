@@ -33,13 +33,10 @@ export class SigningComponent implements OnInit {
   cancel(): void {
     this.wizzard.goToPreviousStep();
   }
-  signResult(isSigned: boolean): void {
-    if (isSigned) {
+  signResult(signedFile: any): void {
+    if (signedFile) {
       this.wizzard.goToNextStep();
+      this.srcPdfResult = signedFile;
     }
-  }
-
-  fileURL(): any {
-    return this.sanitizer.bypassSecurityTrustResourceUrl('file:///D:/view_signed.pdf');
   }
 }
