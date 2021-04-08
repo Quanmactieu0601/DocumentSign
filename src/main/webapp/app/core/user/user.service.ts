@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption, Pagination } from 'app/shared/util/request-util';
 import { IUser, User } from './user.model';
-import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
@@ -29,6 +28,9 @@ export class UserService {
     return this.http.get<IUser>(`${this.resourceUrl}/${login}`);
   }
 
+  findById(id: number): Observable<any> {
+    return this.http.get<IUser>(`${this.resourceUrl}/getById/${id}`);
+  }
   findByUser(req?: any): Observable<any> {
     const options = createRequestOption(req);
     return this.http.get<IUser[]>(this.resourceUrl + '/search', { params: options, observe: 'response' });
@@ -37,6 +39,10 @@ export class UserService {
   query(req?: Pagination): Observable<HttpResponse<IUser[]>> {
     const options = createRequestOption(req);
     return this.http.get<IUser[]>(this.resourceUrl, { params: options, observe: 'response' });
+  }
+
+  getAllUsers(): Observable<HttpResponse<IUser[]>> {
+    return this.http.get<IUser[]>(this.resourceUrl + '/getAll', { observe: 'response' });
   }
 
   delete(login: string): Observable<{}> {
@@ -88,12 +94,6 @@ export class UserService {
   }
 
   downLoadTemplateFile(): Observable<any> {
-    return this.http.get(`${this.resourceUrl}/templateFile`, { responseType: 'blob' }).pipe(
-      map(response => {
-        return {
-          data: response,
-        };
-      })
-    );
+    return this.http.get(`${this.resourceUrl}/templateFile`, { observe: 'body' });
   }
 }

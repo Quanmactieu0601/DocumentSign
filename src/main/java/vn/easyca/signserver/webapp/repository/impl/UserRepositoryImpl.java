@@ -11,6 +11,7 @@ import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Repository
@@ -19,7 +20,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
+    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone, boolean activated) {
         Map<String, Object> params = new HashMap<>();
         List<UserEntity> userEntityList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -55,6 +56,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             sqlBuilder.append("AND a.phone like :phone ");
             params.put("phone", "%" + phone + "%");
         }
+        if (activated) {
+            sqlBuilder.append("And a.activated = true ");
+        }
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
@@ -65,7 +69,5 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             userEntityList = query.getResultList();
         }
         return new PageImpl<>(userEntityList, pageable, total.longValue());
-
     }
-
 }

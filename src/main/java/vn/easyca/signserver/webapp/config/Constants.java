@@ -25,4 +25,6 @@ public final class Constants {
     }
 
     public static final List<String> HASH_ALGORITHMS = Arrays.asList(HASH_ALGORITHM.SHA1, HASH_ALGORITHM.SHA256, HASH_ALGORITHM.SHA512);
+
+    public static final String TEMP_FOLDER_DIRECTORY = "opt/easysign/tmp";
 }

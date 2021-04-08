@@ -101,7 +101,9 @@ public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
             QueryUtils.setParamsWithPageable(transactionDTOQuery, params, pageable, total);
             transactionList = transactionDTOQuery.getResultList();
         }
+//        return new PageImpl<>(transactionList, pageable, total.longValue());
         return new PageImpl<>(transactionList, pageable, total.longValue());
+
     }
 
     @Override

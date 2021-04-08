@@ -66,10 +66,11 @@ export class CertificateSignatureComponent implements OnInit {
     this.signatureImageService.saveImage(this.imageFiles, this.certificate?.id).subscribe((res: any) => {
       this.results = res.body['data'];
       this.toastrService.success(this.translateService.instant('webappApp.signatureImage.showImageSign.success'));
+      this.activeModal.close(this.results);
     });
   }
 
   cancel(): void {
-    this.activeModal.close(this.results);
+    this.activeModal.close();
   }
 }

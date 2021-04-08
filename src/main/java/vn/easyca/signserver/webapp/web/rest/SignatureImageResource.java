@@ -3,7 +3,6 @@ package vn.easyca.signserver.webapp.web.rest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
@@ -167,7 +166,7 @@ public class SignatureImageResource extends BaseResource {
         }
         try {
             String base64Image = Base64.getEncoder().encodeToString(files[0].getBytes());
-            SignatureImage signatureImage = signatureImageService.saveSignatureImageByCert(base64Image, certId);
+            SignatureImageDTO signatureImage = signatureImageService.saveSignatureImageByCert(base64Image, certId);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signatureImage.getId()));
         } catch (ApplicationException applicationException) {

@@ -7,6 +7,7 @@ import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import javax.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * A SignatureTemplate.
@@ -35,6 +36,23 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @Column(name = "core_parser")
     private SignatureTemplateParserType coreParser;
 
+    @Column(name = "width")
+    private Integer width;
+
+    @Column(name = "transparency")
+    private Boolean transparency;
+
+    public Integer getWidth() { return width; }
+
+    public void setWidth(Integer width) { this.width = width; }
+
+    public Integer getHeight() { return height; }
+
+    public void setHeight(Integer height) { this.height = height; }
+
+    @Column(name = "height")
+    private Integer height;
+
     public Integer getType() {
         return type;
     }
@@ -58,6 +76,7 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     }
 
     public void setId(Long id) {
+
         this.id = id;
     }
 
@@ -74,7 +93,14 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     public void setUserId(Long userId) {
         this.userId = userId;
     }
-    // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
+
+    public Boolean getTransparency() {
+        return transparency;
+    }
+
+    public void setTransparency(Boolean transparency) {
+        this.transparency = transparency == null ? false : transparency;
+    }
 
     public SignatureTemplateParserType getCoreParser() {
         return coreParser;

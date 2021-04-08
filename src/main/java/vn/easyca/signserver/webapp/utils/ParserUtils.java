@@ -5,6 +5,7 @@ import org.xhtmlrenderer.swing.Java2DRenderer;
 import vn.easyca.signserver.core.exception.ApplicationException;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
@@ -33,6 +34,40 @@ public class ParserUtils {
             Tidy tidy = new Tidy();
             org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
             Java2DRenderer renderer = new Java2DRenderer(doc, 355, 130);
+            BufferedImage img = renderer.getImage();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(img, "png", os);
+            return Base64.getEncoder().encodeToString(os.toByteArray());
+        } catch (UnsupportedEncodingException e) {
+            throw new ApplicationException("Error encoding when convert html to base64", e);
+        } catch (IOException e) {
+            throw new ApplicationException("Error I/O when convert html to base64", e);
+        }
+    }
+
+    public static String convertHtmlContentToBase64Resize(String htmlContent, Integer width , Integer height, boolean transparency) throws ApplicationException {
+        //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
+        try {
+            InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
+            Tidy tidy = new Tidy();
+            org.w3c.dom.Document doc = tidy.parseDOM(new InputStreamReader(htmlStream, "UTF-8"), null);
+            Java2DRenderer renderer;
+            if (transparency) {
+                final java.awt.Color TRANSPARENT = new Color(255, 255, 255, 0);
+                final int imageType = BufferedImage.TYPE_INT_ARGB;
+                renderer = new Java2DRenderer(doc, width, height){
+                    @Override
+                    protected BufferedImage createBufferedImage(final int width, final int height) {
+                        final BufferedImage image = org.xhtmlrenderer.util.ImageUtil.createCompatibleBufferedImage(width, height, imageType);
+                        org.xhtmlrenderer.util.ImageUtil.clearImage(image, TRANSPARENT);
+                        return image;
+                    }
+                };
+                renderer.setBufferedImageType(imageType);
+            } else {
+                renderer = new Java2DRenderer(doc, width, height);
+            }
+
             BufferedImage img = renderer.getImage();
             ByteArrayOutputStream os = new ByteArrayOutputStream();
             ImageIO.write(img, "png", os);

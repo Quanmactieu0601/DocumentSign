@@ -4,7 +4,6 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +52,7 @@ public class HSMCertificateResource extends BaseResource {
 //            String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
             p11GeneratorService.generateBulkCSR(dtos);
-            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos);
+            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos, CertRequestInfoDTO.STEP_2);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(byteData));
         } catch (Exception e) {
@@ -66,16 +65,16 @@ public class HSMCertificateResource extends BaseResource {
         }
     }
 
-    @GetMapping("/download-certificate-request-information")
+    @GetMapping("/download-csr-template")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try {
             log.info("--- download-certificate-request-template ---");
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
-            return new ResponseEntity<>(IOUtils.toByteArray(inputStream), null, HttpStatus.OK);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
         } catch (Exception e) {
             log.debug(e.getMessage());
-            return new ResponseEntity<>(null, null, HttpStatus.OK);
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
         }
     }
 
@@ -87,8 +86,9 @@ public class HSMCertificateResource extends BaseResource {
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
             String currentUser = AccountUtils.getLoggedAccount();
             p11GeneratorService.installCertIntoHsm(dtos, currentUser);
+            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos, CertRequestInfoDTO.STEP_4);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse());
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(byteData));
         } catch (Exception e) {
             message = e.getMessage();
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(message));

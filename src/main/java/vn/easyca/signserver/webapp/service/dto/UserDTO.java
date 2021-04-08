@@ -20,7 +20,7 @@ public class UserDTO {
     @Pattern(regexp = Constants.LOGIN_REGEX)
     @Size(min = 1, max = 50)
     private String login;
- 
+
     @Size(max = 200)
     private String firstName;
 
@@ -113,6 +113,30 @@ public class UserDTO {
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+        this.remindChangePassword = userEntity.getRemindChangePassword();
+    }
+
+
+    public UserDTO(UserEntity userEntity, boolean getAuthority) {
+        this.id = userEntity.getId();
+        this.login = userEntity.getLogin();
+        this.firstName = userEntity.getFirstName();
+        this.lastName = userEntity.getLastName();
+        this.email = userEntity.getEmail();
+        this.activated = userEntity.getActivated();
+        this.imageUrl = userEntity.getImageUrl();
+        this.langKey = userEntity.getLangKey();
+        this.createdBy = userEntity.getCreatedBy();
+        this.createdDate = userEntity.getCreatedDate();
+        this.lastModifiedBy = userEntity.getLastModifiedBy();
+        this.lastModifiedDate = userEntity.getLastModifiedDate();
+        this.commonName = userEntity.getCommonName();
+        this.localityName = userEntity.getLocalityName();
+        this.organizationName = userEntity.getOrganizationName();
+        this.organizationUnit = userEntity.getOrganizationUnit();
+        this.stateName = userEntity.getStateName();
+        this.country = userEntity.getCountry();
+        this.phone = userEntity.getPhone();
         this.remindChangePassword = userEntity.getRemindChangePassword();
     }
 

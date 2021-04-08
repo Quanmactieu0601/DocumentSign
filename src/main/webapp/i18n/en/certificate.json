@@ -78,22 +78,41 @@
         "cancel": "Cancel",
         "confirm": "Confirm"
       },
-      "uploadCert": {
+      "installCertIntoHsm": {
         "title": "Install CERT into HSM",
+        "notification": "File size must be less than 10MB",
         "alert": {
           "success": "Install CERT into HSM successfully",
           "error": "Install CERT into HSM failure: {{message}}"
-        }
+        },
+        "install": "Install",
+        "cancel": "Cancel"
+      },
+      "generateCSR": {
+        "generateCsr": "Generate CSR",
+        "title": "Generate and download file CSR",
+        "alertGenerateCsr": {
+          "success": "The file CSR was generated successfully",
+          "error": "CSR file generation failed"
+        },
+        "alertDownSampleFile": {
+          "success": "Download the Certificate sample file successfully",
+          "error": "Failed to download the Certificate template file"
+        },
+        "sampleFile": "Sample file",
+        "cancel": "Cancel"
+      },
+      "exportSerial": {
+        "exportSerial": "Export Serial",
+        "notification": "File size must be less than 1MB",
+        "alert": {
+          "success": "Export Serial successfully"
+        },
+        "cancel": "Cancel"
       },
       "uploadP12Cert": "Upload P12 CERT",
       "uploadSignatureImage": "Upload Signature Image",
-      "search": "Search",
-      "exportSerial": "Export Serial",
-      "success": "Successfully",
-      "generateCsr": "Generate CSR",
-      "cancel": "Cancel",
-      "sampleFile": "Sample File",
-      "errorGenerateCsr": "The file was not uploaded"
+      "search": "Search"
     }
   }
 }

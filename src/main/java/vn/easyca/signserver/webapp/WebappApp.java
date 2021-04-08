@@ -22,6 +22,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.core.env.Environment;
 import vn.easyca.signserver.webapp.config.Constants;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
+import vn.easyca.signserver.webapp.utils.FileIOHelper;
 
 import javax.annotation.PostConstruct;
 import java.net.InetAddress;
@@ -91,8 +92,11 @@ public class WebappApp {
         try {
             systemConfigCachingService.getConfig();
         } catch (ApplicationException e) {
-            log.error(e.getMessage());
+            log.error("Cannot init system config caching: " + e.getMessage());
         }
+
+        //create temp folder
+        FileIOHelper.createDirectory(Constants.TEMP_FOLDER_DIRECTORY);
     }
 
     private static void logApplicationStartup(Environment env) {

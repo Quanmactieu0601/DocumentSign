@@ -10,6 +10,8 @@
       "cancel": "Hủy",
       "exportCSR": "Tạo tệp CSR"
     },
+    "chooseUser": "Chọn người dùng",
+    "chooseParser": "Chọn bộ chuyển đổi",
     "created": "Tạo tài khoản mới thành công",
     "updated": "Cập nhật tài khoản thành công",
     "updated-err": "Bạn cần thêm ít nhất một giá trị từ trường Tên Chung đến trường Quốc Gia",
@@ -65,6 +67,10 @@
         "uploaded": "Tải lên tệp người dùng thất bại",
         "sizeErr": "Kích thước file không được vượt quá 1 MB"
       }
+    },
+    "downloadSampleFileUser": {
+      "success": "Tải thư mục thành công",
+      "error": "Tải thư mục thất bại"
     }
   }
 }

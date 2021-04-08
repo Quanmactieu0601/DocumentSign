@@ -110,7 +110,7 @@ public class SignatureImageServiceImpl implements SignatureImageService {
 
     @Transactional
     @Override
-    public SignatureImage saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException {
+    public SignatureImageDTO saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException {
         SignatureImage signatureImage = new SignatureImage();
         Optional<UserEntity> userEntity = userApplicationService.getUserEntity();
         if (userEntity.isPresent()){
@@ -133,9 +133,9 @@ public class SignatureImageServiceImpl implements SignatureImageService {
             throw new ApplicationException("Certificate not found");
         }
         signatureImage.setImgData(base64Image);
-        SignatureImageDTO dto = signatureImageMapper.toDto(signatureImage);
-        dto = save(dto);
-        certificateService.updateSignatureImageInCert(dto.getId(), certId);
-        return signatureImage;
+        SignatureImageDTO signatureImageDTO = signatureImageMapper.toDto(signatureImage);
+        signatureImageDTO = save(signatureImageDTO);
+        certificateService.updateSignatureImageInCert(signatureImageDTO.getId(), certId);
+        return signatureImageDTO;
     }
 }
