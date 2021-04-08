@@ -23,6 +23,7 @@ import { SigningComponent } from './signing/signing.component';
 import { ArchwizardModule } from 'angular-archwizard';
 import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
 import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
+import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -49,6 +50,7 @@ import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
     PdfViewComponent,
     SigningComponent,
     UploadDocComponent,
+    SignatureListComponent,
   ],
   bootstrap: [MainComponent],
 })

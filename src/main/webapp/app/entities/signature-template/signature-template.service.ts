@@ -38,4 +38,8 @@ export class SignatureTemplateService {
   getSignatureImageExamp(req?: any): Observable<HttpResponse<any>> {
     return this.http.post<any>(this.resourceUrl + '/signExample', req, { observe: 'response' });
   }
+
+  getSignatureTemplateByUserID(userId: number): Observable<EntityArrayResponseType> {
+    return this.http.get<ISignatureTemplate[]>(this.resourceUrl + '/getByUserId' + `/${userId}`, { observe: 'response' });
+  }
 }

@@ -1,9 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
-import org.apache.commons.codec.binary.Base64;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.pki.sign.utils.FileUtils;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
@@ -29,11 +28,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,6 +120,22 @@ public class SignatureTemplateResource extends BaseResource {
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    @GetMapping("/signature-templates/getByUserId/{userId}")
+    public ResponseEntity<SignatureTemplate[]> getAllSignatureTemplatesByUserId(@PathVariable Long userId) {
+        log.debug("REST request to get a page of SignatureTemplates by UserId");
+//        Page<SignatureTemplateDTO> page = signatureTemplateService.findAll(pageable);
+//        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+//        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+//            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+//        return ResponseEntity.ok().headers(headers).body(page.getContent());
+         Optional<SignatureTemplate[]> signatureTemplateDTOList = signatureTemplateService.findAllWithUserId(userId);
+        asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+        return ResponseUtil.wrapOrNotFound(signatureTemplateDTOList);
+
+    }
+
 
     /**
      * {@code GET  /signature-templates/:id} : get the "id" signatureTemplate.

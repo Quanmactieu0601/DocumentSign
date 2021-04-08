@@ -46,4 +46,6 @@ public interface SignatureTemplateService {
     void delete(Long id);
 
     Optional<SignatureTemplate> findOneWithUserId(Long id);
+
+    Optional<SignatureTemplate[]> findAllWithUserId(Long userId);
 }

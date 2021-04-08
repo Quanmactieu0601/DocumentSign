@@ -17,6 +17,9 @@ import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { saveAs } from 'file-saver';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -46,7 +49,7 @@ export class PdfViewComponent implements OnInit {
   pdfQuery = '';
   totalPages!: number;
   heightPage = 900;
-  base64Content = '';
+  modalRef: NgbModalRef | undefined;
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
@@ -57,7 +60,9 @@ export class PdfViewComponent implements OnInit {
     private signingService: SigningService,
     private fb: FormBuilder,
     private elementRef: ElementRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private modalService: NgbModal,
+    protected accountService: AccountService
   ) {}
 
   ngOnInit(): void {}
@@ -206,6 +211,16 @@ export class PdfViewComponent implements OnInit {
 
   cancel(): void {
     this.cancelEvent.emit();
+  }
+
+  openModalTemplateList(): void {
+    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'lg' });
+
+    this.accountService.identity(false).subscribe(res => {
+      this.modalRef!.componentInstance.userId = res?.id;
+    });
+
+    // this.modalRef.componentInstance.userId =
   }
 
   textLayerRendered(event: any): void {

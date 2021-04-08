@@ -26,6 +26,25 @@
                 <label id="xPos"></label>
                 <label id="yPos"></label>
             </div>
+            <div>
+                <div class="input-group" style="text-align: left; padding:10px">
+                <span class="input-group-btn" style="display: table-cell" >
+                                                                <button class="btn btn-default btn-sm btn-file" (click)="openModalTemplateList()" style="vertical-align: unset; border-color: darkgray; border-radius: 1px;">
+                                                                    Chọn mẫu chữ ký
+                                                                </button>
+                                                    </span>
+                    <input class="form-control form-control-sm" style="border-radius: 1px !important;" type="text" readonly>
+                </div>
+            </div>
+
+
+
+<!--            <span class="input-group-btn">-->
+<!--                <span class="btn btn-default btn-file">-->
+<!--                    Chọn từ máy...<input type="file" accept="image/x-png,image/jpeg" id="browse_logo" class="browse_image" onclick="this.value=null;">-->
+<!--                </span>-->
+<!--            </span>-->
+<!--            <input type="file" (click)="openModalTemplateList()" class="form-control ele-unset"/>-->
 
             <div class="pdfv-control">
                 <form class="form" [formGroup]="signingForm">

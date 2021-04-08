@@ -100,4 +100,10 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         log.debug("Request to get SignatureImage with id : {}", userId);
         return signatureTemplateRepository.findOneByUserId(userId);
     }
+
+    @Override
+    public Optional<SignatureTemplate[]> findAllWithUserId(Long userId) {
+        log.debug("Request to get SignatureImage with id : {}", userId);
+        return signatureTemplateRepository.findAllByUserId(userId);
+    }
 }
