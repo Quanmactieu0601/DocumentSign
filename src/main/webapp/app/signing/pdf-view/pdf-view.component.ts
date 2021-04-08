@@ -111,7 +111,6 @@ export class PdfViewComponent implements OnInit {
 
   pageRendered(event: any): void {
     console.warn('pageRendered', event);
-    u;
     this.setSignatureInPage(this.renderTextMode);
   }
 
