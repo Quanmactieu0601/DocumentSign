@@ -51,16 +51,16 @@
 
             </thead>
             <tbody>
-            <tr *ngFor="let user of users;">
-                <td class="custom-middle-align" colspan="5">{{ user.login }}</td>
-                <td class="custom-middle-align" colspan="3">{{ user.firstName }} {{user.lastName}}</td>
-                <td class="custom-middle-align" colspan="4">
+                <tr *ngFor="let user of users;">
+                    <td class="custom-middle-align" colspan="5">{{ user.login }}</td>
+                    <td class="custom-middle-align" colspan="3">{{ user.firstName }} {{user.lastName}}</td>
+                    <td class="custom-middle-align" colspan="4">
 
-                    <button type="submit" class="btn btn-info active btn-sm" (click)="changeSelect(user)">
-                        <fa-icon icon="check-circle"></fa-icon>
-                        <span> Chọn </span>
-                    </button>
-                </td>
+                        <button type="submit" class="btn btn-info active btn-sm" (click)="changeSelect(user)">
+                            <fa-icon icon="check-circle"></fa-icon>
+                            <span> Chọn </span>
+                        </button>
+                    </td>
             </tbody>
         </table>
     </div>

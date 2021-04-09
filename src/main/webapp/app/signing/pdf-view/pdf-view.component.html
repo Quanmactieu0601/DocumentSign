@@ -26,33 +26,14 @@
                 <label id="xPos"></label>
                 <label id="yPos"></label>
             </div>
-            <div>
-                <div class="input-group" style="text-align: left; padding:10px">
-                <span class="input-group-btn" style="display: table-cell" >
-                                                                <button class="btn btn-default btn-sm btn-file" (click)="openModalTemplateList()" style="vertical-align: unset; border-color: darkgray; border-radius: 1px;">
-                                                                    Chọn mẫu chữ ký
-                                                                </button>
-                                                    </span>
-                    <input class="form-control form-control-sm" style="border-radius: 1px !important;" type="text" readonly>
-                </div>
-            </div>
-
-
-
-<!--            <span class="input-group-btn">-->
-<!--                <span class="btn btn-default btn-file">-->
-<!--                    Chọn từ máy...<input type="file" accept="image/x-png,image/jpeg" id="browse_logo" class="browse_image" onclick="this.value=null;">-->
-<!--                </span>-->
-<!--            </span>-->
-<!--            <input type="file" (click)="openModalTemplateList()" class="form-control ele-unset"/>-->
 
             <div class="pdfv-control">
                 <form class="form" [formGroup]="signingForm">
                     <div class="form-group">
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.certificate.serial">Serial</span></label>
-                        <input type="text" class="form-control form-control-sm" name="serial" formControlName="serial">
-                        <div *ngIf="signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)">
+                        <input type="text" class="form-control form-control-sm" name="serial" formControlName="serial" #serialElement>
+                        <div *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)) || this.showMessageSerialRequired " >
                             <small
                                 class="form-text text-danger"
                                 *ngIf="signingForm.get('serial')?.errors?.required"
@@ -61,7 +42,25 @@
                                 Your serial is required.
                             </small>
                         </div>
+
+
                     </div>
+                    <div>
+                        <div class="input-group" style="text-align: left;">
+                <span class="input-group-btn" style="display: table-cell" >
+                                                                <button class="btn btn-default btn-sm btn-file" (click)="openModalTemplateList()" style="vertical-align: unset; border-color: darkgray; border-radius: 1px;">
+                                                                    Chọn mẫu chữ ký
+                                                                </button>
+                                                    </span>
+                            <input class="form-control form-control-sm" style="border-radius: 1px !important; height: 33px !important;" type="text" readonly>
+                        </div>
+
+                        <!-- Ảnh chữ ký !-->
+                        <div>
+                            <img #signatureImage class="signatureImage">
+                        </div>
+                    </div>
+
 
                     <div class="form-group">
                         <label class="form-control-label"><span
@@ -82,7 +81,7 @@
             </div>
 
             <div class="pdfv-control">
-                    <button type="submit" class="btn btn-primary btn-sm" (click)="sign()">
+                    <button type="submit" class="btn btn-primary btn-sm" (click)="sign()" [disabled]="this.signingForm.invalid">
                         <span jhiTranslate="sign.pdf.signFile"></span>
                     </button>
 

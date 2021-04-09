@@ -96,14 +96,9 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     }
 
     @Override
-    public Optional<SignatureTemplate> findOneWithUserId(Long userId) {
+    @Transactional(readOnly = true)
+    public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) {
         log.debug("Request to get SignatureImage with id : {}", userId);
-        return signatureTemplateRepository.findOneByUserId(userId);
-    }
-
-    @Override
-    public Optional<SignatureTemplate[]> findAllWithUserId(Long userId) {
-        log.debug("Request to get SignatureImage with id : {}", userId);
-        return signatureTemplateRepository.findAllByUserId(userId);
+        return signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
     }
 }

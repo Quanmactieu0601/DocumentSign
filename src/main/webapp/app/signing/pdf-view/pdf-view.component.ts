@@ -28,10 +28,11 @@ import { AccountService } from 'app/core/auth/account.service';
 })
 export class PdfViewComponent implements OnInit {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
+  @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @Input() pdfSrc = '';
   @Output() cancelEvent = new EventEmitter();
   @Output() signEvent = new EventEmitter<any>();
-  title = 'angular-pdf-viewer-app';
+
   signingForm = this.fb.group({
     serial: ['', Validators.required],
     pin: ['', Validators.required],
@@ -50,6 +51,7 @@ export class PdfViewComponent implements OnInit {
   totalPages!: number;
   heightPage = 900;
   modalRef: NgbModalRef | undefined;
+  showMessageSerialRequired = false;
 
   certificateInfoForm = this.fb.group({
     serial: ['', [Validators.required]],
@@ -214,8 +216,13 @@ export class PdfViewComponent implements OnInit {
   }
 
   openModalTemplateList(): void {
-    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'lg' });
+    if (this.signingForm.get('serial')?.invalid) {
+      this.serialElement?.nativeElement.focus();
+      this.showMessageSerialRequired = true;
+      return;
+    }
 
+    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
     });
