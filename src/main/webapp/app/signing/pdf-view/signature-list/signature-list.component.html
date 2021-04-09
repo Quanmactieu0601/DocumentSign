@@ -1,25 +1,31 @@
 <div class="modal-header header-custom">
     <h5 class="modal-title">Chọn mẫu chữ ký</h5>
-    <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')" >
+    <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
         <span aria-hidden="true">&times;</span>
     </a>
 </div>
 
 <div class="modal-body">
-    <div class="card-body">
-        <div class="card mb-3 searching">
-            <div *ngFor="let template of templates ">
-                <div>
-                    {{template.htmlTemplate}}
+    <div class="card table-responsive" id="entities">
+        <div>
+            <table class="table table-striped table-custom" aria-describedby="page-heading">
+                <thead></thead>
+                <tbody>
+                <div *ngFor="let template of templates ">
+                    <td class="custom-left-align">
+                        <div [innerHTML]="template.htmlTemplate"></div>
+                    </td>
                 </div>
-            </div>
+                </tbody>
+            </table>
         </div>
-    </div>
+        </div>
 </div>
 
 <div class="modal-footer footer-custom">
-<!--    <button class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">-->
-<!--        Upload</button>-->
-    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">Hủy</button>
+    <!--    <button class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">-->
+    <!--        Upload</button>-->
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">Hủy
+    </button>
 </div>
 
