@@ -41,12 +41,6 @@ export class SignatureImageViewComponent implements OnInit {
   ngOnInit(): void {}
 
   openModalTemplateList(): void {
-    // if (this.signingForm.get('serial')?.invalid) {
-    //   this.serialElement?.nativeElement.focus();
-    //   this.showMessageSerialRequired = true;
-    //   return;
-    // }
-
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.modalRef.result.then(templateId => {
       this.signingForm.controls['templateId'].setValue(templateId);
@@ -54,8 +48,6 @@ export class SignatureImageViewComponent implements OnInit {
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
     });
-
-    // this.modalRef.componentInstance.userId =
   }
 
   checkValidatedImage(): void {
