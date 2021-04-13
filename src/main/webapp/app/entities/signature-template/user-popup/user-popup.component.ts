@@ -12,8 +12,6 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpHeaders, HttpResponse } from '@angular/common/http';
-import { UserManagementKeyLengthComponent } from 'app/admin/user-management/user-management-key-length.component';
-import { UploadUserComponent } from 'app/admin/user-management/upload-user/upload-user-component';
 import { Output, EventEmitter } from '@angular/core';
 
 @Component({

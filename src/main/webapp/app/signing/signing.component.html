@@ -1,36 +1,20 @@
 <aw-wizard #wizzard>
     <aw-wizard-step stepTitle="Chọn tệp ký" style="text-align: center; padding: 30px 30px 0px 30px; background-color: white">
         <jhi-upload-doc style="margin-top: 50px" (fileOutPut)="validateFileInput($event)"></jhi-upload-doc>
-<!--        <button type="button" class="btn btn-primary btn-sm" [awGoToStep]="{stepIndex: 2}">Go directly to third Step</button>-->
-<!--        <button type="button" class="btn btn-primary btn-sm" awPreviousStep style="margin-top: -35px">Quay lại</button>-->
         <button type="button" class="btn btn-primary btn-sm" awNextStep style="margin-top: -35px" [disabled]="!FileToSign">
             <span jhiTranslate="sign.pdf.next">Next</span></button>
     </aw-wizard-step>
     <aw-wizard-step stepTitle="Chọn mẫu chữ ký">
-        Content of Step 2
-        <button type="button" awPreviousStep>Go to previous step</button>
-        <button type="button" awNextStep>Go to next step</button>
+        <jhi-signature-image-view (nextActionEvent)="nextStep($event)"></jhi-signature-image-view>
     </aw-wizard-step>
-<!--    <aw-wizard-step stepTitle="Thông tin chứng thư số">-->
-<!--        Content of Step 3-->
-<!--        <button type="button" awPreviousStep>Go to previous step</button>-->
-<!--        <button type="button" awNextStep>Go to next step</button>-->
-<!--    </aw-wizard-step>-->
+
     <aw-wizard-step stepTitle="Chọn vị trí ký" >
-        <jhi-pdf-view [pdfSrc]="FileToSign" (cancelEvent)="cancel()" (signEvent)="signResult($event)"></jhi-pdf-view>
-<!--    <button type="button" awPreviousStep>Go to previous step</button>-->
-<!--      <button type="button" (click)="wizzard.goToNextStep()">Go to next step</button>-->
+        <jhi-pdf-view [pdfSrc]="FileToSign" (cancelEvent)="cancel()" (signEvent)="signResult($event)" [imageSrc]="this.imageSrc" [serial]="this.serial" [pin]="this.pin"></jhi-pdf-view>
     </aw-wizard-step>
 
     <aw-wizard-step stepTitle="Kết quả ký">
-<!--        <button type="button" awPreviousStep>Previous Step</button>-->
-<!--        <button type="button" (click)="finishFunction()">Finish</button>-->
-
-<!--        <div id="content"><embed id="plugin" type="application/x-google-chrome-pdf" src="file:///D:/view_signed.pdf" stream-url="chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/29b41d1b-2eeb-470d-aa49-67e64acc3a6e" headers="" background-color="0xFF525659" top-toolbar-height="0" javascript="allow" full-frame="" pdf-viewer-update-enabled=""></div>-->
-<!--&lt;!&ndash;        <div id="content"><embed id="plugin" type="application/x-google-chrome-pdf" [src]="fileURL()" stream-url="chrome-extension://mhjfbmdgcfjbbpaeojofohoefgiehjai/29b41d1b-2eeb-470d-aa49-67e64acc3a6e" headers="" background-color="0xFF525659" top-toolbar-height="0" javascript="allow" full-frame="" pdf-viewer-update-enabled=""></div>&ndash;&gt;-->
         <div class="container">
                 <ngx-extended-pdf-viewer [src]="srcPdfResult" [showUnverifiedSignatures]="true"></ngx-extended-pdf-viewer>
         </div>
     </aw-wizard-step>
-
 </aw-wizard>

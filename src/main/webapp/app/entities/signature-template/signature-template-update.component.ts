@@ -1,15 +1,14 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ISignatureTemplate } from 'app/shared/model/signature-template.model';
 import { SignatureTemplateService } from './signature-template.service';
 import { UserService } from 'app/core/user/user.service';
-import { IUser, User } from 'app/core/user/user.model';
+import { IUser } from 'app/core/user/user.model';
 import { ICoreParser } from 'app/shared/model/core-parser.model';
 import { CoreParserService } from 'app/entities/core-parser/core-parser.service';
-import { Authority } from 'app/shared/constants/authority.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { UserPopupComponent } from 'app/entities/signature-template/user-popup/user-popup.component';
@@ -96,7 +95,7 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<ISignatureTemplate>>): void {
     result.subscribe(
-      (data: any) => {
+      () => {
         this.onSaveSuccess();
       },
       () => this.onSaveError()
@@ -136,23 +135,13 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     });
   }
 
-  isOnlyUser(): boolean {
-    const user = this.accountService.hasAnyAuthority(Authority.USER);
-    const admin = this.accountService.hasAnyAuthority(Authority.ADMIN);
-    if (user && !admin) return true;
-    else return false;
-  }
-
   showUserPopUp(): any {
     this.modalRef = this.modalService.open(UserPopupComponent, { size: 'lg' });
     // this.modalRef.componentInstance.userSelectEvent = this.userSelectEvent;
-    this.modalRef.result.then(
-      user => {
-        this.user = user;
-        this.updateAccountInput(user);
-      },
-      reason => {}
-    );
+    this.modalRef.result.then(user => {
+      this.user = user;
+      this.updateAccountInput(user);
+    });
   }
 
   updateAccountInput(user: IUser): void {

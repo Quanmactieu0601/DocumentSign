@@ -69,7 +69,7 @@ public class SigningResource extends BaseResource {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + signingRequest.getSigningRequestContents().get(0).getDocumentName() + "_signed" + ".pdf")
                 .body(resource);
         } catch (ApplicationException applicationException) {
-            log.error(applicationException.getMessage(), applicationException);
+             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
@@ -187,4 +187,6 @@ public class SigningResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
+
+
 }

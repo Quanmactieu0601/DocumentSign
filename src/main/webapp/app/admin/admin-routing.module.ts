@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { HomeComponent } from 'app/home/home.component';
-import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
 import { SigningComponent } from 'app/signing/signing.component';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */

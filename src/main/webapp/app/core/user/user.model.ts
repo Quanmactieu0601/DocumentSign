@@ -20,7 +20,6 @@ export interface IUser {
   lastModifiedBy?: string;
   lastModifiedDate?: Date;
   password?: string;
-  remindChangePassword?: boolean;
 }
 
 export class User implements IUser {
@@ -46,7 +45,6 @@ export class User implements IUser {
     public lastModifiedBy?: string,
     public lastModifiedDate?: Date,
     public password?: string,
-    public currentPassword?: string,
-    remindChangePassword?: boolean
+    public currentPassword?: string
   ) {}
 }

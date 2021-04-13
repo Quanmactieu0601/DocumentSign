@@ -1,9 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { SignatureTemplateService } from 'app/entities/signature-template/signature-template.service';
 import { ISignatureTemplate } from 'app/shared/model/signature-template.model';
-import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 
 @Component({
   selector: 'jhi-signature-list',
@@ -32,10 +31,10 @@ export class SignatureListComponent implements OnInit {
     };
     this.signatureTemplateService
       .getSignatureTemplateByUserID(dataRequest)
-      .subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
+      .subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad));
   }
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
+  loadPage(page?: number): void {
     const pageToLoad: number = page || this.page || 1;
 
     const dataRequest = {
@@ -46,7 +45,7 @@ export class SignatureListComponent implements OnInit {
     };
     this.signatureTemplateService
       .getSignatureTemplateByUserID(dataRequest)
-      .subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
+      .subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad));
   }
 
   sort(): string[] {
@@ -61,11 +60,15 @@ export class SignatureListComponent implements OnInit {
     this.ngbPaginationPage = this.page ?? 1;
   }
 
-  protected onSuccess(data: ISignatureTemplate[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
+  protected onSuccess(data: ISignatureTemplate[] | null, headers: HttpHeaders, page: number): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.page = page;
 
     this.templates = data || [];
     this.ngbPaginationPage = this.page;
+  }
+
+  chooseSignatureTemplate(templateId: number): void {
+    this.activeModal.close(templateId);
   }
 }

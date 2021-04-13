@@ -359,6 +359,27 @@ public class CertificateResource extends BaseResource {
         }
     }
 
+    @GetMapping("/getImageByTemplateId")
+    public ResponseEntity<BaseResponseVM> getSignatureImageByTemplateId(@RequestParam String serial, @RequestParam String pin, @RequestParam Long templateId) {
+        log.info(" --- getImage --- serial: {}", serial);
+        try {
+            String base64Image = certificateService.getSignatureImageByTemplateId(serial, pin, templateId);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
     @GetMapping("/getQRCodeOTP")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> getQRCodeOTP(@RequestParam String serial, @RequestParam String pin) {

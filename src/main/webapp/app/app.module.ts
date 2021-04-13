@@ -9,7 +9,6 @@ import { WebappAppRoutingModule } from './app-routing.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { MainComponent } from './layouts/main/main.component';
-import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
 import { ErrorComponent } from './layouts/error/error.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
@@ -24,6 +23,7 @@ import { ArchwizardModule } from 'angular-archwizard';
 import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
 import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
 import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
+import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -51,6 +51,7 @@ import { SignatureListComponent } from './signing/pdf-view/signature-list/signat
     SigningComponent,
     UploadDocComponent,
     SignatureListComponent,
+    SignatureImageViewComponent,
   ],
   bootstrap: [MainComponent],
 })

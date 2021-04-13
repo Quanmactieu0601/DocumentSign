@@ -12,13 +12,14 @@
                 <thead></thead>
                 <tbody>
                 <div *ngFor="let template of templates ">
-                    <tr>
-                        <td class="custom-left-align">
+                    <tr class="col-12">
+
+                        <td class="custom-left-align col-6">
                             <div [innerHTML]="template.htmlTemplate"></div>
                         </td>
-                        <td class="custom-middle-align">
-                            <button type="submit" class="btn btn-primary btn-sm">
-                                Chọn
+                        <td class="custom-middle-align col-6">
+                            <button type="submit" class="btn btn-primary btn-sm" (click)="chooseSignatureTemplate(template.id!)">
+                                <span jhiTranslate="sign.pdf.choose">Chọn</span>
                             </button>
                         </td>
                     </tr>
@@ -33,7 +34,6 @@
 
             <div class="row justify-content-center">
                 <ngb-pagination [collectionSize]="totalItems" [(page)]="ngbPaginationPage" [pageSize]="itemsPerPage"
-                                [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
                                 (pageChange)="loadPage($event)"></ngb-pagination>
             </div>
         </div>
@@ -43,6 +43,8 @@
 <div class="modal-footer footer-custom">
     <!--    <button class="btn btn-success btn-sm float-right mr-1" [disabled]="!selectedFiles || this.selectedFiles.length == 0" (click)="upload()">-->
     <!--        Upload</button>-->
-    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">Hủy</button>
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">
+        <span jhiTranslate="sign.pdf.cancel"></span>
+    </button>
 </div>
 

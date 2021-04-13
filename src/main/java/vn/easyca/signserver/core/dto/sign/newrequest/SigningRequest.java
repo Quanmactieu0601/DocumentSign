@@ -10,6 +10,7 @@ public class SigningRequest<T> {
     private TokenInfoDTO tokenInfo;
     private OptionalDTO optional;
 
+
     public List<T> getSigningRequestContents() { return signingRequestContents; }
 
     public void setSigningRequestContents(List<T> signingRequestContents) { this.signingRequestContents = signingRequestContents; }

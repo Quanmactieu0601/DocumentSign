@@ -6,7 +6,6 @@ import { LANGUAGES } from 'app/core/language/language.constants';
 import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { TranslateService } from '@ngx-translate/core';
-import { ReturnStatement } from '@angular/compiler';
 
 @Component({
   selector: 'jhi-user-mgmt-update',

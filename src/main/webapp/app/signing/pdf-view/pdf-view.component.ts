@@ -1,21 +1,9 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  EventEmitter,
-  HostListener,
-  Input,
-  OnInit,
-  Output,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { saveAs } from 'file-saver';
 import { ResponseBody } from 'app/shared/model/response-body';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
@@ -30,12 +18,15 @@ export class PdfViewComponent implements OnInit {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @Input() pdfSrc = '';
+  @Input() imageSrc: any;
+  @Input() serial: any;
+  @Input() pin: any;
   @Output() cancelEvent = new EventEmitter();
   @Output() signEvent = new EventEmitter<any>();
 
   signingForm = this.fb.group({
-    serial: ['', Validators.required],
-    pin: ['', Validators.required],
+    serial: ['540110000b4525650231e39369660895', Validators.required],
+    pin: ['079073009568', Validators.required],
   });
 
   renderText = true;
@@ -52,11 +43,6 @@ export class PdfViewComponent implements OnInit {
   heightPage = 900;
   modalRef: NgbModalRef | undefined;
   showMessageSerialRequired = false;
-
-  certificateInfoForm = this.fb.group({
-    serial: ['', [Validators.required]],
-    pin: ['', [Validators.required]],
-  });
 
   constructor(
     private signingService: SigningService,
@@ -103,15 +89,17 @@ export class PdfViewComponent implements OnInit {
     // Setting total number of pages
     this.totalPages = event._pdfInfo.numPages;
     const element = document.getElementsByClassName('pdfViewer')[0];
-    const child = document.createElement('div');
+    const child = document.createElement('img');
     child.setAttribute('id', 'signature-box');
+    child.setAttribute('src', this.imageSrc);
     (child as HTMLElement).style.backgroundColor = 'red';
     (child as HTMLElement).style.position = 'absolute';
     (child as HTMLElement).style.top = `${this.heightPage}px`;
     (child as HTMLElement).style.left = '220px';
     (child as HTMLElement).style.zIndex = '9';
-    (child as HTMLElement).style.width = '256px';
-    (child as HTMLElement).style.height = '65px';
+    (child as HTMLElement).style.background = 'transparent';
+    // (child as HTMLElement).style.width = '256px';
+    // (child as HTMLElement).style.height = '65px';
     // // this.renderer.setAttribute(child, 'ngDraggable','');
     this.renderer.appendChild(element, child);
   }
@@ -126,6 +114,7 @@ export class PdfViewComponent implements OnInit {
     const sig = document.getElementById('signature-box');
     const dpi = 96;
 
+    const page = this.pdfComponent!.pdfViewer._pages[Number(numberPage) - 1];
     ($('#signature-box') as any).draggable({
       containment: pdfPage,
       drag(): void {
@@ -136,7 +125,9 @@ export class PdfViewComponent implements OnInit {
         const xPos = Math.floor(((left - boundX - 9) / dpi) * 72);
 
         const h = Math.floor((sig!.offsetHeight / dpi) * 72);
-        const yPos = 791 - Math.ceil(((top - boundY - 10) / dpi) * 72) - h;
+        const test = page;
+        const yPos =
+          Math.ceil(test.pdfPage.getViewport(Number(numberPage) - 1).viewBox[3]) - Math.ceil(((top - boundY - 9) / dpi) * 72) - h;
 
         $('#xPos').text(xPos);
         $('#yPos').text(yPos);
@@ -184,12 +175,18 @@ export class PdfViewComponent implements OnInit {
 
   sign(): void {
     const request = {
-      tokenInfo: { serial: '540110000b4525650231e39369660895', pin: '079073009568' },
+      tokenInfo: { serial: this.serial, pin: this.pin },
       signingRequestContents: [
         {
           data: this.pdfSrc.toString().replace('data:application/pdf;base64,', ''),
-          location: { visibleX: $('#xPos').text(), visibleY: $('#yPos').text() },
+          location: {
+            visibleX: $('#xPos').text(),
+            visibleY: $('#yPos').text(),
+            visibleWidth: Math.floor(($('#signature-box')[0].offsetWidth / 96) * 72),
+            visibleHeight: Math.floor(($('#signature-box')[0].offsetHeight / 96) * 72),
+          },
           extraInfo: { pageNum: Number(this.renderTextMode) },
+          imageSignature: this.imageSrc.replace('data:image/jpeg;base64,', ''),
         },
       ],
     };
@@ -226,8 +223,6 @@ export class PdfViewComponent implements OnInit {
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
     });
-
-    // this.modalRef.componentInstance.userId =
   }
 
   textLayerRendered(event: any): void {

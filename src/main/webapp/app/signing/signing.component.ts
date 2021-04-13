@@ -1,7 +1,5 @@
-import { Component, ElementRef, OnInit, Sanitizer, ViewChild } from '@angular/core';
-import { doc } from 'prettier';
-import printer = doc.printer;
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-signing',
@@ -11,12 +9,14 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 export class SigningComponent implements OnInit {
   FileToSign: any = null;
   srcPdfResult: any;
+  imageSrc: any;
+  serial: any;
+  pin: any;
 
   @ViewChild('wizzard') wizzard: any;
   constructor(private sanitizer: DomSanitizer) {}
 
   ngOnInit(): void {}
-  finishFunction(): void {}
 
   validateFileInput(FileToSign: File): any {
     if (typeof FileReader !== 'undefined') {
@@ -38,5 +38,12 @@ export class SigningComponent implements OnInit {
       this.wizzard.goToNextStep();
       this.srcPdfResult = signedFile;
     }
+  }
+
+  nextStep(content: any): void {
+    this.imageSrc = content.signatureImage;
+    this.serial = content.signingForm.get('serial').value;
+    this.pin = content.signingForm.get('pin').value;
+    this.wizzard.goToNextStep();
   }
 }

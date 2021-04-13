@@ -4,7 +4,7 @@
   border: 5px solid #cccccc;
 }
 .pdf-viewer-controls-wrap {
-  border: 5px solid #cccccc;
+  //border: 5px solid #cccccc;
   width: 20%;
   text-align: center;
 }
@@ -26,7 +26,8 @@
 }
 
 .pdf-viewer-viewer-window {
-  border: 5px solid #cccccc;
+  //border: 5px solid #cccccc;
+  border-left: 5px solid #cccccc;
   width: 80%;
   overflow: auto;
 }

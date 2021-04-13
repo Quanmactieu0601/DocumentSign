@@ -1,11 +1,10 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpResponse, HttpHeaders, HttpEventType } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 import { FormBuilder } from '@angular/forms';
-import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
@@ -16,7 +15,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { IUser, User } from '../../core/user/user.model';
-import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
 import { UploadUserComponent } from 'app/admin/user-management/upload-user/upload-user-component';
 
 @Component({
@@ -145,14 +143,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
-  searchUser(page?: number): any {
+  searchUser(): any {
     const data = {
       ...this.userSearch.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    const pageToLoad: number = page || this.page || 1;
 
     if (data.account != null) {
       data.account = data.account.trim();
@@ -254,7 +251,6 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   createCSR(): void {
-    const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
     this.userService.setListId(this.listId);
   }
 
