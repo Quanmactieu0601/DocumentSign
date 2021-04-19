@@ -26,6 +26,7 @@
       "action": "Action",
       "info": "Info",
       "serial": "Serial",
+      "pin": "Pin",
       "ownerTaxcode": "Owner Taxcode",
       "ownerId": "Owner Id",
       "subjectInfo": "Subject Info",

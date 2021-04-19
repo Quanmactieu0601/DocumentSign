@@ -11,5 +11,6 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
   declarations: [VerifySignatureDocComponent],
   providers: [],
   bootstrap: [VerifySignatureDocComponent],
+  exports: [VerifySignatureDocComponent],
 })
 export class VerifySignatureDocModule {}

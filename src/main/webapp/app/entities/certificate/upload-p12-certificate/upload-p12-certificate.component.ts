@@ -1,9 +1,7 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
 import { saveAs } from 'file-saver';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
@@ -16,7 +14,6 @@ export class UploadP12CertificateComponent implements OnInit {
   selectedFiles: any;
   currentFile: any;
   progress = 0;
-  fileInfos: Observable<any> = new Observable<any>();
   fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
   constructor(
     private certificateService: CertificateService,

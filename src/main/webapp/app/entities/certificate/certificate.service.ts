@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
-import { observable, Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
 import { createRequestOption } from 'app/shared/util/request-util';
@@ -131,6 +131,11 @@ export class CertificateService {
   getQRCodeOTP(req?: any): Observable<ResponseBody> {
     const options = createRequestOption(req);
     return this.http.get<ResponseBody>(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'body' });
+  }
+
+  getSignatureImageByTemplateId(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<ResponseBody>(`${this.resourceUrl}/getImageByTemplateId`, { params: options, observe: 'body' });
   }
 
   savePIN(serial: string | undefined, oldPIN: string, newPIN: string): Observable<{}> {

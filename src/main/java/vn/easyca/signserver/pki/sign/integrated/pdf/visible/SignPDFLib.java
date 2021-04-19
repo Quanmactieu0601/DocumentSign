@@ -99,8 +99,40 @@ public class SignPDFLib {
         this.partyMode = dto.getPartyMode();
         this.hashAlg = StringUtils.isNullOrEmpty(dto.getHashAlg()) ? this.hashAlg : dto.getHashAlg();
         validDTO(dto);
-        emptySignature(dto,tempFile);
+//        emptySignature(dto,tempFile);
+        addSignatureImg(dto,tempFile);
         return preSign(tempFile,dto.getSignField(),dto.getChain(),dto.getSignDate());
+    }
+
+    private void addSignatureImg(SignPDFDto signDTO, String tempFile) throws Exception {
+        BouncyCastleProvider providerBC = new BouncyCastleProvider();
+        Security.addProvider(providerBC);
+        PdfReader.unethicalreading = true;
+        PdfReader reader = new PdfReader(signDTO.getContent());
+        FileOutputStream os = new FileOutputStream(tempFile);
+        PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
+        PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
+        appearance.setSignDate(getSigningDate(signDTO.getSignDate()));
+        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleHeight());
+        appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
+
+        PdfTemplate layer20 = appearance.getLayer(2);
+        Image bg = Image.getInstance(Base64.getDecoder().decode(signDTO.getSignatureImage()));
+        bg.scaleAbsolute(signDTO.getVisibleWidth(), signDTO.getVisibleHeight());
+        bg.setAbsolutePosition(0, 0);
+        layer20.addImage(bg);
+        rectangle = appearance.getRect();
+        layer20.setLineWidth(1);
+        layer20.setRGBColorStroke(255, 0, 0);
+        layer20.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
+        layer20.stroke();
+
+        ExternalSignatureContainer external = new ExternalBlankSignatureContainer(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
+        MakeSignature.signExternalContainer(appearance, external, 8192);
+        try {
+            os.close();
+        } catch (Exception localException) {
+        }
     }
 
     public void insertSignature(String src, String dest, byte[] hash, byte[] extSignature, Certificate[] chain, Date signDate, String signField)

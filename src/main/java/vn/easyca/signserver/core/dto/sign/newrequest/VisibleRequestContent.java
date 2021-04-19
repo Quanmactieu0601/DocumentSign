@@ -3,6 +3,7 @@ package vn.easyca.signserver.core.dto.sign.newrequest;
 public class VisibleRequestContent extends SigningRequestContent {
     private Location location;
     private ExtraInfo extraInfo;
+    private String imageSignature;
 
     public Location getLocation() {
         return location;
@@ -19,5 +20,9 @@ public class VisibleRequestContent extends SigningRequestContent {
     public void setExtraInfo(ExtraInfo extraInfo) {
         this.extraInfo = extraInfo;
     }
+
+    public String getImageSignature() { return imageSignature; }
+
+    public void setImageSignature(String imageSignature) { this.imageSignature = imageSignature; }
 }
 

@@ -47,6 +47,6 @@ export class User implements IUser {
     public lastModifiedDate?: Date,
     public password?: string,
     public currentPassword?: string,
-    remindChangePassword?: boolean
+    public remindChangePassword?: boolean
   ) {}
 }

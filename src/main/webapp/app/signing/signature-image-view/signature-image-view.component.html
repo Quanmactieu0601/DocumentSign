@@ -1,0 +1,111 @@
+<div class="card mb-3 searching">
+    <div class="card-body">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <form class="form" [formGroup]="signingForm">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-control-label"><span
+                                    jhiTranslate="webappApp.certificate.serial">Serial</span></label>
+                                <input type="text" class="form-control form-control-sm" name="serial"  formControlName="serial"
+                                       #serialElement` (click)="setDisableButton()">
+                                <div
+                                    *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)) || this.showMessageSerialRequired ">
+                                    <small
+                                        class="form-text text-danger"
+                                        *ngIf="signingForm.get('serial')?.errors?.required"
+                                        jhiTranslate="sign.messages.validate.serial.required"
+                                    >
+                                        Your serial is required.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label class="form-control-label"><span
+                                    jhiTranslate="webappApp.certificate.pin">Pin</span></label>
+                                <input type="password" class="form-control form-control-sm" name="pin" formControlName="pin" (click)="setDisableButton()">
+
+                                <div
+                                    *ngIf="signingForm.get('pin')!.invalid && (signingForm.get('pin')!.dirty || signingForm.get('pin')!.touched)">
+                                    <small
+                                        class="form-text text-danger"
+                                        *ngIf="signingForm.get('pin')?.errors?.required"
+                                        jhiTranslate="sign.messages.validate.pin.required"
+                                    >
+                                        Your pin is required.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <label class="form-control-label" style="visibility: hidden"><span jhiTranslate="sign.pdf.chooseSignatureTemplate">Chọn mẫu</span></label>
+                            <input type="text" class="form-control form-control-sm" name="templateId" formControlName="templateId" hidden>
+                            <div class="form-group">
+                                <div class="input-group" style="text-align: left;">
+                <span class="input-group-btn" style="display: table-cell">
+                                                                <button class="btn btn-default btn-sm btn-primary"
+                                                                        (click)="openModalTemplateList()"
+                                                                        style="vertical-align: unset; border-color: darkgray; border-radius: 1px;">
+                                                                     <span jhiTranslate="sign.pdf.chooseSignatureTemplate">Kiểm tra ảnh chữ ký</span>
+
+                                                                </button>
+                                                    </span>
+                                    <input class="form-control form-control-sm"
+                                           style="border-radius: 1px !important; height: 31px !important;" type="text" readonly>
+                                </div>
+
+                                <!-- Ảnh chữ ký !-->
+                            </div>
+
+                            <div
+                                *ngIf="signingForm.get('templateId')!.invalid && this.isShowMessage">
+                                <small
+                                    class="form-text text-danger"
+                                    *ngIf="signingForm.get('templateId')?.errors?.required"
+                                    jhiTranslate="sign.messages.validate.signatureTemplate.required"
+                                >
+                                    Your template is required
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label" jhiTranslate="sign.signatureImage">Ảnh chữ ký số</label>
+
+<!--                        <button type="button"-->
+<!--                                class="btn btn-primary btn-sm"-->
+<!--                                >-->
+<!--&lt;!&ndash;                            <fa-icon icon="eye"></fa-icon>&ndash;&gt;-->
+<!--                            <span></span>-->
+<!--                        </button>-->
+                    </div>
+                    <div class="form-group" style="text-align: center;">
+                        <img #signatureImage class="signatureImage">
+                    </div>
+                </form>
+                <div style="text-align: center">
+                    <button type="button"
+                            class="btn btn-primary btn-sm"
+                            (click)="checkValidatedImage()"
+                    >
+                        <span jhiTranslate="sign.pdf.validateSignature">Kiểm tra ảnh chữ ký</span>
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-primary btn-sm"
+                            [disabled]="true" (click)="nextAction()" #nextBtnElement>
+                        <span jhiTranslate="sign.pdf.next">Tiếp theo</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

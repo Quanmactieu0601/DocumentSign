@@ -103,6 +103,7 @@ public class SigningService {
         signPDFDto.setVisibleHeight(location.getVisibleHeight());
         signPDFDto.setVisibleX(location.getVisibleX());
         signPDFDto.setVisibleY(location.getVisibleY());
+        signPDFDto.setSignatureImage(firstContent.getImageSignature());
         signPDFDto.setPageNumber(firstContent.getExtraInfo().getPageNum());
         try {
             signPDFPlugin.sign(signPDFDto);
