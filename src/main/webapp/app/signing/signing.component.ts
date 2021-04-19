@@ -25,7 +25,7 @@ export class SigningComponent implements OnInit {
         this.FileToSign = e.target.result;
       };
 
-      if (FileToSign) reader.readAsDataURL(FileToSign);
+      if (FileToSign) reader.readAsArrayBuffer(FileToSign);
       else this.FileToSign = FileToSign;
     }
   }
