@@ -83,6 +83,8 @@ module.exports = (options) => ({
         // jhipster-needle-add-assets-to-webpack - JHipster will add/remove third-party resources in this array
         { from: './src/main/webapp/robots.txt', to: 'robots.txt' },
         { from: "./node_modules/ngx-extended-pdf-viewer/assets", to: 'assets' },
+        { from: "./node_modules/pdfjs-dist/es5/build/", to: 'assets/pdfjs' },
+        // { from: "./node_modules/ngx-extended-pdf-viewer/assets", to: 'assets/pdfjs-extend' },
       ]),
         new MergeJsonWebpackPlugin({
             output: {

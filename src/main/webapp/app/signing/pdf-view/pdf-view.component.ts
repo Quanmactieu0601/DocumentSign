@@ -8,6 +8,8 @@ import { ResponseBody } from 'app/shared/model/response-body';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
 import { AccountService } from 'app/core/auth/account.service';
+// import * as PDFJS from "pdfjs-dist";
+(window as any).pdfWorkerSrc = '/assets/pdfjs/pdf.worker.js';
 
 @Component({
   selector: 'jhi-pdf-view',
@@ -25,8 +27,8 @@ export class PdfViewComponent implements OnInit {
   @Output() signEvent = new EventEmitter<any>();
 
   signingForm = this.fb.group({
-    serial: ['540110000b4525650231e39369660895', Validators.required],
-    pin: ['079073009568', Validators.required],
+    serial: [this.serial],
+    pin: [this.pin],
   });
 
   renderText = true;
@@ -71,18 +73,18 @@ export class PdfViewComponent implements OnInit {
     }
   }
 
-  onFileSelected(): void {
-    const $pdf: any = document.querySelector('#file');
-    if (typeof FileReader !== 'undefined') {
-      const reader = new FileReader();
-
-      reader.onload = (e: any) => {
-        this.pdfSrc = e.target.result;
-      };
-      reader.readAsDataURL($pdf.files[0]);
-      this.renderTextMode = 1;
-    }
-  }
+  // onFileSelected(): void {
+  //   const $pdf: any = document.querySelector('#file');
+  //   if (typeof FileReader !== 'undefined') {
+  //     const reader = new FileReader();
+  //
+  //     reader.onload = (e: any) => {
+  //       this.pdfSrc = e.target.result;
+  //     };
+  //     reader.readAsArrayBuffer($pdf.files[0]);
+  //     this.renderTextMode = 1;
+  //   }
+  // }
 
   callBackFn(event: any): void {
     console.warn('callBackFn', event);
@@ -174,11 +176,12 @@ export class PdfViewComponent implements OnInit {
   }
 
   sign(): void {
+    const base64PdfContent = this.arrayBufferToBase64(this.pdfSrc);
     const request = {
       tokenInfo: { serial: this.serial, pin: this.pin },
       signingRequestContents: [
         {
-          data: this.pdfSrc.toString().replace('data:application/pdf;base64,', ''),
+          data: base64PdfContent.toString().replace('data:application/pdf;base64,', ''),
           location: {
             visibleX: $('#xPos').text(),
             visibleY: $('#yPos').text(),
@@ -210,6 +213,10 @@ export class PdfViewComponent implements OnInit {
 
   cancel(): void {
     this.cancelEvent.emit();
+  }
+
+  arrayBufferToBase64(buffer: any): string {
+    return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''));
   }
 
   openModalTemplateList(): void {

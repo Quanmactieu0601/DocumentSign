@@ -1,3 +1,4 @@
+<script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 <div class="pdf-viewer-wrap">
     <div class="pdf-viewer-controls-wrap">
 <!--        <h2>Ký tệp PDF</h2>-->
@@ -93,12 +94,13 @@
 
     </div>
     <div class="pdf-viewer-viewer-window">
-        <pdf-viewer [src]="pdfSrc" [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"
+        <pdf-viewer [src]=pdfSrc [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"
                     [original-size]="originalSize" [fit-to-page]="fitToPage"
                     [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"
                     (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"
                     (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)" (on-progress)="onProgress($event)">
         </pdf-viewer>
+
     </div>
 </div>
 
