@@ -27,8 +27,8 @@ export class PdfViewComponent implements OnInit {
   @Output() signEvent = new EventEmitter<any>();
 
   signingForm = this.fb.group({
-    serial: ['540110000b4525650231e39369660895', Validators.required],
-    pin: ['079073009568', Validators.required],
+    serial: [this.serial],
+    pin: [this.pin],
   });
 
   renderText = true;
