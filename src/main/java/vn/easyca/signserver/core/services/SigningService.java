@@ -105,7 +105,7 @@ public class SigningService {
         signPDFDto.setVisibleX(location.getVisibleX());
         signPDFDto.setVisibleY(location.getVisibleY());
         signPDFDto.setSignatureImage(firstContent.getImageSignature());
-        signPDFDto.setPageNumber(new ExtraInfo().getPageNum());
+        signPDFDto.setPageNumber(firstContent.getExtraInfo().getPageNum());
         try {
             signPDFPlugin.sign(signPDFDto);
             byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));

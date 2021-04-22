@@ -40,6 +40,7 @@ public class VaccinationCertDTO {
         VisibleRequestContent visibleRequestContent = new VisibleRequestContent();
         visibleRequestContent.setImageSignature(getSignatureImage(fileResourceService));
         visibleRequestContent.setLocation(new Location());
+        visibleRequestContent.setExtraInfo(new ExtraInfo());
         visibleRequestContent.setDocumentName("Verified_File");
         visibleRequestContent.setData(confirmContentFile);
         visibleRequestContentList.add(visibleRequestContent);
