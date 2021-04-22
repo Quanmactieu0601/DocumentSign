@@ -5,6 +5,7 @@ import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.OptionalDTO;
+import vn.easyca.signserver.core.dto.sign.newrequest.ExtraInfo;
 import vn.easyca.signserver.core.dto.sign.newrequest.Location;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
@@ -104,7 +105,7 @@ public class SigningService {
         signPDFDto.setVisibleX(location.getVisibleX());
         signPDFDto.setVisibleY(location.getVisibleY());
         signPDFDto.setSignatureImage(firstContent.getImageSignature());
-        signPDFDto.setPageNumber(firstContent.getExtraInfo().getPageNum());
+        signPDFDto.setPageNumber(new ExtraInfo().getPageNum());
         try {
             signPDFPlugin.sign(signPDFDto);
             byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
