@@ -1,11 +1,9 @@
 package vn.easyca.signserver.core.services;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.OptionalDTO;
-import vn.easyca.signserver.core.dto.sign.newrequest.ExtraInfo;
 import vn.easyca.signserver.core.dto.sign.newrequest.Location;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
@@ -35,7 +33,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
