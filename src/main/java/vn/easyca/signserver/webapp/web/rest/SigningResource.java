@@ -80,17 +80,15 @@ public class SigningResource extends BaseResource {
         }
     }
 
-    @PostMapping(value = "/vaccinationCertSigning", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Object> signVaccinationCert(@RequestBody VaccinationCertDTO vaccinationCertDTO) {
+    @PostMapping(value = "/vaccinationCertSigning")
+    public ResponseEntity<BaseResponseVM> signVaccinationCert(@RequestBody VaccinationCertDTO vaccinationCertDTO) {
         log.info(" --- Sign Vaccination Cert --- ");
         try {
             SigningRequest<VisibleRequestContent> signingRequest = vaccinationCertDTO.createSigningRequest(fileResourceService);
             PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
             String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + signingRequest.getSigningRequestContents().get(0).getDocumentName() + "_signed" + ".pdf")
-                .body(resource);
+            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, "Ký tệp chứng nhận thành công"));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
