@@ -7,11 +7,15 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Repository
@@ -42,11 +46,13 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
         }
         if (!QueryUtils.isNullOrEmptyProperty(validDate)) {
             sqlBuilder.append("AND a.validDate >= :validDate ");
-            params.put("validDate", validDate);
+            LocalDateTime localDateTime = LocalDate.parse(validDate, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+            params.put("validDate", localDateTime);
         }
         if (!QueryUtils.isNullOrEmptyProperty(expiredDate)) {
             sqlBuilder.append("AND a.expiredDate <= :expiredDate ");
-            params.put("expiredDate", expiredDate);
+            LocalDateTime localDateTime = LocalDate.parse(expiredDate, DateTimeFormatter.ISO_LOCAL_DATE).atTime(23, 59, 59);
+            params.put("expiredDate", localDateTime);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
