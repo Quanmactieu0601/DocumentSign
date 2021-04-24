@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
+import com.itextpdf.text.BadElementException;
 import jdk.nashorn.internal.ir.ReturnNode;
 import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.domain.TokenInfo;
@@ -33,13 +34,19 @@ public class VaccinationCertDTO {
 
     public void setConfirmContentFile(byte[] contentFile) { confirmContentFile = contentFile; }
 
-    public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService) throws IOException, ApplicationException {
+    public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService) throws IOException, ApplicationException, BadElementException {
         SigningRequest<VisibleRequestContent> signingRequest = new SigningRequest<>();
-
         List<VisibleRequestContent> visibleRequestContentList = new ArrayList<VisibleRequestContent>();
         VisibleRequestContent visibleRequestContent = new VisibleRequestContent();
         visibleRequestContent.setImageSignature(getSignatureImage(fileResourceService));
-        visibleRequestContent.setLocation(new Location());
+
+        Location location = new Location();
+        location.setVisibleHeight(112);
+        location.setVisibleWidth(150);
+        location.setVisibleX(225);
+        location.setVisibleY(53);
+
+        visibleRequestContent.setLocation(location);
         visibleRequestContent.setExtraInfo(new ExtraInfo());
         visibleRequestContent.setDocumentName("Verified_File");
         visibleRequestContent.setData(confirmContentFile);
