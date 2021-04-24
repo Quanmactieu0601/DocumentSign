@@ -3,12 +3,10 @@ package vn.easyca.signserver.webapp.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
@@ -17,13 +15,13 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.services.PDFSigningService;
 import vn.easyca.signserver.core.services.SigningService;
-import vn.easyca.signserver.core.dto.sign.request.content.PDFSignContent;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.*;
+import vn.easyca.signserver.webapp.service.dto.VaccinationCertDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -31,8 +29,6 @@ import vn.easyca.signserver.core.services.XMLSigningService;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.enm.Method;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
 
@@ -47,14 +43,16 @@ public class SigningResource extends BaseResource {
     private final PDFSigningService pdfSigningService;
     private final XMLSigningService xmlSigningService;
     private final AsyncTransactionService asyncTransactionService;
+    private final FileResourceService fileResourceService;
 
     public SigningResource(SigningService signService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService,
-                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService) {
+                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService) {
         this.signService = signService;
         this.pdfSigningService = pdfSigningService;
         this.xmlSigningService = xmlSigningService;
         this.officeSigningService = officeSigningService;
         this.asyncTransactionService = asyncTransactionService;
+        this.fileResourceService = fileResourceService;
     }
 
 
@@ -81,6 +79,32 @@ public class SigningResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
+
+    @PostMapping(value = "/vaccinationCertSigning")
+    public ResponseEntity<BaseResponseVM> signVaccinationCert(@RequestBody VaccinationCertDTO vaccinationCertDTO) {
+        log.info(" --- Sign Vaccination Cert --- ");
+        try {
+            SigningRequest<VisibleRequestContent> signingRequest = vaccinationCertDTO.createSigningRequest(fileResourceService);
+            PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
+            String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, "Ký tệp chứng nhận thành công"));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/sign/pdf", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+
+
     @PostMapping(value = "/hash")
     public ResponseEntity<BaseResponseVM> signHash(@RequestBody SigningVM<String> signingVM) {
         log.info(" --- signHash --- ");
