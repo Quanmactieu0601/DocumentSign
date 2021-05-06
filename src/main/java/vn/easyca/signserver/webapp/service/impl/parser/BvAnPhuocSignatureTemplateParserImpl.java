@@ -29,6 +29,7 @@ public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplatePa
         } catch (Exception ex) {
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s - ex: %s", subjectDN, ex.getMessage()), ex);
         }
+        
     }
 
     @Override
