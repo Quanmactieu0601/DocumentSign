@@ -22,7 +22,7 @@ public class BvNhietDoiSignatureTemplateParserImpl implements SignatureTemplateP
 
             if (signerInfor[1] != null) {
                 address = signerInfor[1];
-            }else {
+            } else {
                 signatureTemplate.replaceFirst("address", "");
             }
 
