@@ -7,8 +7,8 @@ import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
-public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplateParseService {
-    String regexCN = "CN=([^\",]+)";
+public class BvNhietDoiSignatureTemplateParserImpl implements SignatureTemplateParseService {
+    String regexCN = "CN=\"?([^,]+,?\\s.*)\"";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
@@ -18,11 +18,19 @@ public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplatePa
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
+            String address = "";
+
+            if (signerInfor[1] != null) {
+                address = signerInfor[1];
+            }else {
+                signatureTemplate.replaceFirst("address", "");
+            }
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
                 .replaceFirst("signer", signerName)
                 .replaceFirst("position", T)
+                .replaceFirst("address", address)
                 .replaceFirst("signatureImage", signatureImage)
                 .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
             return htmlContent;
@@ -35,4 +43,5 @@ public class BvAnPhuocSignatureTemplateParserImpl implements SignatureTemplatePa
     public String getSigner(String subjectDN) throws ApplicationException {
         return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
     }
+
 }
