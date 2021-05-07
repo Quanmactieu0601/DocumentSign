@@ -32,7 +32,7 @@ public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTempl
                 .replaceFirst("position", T)
                 .replaceFirst("cchn", cchn)
                 .replaceFirst("signatureImage", signatureImage)
-                .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.ddMMyyyy_HHmmss));
             return htmlContent;
         } catch (Exception ex) {
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s - ex: %s", subjectDN, ex.getMessage()), ex);

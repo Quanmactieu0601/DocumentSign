@@ -12,6 +12,7 @@ public class DateTimeUtils {
 
     public final static String DEFAULT_FORMAT = "yyyy-MM-dd";
     public final static String HHmmss_ddMMyyyy = "HH:mm:ss dd/MM/yyyy";
+    public final static String ddMMyyyy_HHmmss = "dd/MM/yyyy HH:mm:ss";
 
     public static Date parse(String strDate) throws ParseException {
 
