@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.service.impl.parser.BvAnPhuocSignatureTemplateParserImpl;
-import vn.easyca.signserver.webapp.service.impl.parser.BvNhietDoiSignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.BvBenhNhietDoiSignatureTemplateParserImpl;
 import vn.easyca.signserver.webapp.service.impl.parser.Bvq11SignatureTemplateParserImpl;
 import vn.easyca.signserver.webapp.service.impl.parser.DefaultSignatureTemplateParserImpl;
 
@@ -12,13 +12,13 @@ import vn.easyca.signserver.webapp.service.impl.parser.DefaultSignatureTemplateP
 public class SignatureTemplateParserFactory {
     private final Bvq11SignatureTemplateParserImpl bvq11SignatureTemplateParser;
     private final BvAnPhuocSignatureTemplateParserImpl bvAnPhuocSignatureTemplateParser;
-    private final BvNhietDoiSignatureTemplateParserImpl bvNhietDoiSignatureTemplateParser;
+    private final BvBenhNhietDoiSignatureTemplateParserImpl bvBenhNhietDoiSignatureTemplateParser;
     private final DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser;
 
-    public SignatureTemplateParserFactory(Bvq11SignatureTemplateParserImpl bvq11SignatureTemplateParser, BvAnPhuocSignatureTemplateParserImpl bvAnPhuocSignatureTemplateParser, BvNhietDoiSignatureTemplateParserImpl bvNhietDoiSignatureTemplateParser, DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser) {
+    public SignatureTemplateParserFactory(Bvq11SignatureTemplateParserImpl bvq11SignatureTemplateParser, BvAnPhuocSignatureTemplateParserImpl bvAnPhuocSignatureTemplateParser, BvBenhNhietDoiSignatureTemplateParserImpl bvNhietDoiSignatureTemplateParser, DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser) {
         this.bvq11SignatureTemplateParser = bvq11SignatureTemplateParser;
         this.bvAnPhuocSignatureTemplateParser = bvAnPhuocSignatureTemplateParser;
-        this.bvNhietDoiSignatureTemplateParser = bvNhietDoiSignatureTemplateParser;
+        this.bvBenhNhietDoiSignatureTemplateParser = bvNhietDoiSignatureTemplateParser;
         this.defaultSignatureTemplateParser = defaultSignatureTemplateParser;
     }
 
@@ -26,7 +26,7 @@ public class SignatureTemplateParserFactory {
         switch (templateParserType) {
             case BV_Q11: return bvq11SignatureTemplateParser;
             case BV_AnPhuoc: return bvAnPhuocSignatureTemplateParser;
-            case BV_NhietDoi: return bvNhietDoiSignatureTemplateParser;
+            case BV_BenhNhietDoi: return bvBenhNhietDoiSignatureTemplateParser;
             default: return defaultSignatureTemplateParser;
         }
     }

@@ -7,7 +7,7 @@ import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
-public class BvNhietDoiSignatureTemplateParserImpl implements SignatureTemplateParseService {
+public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTemplateParseService {
     String regexCN = "CN=\"?([^,]+,?\\s.*)\"";
 
     @Override
@@ -18,19 +18,19 @@ public class BvNhietDoiSignatureTemplateParserImpl implements SignatureTemplateP
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
-            String address = "";
+            String cchn = "";
 
             if (signerInfor[1] != null) {
-                address = signerInfor[1];
+                cchn = signerInfor[1];
             } else {
-                signatureTemplate.replaceFirst("address", "");
+                signatureTemplate.replaceFirst("cchn", "");
             }
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
                 .replaceFirst("signer", signerName)
                 .replaceFirst("position", T)
-                .replaceFirst("address", address)
+                .replaceFirst("cchn", cchn)
                 .replaceFirst("signatureImage", signatureImage)
                 .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
             return htmlContent;
