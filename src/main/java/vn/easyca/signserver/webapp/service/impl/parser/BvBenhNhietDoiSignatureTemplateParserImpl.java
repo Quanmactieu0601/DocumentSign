@@ -6,6 +6,9 @@ import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTemplateParseService {
     String regexCN = "CN=\"?([^,]+,?\\s.*)\"";
@@ -16,19 +19,16 @@ public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTempl
             String regexT = ", T=([^,]+)";
             String CN = getSigner(subjectDN);
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
-            String[] signerInfor = CN.split(",");
-            String signerName = signerInfor[0];
-            String cchn = "";
+            String[] signerInfor = new String[5];
+            signerInfor = getSignerInfor(CN, "([^,-]+), ([^,-]+)-(.+)");
 
-            if (signerInfor[1] != null) {
-                cchn = signerInfor[1];
-            } else {
-                signatureTemplate.replaceFirst("cchn", "");
-            }
+            String signer = signerInfor[1];
+            String mnv = signerInfor[2];
+            String cchn = signerInfor[3];
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
-                .replaceFirst("signer", signerName)
+                .replaceFirst("signer", signer)
                 .replaceFirst("position", T)
                 .replaceFirst("cchn", cchn)
                 .replaceFirst("signatureImage", signatureImage)
@@ -44,4 +44,20 @@ public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTempl
         return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
     }
 
+
+    private String[] getSignerInfor(String CN, String regex) throws ApplicationException {
+        try {
+            final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+            final Matcher matcher = pattern.matcher(CN);
+            String[] signerInfo = new String[4];
+            if (matcher.matches()) {
+                for (int i = 0; i <= matcher.groupCount(); i++) {
+                    signerInfo[i] = matcher.group(i);
+                }
+            }
+            return signerInfo;
+        } catch (Exception ex) {
+            throw new ApplicationException(String.format("Parse CN has error: [content: %s, regex: %s]", CN, regex), ex);
+        }
+    }
 }
