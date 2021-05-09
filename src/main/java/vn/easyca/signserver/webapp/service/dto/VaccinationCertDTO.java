@@ -41,10 +41,14 @@ public class VaccinationCertDTO {
         visibleRequestContent.setImageSignature(getSignatureImage(fileResourceService));
 
         Location location = new Location();
-        location.setVisibleHeight(112);
-        location.setVisibleWidth(150);
-        location.setVisibleX(225);
-        location.setVisibleY(53);
+//        location.setVisibleHeight(112);
+//        location.setVisibleWidth(150);
+//        location.setVisibleX(225);
+//        location.setVisibleY(53);
+        location.setVisibleHeight(132);
+        location.setVisibleWidth(170);
+        location.setVisibleX(360);
+        location.setVisibleY(105);
 
         visibleRequestContent.setLocation(location);
         visibleRequestContent.setExtraInfo(new ExtraInfo());
