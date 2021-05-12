@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+<!--            <button class="" data-toggle="modal" data-target="#modalDelele">Delete</button>-->
+            <!-- modal -->
+            <div  id="modalDelele">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Hỗ trợ sử dụng</h4>
+                            <button (click)="cancel()" type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="box">
+                                <div class="qrCode">
+                                    <img src="/content/images/logo/qrcodefbinvoice.png" alt="">
+                                </div>
+                                <h2 class="title">hỗ trợ sử dụng hdđt easyinvoice<br>hỗ trợ kịp thời - thảo luận hữu ích</h2>
+                                <div class="link">
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Quét mã QR trên Smartphone để tìm kiếm</p>
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Cách 2: Nhấn vào link <a href="https://www.facebook.com/groups/phanmemhoadondientu" target="_blank" style="font-weight: bold; color: blue;">https://www.facebook.com/groups/phanmemhoadondientu</a> click "tham gia nhóm"</p>
+                                    <p style="text-align: center; color: red; font-weight: bold; margin: 0px !important;">Tham gia nhóm để nhận hỗ trợ tốt nhất</p>
+                                </div>
+                                <div class="left">
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Hỗ trợ, xử lý mọi khó khăn 24/7</p>
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Cập nhật văn bản, nghị định về kế toán/thuế mới nhất</p>
+                                </div>
+                                <div class="right">
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Trao đổi chuyên sâu về kế toán, cung cấp tài liệu</p>
+                                    <p><i class="fa fa-check-circle" aria-hidden="true"></i>Lắng nghe mọi đánh giá của khách hàng về sản phẩm </p>
+                                </div>
+                            </div>
+                            <div class="footer">
+                                <p style="color: #fff; margin: 0px !important;">Nếu có vướng mắc, Anh/chị hãy đăng bài viết kèm hình ảnh (nếu có) để nhận hỗ trợ nhé!</p>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button (click)="cancel()" type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                            <button (click)="markAsRead()" type="button" class="btn btn-success">Đã xem</button>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- end modal -->
+        </div>
+
+    </div>
+</div>
+
+
+
+

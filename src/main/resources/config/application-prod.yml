@@ -34,12 +34,12 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
 
-    # SDS DB production - old ver
-    #    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: easysign
-    #    password: EasySign@202o
-
-    # SDS DB production - new ver
+    #     SDS DB production - old ver
+    #        url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #        username: easysign
+    #        password: EasySign@202o
+    #
+    #     SDS DB production - new ver
     url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
     username: thanhld
     password: Th@nhSignE@sy#1

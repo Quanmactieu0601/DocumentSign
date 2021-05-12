@@ -24,6 +24,9 @@ import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify
 import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
 import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
 import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
+import { WebappHomeModule } from 'app/home/home.module';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   imports: [
     BrowserModule,
@@ -41,6 +44,7 @@ import { SignatureImageViewComponent } from './signing/signature-image-view/sign
     ToastrModule.forRoot(),
     PdfViewerModule,
     VerifySignatureDocModule,
+    WebappHomeModule,
   ],
   declarations: [
     MainComponent,
@@ -54,5 +58,6 @@ import { SignatureImageViewComponent } from './signing/signature-image-view/sign
     SignatureImageViewComponent,
   ],
   bootstrap: [MainComponent],
+  providers: [NgbActiveModal],
 })
 export class WebappAppModule {}
