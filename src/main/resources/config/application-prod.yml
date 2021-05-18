@@ -40,9 +40,9 @@ spring:
     #    password: EasySign@202o
 
     # SDS DB production - new ver
-    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: thanhld
-    password: Th@nhSignE@sy#1
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -84,6 +84,11 @@ spring:
     #    username: ctch
     #    password: ctch@654@$!
 
+    # BV Hung Vuong - cau hinh DB Prod
+    url: jdbc:mariadb://10.200.150.10:3306/signserver_bvhungvuong?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: hungvuong
+    password: HungVuong@2o2!
+
     # BV Benh Nhiet Doi - cau hinh DB Prod
     #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: easysign
@@ -112,7 +117,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: /opt/easysign/tmp
+      #      location: /opt/easysign/tmp
+      location: /opt/hungvuong/opt/easysign/tmp #config for bv hung vuong
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
@@ -134,7 +140,8 @@ spring:
 #     ciphers: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 ,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA,TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
 # ===================================================================
 server:
-  port: 8888
+  port: 8088
+  #  port: 8888 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443
   #  ssl:
