@@ -8,6 +8,7 @@ import { ResponseBody } from 'app/shared/model/response-body';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
 import { AccountService } from 'app/core/auth/account.service';
+import { HttpResponse } from '@angular/common/http';
 // import * as PDFJS from "pdfjs-dist";
 (window as any).pdfWorkerSrc = '/assets/pdfjs/pdf.worker.js';
 
@@ -194,9 +195,10 @@ export class PdfViewComponent implements OnInit {
       ],
     };
 
-    this.signingService.signPdf(request).subscribe((res: ResponseBody) => {
-      const byteArray = this.base64ToArrayBuffer(res);
-      // saveAs(new Blob([byteArray], { type: 'application/pdf' }), Date.now().toString());
+    this.signingService.signPdf(request).subscribe((res: any) => {
+      const data = JSON.parse(res).data;
+      const byteArray = this.base64ToArrayBuffer(data);
+      // // saveAs(new Blob([byteArray], { type: 'application/pdf' }), Date.now().toString());
       this.signEvent.emit(byteArray);
     });
   }

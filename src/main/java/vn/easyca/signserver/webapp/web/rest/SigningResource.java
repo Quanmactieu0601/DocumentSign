@@ -56,16 +56,13 @@ public class SigningResource extends BaseResource {
     }
 
 
-    @PostMapping(value = "/pdf", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping(value = "/pdf")
     public ResponseEntity<Object> signPDF(@RequestBody SigningRequest<VisibleRequestContent> signingRequest) {
         log.info(" --- signPDF --- ");
         try {
             PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
             String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
-            status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + signingRequest.getSigningRequestContents().get(0).getDocumentName() + "_signed" + ".pdf")
-                .body(resource);
+            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, "Ký tệp pdf thành công"));
         } catch (ApplicationException applicationException) {
              log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
