@@ -1,5 +1,6 @@
 {
   "sign": {
+    "title": "Ký",
     "pdf": {
       "signFile": "Ký điện tử",
       "cancel": "Hủy",
@@ -10,6 +11,9 @@
       "validateSignature": "Kiểm tra ảnh chữ ký",
       "chooseSignatureTemplate": "Chọn mẫu chữ ký",
       "choose": "Chọn"
+    },
+    "doc": {
+
     },
     "signatureImage": "Ảnh chữ ký",
     "dragAndDrop": "Kéo thả file pdf cần ký vào đây hoặc click để chọn",

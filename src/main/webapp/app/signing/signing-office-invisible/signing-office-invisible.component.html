@@ -1,0 +1,56 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span jhiTranslate="sign.title">Signing</span>&nbsp;<span> Doc</span>
+    </li>
+</ol>
+
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"
+                 [disableClick]="selectFiles.length!=0">
+                <ngx-dropzone-label style="font-family: Nunito">
+                    <i class="fas fa-upload fa-2x"></i>
+                    <br>
+                    Kéo thả file doc cần xác thực vào đây hoặc click để chọn
+                </ngx-dropzone-label>
+                <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
+                                      (removed)="removeFile($event)">
+                    <ngx-dropzone-label>
+                        <i class="fas fa-file-word fa-2x"></i>
+                        <label style="font-family: Nunito; font-size-adjust: inherit">
+                            {{f.name}}
+                        </label>
+                    </ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </div>
+        </div>
+        <form name="editForm" [formGroup]="editForm">
+            <div class="form-group">
+                <label class="form-control-label" for="field_serial">Serial</label>
+                <select class="form-control" id="field_serial" name="serial" formControlName="serial" size="1">
+                    <option class="form-control" selected>Serial
+                    </option>
+                    <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="form-control-label" for="field_pinCode">Pin Code</label>
+                <input type="text" class="form-control" id="field_pinCode" name="pinCode"
+                       formControlName="pinCode"/>
+            </div>
+<!--            <div class="form-group">-->
+<!--                <label class="form-control-label" for="field_otpCode"-->
+<!--                       jhiTranslate="webappApp.signatureVerify.originalData">Otp Code</label>-->
+<!--                <input type="text" class="form-control" id="field_otpCode" name="otpCode"-->
+<!--                       formControlName="otpCode"/>-->
+<!--            </div>-->
+        </form>
+        <button class="btn btn-success btn-primary" [disabled]="!selectFiles || this.selectFiles.length == 0"
+                (click)="signDoc()" style="alignment: center">
+            <span jhiTranslate="sign.title">Sign</span>
+        </button>
+    </div>
+</div>
+
