@@ -19,6 +19,6 @@ export class NotificationComponent implements OnInit {
   }
   markAsRead(): void {
     this.activeModal.dismiss();
-    this.$localStorage.store('key', 'value');
+    this.$localStorage.store('notification', 'Show_notification');
   }
 }

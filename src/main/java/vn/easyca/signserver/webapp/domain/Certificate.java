@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "certificate")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Certificate implements Serializable {
+public class    Certificate implements Serializable {
 
     private static final long serialVersionUID = 1L;
     public static final String PKCS_11 = "PKCS_11";

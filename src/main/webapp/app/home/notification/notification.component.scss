@@ -1,12 +1,15 @@
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css');
+
 .box {
-  width: 700px;
+  width: 100%;
   height: 400px;
   /* background: #fdeae7; */
   padding: 10px;
   font-size: 14px !important;
 }
+
 p {
-  margin: 10px !important;
+  margin: 11px !important;
 }
 .qrCode {
   text-align: center;
@@ -44,7 +47,7 @@ p {
   font: normal normal normal 14px/1 FontAwesome;
   font-size: 16px !important;
   text-rendering: auto;
-  color: green;
+  color: #4b6987;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -53,23 +56,14 @@ p {
   margin-right: 5px;
 }
 .footer {
-  width: 700px;
+  width: 100%;
   padding: 10px;
-  background: #ec5625;
+  background: #4b6987;
   text-align: center;
   color: #fff;
-  border-bottom-right-radius: 10px;
-  border-bottom-left-radius: 10px;
+  border-radius: 10px;
 }
-.modal-content {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  width: 720px;
-  pointer-events: auto;
-  background-color: #fff;
-  background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 0.125rem;
-  outline: 0;
+
+button {
+  margin-left: 15px;
 }

@@ -17,7 +17,7 @@ export class HomeLayoutComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    const notifyStorage = this.$localStorage.retrieve('key');
+    const notifyStorage = this.$localStorage.retrieve('notification');
     if (notifyStorage === null) {
       this.modalService.open(NotificationComponent, { size: 'lg', backdrop: 'static' });
     }
