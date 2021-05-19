@@ -8,10 +8,10 @@
 # ===================================================================
 
 # ===================================================================
-# Standard Spring Boot properties.z
+# Standard Spring Boot properties.
 # Full reference is available at:
 # http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
-# ================================================================
+# ===================================================================
 logging:
   level:
     ROOT: INFO

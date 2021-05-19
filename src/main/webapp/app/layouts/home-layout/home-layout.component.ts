@@ -10,8 +10,6 @@ import { getLocalStorage } from 'ngx-webstorage/lib/core/nativeStorage';
   styleUrls: ['./home-layout.component.scss'],
 })
 export class HomeLayoutComponent implements OnInit, AfterViewInit {
-  notifyKey = 'linh';
-
   constructor(private modalService: NgbModal, private $localStorage: LocalStorageService, public activeModal: NgbActiveModal) {}
 
   ngOnInit(): void {}
