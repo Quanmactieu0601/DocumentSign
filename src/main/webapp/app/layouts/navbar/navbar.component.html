@@ -22,7 +22,7 @@
         <div id="collapseBootstrap0" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.pdf">Ký số PDF</span></a>
+                <a class="collapse-item" routerLink="/admin/pdfSigning" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.pdf">Ký số PDF</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.ooxml">Ký số Office</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.xml">Ký số XML</span></a>
                 <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.signing.raw">Ký số dữ liệu raw</span></a>
@@ -38,11 +38,11 @@
         <div id="collapseBootstrap1" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.xml">Xác thực XML</span></a>
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
+                <a class="collapse-item" routerLink="/developing" routerLinkActive="active" [hidden]="true"><span jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-pdf" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-doc" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-hash" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.hash">Xác thực Hash</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-raw" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
             </div>
         </div>
     </li>
@@ -63,11 +63,13 @@
                     jhiTranslate="global.menu.entities.report">Thống kê báo cáo</span></a>
                 <a class="collapse-item" routerLink="/admin/user-management" routerLinkActive="active"><span
                     jhiTranslate="global.menu.admin.userManagement">User management</span></a>
+                <a class="collapse-item" routerLink="/home/signature-template" routerLinkActive="active"><span
+                    >Template management</span></a>
                 <a class="collapse-item" routerLink="/home/system-config" routerLinkActive="active"><span
                     jhiTranslate="global.menu.entities.systemConfig">Cấu hình hệ thống</span></a>
-                <a class="collapse-item"routerLink="/admin/health" routerLinkActive="active"><span
+                <a class="collapse-item" routerLink="/admin/health" routerLinkActive="active"><span
                     jhiTranslate="global.menu.admin.health">Health</span></a>
-                <a class="collapse-item"routerLink="/admin/metrics" routerLinkActive="active"><span
+                <a class="collapse-item" routerLink="/admin/metrics" routerLinkActive="active"><span
                     jhiTranslate="global.menu.admin.metrics">Metrics</span></a>
             </div>
         </div>

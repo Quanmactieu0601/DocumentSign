@@ -41,12 +41,14 @@ import {
   faQrcode,
   faInfo,
   faInfoCircle,
+  faCheck,
   // jhipster-needle-add-icon-import
   faCogs,
   faExclamationCircle,
   faCheckCircle,
   faCertificate,
   faFileArchive,
+  faIdCard,
 } from '@fortawesome/free-solid-svg-icons';
 
 export const fontAwesomeIcons = [
@@ -92,10 +94,12 @@ export const fontAwesomeIcons = [
   faQrcode,
   faInfo,
   faInfoCircle,
+  faCheck,
   // jhipster-needle-add-icon-import
   faCogs,
   faExclamationCircle,
   faCheckCircle,
   faCertificate,
   faFileArchive,
+  faIdCard,
 ];

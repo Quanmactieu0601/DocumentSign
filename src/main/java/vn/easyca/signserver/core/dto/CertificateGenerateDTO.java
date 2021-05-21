@@ -8,6 +8,7 @@ import vn.easyca.signserver.core.domain.SubjectDN;
 public class CertificateGenerateDTO {
 
     private String ou = "IT";
+    private String t;
     private String l;
     private String o;
     private String s;
@@ -116,7 +117,7 @@ public class CertificateGenerateDTO {
     }
 
     public SubjectDN getSubjectDN() {
-        return new SubjectDN(cn, ou, o, l, s, c);
+        return new SubjectDN(cn, t, ou, o, l, s, c);
     }
 
     public OwnerInfo getOwnerInfo() {
@@ -135,6 +136,14 @@ public class CertificateGenerateDTO {
         this.o = o;
     }
 
+    public String getT() {
+        return t;
+    }
+
+    public void setT(String t) {
+        this.t = t;
+    }
+
     public void setOwnerName(String ownerName) {
         this.ownerName = ownerName;
     }
@@ -150,8 +159,9 @@ public class CertificateGenerateDTO {
     public CertificateGenerateDTO() {
     }
 
-    public CertificateGenerateDTO(String ou, String l, String o, String s, String c, String cn, String ownerId, int keyLen) {
+    public CertificateGenerateDTO(String ou, String t, String l, String o, String s, String c, String cn, String ownerId, int keyLen) {
         this.ou = ou;
+        this.t = t;
         this.l = l;
         this.o = o;
         this.s = s;

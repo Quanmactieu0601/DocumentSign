@@ -17,7 +17,16 @@
         "title": "Signature Image"
       },
       "imgData": "Img Data",
-      "userId": "User Id"
+      "userId": "User Id",
+      "showImageSign": {
+        "showImageSign": "Ảnh chữ kí",
+        "modify": "Lưu",
+        "cancel": "Hủy",
+        "showAlert": "Chứng thư số không có ảnh chữ kí",
+        "chooseImage": "Cập nhật ảnh",
+        "success": "Lưu thành công",
+        "alert": "Dung lượng ảnh phải nhỏ hơn 100KB"
+      }
     }
   }
 }

@@ -11,6 +11,7 @@ import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Repository
@@ -19,11 +20,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone) {
+    public Page<UserEntity> findByFilter(Pageable pageable, String login, String account, String name, String email, String ownerId, String commonName, String country, String phone, boolean activated) {
         Map<String, Object> params = new HashMap<>();
         List<UserEntity> userEntityList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("FROM jhi_user a ");
+        sqlBuilder.append("FROM UserEntity a ");
 //        String sort = Common.addSort(pageable.getSort());
 
         sqlBuilder.append(" WHERE 1 = 1 ");
@@ -32,7 +33,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             params.put("login", "%" + account + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(name)) {
-            sqlBuilder.append("AND Concat(a.first_name,a.last_name) like :name ");
+            sqlBuilder.append("AND concat(a.firstName, a.lastName) like :name ");
             params.put("name", "%" + name + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(email)) {
@@ -40,11 +41,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             params.put("email",  email );
         }
         if (!QueryUtils.isNullOrEmptyProperty(ownerId)) {
-            sqlBuilder.append("AND a.owner_id like :ownerId ");
+            sqlBuilder.append("AND a.ownerId like :ownerId ");
             params.put("ownerId", "%" + ownerId + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(commonName)) {
-            sqlBuilder.append("AND a.common_name like :commonName ");
+            sqlBuilder.append("AND a.commonName like :commonName ");
             params.put("commonName", "%" + commonName + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(country)) {
@@ -55,17 +56,18 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
             sqlBuilder.append("AND a.phone like :phone ");
             params.put("phone", "%" + phone + "%");
         }
-        Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());
+        if (activated) {
+            sqlBuilder.append("And a.activated = true ");
+        }
+        Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString() + sort, UserEntity.class);
+            Query query = entityManager.createQuery("SELECT a " + sqlBuilder.toString() + sort, UserEntity.class);
             QueryUtils.setParamsWithPageable(query, params, pageable, total);
             userEntityList = query.getResultList();
         }
         return new PageImpl<>(userEntityList, pageable, total.longValue());
-
     }
-
 }

@@ -37,6 +37,8 @@ public class CertificateDTO {
 
     private int activeStatus;
 
+    private String rawPin;
+
     private String encryptedPin;
 
     private X509Certificate x509Certificate;
@@ -168,5 +170,13 @@ public class CertificateDTO {
 
     public void setSignatureImageId(Long signatureImageId) {
         this.signatureImageId = signatureImageId;
+    }
+
+    public String getRawPin() {
+        return rawPin;
+    }
+
+    public void setRawPin(String rawPin) {
+        this.rawPin = rawPin;
     }
 }

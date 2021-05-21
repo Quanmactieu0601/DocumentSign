@@ -1,6 +1,8 @@
 {
   "webappApp": {
     "certificate": {
+      "chooseFile": "Choose File",
+      "chooseSignatureImage": "Choose Signature Image(s)",
       "home": {
         "title": "Certificates",
         "createLabel": "Create a new Certificate",
@@ -24,6 +26,7 @@
       "action": "Action",
       "info": "Info",
       "serial": "Serial",
+      "pin": "Pin",
       "ownerTaxcode": "Owner Taxcode",
       "ownerId": "Owner Id",
       "subjectInfo": "Subject Info",
@@ -67,7 +70,49 @@
           "newPIN": "Your new PIN is required",
           "confirmPIN": "Your confirm PIN is required"
         }
-      }
+      },
+      "confirmDeactive": {
+        "success": "Successfully",
+        "question": "Do you want to deactivate certificate {{id}}",
+        "title": "Confirm",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "installCertIntoHsm": {
+        "title": "Install CERT into HSM",
+        "notification": "File size must be less than 10MB",
+        "alert": {
+          "success": "Install CERT into HSM successfully",
+          "error": "Install CERT into HSM failure: {{message}}"
+        },
+        "install": "Install",
+        "cancel": "Cancel"
+      },
+      "generateCSR": {
+        "generateCsr": "Generate CSR",
+        "title": "Generate and download file CSR",
+        "alertGenerateCsr": {
+          "success": "The file CSR was generated successfully",
+          "error": "CSR file generation failed"
+        },
+        "alertDownSampleFile": {
+          "success": "Download the Certificate sample file successfully",
+          "error": "Failed to download the Certificate template file"
+        },
+        "sampleFile": "Sample file",
+        "cancel": "Cancel"
+      },
+      "exportSerial": {
+        "exportSerial": "Export Serial",
+        "notification": "File size must be less than 1MB",
+        "alert": {
+          "success": "Export Serial successfully"
+        },
+        "cancel": "Cancel"
+      },
+      "uploadP12Cert": "Upload P12 CERT",
+      "uploadSignatureImage": "Upload Signature Image",
+      "search": "Search"
     }
   }
 }

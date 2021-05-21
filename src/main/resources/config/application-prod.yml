@@ -34,10 +34,15 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
 
-    # DB production
+    # SDS DB production - old ver
     #    url: jdbc:mariadb://localhost:3306/signserver2?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: easysign
     #    password: EasySign@202o
+
+    # SDS DB production - new ver
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -74,10 +79,20 @@ spring:
     #    username: sa
     #    password: admin@123
 
-    # BV CTCH - cau hinh DB
+    # BV CTCH - cau hinh DB Prod
     #    url: jdbc:mariadb://10.200.150.10:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: ctch
     #    password: ctch@654@$!
+
+    # BV Hung Vuong - cau hinh DB Prod
+    #    url: jdbc:mariadb://10.200.150.10:3306/signserver_bvhungvuong?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: hungvuong
+    #    password: HungVuong@2o2!
+
+    # BV Benh Nhiet Doi - cau hinh DB Prod
+    #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: easysign@#2021
 
     hikari:
       poolName: Hikari
@@ -99,6 +114,11 @@ spring:
     password:
   thymeleaf:
     cache: true
+  servlet:
+    multipart:
+      enabled: true
+      location: /opt/easysign/tmp
+#      location: /opt/hungvuong/opt/easysign/tmp #config for bv hung vuong
 
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
@@ -121,6 +141,7 @@ spring:
 # ===================================================================
 server:
   port: 8088
+  #  port: 8888 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443
   #  ssl:

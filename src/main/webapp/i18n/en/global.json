@@ -43,7 +43,8 @@
           "pdf": "PDF File",
           "ooxml": "Office File",
           "raw": "Raw Data",
-          "xml": "XML File"
+          "xml": "XML File",
+          "hash": "Hash"
         },
         "signing": {
           "main": "Signing",
@@ -53,6 +54,10 @@
           "xml": "XML File"
         },
         "question": "Frequently asked questions"
+      },
+      "user": {
+        "main": "User",
+        "verifySignature": "Verify Signature"
       },
       "language": "Language"
     },

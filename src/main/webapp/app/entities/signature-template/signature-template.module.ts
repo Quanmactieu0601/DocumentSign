@@ -7,6 +7,7 @@ import { SignatureTemplateDetailComponent } from './signature-template-detail.co
 import { SignatureTemplateUpdateComponent } from './signature-template-update.component';
 import { SignatureTemplateDeleteDialogComponent } from './signature-template-delete-dialog.component';
 import { signatureTemplateRoute } from './signature-template.route';
+import { UserPopupComponent } from './user-popup/user-popup.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(signatureTemplateRoute)],
@@ -15,6 +16,7 @@ import { signatureTemplateRoute } from './signature-template.route';
     SignatureTemplateDetailComponent,
     SignatureTemplateUpdateComponent,
     SignatureTemplateDeleteDialogComponent,
+    UserPopupComponent,
   ],
   entryComponents: [SignatureTemplateDeleteDialogComponent],
 })

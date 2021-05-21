@@ -51,8 +51,21 @@
         "GET_INFO": "Lấy thông tin",
         "LOGIN": "Đăng nhập"
       },
-      "search": "Tìm kiếm",
-      "properties": "Các thuộc tính"
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "Chứng thư số",
+        "HASH": "HASH",
+        "SIGN_TEMPLATE": "Mẫu chữ ký",
+        "SIGN_IMAGE": "Ảnh chữ kí",
+        "ACCOUNT": "Tài khoản",
+        "QR_CODE": "Mã QR",
+        "NONE": "Không xác định"
+      },
+      "search": "Tìm kiếm"
     }
   }
 }

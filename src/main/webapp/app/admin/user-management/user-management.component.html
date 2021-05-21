@@ -5,45 +5,47 @@
 </ol>
 <div class="card mb-3 searching">
     <div class="card-body">
-        <!--        <form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">-->
         <form name="userSearch" role="form" novalidate (ngSubmit)="searchUser()" [formGroup]="userSearch">
             <div class="row row-cols-xl-6 row-cols-md-4 row-cols-sm-1">
                 <div class="col">
                     <div class="form-group ">
-                        <label class="form-control-label">Login Account:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.login">Login Account:</label>
                         <input type="email" class="form-control form-control-sm" name="account"
                                formControlName="account"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Name:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.fullName"
+                        >Name:</label>
                         <input type="text" class="form-control form-control-sm" name="name" formControlName="name"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Common Name :</label>
+                        <label class="form-control-label">Common Name</label>
                         <input type="text" class="form-control form-control-sm" name="commonName"
                                formControlName="commonName"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Email :</label>
+                        <label class="form-control-label">Email</label>
                         <input type="email" class="form-control form-control-sm" name="email" formControlName="email"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Country:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.country"
+                        >Country:</label>
                         <input type="text" class="form-control form-control-sm" name="country"
                                formControlName="country"/>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label class="form-control-label">Phone:</label>
+                        <label class="form-control-label" jhiTranslate="userManagement.phone"
+                        >Phone:</label>
                         <input type="text" class="form-control form-control-sm" name="phone" formControlName="phone"/>
                     </div>
                 </div>
@@ -51,214 +53,12 @@
             <div class="text-center">
                 <button type="submit" class="btn btn-primary btn-sm">
                     <fa-icon icon="search"></fa-icon>
-                    Search
+                    <span jhiTranslate="userManagement.search"></span>
                 </button>
             </div>
         </form>
     </div>
 </div>
-
-
-<!--<div>-->
-<!--    <h2>-->
-<!--        <span id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>-->
-<!--        <button-->
-<!--            type="submit"-->
-<!--            class="btn btn-primary float-right jh-create-entity mr-2"-->
-<!--            (click)="createCSR()"-->
-<!--            [disabled]="this.listId.length == 0"-->
-<!--        >-->
-<!--            <fa-icon icon="file-excel"></fa-icon>-->
-<!--            <span jhiTranslate="userManagement.home.exportCSR">Xuất Excel CSR</span>-->
-<!--        </button>-->
-
-<!--        <button type="submit" class="btn btn-primary float-right jh-create-entity mr-2"-->
-<!--                (click)="openModal(cancelModal)">-->
-<!--            <fa-icon icon="upload"></fa-icon>-->
-<!--            <span jhiTranslate="userManagement.home.uploadUser">Upload User</span>-->
-<!--        </button>-->
-<!--        <button class="btn btn-primary float-right jh-create-entity mr-2" [routerLink]="['./new']">-->
-<!--            <fa-icon icon="plus"></fa-icon>-->
-<!--            <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>-->
-<!--        </button>-->
-<!--    </h2>-->
-<!--    &lt;!&ndash; <jhi-alert-error></jhi-alert-error>-->
-
-<!--    <jhi-alert></jhi-alert> &ndash;&gt;-->
-
-<!--    <div class="alert alert-warning" id="no-result" *ngIf="users?.length === 0">-->
-<!--        <span jhiTranslate="userManagement.home.notfound">No User found</span>-->
-<!--    </div>-->
-<!--    <div class="table-responsive" *ngIf="users && users.length > 0">-->
-<!--        <table class="table table-striped" aria-describedby="user-management-page-heading">-->
-<!--            <thead jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="transition.bind(this)">-->
-<!--                <th><input type="checkbox" name="checkboxAll" (change)="checkAll(this.$event)"/></th>-->
-<!--                <th scope="col" jhiSortBy="id">-->
-<!--                    <span jhiTranslate="global.field.id">ID</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="login">-->
-<!--                    <span jhiTranslate="userManagement.login">Login</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="email">-->
-<!--                    <span jhiTranslate="userManagement.email">Email</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="organizationUnit">-->
-<!--                    <span jhiTranslate="userManagement.phone">Phone</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="common_Name">-->
-<!--                    <span jhiTranslate="userManagement.commonName">CommonName</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="organization_Name">-->
-<!--                    <span jhiTranslate="userManagement.organizationName">OrganizationName</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="organization_Unit">-->
-<!--                    <span jhiTranslate="userManagement.organizationUnit">OrganizationUnit</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="locality_Name">-->
-<!--                    <span jhiTranslate="userManagement.localityName">LocalityName</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="state_Name">-->
-<!--                    <span jhiTranslate="userManagement.stateName">StateName</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="country">-->
-<!--                    <span jhiTranslate="userManagement.country">Country</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col"></th>-->
-<!--                <th scope="col" jhiSortBy="lang_Key">-->
-<!--                    <span jhiTranslate="userManagement.langKey">Lang Key</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col"><span jhiTranslate="userManagement.profiles">Profiles</span></th>-->
-<!--                <th scope="col" jhiSortBy="created_Date">-->
-<!--                    <span jhiTranslate="userManagement.createdDate">Created Date</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="last_Modified_By">-->
-<!--                    <span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col" jhiSortBy="last_Modified_Date">-->
-<!--                    <span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span>-->
-<!--                    <fa-icon icon="sort"></fa-icon>-->
-<!--                </th>-->
-<!--                <th scope="col"></th>-->
-<!--            </thead>-->
-<!--            <tbody *ngIf="users">-->
-<!--            <tr *ngFor="let user of users; trackBy: trackIdentity">-->
-<!--                <td>-->
-<!--                    <input type="checkbox" name="checkboxElement" (change)="changeSelect(this.$event)"-->
-<!--                           value="{{ user.id }}"/>-->
-<!--                </td>-->
-
-<!--                <td>-->
-<!--                    <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>-->
-<!--                </td>-->
-<!--                <td>{{ user.login }}</td>-->
-<!--                <td>{{ user.email }}</td>-->
-<!--                <td>{{ user.phone }}</td>-->
-<!--                <td>{{ user.commonName }}</td>-->
-<!--                <td>{{ user.organizationName }}</td>-->
-<!--                <td>{{ user.organizationUnit }}</td>-->
-<!--                <td>{{ user.localityName }}</td>-->
-<!--                <td>{{ user.stateName }}</td>-->
-<!--                <td>{{ user.country }}</td>-->
-<!--                <td>-->
-<!--                    <button-->
-<!--                        class="btn btn-danger btn-sm"-->
-<!--                        (click)="setActive(user, true)"-->
-<!--                        *ngIf="!user.activated"-->
-<!--                        jhiTranslate="userManagement.deactivated"-->
-<!--                    >-->
-<!--                        Deactivated-->
-<!--                    </button>-->
-<!--                    <button-->
-<!--                        class="btn btn-success btn-sm"-->
-<!--                        (click)="setActive(user, false)"-->
-<!--                        *ngIf="user.activated"-->
-<!--                        [disabled]="!currentAccount || currentAccount.login === user.login"-->
-<!--                        jhiTranslate="userManagement.activated"-->
-<!--                    >-->
-<!--                        Activated-->
-<!--                    </button>-->
-<!--                </td>-->
-<!--                <td>{{ user.langKey }}</td>-->
-<!--                <td>-->
-<!--                    <div *ngFor="let authority of user.authorities">-->
-<!--                        <span class="badge badge-info">{{ authority }}</span>-->
-<!--                    </div>-->
-<!--                </td>-->
-<!--                <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>-->
-<!--                <td>{{ user.lastModifiedBy }}</td>-->
-<!--                <td>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>-->
-<!--                <td class="text-right">-->
-<!--                    <div class="btn-group">-->
-<!--                        <button type="submit" [routerLink]="['./', user.login, 'view']" class="btn btn-info btn-sm">-->
-<!--                            <fa-icon icon="eye"></fa-icon>-->
-<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>-->
-<!--                        </button>-->
-
-<!--                        <button-->
-<!--                            type="button"-->
-<!--                            (click)="viewCertificate(user)"-->
-<!--                            class="btn btn-warning btn-sm"-->
-<!--                            [disabled]="!currentAccount || currentAccount.login === user.login"-->
-<!--                        >-->
-<!--                            <fa-icon icon="eye"></fa-icon>-->
-<!--                            <span class="d-none d-md-inline"-->
-<!--                                  jhiTranslate="webappApp.certificate.home.title">Certificate</span>-->
-<!--                        </button>-->
-
-<!--                        <button type="submit" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge"-->
-<!--                                class="btn btn-primary btn-sm">-->
-<!--                            <fa-icon icon="pencil-alt"></fa-icon>-->
-<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>-->
-<!--                        </button>-->
-
-<!--                        <button-->
-<!--                            type="button"-->
-<!--                            (click)="deleteUser(user)"-->
-<!--                            class="btn btn-danger btn-sm"-->
-<!--                            [disabled]="!currentAccount || currentAccount.login === user.login"-->
-<!--                        >-->
-<!--                            <fa-icon icon="times"></fa-icon>-->
-<!--                            <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>-->
-<!--                        </button>-->
-<!--                    </div>-->
-<!--                </td>-->
-<!--            </tr>-->
-<!--            </tbody>-->
-<!--        </table>-->
-<!--    </div>-->
-
-<!--    <div *ngIf="users">-->
-<!--        <div class="row justify-content-center">-->
-<!--            <jhi-item-count [page]="page" [total]="totalItems" [itemsPerPage]="itemsPerPage"></jhi-item-count>-->
-<!--        </div>-->
-
-<!--        <div class="row justify-content-center">-->
-<!--            <ngb-pagination-->
-<!--                [collectionSize]="totalItems"-->
-<!--                [(page)]="page"-->
-<!--                [pageSize]="itemsPerPage"-->
-<!--                [maxSize]="5"-->
-<!--                [rotate]="true"-->
-<!--                [boundaryLinks]="true"-->
-<!--                (pageChange)="transition()"-->
-<!--            ></ngb-pagination>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
 
 <div class="card mb-1">
     <div class="card-body">
@@ -287,9 +87,16 @@
                     <fa-icon icon="plus"></fa-icon>
                     <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
                 </button>
+                <button type="submit" class="btn btn-primary  btn-sm jh-create-entity mr-2"
+                        (click)="openModal(uploadP12)"
+                        [disabled]="this.listId.length != 1">
+                    <fa-icon icon="upload"></fa-icon>
+                    <span >Upload P12</span>
+                </button>
             </div>
 
         </div>
+
         <div class="alert alert-warning" id="no-result" *ngIf="this.users?.length === 0">
             <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
         </div>
@@ -297,74 +104,22 @@
         <div class="card table-responsive" id="entities" *ngIf="this.users && this.users.length > 0">
             <table class="table table-striped table-custom" aria-describedby="page-heading" id="usermanagement-table">
                 <thead jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="transition.bind(this)">
-                <!--                <th><input type="checkbox" name="checkboxAll" (change)="checkAll(this.$event)"/></th>-->
                 <th scope="col" class="custom-middle-align"><input type="checkbox" class="custom-middle-align"
                                                                    name="checkboxAll" (change)="checkAll(this.$event)"/>
                 </th>
-
-                <!--                        <th scope="col" jhiSortBy="id">-->
-                <!--                            <span jhiTranslate="global.field.id">ID</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
                 <th scope="col" jhiSortBy="login" class="custom-left-align">
                     <span jhiTranslate="userManagement.login">Login</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="common_Name" class="custom-left-align">
+                <th scope="col" jhiSortBy="commonName" class="custom-left-align">
                     <span jhiTranslate="userManagement.fullName">Full Name</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <!--                        <th scope="col" jhiSortBy="phone"  class="custom-middle-align">-->
-                <!--                            <span jhiTranslate="userManagement.phone">Phone</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="common_Name">-->
-                <!--                            <span jhiTranslate="userManagement.commonName">CommonName</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="organization_Name">-->
-                <!--                            <span jhiTranslate="userManagement.organizationName">OrganizationName</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="organization_Unit">-->
-                <!--                            <span jhiTranslate="userManagement.organizationUnit">OrganizationUnit</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="locality_Name">-->
-                <!--                            <span jhiTranslate="userManagement.localityName">LocalityName</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="state_Name">-->
-                <!--                            <span jhiTranslate="userManagement.stateName">StateName</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="country">-->
-                <!--                            <span jhiTranslate="userManagement.country">Country</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col"></th>-->
-                <!--                        <th scope="col" jhiSortBy="lang_Key">-->
-                <!--                            <span jhiTranslate="userManagement.langKey">Lang Key</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col"><span jhiTranslate="userManagement.profiles">Profiles</span></th>-->
-                <!--                        <th scope="col" jhiSortBy="created_Date">-->
-                <!--                            <span jhiTranslate="userManagement.createdDate">Created Date</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="last_Modified_By">-->
-                <!--                            <span jhiTranslate="userManagement.lastModifiedBy">Last Modified By</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <!--                        <th scope="col" jhiSortBy="last_Modified_Date">-->
-                <!--                            <span jhiTranslate="userManagement.lastModifiedDate">Last Modified Date</span>-->
-                <!--                            <fa-icon icon="sort"></fa-icon>-->
-                <!--                        </th>-->
-                <th scope="col" jhiSortBy="active_Status" class="custom-middle-align"><span
+                <th scope="col" jhiSortBy="activeStatus" class="custom-middle-align"><span
                     jhiTranslate="userManagement.activeStatus">Active Status</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
-                <th scope="col" jhiSortBy="active_Status" class="custom-middle-align"><span
+                <th scope="col" class="custom-middle-align"><span
                     jhiTranslate="userManagement.role">Role</span>
                     <fa-icon icon="sort"></fa-icon>
                 </th>
@@ -378,33 +133,18 @@
                         <input type="checkbox" name="checkboxElement" (change)="changeSelect(this.$event)"
                                value="{{ user.id }}"/>
                     </td>
-
-                    <!--                        <td>-->
-                    <!--                            <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>-->
-                    <!--                        </td>-->
                     <td class="custom-left-align">{{ user.login }}</td>
                     <td class="custom-left-align">{{ user.firstName }} {{user.lastName}}</td>
-                    <!--                        <td  class="custom-middle-align">{{ user.phone }}</td>-->
-                    <!--                        <td>{{ user.commonName }}</td>-->
-                    <!--                        <td>{{ user.organizationName }}</td>-->
-                    <!--                        <td>{{ user.organizationUnit }}</td>-->
-                    <!--                        <td>{{ user.localityName }}</td>-->
-                    <!--                        <td>{{ user.stateName }}</td>-->
-                    <!--                        <td>{{ user.country }}</td>-->
 
                     <td class="custom-middle-align">
                         <fa-icon icon="check-circle" *ngIf="user.activated" class="green"></fa-icon>
                         <fa-icon icon="ban" *ngIf="!user.activated" class="red"></fa-icon>
                     </td>
-                    <!--                        <td>{{ user.langKey }}</td>-->
                     <td class="custom-middle-align">
                         <div *ngFor="let authority of user.authorities">
                             <span class="badge badge-info">{{ authority }}</span>
                         </div>
                     </td>
-                    <!--                        <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>-->
-                    <!--                        <td>{{ user.lastModifiedBy }}</td>-->
-                    <!--                        <td>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>-->
                     <td class="custom-middle-align">
                         <div class="btn-group btnAction">
                             <button type="submit" [routerLink]="['./', user.login, 'view']"
@@ -440,7 +180,6 @@
                                 <fa-icon icon="times"></fa-icon>
                                 <span class="d-none d-md-inline"></span>
                             </button>
-
                         </div>
                     </td>
                 </tr>
@@ -467,34 +206,90 @@
     </div>
 </div>
 
+<!-- Modal Upload User Excel File -->
+<ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">
+    <div class="modal-header">
+        <h5 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser">Upload User</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body uploadModalBody">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <jhi-upload-user (isUploadedSucessfully)="isUploadedSucessfully($event)"></jhi-upload-user>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-warning shadow rounded btn-sm" (click)="downLoadFileTemplate()">
+            <fa-icon icon="download"></fa-icon>
+            <span jhiTranslate="userManagement.downloadFileTemp">Download file template</span>
+        </button>
+        <div class="group-btn float-right">
+            <button type="button" class="btn btn-sm" (click)="d('Close')" jhiTranslate="userManagement.home.cancel">
+                Cancel
+            </button>
+        </div>
+    </div>
+</ng-template>
 
-<!--&lt;!&ndash; Modal Upload User Excel File &ndash;&gt;-->
-<!--<ng-template #cancelModal let-c="close" let-d="dismiss" data-dismiss="modal">-->
-<!--    <div class="modal-header">-->
-<!--        <h5 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser">Upload User</span></h5>-->
-<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">-->
-<!--            <span aria-hidden="true">&times;</span>-->
-<!--        </button>-->
-<!--    </div>-->
-<!--    <div class="modal-body uploadModalBody">-->
-<!--        <div class="form-group col-md-12 uploadFormGroup">-->
-<!--            <jhi-upload-user (isUploadedSucessfully)="isUploadedSucessfully($event)"></jhi-upload-user>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    <div class="modal-footer">-->
-<!--        <button-->
-<!--            class="btn btn-primary btn-sm"-->
-<!--        >-->
-<!--            Upload-->
-<!--        </button>-->
-<!--        <button class="btn btn-warning btn-sm" (click)="downLoadFileTemplate()">-->
-<!--            <fa-icon icon="download"></fa-icon>-->
-<!--            <span jhiTranslate="userManagement.downloadFileTemp">Download file template</span>-->
-<!--        </button>-->
-<!--        <div class="float-right">-->
-<!--            <button type="button" class="btn btn-secondary btn-sm" (click)="d('Close')" jhiTranslate="userManagement.home.cancel">-->
-<!--                Cancel-->
-<!--            </button>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</ng-template>-->
+<!-- Modal Upload P12 -->
+<ng-template #uploadP12 let-c="close" let-d="dismiss" data-dismiss="modal">
+    <div class="modal-header">
+        <h5 class="modal-title"><span jhiTranslate="userManagement.home.uploadUser">Upload User</span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="d('Close')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body uploadModalBody">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <div *ngIf="currentFile" class="progress mb-2">
+                <div
+                    class="progress-bar progress-bar-info progress-bar-striped"
+                    role="progressbar"
+                    attr.aria-valuenow="{{ progress }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    [ngStyle]="{ width: progress + '%' }"
+                >
+                    {{ progress }}%
+                </div>
+            </div>
+
+<!--            <label class="btn btn-default lblUpload overflow-auto">-->
+<!--                <input type="file" (change)="selectFile($event)" (click)="onInputClick($event)" class="inputFile"-->
+<!--                       accept=".p12"/>-->
+<!--            </label>-->
+
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="validatedCustomFile" (change)="selectFile($event)" >
+                <label class="custom-file-label overflow-hidden" for="validatedCustomFile" >{{fileName}}</label>
+            </div>
+<!--            <div class="pl-3 mt-2">-->
+<!--                <label class="mr-2">PIN</label>-->
+<!--                <input type="text" [(ngModel)]="pin"  />-->
+<!--            </div>-->
+            <br>
+            <div class="input-group mt-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Pin</span>
+                </div>
+                <input type="text" aria-label="Pin ..." class="form-control" [(ngModel)]="pin">
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="group-btn float-right">
+            <button
+                class="btn btn-success"
+                [disabled]="!selectFiles || this.selectFiles.length == 0"
+                (click)="uploadP12File()"
+                jhiTranslate="userManagement.home.upload"
+            >
+                Upload
+            </button>
+            <button type="button" class="btn btn-sm" (click)="d('Close')" jhiTranslate="userManagement.home.cancel">
+                Cancel
+            </button>
+        </div>
+    </div>
+</ng-template>

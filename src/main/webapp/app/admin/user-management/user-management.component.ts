@@ -1,11 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpResponse, HttpHeaders, HttpEventType } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, combineLatest } from 'rxjs';
 import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { JhiAlertService, JhiEventManager } from 'ng-jhipster';
 import { FormBuilder } from '@angular/forms';
-import { saveAs } from 'file-saver';
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
@@ -16,7 +15,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { IUser, User } from '../../core/user/user.model';
-import { UserManagementKeyLengthComponent } from './user-management-key-length.component';
 import { UploadUserComponent } from 'app/admin/user-management/upload-user/upload-user-component';
 
 @Component({
@@ -46,6 +44,16 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ascending!: boolean;
   listId: number[] = [];
   ngbPaginationPage = 1;
+
+  // Update p12
+  selectFiles: any;
+  progress = 0;
+  currentFile: any;
+  account: Account | null = null;
+  authSubscription?: Subscription;
+  pin: string | undefined;
+  fileName: string | undefined;
+
   constructor(
     private userService: UserService,
     private accountService: AccountService,
@@ -61,11 +69,50 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    //  Update p12
+    this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
+
     this.accountService.identity().subscribe(account => (this.currentAccount = account));
     this.userListSubscription = this.eventManager.subscribe('userListModification', () => {
       this.loadAll();
     });
     this.handleNavigation();
+    this.fileName = 'Choose file ...';
+  }
+
+  // Update p12
+  selectFile(event: any): void {
+    this.selectFiles = event.target.files;
+    const sizeFile = event.target.files.item(0).size / 1024000;
+    if (sizeFile > 1) {
+      this.toastrService.error(this.translateService.instant('userManagement.alert.fail.sizeErr'));
+      this.selectFiles = [];
+    }
+    this.fileName = event.target.files[0].name;
+  }
+
+  uploadP12File(): void {
+    this.progress = 0;
+    this.currentFile = this.selectFiles.item(0);
+    if (this.pin === undefined || this.pin === '') {
+      this.toastrService.error('Must input pin');
+    } else if (this.account != null) {
+      if (this.pin === undefined) this.pin = '';
+      this.userService.uploadP12(this.currentFile, this.pin).subscribe((res: any) => {
+        if (res.type === HttpEventType.UploadProgress) {
+          this.progress = Math.round((100 * res.loaded) / res.total);
+        } else if (res instanceof HttpResponse) {
+          if (res.body.status === 200) {
+            this.toastrService.success(this.translateService.instant('userManagement.alert.success.uploaded'));
+            this.isUploadedSucessfully(true);
+          } else {
+            this.toastrService.error(res.body.msg, '', {
+              enableHtml: true,
+            });
+          }
+        }
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -96,14 +143,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.user = user;
   }
 
-  searchUser(page?: number): any {
+  searchUser(): any {
     const data = {
       ...this.userSearch.value,
       page: this.page - 1,
       size: this.itemsPerPage,
       sort: this.sort(),
     };
-    const pageToLoad: number = page || this.page || 1;
 
     if (data.account != null) {
       data.account = data.account.trim();
@@ -205,12 +251,45 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   }
 
   createCSR(): void {
-    const modalRef = this.modalService.open(UserManagementKeyLengthComponent, { size: 'lg', backdrop: 'static' });
     this.userService.setListId(this.listId);
   }
 
   showUploadComponent(): void {
     this.modalRef = this.modalService.open(UploadUserComponent, { size: 'lg' });
+  }
+
+  downLoadFileTemplate(): void {
+    this.userService.downLoadTemplateFile().subscribe(
+      res => {
+        const bindData = [];
+        bindData.push(res.data);
+        const url = window.URL.createObjectURL(
+          new Blob(bindData, { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+        );
+        const a = document.createElement('a');
+        document.body.appendChild(a);
+        a.setAttribute('style', 'display: none');
+        a.setAttribute('target', 'blank');
+        a.href = url;
+        a.download = 'templateFile';
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+      },
+      error => {
+        console.error(error);
+      }
+    );
+  }
+
+  openModal(content: any): void {
+    this.modalRef = this.modalService.open(content, { size: 'md' });
+    this.userService.setListId(this.listId);
+    let userFilter: User[];
+    if (this.users?.filter(user => this.listId.includes(user.id)) !== undefined) {
+      userFilter = this.users?.filter(user => this.listId.includes(user.id));
+      this.userService.setUsers(userFilter);
+    }
   }
   isUploadedSucessfully(agreed: boolean): void {
     if (agreed) {

@@ -1,0 +1,64 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span>&nbsp;<span> Hash</span>
+    </li>
+</ol>
+
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup">
+
+
+            <form name="editForm" [formGroup]="editForm">
+                <div class="form-group">
+                    <label class="form-control-label" for="field_base64Signature"
+                           jhiTranslate="webappApp.signatureVerify.signature">Base 64 Signature</label>
+                    <input type="text" class="form-control" id="field_base64Signature" name="base64Signature"
+                           formControlName="base64Signature"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_base64OriginalData"
+                           jhiTranslate="webappApp.signatureVerify.originalData">Original Data</label>
+                    <input type="text" class="form-control" id="field_base64OriginalData" name="base64OriginalData"
+                           formControlName="base64OriginalData"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_serial"
+                           jhiTranslate="webappApp.signatureVerify.serial">Serial</label>
+                    <!--                    <input type="text" class="form-control" id="field_serial" name="serial" formControlName="serial"/>-->
+                    <select class="form-control" id="field_serial" name="serial" formControlName="serial" size="1">
+                        <option class="form-control" jhiTranslate="webappApp.signatureVerify.serial" selected>Serial
+                        </option>
+                        <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="captcha-text-label" for="captcha-text">Captcha</label>
+                    <div class="captcha">
+                        <img alt="captcha" src="{{img}}"/>
+                        <div class="reload" (click)="reloadCaptcha()"><fa-icon icon="sync"></fa-icon></div>
+                        <input id="captcha-text" type="text" class="form-control" formControlName="text" style="margin-left: 105px;width: 200px;"/>
+                    </div>
+                </div>
+                <button
+                    class="btn btn-success"
+                    (click)="verifyHash()">
+                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="card mb-1" *ngIf="result">
+    <div class="card-body">
+        <ul>
+            <li><span class="font-weight-bold"
+                      jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>: {{certificate}}
+            </li>
+            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.result">Result</span>: {{result}}
+            </li>
+        </ul>
+    </div>
+</div>
+

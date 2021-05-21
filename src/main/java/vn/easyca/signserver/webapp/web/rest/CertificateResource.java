@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import io.github.jhipster.web.util.PaginationUtil;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,7 @@ import vn.easyca.signserver.webapp.enm.Method;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
+import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
@@ -42,9 +44,12 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.*;
+import java.util.Base64;
+import java.util.List;
 import java.io.ByteArrayInputStream;
-import java.util.*;
 
+@Scope("request")
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateResource extends BaseResource {
@@ -58,11 +63,13 @@ public class CertificateResource extends BaseResource {
     private final UserApplicationService userApplicationService;
     private final SignatureTemplateService signatureTemplateService;
     private final SignatureImageMapper signatureImageMapper;
+    private final ExcelUtils excelUtils;
 
     public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
-                               SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper) {
+                               SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper,
+                               ExcelUtils excelUtils) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
@@ -71,6 +78,7 @@ public class CertificateResource extends BaseResource {
         this.userApplicationService = userApplicationService;
         this.signatureTemplateService = signatureTemplateService;
         this.signatureImageMapper = signatureImageMapper;
+        this.excelUtils = excelUtils;
     }
 
     @GetMapping()
@@ -96,8 +104,12 @@ public class CertificateResource extends BaseResource {
     @GetMapping("ownerId/{ownerId}")
     public ResponseEntity<List<Certificate>> findByOwnerId(@PathVariable String ownerId) {
         log.info("get cert by owner Id: {}", ownerId);
-        List<Certificate> certificateList = certificateService.getByOwnerId(ownerId);
-        return new ResponseEntity<>(certificateList, HttpStatus.OK);
+        try {
+            List<Certificate> certificateList = certificateService.getByOwnerId(ownerId);
+            return new ResponseEntity<>(certificateList, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new BadRequestAlertException(e.getMessage(), "certificate", "findByOwnerId");
+        }
     }
 
     @PostMapping("/import/p12")
@@ -107,14 +119,47 @@ public class CertificateResource extends BaseResource {
             log.info("--- importP12File ---");
             ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
             p12ImportService.insert(serviceInput);
-            status = TransactionStatus.SUCCESS;
+
+            asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
-        } catch (ApplicationException e) {
+        } catch (ApplicationException  e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e));
         } finally {
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @PostMapping("/import/p12file")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importP12File2(@RequestParam("file") MultipartFile file, @RequestParam String ownerId, @RequestParam String pin) {
+        try {
+            String base64File = "";
+            base64File = Base64.getEncoder().encodeToString(file.getBytes());
+
+            P12ImportVM p12ImportVM = new P12ImportVM();
+            p12ImportVM.setP12Base64(base64File);
+            p12ImportVM.setOwnerId(ownerId);
+            p12ImportVM.setPin(pin);
+
+            log.info("importP12File: {}", p12ImportVM);
+            ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+            p12ImportService.insertP12(serviceInput);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/import/p12file", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
@@ -216,7 +261,7 @@ public class CertificateResource extends BaseResource {
         try {
             log.info("--- exportCsr ---");
             List<CertDTO> csrResult = p11GeneratorService.createCSRs(dto);
-            byte[] byteData = ExcelUtils.exportCsrFile(csrResult);
+            byte[] byteData = excelUtils.exportCsrFileFormat1(csrResult);
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(byteData));
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok()
@@ -294,14 +339,44 @@ public class CertificateResource extends BaseResource {
     }
 
     @GetMapping("/getImage")
-    public ResponseEntity<BaseResponseVM> getImage(@RequestParam String serial, @RequestParam String pin) {
+    public ResponseEntity<BaseResponseVM> getSignatureTemplateImage(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImage(serial, pin);
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @GetMapping("/getImageByTemplateId")
+    public ResponseEntity<BaseResponseVM> getSignatureImageByTemplateId(@RequestParam String serial, @RequestParam String pin, @RequestParam Long templateId) {
+        log.info(" --- getImage --- serial: {}", serial);
+        try {
+            String base64Image = certificateService.getSignatureImageByTemplateId(serial, pin, templateId);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 
@@ -312,9 +387,17 @@ public class CertificateResource extends BaseResource {
         try {
             String base64Image = certificateService.getBase64OTPQRCode(serial, pin);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
         } catch (Exception e) {
             log.error(e.getMessage());
+            message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/getQRCodeOTP", TransactionType.BUSINESS, Action.GET_INFO, Extension.QR_CODE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
         }
     }
 

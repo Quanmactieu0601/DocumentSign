@@ -4,6 +4,7 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { saveAs } from 'file-saver';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'jhi-upload-signature-image',
@@ -17,7 +18,14 @@ export class UploadSignatureImageComponent implements OnInit {
   imageFileImport: any;
   progress = 0;
   fileInfos: Observable<any> = new Observable<any>();
-  constructor(private certificateService: CertificateService, private toastService: ToastrService, private translate: TranslateService) {}
+  fileName: any = this.translate.instant('webappApp.certificate.chooseFile');
+  signatureImageName: any = this.translate.instant('webappApp.certificate.chooseSignatureImage');
+  constructor(
+    private certificateService: CertificateService,
+    private toastService: ToastrService,
+    private translate: TranslateService,
+    public activeModal: NgbActiveModal
+  ) {}
 
   ngOnInit(): void {}
   selectedSuccessFile(event: any): void {
@@ -27,6 +35,7 @@ export class UploadSignatureImageComponent implements OnInit {
       this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
       this.successFile = [];
     }
+    this.fileName = this.successFile[0].name;
   }
 
   selectedImageFiles(event: any): void {
@@ -36,6 +45,10 @@ export class UploadSignatureImageComponent implements OnInit {
       this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
       this.listImageFiles = [];
     }
+    for (const value of this.listImageFiles) {
+      this.signatureImageName += value.name + ', ';
+    }
+    this.signatureImageName = this.signatureImageName.substring(0, this.signatureImageName.length - 2);
   }
   upload(): void {
     this.progress = 0;

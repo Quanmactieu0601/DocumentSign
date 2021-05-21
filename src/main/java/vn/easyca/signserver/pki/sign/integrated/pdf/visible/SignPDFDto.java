@@ -8,7 +8,7 @@ import java.security.cert.Certificate;
 import java.util.Date;
 
 public class SignPDFDto {
-
+    private String signatureImage;
     private PartyMode partyMode;
     private String hashAlg;
     private byte[] content;
@@ -27,8 +27,11 @@ public class SignPDFDto {
     private String signField;
     private Date signDate;
     private String outPath;
-
     private static SignPDFDto instance;
+
+    public String getSignatureImage() { return signatureImage; }
+
+    public void setSignatureImage(String signatureImage) { this.signatureImage = signatureImage; }
 
     public void setPartyMode(PartyMode partyMode) {
         this.partyMode = partyMode;

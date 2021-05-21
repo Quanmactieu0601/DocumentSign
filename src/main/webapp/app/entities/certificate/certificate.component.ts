@@ -17,6 +17,13 @@ import { ResponseBody } from 'app/shared/model/response-body';
 import { AccountService } from 'app/core/auth/account.service';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.component';
+import { InstallCertToHsmComponent } from './install-cert-to-hsm/install-cert-to-hsm.component';
+import { UploadP12CertificateComponent } from './upload-p12-certificate/upload-p12-certificate.component';
+import { UploadSignatureImageComponent } from './upload-signature-image/upload-signature-image.component';
+import { CertificateSignatureComponent } from 'app/entities/signature-image/certificate-signature-view/certificate-signature.component';
+import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
+import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
+import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -54,8 +61,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected accountService: AccountService
   ) {}
 
-  loadPage(page?: number, dontNavigate?: boolean): void {
-    const pageToLoad: number = page || this.page || 1;
+  loadPage(page?: number): void {
     this.searchCertificate(page);
   }
 
@@ -102,11 +108,11 @@ export class CertificateComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.certificate = certificate;
   }
 
-  updateStatus(id: any): void {
-    this.certificateService.updateActiveStatus(id).subscribe((res: any) => {
-      if (res.ok) {
-        this.searchCertificate();
-      }
+  updateStatus(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertificateDeactiveDialogComponent, { size: 'md', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.result.then((isSuccess: boolean) => {
+      if (isSuccess) certificate.activeStatus = 0;
     });
   }
 
@@ -160,6 +166,25 @@ export class CertificateComponent implements OnInit, OnDestroy {
   openModal(content: any): void {
     this.modalRef = this.modalService.open(content, { size: 'md' });
   }
+  openModalUploadCert(): void {
+    this.modalRef = this.modalService.open(InstallCertToHsmComponent, { size: 'md' });
+  }
+
+  openModalP12Upload(): void {
+    this.modalRef = this.modalService.open(UploadP12CertificateComponent, { size: 'md' });
+  }
+
+  openModalUploadSignatureImage(): void {
+    this.modalRef = this.modalService.open(UploadSignatureImageComponent, { size: 'md' });
+  }
+
+  openModalExportSerial(): void {
+    this.modalRef = this.modalService.open(ExportSerialComponent, { size: 'md' });
+  }
+
+  openModalGenerateCSR(): void {
+    this.modalRef = this.modalService.open(GenerateCsrComponent, { size: 'md' });
+  }
 
   isUploadedSucessfully(agreed: boolean): void {
     if (agreed) {
@@ -167,6 +192,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
       this.loadLastestRecord();
     }
   }
+
   loadLastestRecord(): void {
     const lastPage = Math.ceil(this.totalItems / ITEMS_PER_PAGE);
 
@@ -195,5 +221,15 @@ export class CertificateComponent implements OnInit, OnDestroy {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
+  }
+
+  showImageSign(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(CertificateSignatureComponent, { size: 'sm', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.result.then((result: any) => {
+      if (result != null) {
+        certificate.signatureImageId = result;
+      }
+    });
   }
 }

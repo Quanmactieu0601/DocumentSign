@@ -257,7 +257,7 @@ input.form-control {
 }
 //end rouned
 
-.modal-header {
+.modal-header.header-custom {
   padding: 0.5rem 0.5rem !important;
   background-color: rgba(0, 0, 0, 0.03) !important;
 }
@@ -266,4 +266,17 @@ input.form-control {
 }
 .modal-footer.footer-custom {
   padding: 0.25rem 0.25rem !important;
+}
+.custom-file-label::after {
+  font-family: 'Nunito' !important;
+  background-color: #398bf8 !important;
+  color: #ffffff;
+}
+.custom-file-input:lang(vi) ~ .custom-file-label::after {
+  content: 'Chọn';
+}
+
+.custom-group > .form-control:not(:last-child) {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
 }

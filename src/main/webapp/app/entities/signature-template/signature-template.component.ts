@@ -100,7 +100,7 @@ export class SignatureTemplateComponent implements OnInit, OnDestroy {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/signature-template'], {
+      this.router.navigate(['./home/signature-template'], {
         queryParams: {
           page: this.page,
           size: this.itemsPerPage,

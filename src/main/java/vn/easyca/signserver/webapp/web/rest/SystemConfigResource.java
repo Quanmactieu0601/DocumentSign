@@ -57,15 +57,20 @@ public class SystemConfigResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/system-configs")
-    public ResponseEntity<SystemConfigDTO> createSystemConfig(@RequestBody SystemConfigDTO systemConfigDTO) throws URISyntaxException {
+    public ResponseEntity<SystemConfigDTO> createSystemConfig(@RequestBody SystemConfigDTO systemConfigDTO) throws Exception {
         log.debug("REST request to save SystemConfig : {}", systemConfigDTO);
-        if (systemConfigDTO.getId() != null) {
-            throw new BadRequestAlertException("A new systemConfig cannot already have an ID", ENTITY_NAME, "idexists");
+        try{
+            if (systemConfigDTO.getId() != null) {
+                throw new BadRequestAlertException("A new systemConfig cannot already have an ID", ENTITY_NAME, "idexists");
+            }
+            SystemConfigDTO result = systemConfigService.save(systemConfigDTO);
+            systemConfigCachingService.clearCache();
+            return ResponseEntity.created(new URI("/api/system-configs/" + result.getId()))
+                .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                .body(result);
+        }catch (ApplicationException applicationException){
+            throw new BadRequestAlertException("A new systemConfig cannot already have comId and key that exist", "systemConfig", "duplicateComIdAndKey");
         }
-        SystemConfigDTO result = systemConfigService.save(systemConfigDTO);
-        return ResponseEntity.created(new URI("/api/system-configs/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
-            .body(result);
     }
 
     /**
@@ -78,12 +83,13 @@ public class SystemConfigResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/system-configs")
-    public ResponseEntity<SystemConfigDTO> updateSystemConfig(@RequestBody SystemConfigDTO systemConfigDTO) throws URISyntaxException {
+    public ResponseEntity<SystemConfigDTO> updateSystemConfig(@RequestBody SystemConfigDTO systemConfigDTO) throws ApplicationException {
         log.debug("REST request to update SystemConfig : {}", systemConfigDTO);
         if (systemConfigDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         SystemConfigDTO result = systemConfigService.save(systemConfigDTO);
+        systemConfigCachingService.clearCache();
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, systemConfigDTO.getId().toString()))
             .body(result);
@@ -126,6 +132,7 @@ public class SystemConfigResource {
     public ResponseEntity<Void> deleteSystemConfig(@PathVariable Long id) {
         log.debug("REST request to delete SystemConfig : {}", id);
         systemConfigService.delete(id);
+        systemConfigCachingService.clearCache();
         return ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString())).build();
     }
 

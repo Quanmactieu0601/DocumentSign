@@ -6,16 +6,24 @@ import './vendor';
 import { WebappSharedModule } from 'app/shared/shared.module';
 import { WebappCoreModule } from 'app/core/core.module';
 import { WebappAppRoutingModule } from './app-routing.module';
-
+import { NgxDropzoneModule } from 'ngx-dropzone';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import { MainComponent } from './layouts/main/main.component';
-import { ActiveMenuDirective } from './layouts/navbar/active-menu.directive';
 import { ErrorComponent } from './layouts/error/error.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { LoginComponent } from './login/login.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
-
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
+import { AngularDraggableModule } from 'angular2-draggable';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { SigningComponent } from './signing/signing.component';
+import { ArchwizardModule } from 'angular-archwizard';
+import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
+import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
+import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
+import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -23,12 +31,28 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
     WebappCoreModule,
     LoadingBarHttpClientModule,
     LoadingBarModule,
+    NgxDropzoneModule,
+    AngularDraggableModule,
     // jhipster-needle-angular-add-module JHipster will add new module here,
     WebappAppRoutingModule,
     BrowserAnimationsModule,
+    NgxExtendedPdfViewerModule,
+    ArchwizardModule,
     ToastrModule.forRoot(),
+    PdfViewerModule,
+    VerifySignatureDocModule,
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
+  declarations: [
+    MainComponent,
+    ErrorComponent,
+    LoginComponent,
+    HomeLayoutComponent,
+    PdfViewComponent,
+    SigningComponent,
+    UploadDocComponent,
+    SignatureListComponent,
+    SignatureImageViewComponent,
+  ],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

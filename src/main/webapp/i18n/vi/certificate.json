@@ -8,6 +8,8 @@
         "notFound": "No Certificates found",
         "searchCertificates": "Tìm kiếm chứng thư số"
       },
+      "chooseFile": "Chọn tệp",
+      "chooseSignatureImage": "Chọn tệp ảnh",
       "created": "Một Certificate mới được tạo với định danh {{ param }}",
       "updated": "Một Certificate cập nhật với định danh {{ param }}",
       "deleted": "Một Certificate đã xóa với định danh {{ param }}",
@@ -64,7 +66,49 @@
           "newPIN": "Mã PIN mới của bạn là bắt buộc",
           "confirmPIN": "Mã PIN xác nhận của bạn là bắt buộc"
         }
-      }
+      },
+      "confirmDeactive": {
+        "success": "Thành công",
+        "question": "Bạn có muốn hủy kích hoạt chứng thư số {{id}}",
+        "title": "Xác nhận",
+        "cancel": "Hủy",
+        "confirm": "Xác nhận"
+      },
+      "installCertIntoHsm": {
+        "title": "Cài đặt CTS vào HSM",
+        "notification": "Dung lượng tệp tải lên phải nhỏ hơn 10MB",
+        "alert": {
+          "success": "Cài đặt CTS vào HSM thành công",
+          "error": "Cài đặt CTS vào HSM thất bại: {{message}}"
+        },
+        "install": "Cài đặt",
+        "cancel": "Hủy"
+      },
+      "generateCSR": {
+        "generateCsr": "Tạo CSR",
+        "title": "Tạo và tải file CSR",
+        "alertGenerateCsr": {
+          "success": "Tạo tệp CSR thành công",
+          "error": "Tạo tệp CSR thất bại"
+        },
+        "alertDownSampleFile": {
+          "success": "Tải tệp mẫu CTS thành công",
+          "error": "Tải tệp mẫu CTS thất bại"
+        },
+        "sampleFile": "Tệp mẫu",
+        "cancel": "Hủy"
+      },
+      "exportSerial": {
+        "exportSerial": "Xuất Serial",
+        "notification": "Dung lượng tệp tải lên phải nhỏ hơn 1MB",
+        "alert": {
+          "success": "Xuất Serial thành công"
+        },
+        "cancel": "Hủy"
+      },
+      "uploadP12Cert": "Tải chứng thư số P12",
+      "uploadSignatureImage": "Tải ảnh chữ kí",
+      "search": "Tìm kiếm"
     }
   }
 }

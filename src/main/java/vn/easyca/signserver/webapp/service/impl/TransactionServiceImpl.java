@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import java.math.BigInteger;
 import java.text.ParseException;
@@ -114,12 +115,11 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     public List<TransactionDTO> findTransaction(String startDate, String endDate, String type) {
         TransactionType typeEnum = TransactionType.from(type);
-        List<Transaction> listTransaction = transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), typeEnum);
-        return transactionMapper.toDto(listTransaction);
+        return transactionRepository.findAllTransaction(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), typeEnum);
     }
 
     @Override
     public Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type) {
-        return transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type);
+        return transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type.equals("") ? null : type);
     }
 }

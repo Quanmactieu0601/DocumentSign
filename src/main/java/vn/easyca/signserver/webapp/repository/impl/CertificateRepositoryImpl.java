@@ -11,6 +11,7 @@ import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Repository
@@ -18,23 +19,12 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
 
-//    @Override
-//    public vn.easyca.signserver.core.domain.Certificate getBySerial(String serial) {
-//        Optional<Certificate> entity = repository.getCertificateBySerial(serial);
-//        if (entity.isPresent()) {
-//            vn.easyca.signserver.core.domain.Certificate certificate = mapper.map(entity.get());
-//            certificate = encryptionHelper.decryptCert(certificate);
-//            return certificate;
-//        }
-//        return null;
-//    }
-
     @Override
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
         Map<String, Object> params = new HashMap<>();
         List<Certificate> certificateList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
-        sqlBuilder.append("FROM certificate a ");
+        sqlBuilder.append("FROM Certificate a ");
 //        String sort = Common.addSort(pageable.getSort());
 
         sqlBuilder.append(" WHERE 1 = 1 ");
@@ -43,28 +33,28 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             params.put("alias", "%" + alias + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(ownerId)) {
-            sqlBuilder.append("AND a.owner_id like :ownerId ");
+            sqlBuilder.append("AND a.ownerId like :ownerId ");
             params.put("ownerId", "%" + ownerId + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(serial)) {
             sqlBuilder.append("AND a.serial = :serial ");
-            params.put("serial", "" + serial + "");
+            params.put("serial", serial);
         }
         if (!QueryUtils.isNullOrEmptyProperty(validDate)) {
-            sqlBuilder.append("AND a.valid_date >= :validDate ");
-            params.put("validDate", "" + validDate + "");
+            sqlBuilder.append("AND a.validDate >= :validDate ");
+            params.put("validDate", validDate);
         }
         if (!QueryUtils.isNullOrEmptyProperty(expiredDate)) {
-            sqlBuilder.append("AND a.expired_date <= :expiredDate ");
-            params.put("expiredDate", "" + expiredDate + "");
+            sqlBuilder.append("AND a.expiredDate <= :expiredDate ");
+            params.put("expiredDate", expiredDate);
         }
 
-        Query countQuery = entityManager.createNativeQuery("SELECT COUNT(1) " + sqlBuilder.toString());
+        Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();
         if (total.longValue() > 0) {
             String sort = QueryUtils.addMultiSort(pageable.getSort());
-            Query query = entityManager.createNativeQuery("SELECT * " + sqlBuilder.toString() + sort, Certificate.class);
+            TypedQuery query = entityManager.createQuery("SELECT a " + sqlBuilder.toString() + sort, Certificate.class);
             QueryUtils.setParamsWithPageable(query, params, pageable, total);
             certificateList = query.getResultList();
         }

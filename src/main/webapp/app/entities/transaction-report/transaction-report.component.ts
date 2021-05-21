@@ -5,18 +5,23 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { HttpResponse } from '@angular/common/http';
 import { TransactionService } from 'app/entities/transaction/transaction.service';
 import { FormBuilder } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { Type } from 'app/shared/constants/transaction.constants';
 
 @Component({
   selector: 'jhi-transaction-report',
   templateUrl: './transaction-report.component.html',
-  styleUrls: ['./transaction-report.component.scss'],
 })
 export class TransactionReportComponent implements OnInit {
   userSearch = this.fb.group({
-    startDate: '',
-    endDate: '',
-    type: '',
+    startDate: [''],
+    endDate: [''],
+    type: [''],
   });
+
+  type = Type;
+
   totalSuccess = '';
   totalFail = '';
   public pieChartOptions: ChartOptions = {
@@ -30,8 +35,11 @@ export class TransactionReportComponent implements OnInit {
     },
   };
   public show = false;
-  public showAlert = false;
-  public pieChartLabels: Label[] = [['Tổng số lỗi'], ['Tổng số requet thành công']];
+  // public showAlert = false;
+  public pieChartLabels: Label[] = [
+    this.translate.instant('webappApp.transactionReport.requestFail'),
+    this.translate.instant('webappApp.transactionReport.requestSuccess'),
+  ];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
@@ -42,7 +50,12 @@ export class TransactionReportComponent implements OnInit {
     },
   ];
 
-  constructor(protected transactionService: TransactionService, private fb: FormBuilder) {}
+  constructor(
+    protected transactionService: TransactionService,
+    private fb: FormBuilder,
+    private toastService: ToastrService,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {}
 
@@ -70,25 +83,20 @@ export class TransactionReportComponent implements OnInit {
       link.href = downloadURL;
       link.download = 'Transaction Report ' + this.getTime() + '.pdf';
       link.click();
-      this.showAlert = true;
-      setTimeout(() => {
-        this.showAlert = false;
-      }, 4000);
+      this.toastService.success(this.translate.instant('webappApp.transactionReport.success'));
+      // this.showAlert = true;
+      // setTimeout(() => {
+      //   this.showAlert = false;
+      // }, 4000);
     });
   }
 
-  alertNotification(): void {
-    this.showAlert = false;
-  }
-
   searchUser(): void {
-    const data = {
-      startDate: this.userSearch.get(['startDate'])!.value,
-      endDate: this.userSearch.get(['endDate'])!.value,
-      type: this.userSearch.get(['type'])!.value,
-    };
+    const startDate = this.userSearch.get(['startDate'])!.value;
+    const endDate = this.userSearch.get(['endDate'])!.value;
+    const type = this.userSearch.get(['type'])!.value;
     this.show = true;
-    this.transactionService.queryTransaction(data.startDate, data.endDate, data.type).subscribe((res: HttpResponse<any>) => {
+    this.transactionService.queryTransaction(startDate, endDate, type).subscribe((res: HttpResponse<any>) => {
       this.totalSuccess = res.body.TotalSuccess;
       this.totalFail = res.body.TotalFail;
       this.pieChartData = [parseInt(this.totalFail, 10), parseInt(this.totalSuccess, 10)];

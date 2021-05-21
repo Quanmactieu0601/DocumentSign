@@ -19,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import vn.easyca.signserver.pki.sign.utils.DatetimeUtils;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.Security;
@@ -99,9 +101,67 @@ public class SignPDFLib {
         this.partyMode = dto.getPartyMode();
         this.hashAlg = StringUtils.isNullOrEmpty(dto.getHashAlg()) ? this.hashAlg : dto.getHashAlg();
         validDTO(dto);
-        emptySignature(dto,tempFile);
+//        emptySignature(dto,tempFile);
+        addSignatureImg(dto,tempFile);
         return preSign(tempFile,dto.getSignField(),dto.getChain(),dto.getSignDate());
     }
+
+    private void addSignatureImg(SignPDFDto signDTO, String tempFile) throws Exception {
+        BouncyCastleProvider providerBC = new BouncyCastleProvider();
+        Security.addProvider(providerBC);
+        PdfReader.unethicalreading = true;
+        PdfReader reader = new PdfReader(signDTO.getContent());
+        FileOutputStream os = new FileOutputStream(tempFile);
+        PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
+        PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
+        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX()+ signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleHeight());
+
+
+        Image image = Image.getInstance(Image.getInstance(Base64.getDecoder().decode(signDTO.getSignatureImage())));
+        image.setAbsolutePosition(0, 0);
+        image.scaleAbsolute(signDTO.getVisibleWidth(), signDTO.getVisibleHeight());
+        appearance.setSignatureGraphic(image);
+        appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
+        appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.GRAPHIC);
+
+        ExternalSignatureContainer external = new ExternalBlankSignatureContainer(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
+        MakeSignature.signExternalContainer(appearance, external, 8192);
+        try {
+            os.close();
+        } catch (Exception localException) {
+        }
+    }
+
+//    private void addSignatureImg(SignPDFDto signDTO, String tempFile) throws Exception {
+//        BouncyCastleProvider providerBC = new BouncyCastleProvider();
+//        Security.addProvider(providerBC);
+//        PdfReader.unethicalreading = true;
+//        PdfReader reader = new PdfReader(signDTO.getContent());
+//        FileOutputStream os = new FileOutputStream(tempFile);
+//        PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
+//        PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
+//        appearance.setSignDate(getSigningDate(signDTO.getSignDate()));
+//        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleHeight());
+//        appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
+//
+//        PdfTemplate layer20 = appearance.getLayer(2);
+//        Image bg = Image.getInstance(Base64.getDecoder().decode(signDTO.getSignatureImage()));
+//        bg.scaleAbsolute(signDTO.getVisibleWidth(), signDTO.getVisibleHeight());
+//        bg.setAbsolutePosition(0, 0);
+//        layer20.addImage(bg);
+//        rectangle = appearance.getRect();
+//        layer20.setLineWidth(1);
+//        layer20.setRGBColorStroke(255, 0, 0);
+//        layer20.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
+//        layer20.stroke();
+//
+//        ExternalSignatureContainer external = new ExternalBlankSignatureContainer(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
+//        MakeSignature.signExternalContainer(appearance, external, 8192);
+//        try {
+//            os.close();
+//        } catch (Exception localException) {
+//        }
+//    }
 
     public void insertSignature(String src, String dest, byte[] hash, byte[] extSignature, Certificate[] chain, Date signDate, String signField)
         throws Exception {
@@ -171,7 +231,7 @@ public class SignPDFLib {
         PdfStamper stamper = PdfStamper.createSignature(reader, os, '\000', null, true);
         PdfSignatureAppearance appearance = stamper.getSignatureAppearance();
         appearance.setSignDate(getSigningDate(signDTO.getSignDate()));
-        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleWidth());
+        Rectangle rectangle = new Rectangle(signDTO.getVisibleX(), signDTO.getVisibleY(), signDTO.getVisibleX() + signDTO.getVisibleWidth(), signDTO.getVisibleY() + signDTO.getVisibleHeight());
         appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
         BaseFont signatureBaseFont = BaseFont.createFont(getFontURLFromResource(), "Identity-H", false);
         float fontSize = 10.0F;
@@ -206,11 +266,11 @@ public class SignPDFLib {
         PdfTemplate layer20 = appearance.getLayer(2);
         Image bg = Image.getInstance(Base64.getDecoder().decode(DEFAULT_BG));
         bg.scaleToFit(50,35);
-        bg.setAbsolutePosition(2,30);
+        bg.setAbsolutePosition(signDTO.getVisibleWidth() - 40,10);
         layer20.addImage(bg);
         rectangle = appearance.getRect();
         layer20.setLineWidth(1);
-        layer20.setRGBColorStroke(255, 0, 0);
+        layer20.setRGBColorStroke(0, 0, 0);
         layer20.rectangle(rectangle.getLeft(), rectangle.getBottom(), rectangle.getWidth(), rectangle.getHeight());
         layer20.stroke();
 

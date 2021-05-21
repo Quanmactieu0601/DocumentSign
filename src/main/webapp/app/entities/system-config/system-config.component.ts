@@ -14,6 +14,7 @@ import { SystemConfigDeleteDialogComponent } from './system-config-delete-dialog
 @Component({
   selector: 'jhi-system-config',
   templateUrl: './system-config.component.html',
+  styleUrls: ['./system-config.component.scss'],
 })
 export class SystemConfigComponent implements OnInit, OnDestroy {
   systemConfigs?: ISystemConfig[];
@@ -100,7 +101,7 @@ export class SystemConfigComponent implements OnInit, OnDestroy {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.page = page;
     if (navigate) {
-      this.router.navigate(['/system-config'], {
+      this.router.navigate(['/home/system-config'], {
         queryParams: {
           page: this.page,
           size: this.itemsPerPage,

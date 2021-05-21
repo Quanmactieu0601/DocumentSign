@@ -1,0 +1,97 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span jhiTranslate="webappApp.signatureVerify.title">Verify Signature</span>&nbsp;<span> Doc</span>
+    </li>
+</ol>
+
+
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"
+                 [disableClick]="selectFiles.length!=0">
+                <ngx-dropzone-label style="font-family: Nunito">
+                    <i class="fas fa-upload fa-2x"></i>
+                    <br>
+                    Kéo thả file doc cần xác thực vào đây hoặc click để chọn
+                </ngx-dropzone-label>
+                <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
+                                      (removed)="removeFile($event)">
+                    <ngx-dropzone-label>
+                        <i class="fas fa-file-word fa-2x"></i>
+                        <label style="font-family: Nunito; font-size-adjust: inherit">
+                            {{f.name}}
+                        </label>
+                    </ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </div>
+            <br>
+            <div class="verify col">
+                <div class="captcha">
+                    <img alt="captcha" src="{{img}}"/>
+                    <div class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></div>
+                </div>
+                <input type="text" class="form-control" [(ngModel)]="text">
+                <button
+                    class="btn btn-success"
+                    [disabled]="!selectFiles || this.selectFiles.length == 0"
+                    (click)="verifyDoc()">
+                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
+                </button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card mb-1" *ngIf="disable">
+    <div class="card-body">
+        <div *ngIf="signatureVfDTOs">
+            <ul *ngFor="let signatureVfDTO of signatureVfDTOs">
+                <li><span class="font-weight-bold"
+                          jhiTranslate="webappApp.signatureVerify.signTime">sign time</span>: {{signatureVfDTO.signTime}}
+                </li>
+                <li><span class="font-weight-bold"
+                          jhiTranslate="webappApp.signatureVerify.integrity">integrity</span>:
+                    <fa-icon *ngIf="signatureVfDTO.integrity" icon="check" class="text-success"></fa-icon>
+                    <fa-icon *ngIf="!signatureVfDTO.integrity" icon="times" class="text-success"></fa-icon>
+                </li>
+                <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:
+                    <ul *ngFor="let certificateVfDTO of signatureVfDTO.certificateVfDTOs; let i = index">
+                        <span class="font-weight-bolder"><span
+                            jhiTranslate="webappApp.signatureVerify.certificate.title">Cert order </span> {{i + 1}}</span>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.issuer">issuer</span>: {{certificateVfDTO.issuer}}
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.subjectDn">subjectDn</span>: {{certificateVfDTO.subjectDn}}
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.validFrom">valid from</span>: {{certificateVfDTO.validFrom}}
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.validTo">valid to</span>: {{certificateVfDTO.validTo}}
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.title">revocation status</span>:
+                            <span
+                                jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.{{certificateVfDTO.revocationStatus}}"></span>
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.title">current status</span>:
+                            <span
+                                jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.{{certificateVfDTO.currentStatus}}"></span>
+                        </li>
+                        <li><span class="font-weight-bolder"
+                                  jhiTranslate="webappApp.signatureVerify.certificate.signtimeStatus.title">Signtime status</span>:
+                            <span
+                                jhiTranslate="webappApp.signatureVerify.certificate.signtimeStatus.{{certificateVfDTO.signTimeStatus}}"></span>
+                        </li>
+                        <br>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+

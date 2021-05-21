@@ -1,5 +1,8 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import org.hibernate.loader.plan.spi.Return;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
@@ -13,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -28,9 +33,12 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
 
     private final SignatureTemplateMapper signatureTemplateMapper;
 
-    public SignatureTemplateServiceImpl(SignatureTemplateRepository signatureTemplateRepository, SignatureTemplateMapper signatureTemplateMapper) {
+    private final UserRepository userRepository;
+
+    public SignatureTemplateServiceImpl(SignatureTemplateRepository signatureTemplateRepository, SignatureTemplateMapper signatureTemplateMapper, UserRepository userRepository) {
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureTemplateMapper = signatureTemplateMapper;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -57,9 +65,9 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Transactional(readOnly = true)
     public Page<SignatureTemplateDTO> findAll(Pageable pageable) {
         log.debug("Request to get all SignatureTemplates");
-        return signatureTemplateRepository.findAll(pageable)
-            .map(signatureTemplateMapper::toDto);
+        return signatureTemplateRepository.findAllSignatureTemplate(pageable);
     }
+
 
 
     /**
@@ -88,8 +96,9 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     }
 
     @Override
-    public Optional<SignatureTemplate> findOneWithUserId(Long userId) {
+    @Transactional(readOnly = true)
+    public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) {
         log.debug("Request to get SignatureImage with id : {}", userId);
-        return signatureTemplateRepository.findOneByUserId(userId);
+        return signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
     }
 }

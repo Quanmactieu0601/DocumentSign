@@ -42,4 +42,9 @@ public class FileIOHelper {
         byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
         return Base64.encodeBase64String(bytes);
     }
+
+    public static void createDirectory(String directory) {
+        File dir = new File(directory);
+        if (!dir.exists()) dir.mkdirs();
+    }
 }

@@ -32,4 +32,12 @@ public class FileResourceService {
         }
     }
 
+    public InputStream getTemplateFile(String filePath) throws ApplicationException {
+        try {
+            return getFile(filePath).getInputStream();
+        } catch (Exception ex) {
+            throw new ApplicationException("Cannot read Root cer: " +  filePath, ex);
+        }
+    }
+
 }

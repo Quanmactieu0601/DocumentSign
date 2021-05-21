@@ -36,10 +36,6 @@ public class TransactionDTO implements Serializable {
 
     private Extension extension;
 
-    private String typeStr;
-
-    private String statusStr;
-
     public Extension getExtension() {
         return extension;
     }
@@ -144,23 +140,6 @@ public class TransactionDTO implements Serializable {
         this.type = type;
     }
 
-    public String getTypeStr() {
-        return this.type.toString();
-    }
-
-    public String getStatusStr(){
-
-        return this.status.toString();
-    }
-
-    public void setTypeStr() {
-        this.typeStr = this.type.toString();
-    }
-
-    public void setStatusStr() {
-        this.statusStr = this.status.toString();
-    }
-
     public TransactionDTO(Transaction transaction) {
         this.id = transaction.getId();
         this.api = transaction.getApi();
@@ -187,6 +166,24 @@ public class TransactionDTO implements Serializable {
         }
 
         return id != null && id.equals(((TransactionDTO) o).id);
+    }
+
+
+    public TransactionDTO(Long id, String api, LocalDateTime triggerTime, TransactionStatus status, String message,
+                          String data, TransactionType type,
+                          Method method, String host, Action action, Extension extension, String fullName) {
+        this.id = id;
+        this.api = api;
+        this.triggerTime = triggerTime;
+        this.status = status;
+        this.message = message;
+        this.data = data;
+        this.type = type;
+        this.host = host;
+        this.method = method;
+        this.fullName = fullName;
+        this.action = action;
+        this.extension = extension;
     }
 
     @Override

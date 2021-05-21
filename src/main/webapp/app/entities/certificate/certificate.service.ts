@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { SERVER_API_URL } from 'app/app.constants';
@@ -17,6 +17,7 @@ const httpOptions = {
 @Injectable({ providedIn: 'root' })
 export class CertificateService {
   public resourceUrl = SERVER_API_URL + 'api/certificate';
+  public hsmResourceUrl = SERVER_API_URL + 'api/hsm-certificate';
 
   constructor(protected http: HttpClient) {}
 
@@ -63,17 +64,13 @@ export class CertificateService {
   sendData(req?: any): Observable<any> {
     return this.http.post(this.resourceUrl + '/exportCsr', req, httpOptions);
   }
-  upload(file: File): Observable<HttpEvent<any>> {
+
+  importCertToHsm(file: File): Observable<any> {
     const formData: FormData = new FormData();
-
     formData.append('file', file);
-
-    const req = new HttpRequest('POST', `${this.resourceUrl}/uploadCert`, formData, {
-      reportProgress: true,
-      responseType: 'json',
+    return this.http.post(`${this.hsmResourceUrl}/import-cert-to-hsm`, formData, {
+      observe: 'body',
     });
-
-    return this.http.request(req);
   }
 
   uploadP12(files: File[]): Observable<any> {
@@ -108,6 +105,20 @@ export class CertificateService {
     return this.http.request(req);
   }
 
+  exportSerial(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('successFiles', file);
+    });
+
+    const req = new HttpRequest('POST', `api/data/exportSerial`, formData, {
+      responseType: 'arraybuffer' as 'arraybuffer',
+    });
+
+    return this.http.request(req);
+  }
+
   getFiles(): Observable<any> {
     return this.http.get(`${this.resourceUrl}/files`);
   }
@@ -122,7 +133,22 @@ export class CertificateService {
     return this.http.get<ResponseBody>(`${this.resourceUrl}/getQRCodeOTP`, { params: options, observe: 'body' });
   }
 
+  getSignatureImageByTemplateId(req?: any): Observable<any> {
+    const options = createRequestOption(req);
+    return this.http.get<ResponseBody>(`${this.resourceUrl}/getImageByTemplateId`, { params: options, observe: 'body' });
+  }
+
   savePIN(serial: string | undefined, oldPIN: string, newPIN: string): Observable<{}> {
     return this.http.post(`${this.resourceUrl}/changeCertPIN`, { serial, oldPIN, newPIN });
+  }
+
+  downloadSampleFileCertificate(): Observable<any> {
+    return this.http.get(SERVER_API_URL + 'api/hsm-certificate/download-csr-template', { observe: 'body' });
+  }
+
+  generateCertificateRequestInformation(file: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file[0]);
+    return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, { observe: 'body' });
   }
 }

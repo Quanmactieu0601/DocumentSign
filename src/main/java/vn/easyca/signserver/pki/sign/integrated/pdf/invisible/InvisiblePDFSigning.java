@@ -34,8 +34,8 @@ public class InvisiblePDFSigning {
             byte[] signedPdfBytes = Files.readAllBytes(signedPdf.toPath());
 
             //remove temporary files
-            pdfFile.deleteOnExit();
-            signedPdf.deleteOnExit();
+            pdfFile.delete();
+            signedPdf.delete();
 
             return signedPdfBytes;
         } catch (NoSuchAlgorithmException | CertificateException | UnrecoverableKeyException | KeyStoreException | IOException e) {

@@ -1,0 +1,31 @@
+{
+  "sign": {
+    "pdf": {
+      "signFile": "Sign",
+      "cancel": "Cancel",
+      "next": "Next",
+      "searchContent": "Search content",
+      "setSignatureInPage": "Set signature in page",
+      "position": "Signing position",
+      "validateSignature": "Validate Signature",
+      "chooseSignatureTemplate": "Choose signature template",
+      "choose": "Select"
+    },
+    "signatureImage": "Signature Image",
+    "dragAndDrop": "Drag or drop pdf file for signing",
+    "messages": {
+      "validate": {
+        "validated": "Your signature is validated",
+        "serial": {
+          "required": "Your serial is required."
+        },
+        "pin": {
+          "required": "Your pin is required."
+        },
+        "signatureTemplate": {
+          "required": "Your template is required."
+        }
+      }
+    }
+  }
+}

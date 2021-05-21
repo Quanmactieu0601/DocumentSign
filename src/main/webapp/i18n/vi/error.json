@@ -10,6 +10,8 @@
     },
     "concurrencyFailure": "Another user modified this data at the same time as you. Your changes were rejected.",
     "validation": "Validation error on the server.",
-    "currentPassNotMatch": "Mật khẩu hiện tại không đúng"
+    "currentPassNotMatch": "Mật khẩu hiện tại không đúng",
+    "validCaptcha": "Captcha không đúng, vui lòng thử lại",
+    "verifySign": "Chữ ký không chính xác, vui lòng kiểm tra lại"
   }
 }

@@ -20,6 +20,8 @@ import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
+import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -40,7 +42,6 @@ import java.util.*;
 @Service
 public class CertificateService {
 
-    private Optional<UserEntity> userEntityOptional;
     private List<Certificate> certificateList = new ArrayList<>();
     private final CertificateRepository certificateRepository;
     private final CertificateMapper mapper;
@@ -72,19 +73,14 @@ public class CertificateService {
         this.userRepository = userRepository;
     }
 
-    public List<Certificate> getByOwnerId(String ownerId) {
+    public List<Certificate> getByOwnerId(String ownerId) throws ApplicationException {
         Long id = Long.parseLong(ownerId);
-        userEntityOptional = userRepository.findById(id);
-        System.out.println(userEntityOptional);
+        Optional<UserEntity> userEntityOptional = userRepository.findById(id);
+        if (!userEntityOptional.isPresent())
+            throw new ApplicationException(String.format("User is not exist - ownerId %s", ownerId));
         UserEntity userEntity = userEntityOptional.get();
-        boolean roleAdmin = false;
         Set<Authority> userAuthority = userEntity.getAuthorities();
-        for (Authority setAuthority : userAuthority) {
-            if (setAuthority.getName().equals("ROLE_ADMIN")) {
-                roleAdmin = true;
-            }
-        }
-        if (roleAdmin) {
+        if (userAuthority.stream().anyMatch(ua -> "ROLE_ADMIN".equals(ua.getName()) || "ROLE_SUPER_ADMIN".equals(ua.getName()))) {
             certificateList = certificateRepository.findAll();
         } else {
             certificateList = certificateRepository.findByOwnerId(ownerId);
@@ -93,7 +89,7 @@ public class CertificateService {
     }
 
     public CertificateDTO getBySerial(String serial) throws CertificateNotFoundAppException {
-        Optional<Certificate> certificate = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificate = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         CertificateDTO certificateDTO = null;
         if (certificate.isPresent()) {
             certificateDTO = mapper.map(certificate.get());
@@ -121,6 +117,14 @@ public class CertificateService {
 
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+        Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if (userEntityOptional.isPresent()) {
+            Set<Authority> userAuthority = userEntityOptional.get().getAuthorities();
+            boolean isAdmin = userAuthority.stream().anyMatch(ua -> "ROLE_ADMIN".equals(ua.getName()) || "ROLE_SUPER_ADMIN".equals(ua.getName()));
+            if (!isAdmin) {
+                ownerId = userEntityOptional.get().getLogin();
+            }
+        }
         return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
     }
 
@@ -132,21 +136,22 @@ public class CertificateService {
     }
 
     public String getSignatureImage(String serial, String pin) throws ApplicationException {
-        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Optional<SignatureTemplate> signatureTemplateDTO = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
-        if (!signatureTemplateDTO.isPresent()) {
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
+        if (!signatureTemplateOptional.isPresent()) {
             throw new ApplicationException("Signature template is not configured");
         }
+        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
 
         Long signImageId = certificateDTO.getSignatureImageId();
         String signatureImageData = "";
-        String signatureTemplate = signatureTemplateDTO.get().getHtmlTemplate();
+        String htmlTemplate = signatureTemplate.getHtmlTemplate();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
             if (signatureImage.isPresent())
@@ -155,10 +160,48 @@ public class CertificateService {
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
-        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplateDTO.get().getCoreParser());
-        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImageData);
-        return ParserUtils.convertHtmlContentToBase64(htmlContent);
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
+        Integer width = signatureTemplate.getWidth();
+        Integer height = signatureTemplate.getHeight();
+        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
     }
+
+
+
+    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException {
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
+        if (!certificateOptional.isPresent())
+            throw new ApplicationException("Certificate is not found");
+        CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
+        Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
+
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findById(templateId);
+        if (!signatureTemplateOptional.isPresent()) {
+            throw new ApplicationException("Signature template is not configured");
+        }
+        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
+
+        Long signImageId = certificateDTO.getSignatureImageId();
+        String signatureImageData = "";
+        String htmlTemplate = signatureTemplate.getHtmlTemplate();
+        if (signImageId != null) {
+            Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
+            if (signatureImage.isPresent())
+                signatureImageData = signatureImage.get().getImgData();
+        }
+        X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
+        String subjectDN = x509Certificate.getSubjectDN().getName();
+
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
+        Integer width = signatureTemplate.getWidth();
+        Integer height = signatureTemplate.getHeight();
+        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
+    }
+
 
     public Optional<Certificate> findOne(Long id) {
         return certificateRepository.findById(id);
@@ -170,7 +213,7 @@ public class CertificateService {
     }
 
     public String getBase64OTPQRCode(String serial, String pin) throws ApplicationException {
-        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException(String.format("Certificate is not exist - serial: %s", serial));
         CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
@@ -193,7 +236,7 @@ public class CertificateService {
                 throw new ApplicationException("new PIN have to different old PIN");
             }
             SystemDbConfiguration dbConfiguration = systemConfigCachingService.getConfig();
-            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
             if (!certificateOptional.isPresent())
                 throw new ApplicationException("Certificate is not found");
             CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
@@ -241,5 +284,9 @@ public class CertificateService {
         } catch (KeyStoreException | CertificateException e) {
             throw new ApplicationException("KeyStoreException | CertificateException", e);
         }
+    }
+
+    public void updateSignatureImageInCert(Long signatureImageId, Long certId) {
+        certificateRepository.updateSignatureImageInCert(signatureImageId, certId);
     }
 }

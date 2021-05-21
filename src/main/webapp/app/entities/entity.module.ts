@@ -40,6 +40,11 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
             path: 'transaction-report',
             loadChildren: () => import('../entities/transaction-report/transaction-report.module').then(m => m.TransactionReportModule),
           },
+          {
+            path: 'system-config-category',
+            loadChildren: () =>
+              import('./system-config-category/system-config-category.module').then(m => m.WebappSystemConfigCategoryModule),
+          },
           /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
         ],
       },

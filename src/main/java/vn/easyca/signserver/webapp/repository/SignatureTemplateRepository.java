@@ -12,6 +12,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface SignatureTemplateRepository extends JpaRepository<SignatureTemplate, Long> {
+public interface SignatureTemplateRepository extends JpaRepository<SignatureTemplate, Long>, SignatureTemplateRepositoryCustom {
     Optional<SignatureTemplate> findOneByUserId(Long userId);
+    Optional<SignatureTemplate[]> findAllByUserId(Long userId);
 }

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,12 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.dto.ImportP12FileDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.services.P12ImportService;
-import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
-import vn.easyca.signserver.pki.cryptotoken.error.CryptoTokenException;
-import vn.easyca.signserver.pki.cryptotoken.error.InitCryptoTokenException;
-import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -32,19 +26,11 @@ import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
-import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
-import vn.easyca.signserver.webapp.web.rest.vm.request.ImageFileImportVM;
-import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.KeyStoreException;
-import java.security.cert.X509Certificate;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -164,26 +150,26 @@ public class DataBatchImportResource {
             String base64Certificate = "";
             try {
                 base64Certificate = Base64.getEncoder().encodeToString(fileEntry.getBytes());
-            }catch (Exception e) {
+            } catch (Exception e) {
                 log.error(e.getMessage(), e);
                 importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
             }
 
 
             Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
-                ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
-                p12ImportVM.setOwnerId(userId.get().getLogin());
-                p12ImportVM.setPin(PIN);
-                p12ImportVM.setP12Base64(base64Certificate);
+            ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
+            p12ImportVM.setOwnerId(userId.get().getLogin());
+            p12ImportVM.setPin(PIN);
+            p12ImportVM.setP12Base64(base64Certificate);
 
-                try {
-                    Long idCertificate = p12ImportService.insert(p12ImportVM).getId();
-                    importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
-                } catch (ApplicationException e) {
-                    log.error(e.getMessage(), e);
-                    importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
-                    continue;
-                }
+            try {
+                Long idCertificate = p12ImportService.insert(p12ImportVM).getId();
+                importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
+            } catch (ApplicationException e) {
+                log.error(e.getMessage(), e);
+                importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
+                continue;
+            }
         }
         try {
             Gson gson = new Gson();
@@ -217,7 +203,7 @@ public class DataBatchImportResource {
             InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(zipData));
 
             String filename = "EasyCA-CSR-Export";
-           return ResponseEntity.ok()
+            return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
                 .contentType(MediaType.parseMediaType("application/zip"))
                 .body(file);
@@ -293,15 +279,12 @@ public class DataBatchImportResource {
 
     @PostMapping("/importImageSelected")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
-//    @RequestParam("successFile") MultipartFile successFile,
     public ResponseEntity<Resource> importImageSelected(@RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestParam("successFiles") MultipartFile[] successFiles) {
         Optional<UserEntity> userEntity = userApplicationService.getUserWithAuthorities();
         Long userId = userEntity.get().getId();
         List<CertImportErrorDTO> importErrors = new ArrayList<>();
         Gson gson = new Gson();
-//        String certFilePath = certificateImportingResultPath; //"C:\\Users\\ThanhLD\\Downloads\\outSuccess.txt";
-//        String imgFolderPath = imagePath; // "E:\\Document\\EasyCA\\SignServer\\BVQ11_Data\\ImageSignature\\Mix";
-//        File imgFolder = new File(imgFolderPath);
+
         String jsonCertSuccessMapping = null;
         try {
             jsonCertSuccessMapping = new String(successFiles[0].getBytes());
@@ -337,8 +320,7 @@ public class DataBatchImportResource {
 
                             certificate.setSignatureImageId(dto.getId());
                             certificateService.saveOrUpdate(certificate);
-                        }
-                        else {
+                        } else {
                             importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Anh da duoc import"));
                         }
                     }
@@ -349,77 +331,46 @@ public class DataBatchImportResource {
                 importErrors.add(new CertImportErrorDTO(cert.getPersonIdentity().trim(), "Khong ton tai anh"));
             }
         }
-        try {
-            String jsonError = gson.toJson(importErrors);
-            InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(jsonError.getBytes()));
-            FileIOHelper.writeFile(jsonError, "D:/" + "outErrorImageSignature.txt");
-            String filename = "EasyCA-CSR-Export";
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
-                .contentType(MediaType.parseMediaType("application/zip"))
-                .body(file);
-        } catch (IOException e) {
-            return null;
-        }
 
+        String jsonError = gson.toJson(importErrors);
+        InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(jsonError.getBytes()));
+        String filename = "EasyCA-CSR-Export";
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
+            .contentType(MediaType.parseMediaType("application/zip"))
+            .body(file);
     }
 
     @PostMapping("/exportSerial")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public void exportSerial(String p12FolderPath) {
-        File folder = new File(p12FolderPath); // "E:\\Document\\EasyCA\\SignServer\\BVQ11_Data\\P12"
-        String CMND = "";
-        String PIN = "";
-        List<String> result = new ArrayList<>();
-        for (final File fileEntry : folder.listFiles()) {
-            try {
-                String regex = "([^._]+)_([^._]+)";
-                Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                Matcher matcher = pattern.matcher(fileEntry.getName());
-                String[] infor = new String[3];
-
-                while (matcher.find()) {
-                    for (int i = 0; i <= matcher.groupCount(); i++) {
-                        infor[i] = matcher.group(i);
-                    }
-                }
-                CMND = infor[1].trim();
-                PIN = infor[2].trim();
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-
-            if (fileEntry.isDirectory()) {
-                listFilesForFolder(fileEntry);
-            } else {
-                String base64Certificate = encodeCertificateToBase64(fileEntry);
-                try {
-                    P12CryptoToken p12CryptoToken = new P12CryptoToken();
-                    try {
-                        p12CryptoToken.initPkcs12(base64Certificate, PIN);
-                    } catch (InitCryptoTokenException e) {
-                        throw new CertificateAppException(e);
-                    }
-                    X509Certificate x509Certificate = null;
-                    try {
-                        x509Certificate = (X509Certificate) p12CryptoToken.getCertificate(p12CryptoToken.getAliases().get(0));
-                    } catch (KeyStoreException e) {
-                        throw new CertificateAppException("certificate has error", e);
-                    } catch (CryptoTokenException e) {
-                        e.printStackTrace();
-                    }
-                    String serial = x509Certificate.getSerialNumber().toString(16);
-                    result.add("thanhthanh" + CMND.trim() + "," + serial);
-                } catch (ApplicationException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
+    public ResponseEntity<Resource> exportSerial(@RequestParam("successFiles") MultipartFile[] successFiles) throws IOException {
+        String jsonCertSuccessMapping = null;
+        Gson gson = new Gson();
         try {
-            FileIOHelper.writeFileLine(result, p12FolderPath + "/outSuccess.txt");
+            jsonCertSuccessMapping = new String(successFiles[0].getBytes());
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            e.printStackTrace();
         }
+        CertImportSuccessDTO[] importSuccessList = gson.fromJson(jsonCertSuccessMapping, CertImportSuccessDTO[].class);
+        StringBuilder result = new StringBuilder();
+        result.append("cmnd, serial \n");
+        for (CertImportSuccessDTO cert : importSuccessList) {
+            Optional<Certificate> certificate = certificateService.findOne(Long.valueOf(cert.getCertId()));
+            String cmnd = cert.getPersonIdentity();
+            result.append("=\"").append(cmnd).append("\"").append(", ");
+            if (certificate.isPresent()) {
+                String serial = certificate.get().getSerial();
+                result.append(serial).append("\n");
+            } else {
+                result.append("Certificate not found \n");
+            }
+        }
+        byte[] resultByte = result.toString().getBytes();
+        InputStreamResource file = new InputStreamResource(new ByteArrayInputStream(resultByte));
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION)
+            .body(file);
     }
 
     public void listFilesForFolder(final File folder) {

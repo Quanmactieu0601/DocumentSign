@@ -1,0 +1,26 @@
+<div class="modal-header header-custom">
+    <h6 class="modal-title" jhiTranslate="webappApp.signatureImage.showImageSign.showImageSign"></h6>
+    <a class="close" data-dismiss="modal" aria-label="Close"
+       (click)="cancel()">
+        <span aria-hidden="true">&times;</span>
+    </a>
+</div>
+<div class="modal-body">
+    <div hidden class="img-thumbnail mb-2 img-size" #imageUpload  >
+        <img [src]="image" width="100%" alt="">
+    </div>
+        <div class="input-group">
+        <div class="custom-file overflow-hidden" id="custom-file">
+            <input type="file" accept="image/x-png,image/gif,image/jpeg" class="custom-file-input" id="form-control" (change)="choose($event)"/>
+            <label class="custom-file-label">{{this.fileName}}</label>
+        </div>
+    </div>
+</div>
+<div class="modal-footer footer-custom">
+    <button class="btn btn-success btn-sm float-right mr-1" [disabled]="this.imageFiles == null" (click)="save()"
+            jhiTranslate="webappApp.signatureImage.showImageSign.modify">
+    </button>
+    <button type="button" class="btn btn-danger btn-sm float-right" (click)="cancel()"
+            jhiTranslate="webappApp.signatureImage.showImageSign.cancel">
+    </button>
+</div>

@@ -3,6 +3,7 @@ package vn.easyca.signserver.core.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
@@ -19,6 +20,7 @@ import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -109,54 +111,55 @@ public class CertificateGenerateService {
             false,
             false);
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
-        CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
+        CertificateDTO certificateDTO = saveAndInstallCert(rawCertificate.getCert(), alias, alias, cryptoToken);
         return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
-    private CertificateDTO saveNewCertificate(RawCertificate rawCertificate,
+    @Transactional
+    public CertificateDTO saveAndInstallCert(String certValue,
                                               String alias,
-                                              String subjectInfo,
-                                              CryptoToken cryptoToken) throws ApplicationException, CryptoTokenException {
+                                              String ownerId,
+                                              CryptoToken cryptoToken) throws ApplicationException {
+        try {
+            X509Certificate x509Certificate = null;
+            x509Certificate = CertUtils.decodeBase64X509(certValue);
+            if (x509Certificate == null)
+                throw new ApplicationException("Cannot init X509Certificate from cert - alias: " + alias);
+            CertificateDTO certificateDTO = new CertificateDTO();
+            certificateDTO.setRawData(certValue);
+            certificateDTO.setSerial(x509Certificate.getSerialNumber().toString(16));
+            certificateDTO.setSubjectInfo(x509Certificate.getSubjectDN().toString());
+            certificateDTO.setTokenType(CertificateDTO.PKCS_11);
+            certificateDTO.setAlias(alias);
+            certificateDTO.setOwnerId(ownerId);
+            certificateDTO.setModifiedDate(new Date());
+            certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
+            certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
+            certificateDTO.setActiveStatus(1);
+            certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
-        String certB64 = rawCertificate.getCert();
-        String serial = rawCertificate.getSerial();
-        X509Certificate x509Certificate = null;
-        x509Certificate = CertUtils.decodeBase64X509(certB64);
-        if (x509Certificate == null)
-            throw new ApplicationException("Cannot init X509Certificate from cert with serial: " + serial);
-        CertificateDTO certificateDTO = new CertificateDTO();
-        certificateDTO.setRawData(certB64);
-        certificateDTO.setSerial(serial);
-        certificateDTO.setSubjectInfo(subjectInfo);
-        certificateDTO.setTokenType(CertificateDTO.PKCS_11);
-        certificateDTO.setAlias(alias);
-        certificateDTO.setOwnerId(alias);
-        certificateDTO.setModifiedDate(new Date());
-        certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
-        certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
-        certificateDTO.setActiveStatus(1);
-        certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
+            // Create random password for hsm certificate
+            String rawPin = CommonUtils.genRandomHsmCertPin();
+            certificateDTO.setRawPin(rawPin);
+            certificateDTO.setEncryptedPin(symmetricService.encrypt(rawPin));
 
-        //TODO: export this pin to user
-        // Create random password for hsm certificate
-        certificateDTO.setEncryptedPin(symmetricService.encrypt(CommonUtils.genRandomHsmCertPin()));
+            TokenInfo tokenInfo = new TokenInfo()
+                .setName(hsmConfig.getName());
+            if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
+                tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
+            tokenInfo.setPassword(hsmConfig.getModulePin());
+            tokenInfo.setLibrary(hsmConfig.getLibrary());
+            if (hsmConfig.getAttributes() != null)
+                tokenInfo.setP11Attrs(hsmConfig.getAttributes());
+            certificateDTO.setTokenInfo(tokenInfo);
 
-        TokenInfo tokenInfo = new TokenInfo()
-            .setName(hsmConfig.getName());
-        if (hsmConfig.getSlot() != null && !hsmConfig.getSlot().isEmpty())
-            tokenInfo.setSlot(Long.parseLong(hsmConfig.getSlot()));
-        tokenInfo.setPassword(hsmConfig.getModulePin());
-        tokenInfo.setLibrary(hsmConfig.getLibrary());
-        if (hsmConfig.getAttributes() != null)
-            tokenInfo.setP11Attrs(hsmConfig.getAttributes());
-        certificateDTO.setTokenInfo(tokenInfo);
-
-        vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
-        entity = certificateRepository.save(entity);
-
-        cryptoToken.installCert(alias, x509Certificate);
-
-        return certificateDTO;
+            vn.easyca.signserver.webapp.domain.Certificate entity = mapper.map(certificateDTO);
+            certificateRepository.save(entity);
+            cryptoToken.installCert(alias, x509Certificate);
+            return certificateDTO;
+        } catch (Exception e) {
+            throw new ApplicationException(ApplicationException.APPLICATION_ERROR_CODE, String.format("Install cert into HSM has error - alias: %s", alias), e);
+        }
     }
 
     private CertificateGenerateResult.User createUser(CertificateGenerateDTO dto) throws ApplicationException {
@@ -215,6 +218,20 @@ public class CertificateGenerateService {
         return csr;
     }
 
+    public String createCSR(CryptoToken cryptoToken, String alias, String subjectDN, int keyLength) throws CryptoTokenException, CSRGenerator.CSRGeneratorException {
+//        String alias = CertUtils.genRandomAlias();
+        KeyPair keyPair = cryptoToken.genKeyPair(alias, keyLength);
+        String csr = new CSRGenerator().genCsr(
+            subjectDN,
+            cryptoToken.getProviderName(),
+            keyPair.getPrivate(),
+            keyPair.getPublic(),
+            "SHA256withRSA",
+            false,
+            false);
+        return csr;
+    }
+
     /**
      * Tạo cert từ CSR
      *
@@ -228,7 +245,7 @@ public class CertificateGenerateService {
         String alias = dto.getOwnerId();
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         RawCertificate rawCertificate = dto.getRawCertificate();
-        CertificateDTO certificateDTO = saveNewCertificate(rawCertificate, alias, dto.getSubjectDN().toString(), cryptoToken);
+        CertificateDTO certificateDTO = saveAndInstallCert(rawCertificate.getCert(), alias, alias, cryptoToken);
         return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
@@ -252,7 +269,7 @@ public class CertificateGenerateService {
         Optional<UserEntity> userEntityOptional = userRepository.findById(dto.getUserId());
         if (userEntityOptional.isPresent()) {
             UserEntity user = userEntityOptional.get();
-            CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
+            CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                 user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), dto.getKeyLen());
             result.setCsr(createCSR(certificateGenerateDTO));
 //            result.setUser(CertificateGenerateResult.User(user.getLogin(), null, UserCreator.RESULT_EXIST));
@@ -278,7 +295,7 @@ public class CertificateGenerateService {
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
                 try {
-                    CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(),
+                    CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                         user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), keyLength);
                     crs = createCSR(cryptoToken, certificateGenerateDTO);
                     certDto = new CertDTO(userId, user.getLogin(), crs, null);
@@ -300,11 +317,41 @@ public class CertificateGenerateService {
             Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(dto.getOwnerId());
             if (userEntityOptional.isPresent()) {
                 UserEntity user = userEntityOptional.get();
-                // TODO: viet lai ham luu cert
-                saveNewCertificate(new RawCertificate(dto.getSerial(), dto.getCert()), dto.getOwnerId(), new SubjectDN(user.getCommonName(), user.getOrganizationUnit(),
-                    user.getOrganizationName(), user.getLocalityName(), user.getStateName(), user.getCountry()).toString(), cryptoToken);
+                saveAndInstallCert(dto.getCert(), dto.getOwnerId(), dto.getOwnerId(), cryptoToken);
                 //TODO: update csr status of user here
             }
+        }
+    }
+
+    /**
+     * Tạo private key ở HSM và CSR thông qua file upload chứa thông tin CTS
+     * @param certRequestInfoDTOs
+     * @throws Exception
+     */
+    public void generateBulkCSR(List<CertRequestInfoDTO> certRequestInfoDTOs) throws Exception {
+        CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
+        int keyLength = 2048;
+        for(CertRequestInfoDTO dto : certRequestInfoDTOs) {
+            String alias = CommonUtils.genRandomAlias();
+            String subjectDN = dto.getSubjectDN();
+            String csr = createCSR(cryptoToken, alias, subjectDN, keyLength);
+            dto.setAlias(alias);
+            dto.setCsrValue(csr);
+        }
+    }
+
+    /**
+     * Lưu bản ghi certificate vào DB và cài đặt Cert (tương ứng với CSR đã tạo ở generateBulkCSR) vào HSM
+     * @param dtos
+     * @param currentUser
+     * @throws ApplicationException
+     */
+    public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
+        CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
+        for(CertRequestInfoDTO dto : dtos) {
+            CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
+            dto.setSerial(result.getSerial());
+            dto.setPin(result.getRawPin());
         }
     }
 }

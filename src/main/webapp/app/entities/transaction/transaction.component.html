@@ -91,23 +91,23 @@
             <table class="table table-striped" aria-describedby="page-heading">
                 <thead>
                 <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" [callback]="loadPage.bind(this)">
-                    <th class="custom-middle-align" scope="col" jhiSortBy="action"><span
+                    <th class="custom-middle-align" scope="col" jhiSortBy="a.action"><span
                         jhiTranslate="webappApp.transaction.action">Action</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th class="custom-middle-align" scope="col" jhiSortBy="extension"><span
+                    <th class="custom-middle-align" scope="col" jhiSortBy="a.extension"><span
                         jhiTranslate="webappApp.transaction.extension">Extension</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th class="custom-middle-align" scope="col" jhiSortBy="triggerTime"><span
+                    <th class="custom-middle-align" scope="col" jhiSortBy="a.triggerTime"><span
                         jhiTranslate="webappApp.transaction.triggerTime">Trigger Time</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th class="custom-middle-align" scope="col" jhiSortBy="status"><span
+                    <th class="custom-middle-align" scope="col" jhiSortBy="a.status"><span
                         jhiTranslate="webappApp.transaction.status">Status</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
-                    <th class="custom-middle-align" scope="col" jhiSortBy="fullName"><span
+                    <th class="custom-middle-align" scope="col" jhiSortBy="a.fullName"><span
                         jhiTranslate="webappApp.transaction.fullName">Full Name</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
@@ -124,7 +124,8 @@
                             {{transaction.action}}</span>
                     </td>
                     <td class="custom-middle-align">
-                        <span class="badge {{transform(transaction.extension)}}">{{transaction.extension}}</span>
+                        <span jhiTranslate="webappApp.transaction.EXTENSION.{{transaction.extension}}"
+                            class="badge {{transform(transaction.extension)}}">{{transaction.extension}}</span>
                     </td>
                     <td class="custom-middle-align">{{ transaction.triggerTime | date:"dd/MM/yyyy hh:mm:ss" }}</td>
                     <td class="custom-middle-align">

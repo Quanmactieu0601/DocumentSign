@@ -49,7 +49,7 @@ public class UserDTO {
     private String phone;
 
     @Email
-    @Size( max = 254)
+    @Size(max = 254)
     private String email;
 
     @Size(max = 256)
@@ -72,6 +72,16 @@ public class UserDTO {
     private LocalDateTime lastModifiedDate;
 
     private Set<String> authorities;
+
+    private Boolean remindChangePassword;
+
+    public Boolean getRemindChangePassword() {
+        return remindChangePassword;
+    }
+
+    public void setRemindChangePassword(Boolean remindChangePassword) {
+        this.remindChangePassword = remindChangePassword;
+    }
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -103,11 +113,41 @@ public class UserDTO {
         this.authorities = userEntity.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+        this.remindChangePassword = userEntity.getRemindChangePassword();
     }
 
-    public String getCurrentPassword() { return currentPassword; }
 
-    public void setCurrentPassword(String currentPassword) { this.currentPassword = currentPassword; }
+    public UserDTO(UserEntity userEntity, boolean getAuthority) {
+        this.id = userEntity.getId();
+        this.login = userEntity.getLogin();
+        this.firstName = userEntity.getFirstName();
+        this.lastName = userEntity.getLastName();
+        this.email = userEntity.getEmail();
+        this.activated = userEntity.getActivated();
+        this.imageUrl = userEntity.getImageUrl();
+        this.langKey = userEntity.getLangKey();
+        this.createdBy = userEntity.getCreatedBy();
+        this.createdDate = userEntity.getCreatedDate();
+        this.lastModifiedBy = userEntity.getLastModifiedBy();
+        this.lastModifiedDate = userEntity.getLastModifiedDate();
+        this.commonName = userEntity.getCommonName();
+        this.localityName = userEntity.getLocalityName();
+        this.organizationName = userEntity.getOrganizationName();
+        this.organizationUnit = userEntity.getOrganizationUnit();
+        this.stateName = userEntity.getStateName();
+        this.country = userEntity.getCountry();
+        this.phone = userEntity.getPhone();
+        this.remindChangePassword = userEntity.getRemindChangePassword();
+    }
+
+    public String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public void setCurrentPassword(String currentPassword) {
+        this.currentPassword = currentPassword;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -299,6 +339,7 @@ public class UserDTO {
             ", stateName=" + stateName +
             ", country=" + country +
             ", phone=" + phone +
+            ", remindChangePassword" + remindChangePassword +
             "}";
     }
 }

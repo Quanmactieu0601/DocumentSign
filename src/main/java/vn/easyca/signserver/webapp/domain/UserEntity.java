@@ -114,9 +114,12 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "csr_status")
     private int csrStatus;
 
+    @Column(name = "remind_change_password")
+    private Boolean remindChangePassword;
+
     //TODO: Chang fetch_type;
     @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -131,6 +134,14 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getRemindChangePassword() {
+        return remindChangePassword;
+    }
+
+    public void setRemindChangePassword(Boolean remindChangePassword) {
+        this.remindChangePassword = remindChangePassword;
     }
 
     public String getLogin() {
@@ -286,6 +297,32 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.phone = phone;
     }
 
+    public UserEntity() {
+    }
+
+    public UserEntity(Long id, @NotNull @Pattern(regexp = Constants.LOGIN_REGEX) @Size(min = 1, max = 50) String login,
+                      @Size(max = 200) String firstName, @Size(max = 200) String lastName, @Email @Size(max = 254) String email,
+                      @NotNull boolean activated, @Size(min = 2, max = 10) String langKey, @Size(max = 256) String imageUrl,
+                      @Size(max = 200) String commonName, @Size(max = 200) String organizationName, @Size(max = 200) String organizationUnit,
+                      @Size(max = 200) String localityName, @Size(max = 200) String stateName, @Size(max = 200) String country,
+                      @Size(max = 50) String phone, int csrStatus) {
+        this.id = id;
+        this.login = login;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.activated = activated;
+        this.langKey = langKey;
+        this.imageUrl = imageUrl;
+        this.commonName = commonName;
+        this.organizationName = organizationName;
+        this.organizationUnit = organizationUnit;
+        this.localityName = localityName;
+        this.stateName = stateName;
+        this.country = country;
+        this.phone = phone;
+        this.csrStatus = csrStatus;
+    }
 
     @Override
     public boolean equals(Object o) {

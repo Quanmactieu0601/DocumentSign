@@ -10,12 +10,14 @@
       "cancel": "Cancel",
       "exportCSR": "Export CSR"
     },
+    "chooseUser": "Choose user",
     "created": "Create user success !",
     "updated": "Update user success !",
     "updated-err": "You must add at least one value from Common Name to Country !",
     "deleted": "A user is deleted with identifier {{ param }}",
     "delete": {
-      "question": "Are you sure you want to delete user {{ login }}?"
+      "question": "Are you sure you want to delete user {{ login }}?",
+      "success": "Deleted successfully"
     },
     "detail": {
       "title": "User"
@@ -52,6 +54,8 @@
     "lastModifiedBy": "Modified by",
     "lastModifiedDate": "Modified date",
     "chooseFile": "Choose File",
+    "action": "Action",
+    "search": "Search",
     "alert": {
       "success": {
         "csrExported": "Export CSR successfully",
@@ -62,6 +66,10 @@
         "uploaded": "Upload User file failure",
         "sizeErr": "File size need smaller than 1 MB"
       }
+    },
+    "downloadSampleFileUser": {
+      "success": "Download file successfully",
+      "error": "Download file failed"
     }
   }
 }

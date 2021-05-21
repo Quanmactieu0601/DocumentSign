@@ -51,8 +51,21 @@
         "GET_INFO": "GET_INFO",
         "LOGIN": "LOGIN"
       },
-      "search": "Search",
-      "properties": "Properties"
+      "EXTENSION": {
+        "PDF": "PDF",
+        "XML": "XML",
+        "OOXML": "OOXML",
+        "RAW": "RAW",
+        "CSR": "CSR",
+        "CERT": "CERT",
+        "HASH": "HASH",
+        "SIGN_TEMPLATE": "SIGN_TEMPLATE",
+        "SIGN_IMAGE": "SIGN_IMAGE",
+        "ACCOUNT": "ACCOUNT",
+        "QR_CODE": "QR_CODE",
+        "NONE": "NONE"
+      },
+      "search": "Search"
     }
   }
 }

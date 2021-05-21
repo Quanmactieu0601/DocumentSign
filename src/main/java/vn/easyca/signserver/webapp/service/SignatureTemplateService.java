@@ -45,5 +45,5 @@ public interface SignatureTemplateService {
      */
     void delete(Long id);
 
-    Optional<SignatureTemplate> findOneWithUserId(Long id);
+    Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId);
 }

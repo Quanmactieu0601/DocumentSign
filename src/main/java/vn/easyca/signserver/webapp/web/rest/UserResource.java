@@ -1,28 +1,26 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import com.google.common.base.Strings;
-import org.springframework.core.io.ClassPathResource;
+import org.apache.commons.io.IOUtils;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.domain.Authority;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
+import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.MailService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
-import vn.easyca.signserver.webapp.service.error.InfoFromCNToCountryNotFoundException;
-import vn.easyca.signserver.webapp.service.error.InvalidCountryColumnLength;
-import vn.easyca.signserver.webapp.service.error.RequiredColumnNotFoundException;
-import vn.easyca.signserver.webapp.service.error.UsernameAlreadyUsedException;
 import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
-import vn.easyca.signserver.webapp.web.rest.errors.CurrentPasswordNotMatchException;
 import vn.easyca.signserver.webapp.web.rest.errors.EmailAlreadyUsedException;
 import vn.easyca.signserver.webapp.web.rest.errors.LoginAlreadyUsedException;
 
@@ -44,12 +42,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing users.
@@ -75,6 +73,7 @@ import java.util.*;
  * <p>
  * Another option would be to have a specific JPA entity graph to handle this case.
  */
+@Scope("request")
 @RestController
 @RequestMapping("/api")
 public class UserResource extends BaseResource {
@@ -84,14 +83,15 @@ public class UserResource extends BaseResource {
     private String applicationName;
 
     private final UserApplicationService userApplicationService;
-
+    private final FileResourceService fileResourceService;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailService mailService;
     private final AsyncTransactionService asyncTransactionService;
 
-    public UserResource(UserApplicationService userApplicationService, UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, AsyncTransactionService asyncTransactionService) {
+    public UserResource(UserApplicationService userApplicationService, FileResourceService fileResourceService, UserRepository userRepository, PasswordEncoder passwordEncoder, MailService mailService, AsyncTransactionService asyncTransactionService) {
         this.userApplicationService = userApplicationService;
+        this.fileResourceService = fileResourceService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.mailService = mailService;
@@ -152,11 +152,10 @@ public class UserResource extends BaseResource {
         } catch (ApplicationException e) {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
-        } catch (Exception e){
+        } catch (Exception e) {
             message = e.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null,e.getMessage()));
-        }
-         finally {
+            return ResponseEntity.ok(new BaseResponseVM(HttpStatus.EXPECTATION_FAILED.value(), null, e.getMessage()));
+        } finally {
             asyncTransactionService.newThread("/api/users/uploadUser", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
@@ -192,7 +191,7 @@ public class UserResource extends BaseResource {
             if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
                 asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
                     TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
-                throw new BadRequestAlertException("Current Password does not match","user","currentPassNotMatch");
+                throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
             }
         }
 
@@ -216,31 +215,23 @@ public class UserResource extends BaseResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+
+
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<byte[]> getTemplateFileUpload(HttpServletResponse response) throws IOException {
-        InputStream inputStream = null;
+    public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
         try {
-            inputStream = new ClassPathResource("templates/upload/UserUploadTemplate.xlsx").getInputStream();
-            byte[] isr = new byte[inputStream.available()];
-            inputStream.read(isr);
-            response.setContentType("application/vnd.ms-excel");
-
-            HttpHeaders respHeaders = new HttpHeaders();
-            respHeaders.setContentLength(isr.length);
-            respHeaders.setCacheControl("must-revalidate, post-check=0, pre-check=0");
-
-            return new ResponseEntity<>(isr, respHeaders, HttpStatus.OK);
-        } finally {
-            if (inputStream != null) {
-                inputStream.close();
-            }
+            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx");
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
         }
     }
 
     @GetMapping("/users/search")
-    public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone) {
-        final Page<UserDTO> page = userApplicationService.getByFilter(pageable, account, name, email, ownerId, commonName, country, phone);
+    public ResponseEntity<List<UserDTO>> getAllUsersByFilter(Pageable pageable, @RequestParam(required = false) String account, @RequestParam(required = false) String name, @RequestParam(required = false) String email, @RequestParam(required = false) String ownerId, @RequestParam(required = false) String commonName, @RequestParam(required = false) String country, @RequestParam(required = false) String phone, @RequestParam(required = false) boolean activated) {
+        final Page<UserDTO> page = userApplicationService.getByFilter(pageable, account, name, email, ownerId, commonName, country, phone, activated);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -268,6 +259,15 @@ public class UserResource extends BaseResource {
         return ResponseUtil.wrapOrNotFound(
             userApplicationService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));
+    }
+
+
+    @GetMapping("/users/getById/{id:" + Constants.LOGIN_REGEX + "}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        log.debug("REST request to get User : {}", id);
+        Optional<UserDTO> dto = userApplicationService.getUserById(id)
+            .map(user -> new UserDTO(user, true));
+        return ResponseUtil.wrapOrNotFound(dto);
     }
 
     /**

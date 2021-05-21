@@ -53,6 +53,8 @@ public class CryptoTokenProxyFactory {
 
         boolean useOTP = systemConfigCachingService.getConfig().getUseOTP();
         if (useOTP) {
+            if (StringUtils.isEmpty(certificateDTO.getSecretKey()))
+                throw new ApplicationException("OTP is not configured, please contact to admin to get secret key");
             if (StringUtils.isEmpty(otp))
                 throw new ApplicationException("OTP is empty");
             boolean isOTPValid = authenticatorTOTPService.isAuthorized(certificateDTO.getSecretKey(), otp);
