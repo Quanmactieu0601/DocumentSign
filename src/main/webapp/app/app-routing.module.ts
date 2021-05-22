@@ -38,6 +38,14 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
           loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
         },
         {
+          path: 'signing',
+          data: {
+            authorities: [Authority.USER],
+          },
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./signing/signing-routing.module').then(m => m.SigningRoutingModule),
+        },
+        {
           path: 'account',
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule),
         },
