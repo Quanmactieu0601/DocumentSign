@@ -18,7 +18,7 @@ import { SigningComponent } from 'app/signing/signing.component';
           {
             path: '',
             component: HomeComponent,
-            // loadChildren: () => import('../home/home.module').then(m => m.WebappHomeModule)
+            loadChildren: () => import('../home/home.module').then(m => m.WebappHomeModule),
           },
           {
             path: 'user-management',

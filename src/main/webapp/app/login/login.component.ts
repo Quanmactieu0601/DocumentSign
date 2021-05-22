@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     this.loginService.login(this.form).subscribe(
       () => {
         this.router.navigate(['/home']);
+
         this.accountService.isFirstLogin(username).subscribe((response: any) => {
           if (response === true) {
             this.modalService.open(ConfirmChangePasswordComponent, { size: '300', backdrop: 'static' });
