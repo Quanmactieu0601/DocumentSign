@@ -3,8 +3,7 @@ package vn.easyca.signserver.webapp.web.rest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
@@ -44,15 +43,17 @@ public class SigningResource extends BaseResource {
     private final XMLSigningService xmlSigningService;
     private final AsyncTransactionService asyncTransactionService;
     private final FileResourceService fileResourceService;
+    private final Environment env;
 
     public SigningResource(SigningService signService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService,
-                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService) {
+                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env) {
         this.signService = signService;
         this.pdfSigningService = pdfSigningService;
         this.xmlSigningService = xmlSigningService;
         this.officeSigningService = officeSigningService;
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
+        this.env = env;
     }
 
 
@@ -81,7 +82,7 @@ public class SigningResource extends BaseResource {
     public ResponseEntity<BaseResponseVM> signVaccinationCert(@RequestBody VaccinationCertDTO vaccinationCertDTO) {
         log.info(" --- Sign Vaccination Cert --- ");
         try {
-            SigningRequest<VisibleRequestContent> signingRequest = vaccinationCertDTO.createSigningRequest(fileResourceService);
+            SigningRequest<VisibleRequestContent> signingRequest = vaccinationCertDTO.createSigningRequest(fileResourceService, env);
             PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
             String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
             status = TransactionStatus.SUCCESS;
