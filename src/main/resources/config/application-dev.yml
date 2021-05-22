@@ -78,7 +78,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: /opt/easysign/tmp
+      location: D:/image
 server:
   port: 8080
 #  ssl:

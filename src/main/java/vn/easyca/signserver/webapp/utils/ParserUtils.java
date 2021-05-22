@@ -102,16 +102,21 @@ public class ParserUtils {
             fw.write(content);//appends the string to the file
             fw.close();
 
-//            File inputFile = new File(pathProject + "/" + fileInputHtml);
             String fileInputPath = pathProject + "/" + fileInputHtml;
             String fileOutputPath = pathProject + "/" + fileOutputImage;
-
             CommandLine cmdLine = null;
-            if (transparency) {
-                cmdLine = CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+
+
+
+            String os = System.getProperty("os.name");
+            if (os.startsWith("Windows")) {
+                cmdLine = transparency ? CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+                                        :CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
             } else {
-                cmdLine = CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+                cmdLine = transparency ? CommandLine.parse("wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+                                        :CommandLine.parse("wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
             }
+
 
             DefaultExecutor executor = new DefaultExecutor();
 
