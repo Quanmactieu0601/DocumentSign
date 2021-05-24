@@ -1,5 +1,9 @@
 package vn.easyca.signserver.webapp.utils;
 
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+
+import org.springframework.core.env.Environment;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import vn.easyca.signserver.core.exception.ApplicationException;
@@ -8,6 +12,10 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,6 +84,55 @@ public class ParserUtils {
             throw new ApplicationException("Error encoding when convert html to base64", e);
         } catch (IOException e) {
             throw new ApplicationException("Error I/O when convert html to base64", e);
+        }
+    }
+
+
+    public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width , Integer height, boolean transparency, Environment env) throws ApplicationException {
+        String pathProject = env.getProperty("spring.servlet.multipart.location");
+
+        String fileInputUnix = Long.toString(Instant.now().getEpochSecond());
+        String fileInputHtml = fileInputUnix + ".html";
+
+        String fileOutputUnix = Long.toString(Instant.now().getEpochSecond() + 1);
+        String fileOutputImage = fileOutputUnix + ".png";
+        try {
+            String content = new String(htmlContent.getBytes());
+            FileWriter fw = new FileWriter(pathProject + "/" + fileInputHtml, true); //the true will append the new data
+            fw.write(content);//appends the string to the file
+            fw.close();
+
+            String fileInputPath = pathProject + "/" + fileInputHtml;
+            String fileOutputPath = pathProject + "/" + fileOutputImage;
+            CommandLine cmdLine = null;
+
+
+
+            String os = System.getProperty("os.name");
+            if (os.startsWith("Windows")) {
+                cmdLine = transparency ? CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+                                        :CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+            } else {
+                cmdLine = transparency ? CommandLine.parse("wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+                                        :CommandLine.parse("wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+            }
+
+
+            DefaultExecutor executor = new DefaultExecutor();
+
+            // run command line
+            int exitValue = executor.execute(cmdLine);
+            Files.deleteIfExists(Paths.get(fileInputPath));
+
+            // get content image
+            byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
+            String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
+            Files.deleteIfExists(Paths.get(fileOutputPath));
+
+            return imageContentExport;
+        } catch (IOException ioe) {
+            System.err.println("IOException: " + ioe.getMessage());
+            return null;
         }
     }
 }
