@@ -1,0 +1,67 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span>Ký số</span>&nbsp;<span> XML</span>
+    </li>
+</ol>
+
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup">
+            <form class="form" name="signingForm" [formGroup]="signingForm">
+                <div _ngcontent-ehj-c247="" class="row row-cols-12">
+                    <div _ngcontent-ehj-c247="" class="col">
+                        <div _ngcontent-ehj-c247="" class="form-group">
+                            <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
+                                                                                           jhitranslate="webappApp.certificate.alias"
+                                                                                           ng-reflect-jhi-translate="webappApp.certificate.alias">Serial</span></label>
+                            <input _ngcontent-ehj-c247="" type="text" name="serial" formControlName="serial"
+                                   class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
+                                   ng-reflect-name="alias">
+                        </div>
+                    </div>
+                    <div _ngcontent-ehj-c247="" class="col">
+                        <div _ngcontent-ehj-c247="" class="form-group">
+                            <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
+                                                                                           jhitranslate="webappApp.certificate.ownerId"
+                                                                                           ng-reflect-jhi-translate="webappApp.certificate.ownerId">PIN</span></label>
+                            <input _ngcontent-ehj-c247="" type="password" name="pin" formControlName="pin"
+                                   class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
+                                   ng-reflect-name="ownerId">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+
+            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".xml"
+                 [disableClick]="selectFiles.length!=0">
+                <ngx-dropzone-label style="font-family: Nunito">
+                    <i class="fas fa-upload fa-2x"></i>
+                    <br>
+                    Kéo thả file xml cần xác thực vào đây hoặc click để chọn
+                </ngx-dropzone-label>
+                <ngx-dropzone-preview _ngcontent-gor-c235="" _ngcontent-pty-c235="" _nghost-pty-c150="" ng-reflect-removable="true" tabindex="0" class="drop-zone-preview" style="align-items: center; min-width: 95%; border-radius: 5px; display: flex; height: 140px; justify-content: center; margin: 10px; max-width: 100%; min-height: 140px; padding: 0px 20px; position: relative;" _nghost-gor-c150="" *ngFor="let f of selectFiles" [removable]="true"
+                                      (removed)="removeFile($event)">
+                    <ngx-dropzone-label>
+                        <i class="fas fa-file-pdf fa-2x"></i>
+                        <label style="font-family: Nunito; font-size-adjust: inherit">
+                            {{f.name}}
+                        </label>
+                    </ngx-dropzone-label>
+                </ngx-dropzone-preview>
+            </div>
+            <br>
+
+            <div class="signbt col">
+                <button
+                    class="btn btn-success"
+                    [disabled]="!selectFiles || this.selectFiles.length == 0"
+                    (click)="signxml()">
+                    <span>Ký</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>

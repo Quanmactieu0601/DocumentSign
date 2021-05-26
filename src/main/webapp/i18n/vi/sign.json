@@ -14,6 +14,8 @@
     "signatureImage": "Ảnh chữ ký",
     "dragAndDrop": "Kéo thả file pdf cần ký vào đây hoặc click để chọn",
     "messages": {
+      "signingFail": "Ký lỗi.",
+      "signingSuccessful": "Ký thành công.",
       "validate": {
         "validated": "Chữ ký số hợp lệ",
         "serial": {

@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { HomeComponent } from 'app/home/home.component';
 import { SigningComponent } from 'app/signing/signing.component';
+import { XmlfileComponent } from 'app/signing/xmlfile/xmlfile.component';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
@@ -54,6 +55,10 @@ import { SigningComponent } from 'app/signing/signing.component';
           {
             path: 'pdfSigning',
             component: SigningComponent,
+          },
+          {
+            path: 'xmlSigning',
+            component: XmlfileComponent,
           },
           /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
         ],
