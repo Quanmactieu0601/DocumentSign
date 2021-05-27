@@ -1,0 +1,47 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span>Ký số</span>&nbsp;<span> Raw</span>
+    </li>
+</ol>
+
+<!--Nhập thông tin ký sô-->
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup ">
+            <div _ngcontent-wis-c237="" class="form-group">
+                <label _ngcontent-wis-c237="" for="serial" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label" ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Serial</label>
+                <input _ngcontent-wis-c237="" type="text" id="serial" name="base64OriginalData" formcontrolname="base64OriginalData" class="form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64OriginalData">
+<!--                <div _ngcontent-djg-c233="">-->
+<!--                    <small _ngcontent-djg-c233="" jhitranslate="sign.messages.validate.serial.required" class="form-text text-danger" ng-reflect-jhi-translate="sign.messages.validate.serial.">Mời bạn nhập serial.</small>-->
+<!--                    &lt;!&ndash;bindings={"ng-reflect-ng-if": "true"}&ndash;&gt;-->
+<!--                </div>-->
+            </div>
+            <div _ngcontent-wis-c237="" class="form-group">
+                <label _ngcontent-wis-c237="" for="pinCode" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label" ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Pin</label>
+                <input _ngcontent-wis-c237="" type="text" id="pinCode" name="base64OriginalData" formcontrolname="base64OriginalData" class="form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64OriginalData">
+<!--                <div _ngcontent-djg-c233="">-->
+<!--                    <small _ngcontent-djg-c233="" jhitranslate="sign.messages.validate.pin.required" class="form-text text-danger" ng-reflect-jhi-translate="sign.messages.validate.pin.req">Mời bạn nhập mã pin.</small>-->
+<!--                    &lt;!&ndash;bindings={  "ng-reflect-ng-if": "true"}&ndash;&gt;-->
+<!--                </div>-->
+            </div>
+            <div _ngcontent-wis-c237="" class="" >
+                <label _ngcontent-wis-c237="" for="textToSign" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label " ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Nội dung cần ký số</label>
+                <textarea  _ngcontent-wis-c237="" type="" id="textToSign" name="base64OriginalData" formcontrolname="base64OriginalData" class=" h-300 form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64OriginalData"></textarea>
+            </div>
+
+            <div _ngcontent-wis-c237="" class="row justify-content-center align-items-center padding-top">
+                <label _ngcontent-wis-c237=""  type="button" jhitranslate="webappApp.signatureVerify.originalData"
+                       class="signbt justify-content-center align-items-center  "  ng-reflect-jhi-translate="webappApp.signatureVerify.orig"
+                        (click)="signRaw()">
+                    Ký số
+                </label>
+            </div>
+            <div _ngcontent-wis-c237="" class="" *ngIf="!hide">
+                <label _ngcontent-wis-c237="" for="textResult" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label " ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Kết quả</label>
+                <textarea _ngcontent-wis-c237="" type="" id="textResult" name="base64OriginalData" formcontrolname="base64OriginalData" class=" h-300 form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64OriginalData"></textarea>
+            </div>
+
+        </div>
+    </div>
+</div>

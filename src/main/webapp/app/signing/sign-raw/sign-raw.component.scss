@@ -1,0 +1,35 @@
+.signbt {
+  border: 1px solid #28a745;
+  /* position: absolute; */
+  /* right: 0px; */
+  top: 510px;
+  height: inherit;
+  width: 100px;
+  color: #ffffff;
+  border-radius: 5px;
+  vertical-align: middle;
+  background-color: #28a745;
+  border-color: #28a745;
+  text-align: center;
+  display: inline-block;
+  line-height: 1.5;
+  font-weight: 400;
+  font-size: 1rem;
+  height: 40px;
+  padding-top: 7px;
+}
+
+textarea {
+  clear: left;
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 140px;
+  max-height: 150px;
+  resize: none;
+  border-radius: 5px;
+  font-size: 1rem !important;
+}
+
+.padding-top {
+  padding-top: 15px;
+}

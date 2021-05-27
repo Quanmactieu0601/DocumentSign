@@ -16,4 +16,8 @@ export class SigningService {
     const requestData = JSON.stringify(req);
     return this.http.post(SERVER_API_URL + '/api/sign/pdf', requestData, httpOptions);
   }
+  signRaw(req: any): Observable<any> {
+    const requestData = JSON.stringify(req);
+    return this.http.post(SERVER_API_URL + '/api/sign/raw', requestData, httpOptions);
+  }
 }
