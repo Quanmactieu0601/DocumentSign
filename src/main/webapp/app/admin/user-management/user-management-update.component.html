@@ -164,9 +164,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('phone')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 50 }"
+                                                    [translateValues]="{ max: 20 }"
                                                 >
-                                                    This field cannot be longer than 50 characters.
+                                                    This field cannot be longer than 20 characters.
                                                 </small>
 
                                                 <small
