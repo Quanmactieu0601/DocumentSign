@@ -33,3 +33,11 @@ textarea {
 .padding-top {
   padding-top: 15px;
 }
+.h-300 {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: auto;
+  max-height: 140px;
+  border-radius: 5px;
+  word-wrap: break-word;
+}

@@ -46,16 +46,19 @@ export class SignRawComponent implements OnInit {
 
   signRaw(): void {
     const request = {
-      signingRequestContents: [
-        {
-          data: this.textToSign,
-          documentName: '123',
-        },
-      ],
       tokenInfo: {
         pin: this.signingForm.get(['pin'])!.value,
         serial: this.signingForm.get(['serial'])!.value,
       },
+      elements: [
+        {
+          signer: '',
+          signDate: Date.now(),
+          content: this.arrayBufferToBase64(this.textToSign),
+          key: '123',
+        },
+      ],
+
       optional: {
         otpCode: '621143',
       },
@@ -64,23 +67,24 @@ export class SignRawComponent implements OnInit {
       (res: any) => {
         const resStatus = JSON.parse(res).status;
         if (resStatus === 0) {
-          this.textToSign = JSON.parse(res).data.responseContentList[0].signedDocument;
-          const byteArray = this.base64ToArrayBuffer(this.textToSign);
-          saveAs(new Blob([byteArray], { type: 'application/raw' }), Date.now().toString());
+          this.textResult = JSON.parse(res).data.signResult[0].base64Signature;
+
+          // const byteArray = this.base64ToArrayBuffer(this.textToSign);
+          // saveAs(new Blob([byteArray], { type: 'application/raw' }), Date.now().toString());
           this.toastrService.success(this.translateService.instant('sign.messages.signingSuccessful'));
+          this.hide = false;
         } else {
           this.toastrService.error(this.translateService.instant('sign.messages.signingFail') + JSON.parse(res).msg);
         }
       },
       () => this.toastrService.error(this.translateService.instant('sign.messages.validate.signingFail.required'))
     );
-
-    this.hide = false;
   }
-  arrayBufferToBase64(buffer: any): string {
-    return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-      .toString()
-      .replace('data:application/xml;base64,', '');
+  arrayBufferToBase64(str: any): string {
+    return btoa(unescape(encodeURIComponent(str)));
+    // btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+    //   .toString()
+    //   .replace('data:application/xml;base64,', '');
   }
 
   base64ToArrayBuffer(base64: any): ArrayBuffer {
