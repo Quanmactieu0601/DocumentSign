@@ -61,7 +61,7 @@ public class VaccinationCertDTO {
         String fullDate = formatter.format(date) + " +07'00'";
         htmlContentImage = htmlContentImage.replace("Time", fullDate);
 
-        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 279, false, env);
+        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
 //        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, true, env);
         visibleRequestContent.setImageSignature(contentImage);
 
