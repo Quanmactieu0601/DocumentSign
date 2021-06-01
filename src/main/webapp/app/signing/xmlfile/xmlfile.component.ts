@@ -43,7 +43,6 @@ export class XmlfileComponent implements OnInit {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.getListCertificate();
   }
-
   getListCertificate(): void {
     this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
   }
@@ -90,7 +89,7 @@ export class XmlfileComponent implements OnInit {
             this.toastrService.error(this.translateService.instant('sign.messages.signingFail') + JSON.parse(res).msg);
           }
         },
-        () => this.toastrService.error(this.translateService.instant('sign.messages.validate.signingFail.required'))
+        () => this.toastrService.error(this.translateService.instant('sign.messages.signingFail'))
       );
     };
   }

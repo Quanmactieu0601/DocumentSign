@@ -1,7 +1,7 @@
 <ol class="breadcrumb in-page">
     <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
     <li class="breadcrumb-item active" aria-current="page">
-        <span>Ký số</span>&nbsp;<span> XML</span>
+        <span jhiTranslate="sign.signXml">Sign XML</span>
     </li>
 </ol>
 
@@ -15,9 +15,11 @@
                             <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
                                                                                            jhitranslate="webappApp.certificate.alias"
                                                                                            ng-reflect-jhi-translate="webappApp.certificate.alias">Serial</span></label>
-                            <input _ngcontent-ehj-c247="" type="text" name="serial" formControlName="serial"
-                                   class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
-                                   ng-reflect-name="alias">
+                            <select class="form-control" id="serial" name="serial" formControlName="serial" size="1">
+                                <option class="form-control" jhiTranslate="webappApp.signatureVerify.serial" selected>Serial
+                                </option>
+                                <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
+                            </select>
                         </div>
                     </div>
                     <div _ngcontent-ehj-c247="" class="col">
@@ -41,7 +43,10 @@
                     <br>
                     Kéo thả file xml cần xác thực vào đây hoặc click để chọn
                 </ngx-dropzone-label>
-                <ngx-dropzone-preview _ngcontent-gor-c235="" _ngcontent-pty-c235="" _nghost-pty-c150="" ng-reflect-removable="true" tabindex="0" class="drop-zone-preview" style="align-items: center; min-width: 95%; border-radius: 5px; display: flex; height: 140px; justify-content: center; margin: 10px; max-width: 100%; min-height: 140px; padding: 0px 20px; position: relative;" _nghost-gor-c150="" *ngFor="let f of selectFiles" [removable]="true"
+                <ngx-dropzone-preview _ngcontent-gor-c235="" _ngcontent-pty-c235="" _nghost-pty-c150=""
+                                      ng-reflect-removable="true" tabindex="0" class="drop-zone-preview"
+                                      style="align-items: center; min-width: 95%; border-radius: 5px; display: flex; height: 140px; justify-content: center; margin: 10px; max-width: 100%; min-height: 140px; padding: 0px 20px; position: relative;"
+                                      _nghost-gor-c150="" *ngFor="let f of selectFiles" [removable]="true"
                                       (removed)="removeFile($event)">
                     <ngx-dropzone-label>
                         <i class="fas fa-file-pdf fa-2x"></i>

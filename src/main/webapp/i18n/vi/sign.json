@@ -11,6 +11,7 @@
       "chooseSignatureTemplate": "Chọn mẫu chữ ký",
       "choose": "Chọn"
     },
+    "signXml": "Ký số XML",
     "signatureImage": "Ảnh chữ ký",
     "dragAndDrop": "Kéo thả file pdf cần ký vào đây hoặc click để chọn",
     "messages": {
