@@ -21,7 +21,7 @@ export class TransactionReportComponent implements OnInit {
   });
 
   type = Type;
-
+  date = '';
   totalSuccess = '';
   totalFail = '';
   public pieChartOptions: ChartOptions = {
