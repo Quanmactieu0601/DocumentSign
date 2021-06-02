@@ -119,7 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Map<String, BigInteger> findTransactionType(String startDate, String endDate, String type) {
-        return transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type.equals("") ? null : type);
+    public Map<String, BigInteger> findTransactionType(String startDate, String endDate, TransactionType type) {
+        return transactionRepository.findAllTransactionTypeAndDate(convertToLocalDateTime(startDate), convertToLocalDateTime(endDate), type.equals("") ? null :  type);
     }
 }
