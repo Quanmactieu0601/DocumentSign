@@ -30,6 +30,7 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
+import javax.validation.Valid;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -85,6 +86,34 @@ public class SignatureVerificationService {
             throw new CertificateNotFoundAppException();
         response.setCertificate(certificateDTO.getRawData());
         X509Certificate x509Certificate = certificateDTO.getX509Certificate();
+        String issuer = x509Certificate.getIssuerDN().toString();
+        String subjectDn = x509Certificate.getSubjectDN().toString();
+        String validFrom = x509Certificate.getNotBefore().toString();
+        String validTo = x509Certificate.getNotAfter().toString();
+
+
+        CertStatus signTimeStatus = CertStatus.VALID;
+        CertStatus currentStatus = null;
+        try {
+            x509Certificate.checkValidity();
+            currentStatus = CertStatus.VALID;
+        } catch (CertificateExpiredException e) {
+            currentStatus = CertStatus.EXPIRED;
+        } catch (CertificateNotYetValidException e) {
+            currentStatus = CertStatus.INVALID;
+        }
+        RevocationStatus revocationStatus = RevocationStatus.UNCHECKED;
+
+        CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
+        certificateVfDTO.setIssuer(issuer);
+        certificateVfDTO.setSubjectDn(subjectDn);
+        certificateVfDTO.setValidFrom(validFrom);
+        certificateVfDTO.setValidTo(validTo);
+        certificateVfDTO.setRevocationStatus(revocationStatus);
+        certificateVfDTO.setCurrentStatus(currentStatus);
+        certificateVfDTO.setSignTimeStatus(signTimeStatus);
+        response.setCertificateVfDTO(certificateVfDTO);
+
         SignatureValidator rawValidator = new SignatureValidator();
         for (SignatureVerificationRequest.Element element : request.getElements()) {
             boolean result = rawValidator.verify(element.getOriginalData(), element.getSignature(), x509Certificate, request.getHashAlgorithm());

@@ -1,5 +1,9 @@
 package vn.easyca.signserver.core.dto;
 
+import vn.easyca.signserver.core.domain.CertificateDTO;
+import vn.easyca.signserver.core.dto.verification.CertificateVfDTO;
+
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +11,18 @@ public class SignatureVerificationResponse {
 
     private String certificate;
 
+    private CertificateVfDTO certificateVfDTO;
+
+
     private final List<Element> elements = new ArrayList<>();
+
+    public CertificateVfDTO getCertificateVfDTO() {
+        return certificateVfDTO;
+    }
+
+    public void setCertificateVfDTO(CertificateVfDTO certificateVfDTO) {
+        this.certificateVfDTO = certificateVfDTO;
+    }
 
     public List<Element> getElements() {
         return elements;
@@ -25,6 +40,7 @@ public class SignatureVerificationResponse {
         this.certificate = certificate;
     }
 
+
     public static class Element {
         private String key;
         private boolean result;
@@ -32,6 +48,7 @@ public class SignatureVerificationResponse {
         public Element(String key, boolean result) {
             this.key = key;
             this.result = result;
+
         }
 
         public String getKey() {
@@ -49,5 +66,7 @@ public class SignatureVerificationResponse {
         public void setResult(boolean result) {
             this.result = result;
         }
+
+
     }
 }

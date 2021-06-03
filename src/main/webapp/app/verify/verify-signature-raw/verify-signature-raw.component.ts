@@ -14,6 +14,8 @@ import { ICaptchaModel } from 'app/shared/model/captcha.model';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { Md5 } from 'ts-md5';
 import { TranslateService } from '@ngx-translate/core';
+import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
+import { CertificateVfDTO } from 'app/shared/model/certificateVfDTO.model';
 
 @Component({
   selector: 'jhi-verify-signature',
@@ -28,6 +30,7 @@ export class VerifySignatureRawComponent implements OnInit {
   elementVM: IElementVM | undefined;
   result = false;
   bar = false;
+  certificateVfDTO?: CertificateVfDTO;
   listCertificate?: ICertificate[];
   captcha?: ICaptchaModel | null;
   img?: any;
@@ -99,6 +102,7 @@ export class VerifySignatureRawComponent implements OnInit {
           console.error(res.body.data);
           if (res.body.status === 0) {
             this.certificate = res.body.data.certificate;
+            this.certificateVfDTO = res.body.data.certificateVfDTO;
             this.result = res.body.data.elements[0].result;
             if (!this.result) this.toastrService.error(this.translateService.instant('error.verifySign'));
           } else {

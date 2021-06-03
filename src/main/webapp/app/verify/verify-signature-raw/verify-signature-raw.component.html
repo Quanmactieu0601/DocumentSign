@@ -45,8 +45,57 @@
 <div class="card mb-1" *ngIf="result">
     <div class="card-body">
         <ul>
-            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>: {{certificate}}</li>
-            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.result">Result</span>: {{result}}</li>
+            <li><span class="font-weight-bold"
+                      jhiTranslate="webappApp.signatureVerify.coverWholeDocument">coverWholeDocument</span>:
+                <fa-icon *ngIf="result" icon="check" class="text-success"></fa-icon>
+                <fa-icon *ngIf="!result" icon="times" class="text-success"></fa-icon>
+            </li>
+<!--            <li><span class="font-weight-bold"-->
+<!--                      jhiTranslate="webappApp.signatureVerify.revision">revision</span>: {{ signatureVfDTO.revision }}-->
+<!--            </li>-->
+<!--            <li><span class="font-weight-bold"-->
+<!--                      jhiTranslate="webappApp.signatureVerify.totalRevision">total revision</span>: {{signatureVfDTO.totalRevision}}-->
+<!--            </li>-->
+<!--            <li><span class="font-weight-bold"-->
+<!--                      jhiTranslate="webappApp.signatureVerify.signTime">sign time</span>: {{signatureVfDTO.signTime}}-->
+<!--            </li>-->
+<!--            <li><span class="font-weight-bold"-->
+<!--                      jhiTranslate="webappApp.signatureVerify.integrity">integrity</span>:-->
+<!--                <fa-icon *ngIf="signatureVfDTO.integrity" icon="check" class="text-success"></fa-icon>-->
+<!--                <fa-icon *ngIf="!signatureVfDTO.integrity" icon="times" class="text-success"></fa-icon>-->
+<!--            </li>-->
+            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:
+                <ul >
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.issuer">issuer</span>: {{certificateVfDTO.issuer}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.subjectDn">subjectDn</span>: {{certificateVfDTO.subjectDn}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.validFrom">valid from</span>: {{certificateVfDTO.validFrom}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.validTo">valid to</span>: {{certificateVfDTO.validTo}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.title">revocation status</span>:
+                        <span
+                            jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.{{certificateVfDTO.revocationStatus}}"></span>
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.title">current status</span>:
+                        <span
+                            jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.{{certificateVfDTO.currentStatus}}"></span>
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.signtimeStatus.title">Signtime status</span>:
+                        <span
+                            jhiTranslate="webappApp.signatureVerify.certificate.signtimeStatus.{{certificateVfDTO.signTimeStatus}}"></span>
+                    </li>
+                    <br>
+                </ul>
+            </li>
         </ul>
     </div>
 </div>
