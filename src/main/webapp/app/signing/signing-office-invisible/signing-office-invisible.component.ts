@@ -1,34 +1,35 @@
-import {Component, OnInit} from '@angular/core';
-import {AccountService} from "app/core/auth/account.service";
-import {Subscription} from "rxjs";
-import {Account} from "app/core/user/account.model";
-import {ToastrService} from "ngx-toastr";
-import {TranslateService} from "@ngx-translate/core";
-import {SigningService} from "app/signing/signing.service";
-import {HttpResponse} from "@angular/common/http";
-import {saveAs} from "file-saver";
-import {FormBuilder} from "@angular/forms";
-import {CertificateService} from "app/entities/certificate/certificate.service";
-import {ICertificate} from "app/shared/model/certificate.model";
+import { Component, OnInit } from '@angular/core';
+import { AccountService } from 'app/core/auth/account.service';
+import { Subscription } from 'rxjs';
+import { Account } from 'app/core/user/account.model';
+import { ToastrService } from 'ngx-toastr';
+import { TranslateService } from '@ngx-translate/core';
+import { SigningService } from 'app/signing/signing.service';
+import { HttpResponse } from '@angular/common/http';
+import { saveAs } from 'file-saver';
+import { FormBuilder } from '@angular/forms';
+import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { ICertificate } from 'app/shared/model/certificate.model';
 
 @Component({
   selector: 'jhi-signing-office-invisible',
   templateUrl: './signing-office-invisible.component.html',
-  styleUrls: ['./signing-office-invisible.component.scss']
+  styleUrls: ['./signing-office-invisible.component.scss'],
 })
 export class SigningOfficeInvisibleComponent implements OnInit {
   selectFiles: File[] = [];
   currentFile?: File;
-  listCertificate?: ICertificate[];
+  listCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
-  resFile = "";
-  disable = false
+  resFile = '';
+  serial = '';
+  loading = false;
   editForm = this.fb.group({
     pinCode: [],
     serial: [],
-    otpCode: []
+    otpCode: [],
   });
   constructor(
     private accountService: AccountService,
@@ -36,10 +37,8 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     private translateService: TranslateService,
     private signingService: SigningService,
     private fb: FormBuilder,
-    private certificateService: CertificateService,
-  ) {
-  }
-
+    private certificateService: CertificateService
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
@@ -47,7 +46,22 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   }
 
   getListCertificate(): void {
-    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+    this.loading = true;
+    const data = {
+      page: 0,
+      size: 100,
+      sort: ['id,desc'],
+      alias: null,
+      ownerId: this.account?.login,
+      serial: null,
+      validDate: null,
+      expiredDate: null,
+    };
+
+    this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+      this.listCertificate = res.body || [];
+      this.loading = false;
+    });
   }
 
   selectFile(event: any): void {
@@ -69,23 +83,27 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         signingRequestContents: [
           {
             data: this.arrayBufferToBase64(reader.result),
-            documentName: '123'
-          }
+            documentName: '123',
+          },
         ],
         tokenInfo: {
           pin: this.editForm.get(['pinCode'])!.value,
-          serial: this.editForm.get(['serial'])!.value
+          serial: this.editForm.get(['serial'])!.value,
+          // serial: this.serial,
         },
         optional: {
-          otpCode: "621143"
-        }
-      }
+          otpCode: '621143',
+        },
+      };
       this.signingService.signDocInvisible(request).subscribe((res: any) => {
-          this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
-          const byteArray = this.base64ToArrayBuffer(this.resFile)
-          saveAs(new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }), Date.now().toString());
-      })
-    }
+        this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
+        const byteArray = this.base64ToArrayBuffer(this.resFile);
+        saveAs(
+          new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
+          Date.now().toString()
+        );
+      });
+    };
   }
 
   arrayBufferToBase64(buffer: any): string {
@@ -103,5 +121,4 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     }
     return bytes.buffer;
   }
-
 }
