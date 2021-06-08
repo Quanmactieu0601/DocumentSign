@@ -40,9 +40,9 @@ spring:
     #    password: EasySign@202o
 
     # SDS DB production - new ver
-    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: thanhld
-    #    password: Th@nhSignE@sy#1
+    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: thanhld
+    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -55,9 +55,9 @@ spring:
     #    password: easysign999
 
     # SDS - Cau hinh Denmo
-    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign_demo
-    password: easysign@demo1#%
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_demo
+    #    password: easysign@demo1#%
 
     # BV Q11 - cau hinh db IP VIP
     #    url: jdbc:mariadb://172.16.99.16:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -140,8 +140,8 @@ spring:
 #     ciphers: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 ,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA,TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
 # ===================================================================
 server:
-  port: 8080
-  #  port: 8888 #production port
+  #  port: 8080
+  port: 8888 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443
   #  ssl:
