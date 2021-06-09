@@ -27,25 +27,34 @@
             </div>
         </div>
         <form name="editForm" [formGroup]="editForm">
-            <div class="form-group">
-                <label class="form-control-label" for="field_serial">Serial</label>
-                <select class="form-control" id="field_serial" name="serial" formControlName="serial" size="1">
-                    <option class="form-control" selected>Serial
-                    </option>
-                    <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
-                </select>
+            <label class="form-control-label" for="field_serial">Serial</label>
+            <div ngbDropdown class="d-block">
+                <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
+                       value="{{serial}}"
+                       placeholder="Select serial"
+                       (keyup)="filter(part.value)"/>
+                <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content">
+                    <div *ngIf="filterCertificate.length !== 0; else nothing">
+                        <div ngbDropdownItem *ngFor="let cert of filterCertificate"
+                             (click)="selectSerial(cert.serial||'')"
+                             style="cursor: pointer">
+                            {{cert.serial}} <br> {{cert.subjectInfo}}
+                        </div>
+                    </div>
+                    <ng-template #nothing ngbDropdownItem>Don't have any certificate matches</ng-template>
+                </div>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="field_pinCode">Pin Code</label>
                 <input type="text" class="form-control" id="field_pinCode" name="pinCode"
                        formControlName="pinCode"/>
             </div>
-<!--            <div class="form-group">-->
-<!--                <label class="form-control-label" for="field_otpCode"-->
-<!--                       jhiTranslate="webappApp.signatureVerify.originalData">Otp Code</label>-->
-<!--                <input type="text" class="form-control" id="field_otpCode" name="otpCode"-->
-<!--                       formControlName="otpCode"/>-->
-<!--            </div>-->
+            <!--            <div class="form-group">-->
+            <!--                <label class="form-control-label" for="field_otpCode"-->
+            <!--                       jhiTranslate="webappApp.signatureVerify.originalData">Otp Code</label>-->
+            <!--                <input type="text" class="form-control" id="field_otpCode" name="otpCode"-->
+            <!--                       formControlName="otpCode"/>-->
+            <!--            </div>-->
         </form>
         <button class="btn btn-success btn-primary" [disabled]="!selectFiles || this.selectFiles.length == 0"
                 (click)="signDoc()" style="alignment: center">

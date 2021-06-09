@@ -20,12 +20,12 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   selectFiles: File[] = [];
   currentFile?: File;
   listCertificate: ICertificate[] = [];
+  filterCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
   resFile = '';
   serial = '';
-  loading = false;
   editForm = this.fb.group({
     pinCode: [],
     serial: [],
@@ -46,7 +46,6 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   }
 
   getListCertificate(): void {
-    this.loading = true;
     const data = {
       page: 0,
       size: 100,
@@ -60,7 +59,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
 
     this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
       this.listCertificate = res.body || [];
-      this.loading = false;
+      this.filterCertificate = this.listCertificate
     });
   }
 
@@ -88,14 +87,15 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         ],
         tokenInfo: {
           pin: this.editForm.get(['pinCode'])!.value,
-          serial: this.editForm.get(['serial'])!.value,
-          // serial: this.serial,
+          // serial: this.editForm.get(['serial'])!.value,
+          serial: this.serial,
         },
         optional: {
           otpCode: '621143',
         },
       };
       this.signingService.signDocInvisible(request).subscribe((res: any) => {
+        if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg)
         this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
         const byteArray = this.base64ToArrayBuffer(this.resFile);
         saveAs(
@@ -121,4 +121,15 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     }
     return bytes.buffer;
   }
+
+  selectSerial(serial: string): void {
+    this.serial = serial
+  }
+
+  filter(part: string): void {
+    this.filterCertificate = this.listCertificate.filter(item => {
+      return item.serial?.includes(part)
+    })
+  }
+
 }
