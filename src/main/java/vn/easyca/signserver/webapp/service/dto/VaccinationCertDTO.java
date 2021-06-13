@@ -26,6 +26,12 @@ public class VaccinationCertDTO {
     private String serial;
     private String pin;
 
+    /**
+     * 0: VACCINE CERT FILE
+     * 1: PRC TEST FILE
+     */
+    private int fileType;
+
     public String getSerial() {
         return serial;
     }
@@ -50,6 +56,14 @@ public class VaccinationCertDTO {
         confirmContentFile = contentFile;
     }
 
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
+    }
+
     public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService, Environment env) throws IOException, ApplicationException, BadElementException {
         SigningRequest<VisibleRequestContent> signingRequest = new SigningRequest<>();
         List<VisibleRequestContent> visibleRequestContentList = new ArrayList<VisibleRequestContent>();
@@ -68,8 +82,13 @@ public class VaccinationCertDTO {
         Location location = new Location();
         location.setVisibleHeight(130);
         location.setVisibleWidth(305);
-        location.setVisibleX(230);
-        location.setVisibleY(105);
+        if (fileType == 0) {
+            location.setVisibleX(230);
+            location.setVisibleY(105);
+        } else if (fileType == 1) {
+            location.setVisibleX(245);
+            location.setVisibleY(80);
+        }
 
         visibleRequestContent.setLocation(location);
         visibleRequestContent.setExtraInfo(new ExtraInfo());
@@ -87,6 +106,7 @@ public class VaccinationCertDTO {
     }
 
     private String getSignatureImage(FileResourceService fileResourceService) throws ApplicationException, IOException {
-        return new String(IOUtils.toByteArray(fileResourceService.getTemplateFile("/templates/signature/vaccinationCertImageHtml.html")));
+        String signatureImagePath = fileType == 0 ? "/templates/signature/vaccinationCertImageHtml.html" : "/templates/signature/prctest-vaccinationCertImage.html";
+        return new String(IOUtils.toByteArray(fileResourceService.getTemplateFile(signatureImagePath)));
     }
 }
