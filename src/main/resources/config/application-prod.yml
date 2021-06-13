@@ -40,14 +40,19 @@ spring:
     #    password: EasySign@202o
 
     # SDS DB production - new ver
-    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: thanhld
-    password: Th@nhSignE@sy#1
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
     #    username: postgres
     #    password: 123
+
+    # BV Nhi Dong - cau hinh DB master 2
+    url: jdbc:postgresql://192.168.200.213:5432/signserver
+    username: postgres
+    password: 123@@nd1
 
     # SDS - Cau hinh Test
     #    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
