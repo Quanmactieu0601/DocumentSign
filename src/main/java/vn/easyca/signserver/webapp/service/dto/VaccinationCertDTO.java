@@ -75,19 +75,21 @@ public class VaccinationCertDTO {
         String fullDate = formatter.format(date) + " +07'00'";
         htmlContentImage = htmlContentImage.replace("Time", fullDate);
 
-        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
-//        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, true, env);
-        visibleRequestContent.setImageSignature(contentImage);
+
 
         Location location = new Location();
         location.setVisibleHeight(130);
         location.setVisibleWidth(305);
         if (fileType == 0) {
+            String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
+            visibleRequestContent.setImageSignature(contentImage);
             location.setVisibleX(230);
             location.setVisibleY(105);
         } else if (fileType == 1) {
-            location.setVisibleX(245);
-            location.setVisibleY(80);
+            String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 1000, 342, false, env);
+            visibleRequestContent.setImageSignature(contentImage);
+            location.setVisibleX(230);
+            location.setVisibleY(90);
         }
 
         visibleRequestContent.setLocation(location);
