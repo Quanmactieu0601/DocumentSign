@@ -24,6 +24,7 @@ import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify
 import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
 import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
 import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
+import { VerifySignatureXmlComponent } from './verify/verify-signature-xml/verify-signature-xml.component';
 @NgModule({
   imports: [
     BrowserModule,
