@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,6 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
-import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -51,7 +51,7 @@ public class CertificateService {
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SystemConfigCachingService systemConfigCachingService;
     private final SymmetricEncryptors symmetricService;
-
+    private final Environment env;
     private final UserRepository userRepository;
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
 
@@ -60,7 +60,7 @@ public class CertificateService {
                               SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
                               CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService,
                               SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository,
-                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService) {
+                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, Environment env) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
@@ -71,6 +71,7 @@ public class CertificateService {
         this.symmetricService = symmetricService;
         this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.userRepository = userRepository;
+        this.env = env;
     }
 
     public List<Certificate> getByOwnerId(String ownerId) throws ApplicationException {
@@ -164,7 +165,7 @@ public class CertificateService {
         String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         Integer width = signatureTemplate.getWidth();
         Integer height = signatureTemplate.getHeight();
-        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
+        return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
     }
 
 
