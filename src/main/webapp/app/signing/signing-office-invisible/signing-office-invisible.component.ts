@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
@@ -20,12 +20,12 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   selectFiles: File[] = [];
   currentFile?: File;
   listCertificate: ICertificate[] = [];
-  filterCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
   resFile = '';
   serial = '';
+  page = 0;
   editForm = this.fb.group({
     pinCode: [],
     serial: [],
@@ -42,25 +42,40 @@ export class SigningOfficeInvisibleComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.getListCertificate();
+    this.getListCertificate('', 0);
   }
 
-  getListCertificate(): void {
+  getListCertificate(s: string, p: number): void {
     const data = {
-      page: 0,
-      size: 100,
+      page: p,
+      size: 20,
       sort: ['id,desc'],
       alias: null,
       ownerId: this.account?.login,
-      serial: null,
+      serial: s,
       validDate: null,
       expiredDate: null,
     };
-
+    if (p === 0) this.listCertificate = [];
     this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
-      this.listCertificate = res.body || [];
-      this.filterCertificate = this.listCertificate
+      this.listCertificate.push(...res.body || [])
     });
+  }
+
+  @HostListener('scroll', ['$event'])
+  getMoreCert(e: any): void {
+    if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
+      this.getListCertificate(this.serial, ++this.page)
+    }
+  }
+
+  selectSerial(serial: string): void {
+    this.serial = serial
+  }
+
+  filter(part: string): void {
+    this.page = 0;
+    this.getListCertificate(part, this.page)
   }
 
   selectFile(event: any): void {
@@ -120,16 +135,6 @@ export class SigningOfficeInvisibleComponent implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
-  }
-
-  selectSerial(serial: string): void {
-    this.serial = serial
-  }
-
-  filter(part: string): void {
-    this.filterCertificate = this.listCertificate.filter(item => {
-      return item.serial?.includes(part)
-    })
   }
 
 }

@@ -32,10 +32,12 @@
                 <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
                        value="{{serial}}"
                        placeholder="Select serial"
-                       (keyup)="filter(part.value)"/>
-                <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content">
-                    <div *ngIf="filterCertificate.length !== 0; else nothing">
-                        <div ngbDropdownItem *ngFor="let cert of filterCertificate"
+                       (keyup)="filter(part.value)"
+                />
+                <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
+                (scroll)="getMoreCert($event)">
+                    <div *ngIf="listCertificate.length !== 0; else nothing">
+                        <div ngbDropdownItem *ngFor="let cert of listCertificate"
                              (click)="selectSerial(cert.serial||'')"
                              style="cursor: pointer">
                             {{cert.serial}} <br> {{cert.subjectInfo}}
