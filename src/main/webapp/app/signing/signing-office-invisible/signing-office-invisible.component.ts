@@ -26,6 +26,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   resFile = '';
   serial = '';
   page = 0;
+  timer: NodeJS.Timeout | undefined;
   editForm = this.fb.group({
     pinCode: [],
     serial: [],
@@ -74,8 +75,13 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   }
 
   filter(part: string): void {
-    this.page = 0;
-    this.getListCertificate(part, this.page)
+    if (this.timer) {
+      clearTimeout(this.timer)
+    }
+    this.timer = setTimeout(() => {
+      this.page = 0;
+      this.getListCertificate(part, this.page)
+    }, 1000)
   }
 
   selectFile(event: any): void {
