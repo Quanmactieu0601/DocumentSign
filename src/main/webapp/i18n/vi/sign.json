@@ -12,6 +12,7 @@
       "choose": "Chọn"
     },
     "signXml": "Ký số XML",
+    "dragAndDropXML": "Kéo thả file xml cần ký vào đây hoặc click để chọn",
     "signatureImage": "Ảnh chữ ký",
     "dragAndDrop": "Kéo thả file pdf cần ký vào đây hoặc click để chọn",
     "messages": {
