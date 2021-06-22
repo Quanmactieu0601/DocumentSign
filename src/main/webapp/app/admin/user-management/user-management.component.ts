@@ -311,4 +311,11 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         () => this.onError()
       );
   }
+
+  refresh(): void {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
+  }
 }

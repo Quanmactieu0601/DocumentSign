@@ -8,6 +8,7 @@ import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Type } from 'app/shared/constants/transaction.constants';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'jhi-transaction-report',
@@ -54,7 +55,8 @@ export class TransactionReportComponent implements OnInit {
     protected transactionService: TransactionService,
     private fb: FormBuilder,
     private toastService: ToastrService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -101,5 +103,12 @@ export class TransactionReportComponent implements OnInit {
       this.totalFail = res.body.TotalFail;
       this.pieChartData = [parseInt(this.totalFail, 10), parseInt(this.totalSuccess, 10)];
     });
+  }
+
+  refresh() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
   }
 }
