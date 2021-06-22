@@ -12,6 +12,8 @@ import vn.easyca.signserver.webapp.utils.QueryUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Repository
@@ -41,12 +43,18 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             params.put("serial", serial);
         }
         if (!QueryUtils.isNullOrEmptyProperty(validDate)) {
+            String validDatebonus = validDate + " 00:00";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.validDate >= :validDate ");
-            params.put("validDate", validDate);
+            params.put("validDate", dateTime);
         }
         if (!QueryUtils.isNullOrEmptyProperty(expiredDate)) {
+            String validDatebonus = validDate + " 23:59";
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.expiredDate <= :expiredDate ");
-            params.put("expiredDate", expiredDate);
+            params.put("expiredDate", dateTime);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
