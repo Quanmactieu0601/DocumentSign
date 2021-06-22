@@ -5,7 +5,7 @@
       "createLabel": "Create a new user",
       "createOrEditLabel": "Create or edit a user",
       "uploadUser": "Upload Users",
-      "upload": "Upload",
+      "uploadP12": "Upload P12",
       "notfound": "No User Found",
       "cancel": "Cancel",
       "exportCSR": "Export CSR"
