@@ -3,7 +3,7 @@
     "transactionReport": {
       "exportPDF": "Xuất file PDF",
       "title": "Thống kê báo cáo",
-      "startDate": "Ngày Bắt đầu",
+      "startDate": "Ngày bắt đầu",
       "endDate": "Ngày kết thúc ",
       "type": "Kiểu",
       "search": "Tìm kiếm",
