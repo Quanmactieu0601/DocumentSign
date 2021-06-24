@@ -23,7 +23,7 @@ public class Bvq11SignatureTemplateParserImpl implements SignatureTemplateParseS
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
                 .replaceFirst("signer", signerName)
-                .replaceFirst("position", T)
+                .replaceFirst("status", T)
                 .replaceFirst("address", address)
                 .replaceFirst("signatureImage", signatureImage)
                 .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
