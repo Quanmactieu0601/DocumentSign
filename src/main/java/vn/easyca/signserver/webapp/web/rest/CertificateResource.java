@@ -15,6 +15,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.factory.CryptoTokenProxy;
+import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
 import vn.easyca.signserver.webapp.enm.*;
@@ -48,6 +50,7 @@ import java.io.*;
 import java.util.Base64;
 import java.util.List;
 import java.io.ByteArrayInputStream;
+import java.util.Optional;
 
 @Scope("request")
 @RestController
@@ -64,12 +67,13 @@ public class CertificateResource extends BaseResource {
     private final SignatureTemplateService signatureTemplateService;
     private final SignatureImageMapper signatureImageMapper;
     private final ExcelUtils excelUtils;
+    private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
     public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
                                SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper,
-                               ExcelUtils excelUtils) {
+                               ExcelUtils excelUtils, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
@@ -79,6 +83,7 @@ public class CertificateResource extends BaseResource {
         this.signatureTemplateService = signatureTemplateService;
         this.signatureImageMapper = signatureImageMapper;
         this.excelUtils = excelUtils;
+        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
     }
 
     @GetMapping()
@@ -420,6 +425,18 @@ public class CertificateResource extends BaseResource {
         } finally {
             asyncTransactionService.newThread("/api/certificate/changeCertPIN", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<BaseResponseVM> getCertificate(String pin, String serial) {
+        try {
+            CertificateDTO certificateDTO = certificateService.getBySerial(serial);
+            CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(cryptoTokenProxy.getBase64Certificate()));
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse("Can not found certificate"));
         }
     }
 }

@@ -14,5 +14,8 @@ import java.util.Optional;
 @Repository
 public interface SignatureTemplateRepository extends JpaRepository<SignatureTemplate, Long>, SignatureTemplateRepositoryCustom {
     Optional<SignatureTemplate> findOneByUserId(Long userId);
+
+    // TODO: lay ban moi nhat hien tai, tuy nhien se sua lai tim theo trang thai active, moi user chi duoc active 1 mau chu ky tai 1 thoi diem
+    Optional<SignatureTemplate> findFirstByUserIdOrderByCreatedDateDesc(Long userId);
     Optional<SignatureTemplate[]> findAllByUserId(Long userId);
 }

@@ -143,7 +143,7 @@ public class CertificateService {
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserId(userEntity.get().getId());
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
         if (!signatureTemplateOptional.isPresent()) {
             throw new ApplicationException("Signature template is not configured");
         }
