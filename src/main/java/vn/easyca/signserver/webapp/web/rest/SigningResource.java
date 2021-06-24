@@ -108,7 +108,29 @@ public class SigningResource extends BaseResource {
         log.info(" --- signHash --- ");
         try {
             SignRequest<String> request = signingVM.getDTO(String.class);
-            Object signingDataResponse = signService.signHash(request);
+            Object signingDataResponse = signService.signHash(request, false);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @PostMapping(value = "/hashWithoutInfo")
+    public ResponseEntity<BaseResponseVM> signHashWithoutInfo(@RequestBody SigningVM<String> signingVM) {
+        log.info(" --- signHash --- ");
+        try {
+            SignRequest<String> request = signingVM.getDTO(String.class);
+            Object signingDataResponse = signService.signHash(request, true);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
         } catch (ApplicationException applicationException) {

@@ -251,3 +251,9 @@ create table user_permission
     constraint user_permission_pk
         unique (user_id, permission_id)
 );
+
+
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'SYMMETRIC_KEY', 'c2RzQHNpZ24yMDIw', 'Khóa mã hóa các dữ liệu đặc biệt', true, 'STRING');
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'SAVE_TOKEN_PASSWORD', '0', 'save p12 PIN and skip authen by PIN (p12)', true, 'BOOLEAN');
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'OTP_LIFE_TIME_SECOND', '120', null, true, 'NUMERIC');
+INSERT INTO system_config (com_id, config_key, config_value, description, activated, data_type) VALUES (1, 'USE_OTP', '0', 'Sử dụng OTP để xác thực mỗi khi ký số (1: có sử dụng | 0: không sử dụng)', true, 'BOOLEAN');

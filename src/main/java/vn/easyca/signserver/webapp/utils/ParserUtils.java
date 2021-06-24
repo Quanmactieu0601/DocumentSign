@@ -53,7 +53,7 @@ public class ParserUtils {
         }
     }
 
-    public static String convertHtmlContentToBase64Resize(String htmlContent, Integer width , Integer height, boolean transparency) throws ApplicationException {
+    public static String convertHtmlContentToBase64Resize(String htmlContent, Integer width, Integer height, boolean transparency) throws ApplicationException {
         //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
         try {
             InputStream htmlStream = new ByteArrayInputStream(htmlContent.getBytes("UTF-8"));
@@ -63,7 +63,7 @@ public class ParserUtils {
             if (transparency) {
                 final java.awt.Color TRANSPARENT = new Color(255, 255, 255, 0);
                 final int imageType = BufferedImage.TYPE_INT_ARGB;
-                renderer = new Java2DRenderer(doc, width, height){
+                renderer = new Java2DRenderer(doc, width, height) {
                     @Override
                     protected BufferedImage createBufferedImage(final int width, final int height) {
                         final BufferedImage image = org.xhtmlrenderer.util.ImageUtil.createCompatibleBufferedImage(width, height, imageType);
@@ -88,7 +88,7 @@ public class ParserUtils {
     }
 
 
-    public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width , Integer height, boolean transparency, Environment env) throws ApplicationException {
+    public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width, Integer height, boolean transparency, Environment env) throws ApplicationException {
         String pathProject = env.getProperty("spring.servlet.multipart.location");
 
         String fileInputUnix = Long.toString(Instant.now().getEpochSecond());
@@ -102,16 +102,32 @@ public class ParserUtils {
             fw.write(content);//appends the string to the file
             fw.close();
 
-//            File inputFile = new File(pathProject + "/" + fileInputHtml);
             String fileInputPath = pathProject + "/" + fileInputHtml;
             String fileOutputPath = pathProject + "/" + fileOutputImage;
-
             CommandLine cmdLine = null;
-            if (transparency) {
-                cmdLine = CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+
+
+//            String os = System.getProperty("os.name");
+//            if (os.startsWith("Windows")) {
+//                cmdLine = transparency ? CommandLine.parse("cmd /c wkhtmltoimage --crop-h " + height +" --crop-w " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+//                                        :CommandLine.parse("cmd /c wkhtmltoimage --crop-h " + height +" --crop-w " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+//            } else {
+//                cmdLine = transparency ? CommandLine.parse("wkhtmltoimage --crop-h " + height +" --crop-w " + width + " --transparent " + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath)
+//                                        :CommandLine.parse("wkhtmltoimage --crop-h " + height +" --crop-w " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+//            }
+
+            String os = System.getProperty("os.name");
+            String prefixCommand = "";
+            if (os.startsWith("Windows")) {
+                prefixCommand = "cmd /c ";
             } else {
-                cmdLine = CommandLine.parse("cmd /c wkhtmltoimage --height " + height +" --width " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
+                prefixCommand = "";
             }
+
+            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
+                prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
+            cmdLine = CommandLine.parse(command);
+
 
             DefaultExecutor executor = new DefaultExecutor();
 

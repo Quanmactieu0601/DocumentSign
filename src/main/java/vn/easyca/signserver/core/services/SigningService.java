@@ -113,7 +113,7 @@ public class SigningService {
         }
     }
 
-    public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request) throws ApplicationException {
+    public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request, boolean withDigestInfo) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
@@ -125,13 +125,13 @@ public class SigningService {
         List<SignResultElement> resultElements = new ArrayList<>();
         List<SignElement<String>> signElements = request.getSignElements();
         RawSigner rawSigner = new RawSigner();
-//        String hashAlgorithm = request.getOptional().getHashAlgorithm();
+        String hashAlgorithm = request.getOptional().getHashAlgorithm();
         for (SignElement<String> signElement : signElements) {
             byte[] hash = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
 //                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
-                signature = rawSigner.signHashWithoutDigestInfo(hash, cryptoTokenProxy.getPrivateKey());
+                signature = !withDigestInfo ? rawSigner.signHashWithoutDigestInfo(hash, cryptoTokenProxy.getPrivateKey()) : rawSigner.signHashWithDigestInfo(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }

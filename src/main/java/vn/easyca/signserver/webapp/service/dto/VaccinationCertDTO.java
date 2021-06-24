@@ -26,6 +26,12 @@ public class VaccinationCertDTO {
     private String serial;
     private String pin;
 
+    /**
+     * 0: VACCINE CERT FILE
+     * 1: PRC TEST FILE
+     */
+    private int fileType;
+
     public String getSerial() {
         return serial;
     }
@@ -50,6 +56,14 @@ public class VaccinationCertDTO {
         confirmContentFile = contentFile;
     }
 
+    public int getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(int fileType) {
+        this.fileType = fileType;
+    }
+
     public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService, Environment env) throws IOException, ApplicationException, BadElementException {
         SigningRequest<VisibleRequestContent> signingRequest = new SigningRequest<>();
         List<VisibleRequestContent> visibleRequestContentList = new ArrayList<VisibleRequestContent>();
@@ -61,14 +75,24 @@ public class VaccinationCertDTO {
         String fullDate = formatter.format(date) + " +07'00'";
         htmlContentImage = htmlContentImage.replace("Time", fullDate);
 
-        String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 718, 295, false, env);
-        visibleRequestContent.setImageSignature(contentImage);
+
 
         Location location = new Location();
-        location.setVisibleHeight(130);
-        location.setVisibleWidth(307);
-        location.setVisibleX(225);
-        location.setVisibleY(110);
+        if (fileType == 0) {
+            String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
+            visibleRequestContent.setImageSignature(contentImage);
+            location.setVisibleX(230);
+            location.setVisibleY(105);
+            location.setVisibleHeight(130);
+            location.setVisibleWidth(305);
+        } else if (fileType == 1) {
+            String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 1200, 410, false, env);
+            visibleRequestContent.setImageSignature(contentImage);
+            location.setVisibleX(180);
+            location.setVisibleY(70);
+            location.setVisibleWidth(395);
+            location.setVisibleHeight(150);
+        }
 
         visibleRequestContent.setLocation(location);
         visibleRequestContent.setExtraInfo(new ExtraInfo());
@@ -86,6 +110,7 @@ public class VaccinationCertDTO {
     }
 
     private String getSignatureImage(FileResourceService fileResourceService) throws ApplicationException, IOException {
-        return new String(IOUtils.toByteArray(fileResourceService.getTemplateFile("/templates/signature/vaccinationCertImageHtml.html")));
+        String signatureImagePath = fileType == 0 ? "/templates/signature/vaccinationCertImageHtml.html" : "/templates/signature/prctest-vaccinationCertImage.html";
+        return new String(IOUtils.toByteArray(fileResourceService.getTemplateFile(signatureImagePath)));
     }
 }
