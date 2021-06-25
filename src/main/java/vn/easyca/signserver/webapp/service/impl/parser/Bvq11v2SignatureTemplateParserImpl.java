@@ -12,9 +12,9 @@ public class Bvq11v2SignatureTemplateParserImpl implements SignatureTemplatePars
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
         try {
-            final String regexT = ", T=([^,]+";
+            final String regexT = ", T=([^,]+)";
             String CN = getSigner(subjectDN);
-            String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
+            String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
             String address = signerInfor[1];
