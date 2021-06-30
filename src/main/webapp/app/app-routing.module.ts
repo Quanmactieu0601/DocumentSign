@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { errorRoute } from './layouts/error/error.route';
-import { DEBUG_INFO_ENABLED } from 'app/app.constants';
-import { Authority } from 'app/shared/constants/authority.constants';
-import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
-import { loginRoute } from 'app/login/login.route';
+import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
+import {errorRoute} from './layouts/error/error.route';
+import {DEBUG_INFO_ENABLED} from 'app/app.constants';
+import {Authority} from 'app/shared/constants/authority.constants';
+import {UserRouteAccessService} from 'app/core/auth/user-route-access-service';
+import {loginRoute} from 'app/login/login.route';
 
 const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
 
@@ -36,6 +36,14 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
+        },
+        {
+          path: 'signing',
+          data: {
+            authorities: [Authority.USER],
+          },
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./signing/signing-routing.module').then(m => m.SigningRoutingModule)
         },
         {
           path: 'account',
