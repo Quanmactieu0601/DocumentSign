@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Resolve, ActivatedRouteSnapshot, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Routes } from '@angular/router';
 import { Observable, of } from 'rxjs';
 
-import { User, IUser } from 'app/core/user/user.model';
+import { IUser, User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { UserManagementComponent } from './user-management.component';
 import { UserManagementDetailComponent } from './user-management-detail.component';
 import { UserManagementUpdateComponent } from './user-management-update.component';
+import { Authority } from 'app/shared/constants/authority.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { UserManagementDeleteDialogComponent } from 'app/admin/user-management/user-management-delete-dialog.component';
 
 @Injectable({ providedIn: 'root' })
 export class UserManagementResolve implements Resolve<IUser> {
@@ -26,8 +29,10 @@ export const userManagementRoute: Routes = [
     path: '',
     component: UserManagementComponent,
     data: {
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       defaultSort: 'id,asc',
     },
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':login/view',
@@ -35,6 +40,7 @@ export const userManagementRoute: Routes = [
     resolve: {
       user: UserManagementResolve,
     },
+    canActivate: [UserRouteAccessService],
   },
   {
     path: 'new',
@@ -42,6 +48,10 @@ export const userManagementRoute: Routes = [
     resolve: {
       user: UserManagementResolve,
     },
+    data: {
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
+    },
+    canActivate: [UserRouteAccessService],
   },
   {
     path: ':login/edit',
@@ -49,5 +59,9 @@ export const userManagementRoute: Routes = [
     resolve: {
       user: UserManagementResolve,
     },
+    data: {
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
+    },
+    canActivate: [UserRouteAccessService],
   },
 ];

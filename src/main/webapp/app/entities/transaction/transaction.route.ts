@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
-import { Observable, of, EMPTY } from 'rxjs';
+import { ActivatedRouteSnapshot, Resolve, Router, Routes } from '@angular/router';
+import { EMPTY, Observable, of } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 
 import { Authority } from 'app/shared/constants/authority.constants';
@@ -40,7 +40,7 @@ export const transactionRoute: Routes = [
     path: '',
     component: TransactionComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       defaultSort: 'a.id,DESC',
       pageTitle: 'webappApp.transaction.home.title',
     },
@@ -53,7 +53,7 @@ export const transactionRoute: Routes = [
       transaction: TransactionResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -65,7 +65,7 @@ export const transactionRoute: Routes = [
       transaction: TransactionResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -77,7 +77,7 @@ export const transactionRoute: Routes = [
       transaction: TransactionResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -89,7 +89,7 @@ export const transactionRoute: Routes = [
       transaction: TransactionResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -99,6 +99,10 @@ export const transactionRoute: Routes = [
     component: TransactionReportComponent,
     resolve: {
       transaction: TransactionResolve,
+    },
+    data: {
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
+      pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
   },

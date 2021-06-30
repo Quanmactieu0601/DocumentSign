@@ -216,6 +216,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
   isSuperAdmin(): boolean {
     return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
   }
+  isAdmin(): boolean {
+    return this.accountService.hasAnyAuthority(Authority.ADMIN);
+  }
 
   changePIN(certificate: ICertificate): void {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
