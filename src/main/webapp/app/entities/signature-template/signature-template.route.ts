@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
-import { Observable, of, EMPTY } from 'rxjs';
+import { ActivatedRouteSnapshot, Resolve, Router, Routes } from '@angular/router';
+import { EMPTY, Observable, of } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 
 import { Authority } from 'app/shared/constants/authority.constants';
@@ -39,7 +39,7 @@ export const signatureTemplateRoute: Routes = [
     path: '',
     component: SignatureTemplateComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'webappApp.signatureTemplate.home.title',
     },
@@ -52,7 +52,7 @@ export const signatureTemplateRoute: Routes = [
       signatureTemplate: SignatureTemplateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.signatureTemplate.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -64,7 +64,7 @@ export const signatureTemplateRoute: Routes = [
       signatureTemplate: SignatureTemplateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.signatureTemplate.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -76,7 +76,7 @@ export const signatureTemplateRoute: Routes = [
       signatureTemplate: SignatureTemplateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.signatureTemplate.home.title',
     },
     canActivate: [UserRouteAccessService],

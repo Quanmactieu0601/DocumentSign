@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { HomeComponent } from 'app/home/home.component';
 import { SigningComponent } from 'app/signing/signing.component';
+import { Authority } from 'app/shared/constants/authority.constants';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
@@ -23,9 +24,6 @@ import { SigningComponent } from 'app/signing/signing.component';
           {
             path: 'user-management',
             loadChildren: () => import('./user-management/user-management.module').then(m => m.UserManagementModule),
-            data: {
-              pageTitle: 'userManagement.home.title',
-            },
           },
           {
             path: 'audits',
@@ -54,6 +52,9 @@ import { SigningComponent } from 'app/signing/signing.component';
           {
             path: 'pdfSigning',
             component: SigningComponent,
+            data: {
+              authorities: [Authority.ADMIN, Authority.SIGN, Authority.USER, Authority.SUPER_ADMIN],
+            },
           },
           /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
         ],

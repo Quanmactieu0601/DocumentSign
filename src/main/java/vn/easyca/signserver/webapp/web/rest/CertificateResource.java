@@ -285,7 +285,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/uploadCert")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- uploadCert ---");
