@@ -15,8 +15,6 @@ import java.util.List;
  */
 @Repository
 public interface AuthorityRepository extends JpaRepository<Authority, String> {
-    @Transactional
-    @Modifying
     @Query(value = "SELECT c.name" +
         " FROM Authority c" +
         " WHERE c.name <> 'ROLE_SUPER_ADMIN'")
