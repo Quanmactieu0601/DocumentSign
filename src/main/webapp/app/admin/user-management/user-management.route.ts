@@ -40,7 +40,6 @@ export const userManagementRoute: Routes = [
     resolve: {
       user: UserManagementResolve,
     },
-    canActivate: [UserRouteAccessService],
   },
   {
     path: 'new',

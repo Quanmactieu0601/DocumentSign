@@ -24,6 +24,9 @@ import { Authority } from 'app/shared/constants/authority.constants';
           {
             path: 'user-management',
             loadChildren: () => import('./user-management/user-management.module').then(m => m.UserManagementModule),
+            data: {
+              pageTitle: 'userManagement.home.title',
+            },
           },
           {
             path: 'audits',
