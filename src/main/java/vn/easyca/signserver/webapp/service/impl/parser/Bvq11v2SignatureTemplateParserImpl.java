@@ -22,10 +22,10 @@ public class Bvq11v2SignatureTemplateParserImpl implements SignatureTemplatePars
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
                 .replaceFirst("_signer_", signerName)
-                .replaceFirst("_position", T)
+                .replaceFirst("_position_", T)
                 .replaceFirst("_address_", address)
                 .replaceFirst("_signatureImage_", signatureImage)
-                .replaceFirst("_timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
             return htmlContent;
         } catch (Exception ex) {
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s -ex: %s", subjectDN, ex.getMessage()), ex);
