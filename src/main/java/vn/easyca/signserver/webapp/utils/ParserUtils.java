@@ -1,6 +1,5 @@
 package vn.easyca.signserver.webapp.utils;
 
-import com.sun.jna.platform.win32.Guid;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 
