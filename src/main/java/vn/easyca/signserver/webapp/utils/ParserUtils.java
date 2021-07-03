@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.utils;
 
+import com.sun.jna.platform.win32.Guid;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 
@@ -88,22 +89,22 @@ public class ParserUtils {
     }
 
 
-    public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width, Integer height, boolean transparency, Environment env) throws IOException {
+    public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width, Integer height, boolean transparency, Environment env) throws ApplicationException {
         String pathProject = env.getProperty("spring.servlet.multipart.location");
 
-        String fileInputUnix = Long.toString(Instant.now().getEpochSecond());
-        String fileInputHtml = fileInputUnix + ".html";
+        String unique = UUID.randomUUID().toString();
+        String fileInputHtml = unique + ".html";
+        String fileOutputImage = unique + ".png";
 
-        String fileOutputUnix = Long.toString(Instant.now().getEpochSecond() + 1);
-        String fileOutputImage = fileOutputUnix + ".png";
-        String content = new String(htmlContent.getBytes());
-        FileWriter fw = new FileWriter(pathProject + "/" + fileInputHtml, true); //the true will append the new data
-        fw.write(content);//appends the string to the file
-        fw.close();
+        try {
+            String content = new String(htmlContent.getBytes());
+            FileWriter fw = new FileWriter(pathProject + "/" + fileInputHtml, true); //the true will append the new data
+            fw.write(content);//appends the string to the file
+            fw.close();
 
-        String fileInputPath = pathProject + "/" + fileInputHtml;
-        String fileOutputPath = pathProject + "/" + fileOutputImage;
-        CommandLine cmdLine = null;
+            String fileInputPath = pathProject + "/" + fileInputHtml;
+            String fileOutputPath = pathProject + "/" + fileOutputImage;
+            CommandLine cmdLine = null;
 
 
 //            String os = System.getProperty("os.name");
@@ -115,31 +116,33 @@ public class ParserUtils {
 //                                        :CommandLine.parse("wkhtmltoimage --crop-h " + height +" --crop-w " + width + " --quality 80 -f png " + fileInputPath + " " + fileOutputPath);
 //            }
 
-        String os = System.getProperty("os.name");
-        String prefixCommand = "";
-        if (os.startsWith("Windows")) {
-            prefixCommand = "cmd /c ";
-        } else {
-            prefixCommand = "";
+            String os = System.getProperty("os.name");
+            String prefixCommand = "";
+            if (os.startsWith("Windows")) {
+                prefixCommand = "cmd /c ";
+            } else {
+                prefixCommand = "";
+            }
+
+            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
+                prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
+            cmdLine = CommandLine.parse(command);
+
+
+            DefaultExecutor executor = new DefaultExecutor();
+
+            // run command line
+            int exitValue = executor.execute(cmdLine);
+            Files.deleteIfExists(Paths.get(fileInputPath));
+
+            // get content image
+            byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
+            String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
+            Files.deleteIfExists(Paths.get(fileOutputPath));
+
+            return imageContentExport;
+        } catch (IOException ioe) {
+            throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
         }
-
-        String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
-            prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
-        cmdLine = CommandLine.parse(command);
-
-
-        DefaultExecutor executor = new DefaultExecutor();
-
-        // run command line
-        int exitValue = executor.execute(cmdLine);
-        Files.deleteIfExists(Paths.get(fileInputPath));
-
-        // get content image
-        byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
-        String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
-        Files.deleteIfExists(Paths.get(fileOutputPath));
-
-        return imageContentExport;
-
     }
 }
