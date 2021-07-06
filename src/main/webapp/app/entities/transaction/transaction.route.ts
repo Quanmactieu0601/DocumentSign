@@ -40,7 +40,7 @@ export const transactionRoute: Routes = [
     path: '',
     component: TransactionComponent,
     data: {
-      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN, Authority.USER],
       defaultSort: 'a.id,DESC',
       pageTitle: 'webappApp.transaction.home.title',
     },
@@ -53,7 +53,7 @@ export const transactionRoute: Routes = [
       transaction: TransactionResolve,
     },
     data: {
-      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN, Authority.USER],
       pageTitle: 'webappApp.transaction.home.title',
     },
     canActivate: [UserRouteAccessService],
