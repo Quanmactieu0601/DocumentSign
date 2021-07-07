@@ -1,8 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
+import org.springframework.core.env.Environment;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
@@ -45,15 +45,16 @@ public class SignatureTemplateResource extends BaseResource {
     private final FileResourceService fileResourceService;
 
     private static final String ENTITY_NAME = "signatureTemplate";
-
+    private final Environment env;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final SignatureTemplateService signatureTemplateService;
 
-    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, SignatureTemplateService signatureTemplateService) {
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, SignatureTemplateService signatureTemplateService) {
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
+        this.env = env;
         this.signatureTemplateService = signatureTemplateService;
     }
 
@@ -179,13 +180,13 @@ public class SignatureTemplateResource extends BaseResource {
             boolean transparency = signatureExampleDTO.isTransparency();
 
             String htmlContent = htmlTemplate
-                .replaceFirst("signer", signer)
-                .replaceFirst("position", "TPDV. ")
-                .replaceFirst("address", "Hà Nội")
-                .replaceFirst("signatureImage", signingImageB64)
-                .replaceFirst("timeSign", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                .replaceFirst("_signer_", signer)
+                .replaceFirst("_position_", "TPDV. ")
+                .replaceFirst("_address_", "Hà Nội")
+                .replaceFirst("_signatureImage_", signingImageB64)
+                .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
 
-            String imageBase64 = ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, transparency);
+            String imageBase64 = ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(imageBase64));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
