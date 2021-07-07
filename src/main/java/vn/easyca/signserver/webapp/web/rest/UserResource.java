@@ -173,28 +173,34 @@ public class UserResource extends BaseResource {
     @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
-        Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
-        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
-            throw new EmailAlreadyUsedException();
-        }
-
-        existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
-        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
-            throw new LoginAlreadyUsedException();
-        }
-
-        if (!Strings.isNullOrEmpty(userDTO.getCurrentPassword())) {
-            if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
+        Optional<UserEntity> existingUser;
+        try {
+            if (userDTO.getEmail().length() > 0) {
+                existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+                if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+                    asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                        TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
+                    throw new EmailAlreadyUsedException();
+                }
+            }
+            existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
+            if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
                 asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                    TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
-                throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
+                    TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
+                throw new LoginAlreadyUsedException();
+            }
+
+            if (!Strings.isNullOrEmpty(userDTO.getCurrentPassword())) {
+                if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
+                    asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                        TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
+                    throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
+                }
             }
         }
-
+        catch (NullPointerException ex) {
+            System.out.println("Exception in NPE1()" + ex);
+        }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());

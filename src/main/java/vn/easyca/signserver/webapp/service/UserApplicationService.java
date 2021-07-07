@@ -303,6 +303,18 @@ public class UserApplicationService {
                 if (userDTO.getEmail() != null) {
                     user.setEmail(userDTO.getEmail().toLowerCase());
                 }
+                try{
+                    if (userDTO.getEmail() != null) {
+                        user.setEmail(userDTO.getEmail().toLowerCase());
+                    }
+                    if (userDTO.getEmail().length() == 0) {
+                        user.setEmail(null);
+                    }
+                }
+                catch (NullPointerException ex) {
+                    System.out.println("Exception in NPE1()" + ex);
+                }
+
                 user.setCommonName(userDTO.getCommonName());
                 user.setOrganizationName(userDTO.getOrganizationName());
                 user.setOrganizationUnit(userDTO.getOrganizationUnit());
