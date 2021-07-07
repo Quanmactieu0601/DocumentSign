@@ -300,9 +300,6 @@ public class UserApplicationService {
                 user.setLogin(userDTO.getLogin().toLowerCase());
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
-                if (userDTO.getEmail() != null) {
-                    user.setEmail(userDTO.getEmail().toLowerCase());
-                }
                 try{
                     if (userDTO.getEmail() != null) {
                         user.setEmail(userDTO.getEmail().toLowerCase());
@@ -314,7 +311,6 @@ public class UserApplicationService {
                 catch (NullPointerException ex) {
                     System.out.println("Exception in NPE1()" + ex);
                 }
-
                 user.setCommonName(userDTO.getCommonName());
                 user.setOrganizationName(userDTO.getOrganizationName());
                 user.setOrganizationUnit(userDTO.getOrganizationUnit());
