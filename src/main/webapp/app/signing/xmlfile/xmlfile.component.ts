@@ -97,7 +97,7 @@ export class XmlfileComponent implements OnInit {
   arrayBufferToBase64(buffer: any): string {
     return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
       .toString()
-      .replace('data:application/xml;base64,', '');
+      .replace('data:application/pdf;base64,', '');
   }
 
   base64ToArrayBuffer(base64: any): ArrayBuffer {
