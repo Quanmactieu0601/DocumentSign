@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { HomeComponent } from 'app/home/home.component';
-import { SigningComponent } from 'app/signing/signing.component';
+import { SigningPdfVisibleComponent } from 'app/signing/signing-pdf-visible/signing-pdf-visible.component';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
@@ -53,7 +53,7 @@ import { SigningComponent } from 'app/signing/signing.component';
           },
           {
             path: 'pdfSigning',
-            component: SigningComponent,
+            component: SigningPdfVisibleComponent,
           },
           /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
         ],
