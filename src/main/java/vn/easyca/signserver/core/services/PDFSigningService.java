@@ -52,6 +52,7 @@ public class PDFSigningService {
             throw new CertificateNotFoundAppException();
         SigningResponse signingResponse = new SigningResponse();
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, tokenInfoDTO.getPin(), otp);
+        String providerName = cryptoTokenProxy.getProviderName();
         PrivateKey privateKey = cryptoTokenProxy.getPrivateKey();
         Certificate x509Certificates = cryptoTokenProxy.getX509Certificate();
         List<SigningResponseContent> responseContentList = new ArrayList<>();
@@ -59,7 +60,7 @@ public class PDFSigningService {
         SigningResponseContent responseContent = null;
         String signatureAlgorithm = optionalDTO.getSignatureAlgorithm();
         for (SigningRequestContent data : dataList) {
-            byte[] pairResult = invisiblePDFSigning.signPdf(data.getData(), "", "", privateKey, new Certificate[] {x509Certificates}, signatureAlgorithm);
+            byte[] pairResult = invisiblePDFSigning.signPdf(data.getData(), "", "", privateKey, new Certificate[] {x509Certificates}, signatureAlgorithm, providerName);
             responseContent = new SigningResponseContent(data.getDocumentName(), null, pairResult);
             responseContentList.add(responseContent);
         }
