@@ -76,6 +76,12 @@ public class SigningService {
             throw new ApplicationException("Chưa có nội dung đẩy lên");
         }
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
+
+        if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
+            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
+            firstContent.setImageSignature(signatureImage);
+        }
+
         try {
             signPDFDto = SignPDFDto.build(
                 PartyMode.SIGN_SERVER,

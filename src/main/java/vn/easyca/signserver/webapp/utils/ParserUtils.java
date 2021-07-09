@@ -91,11 +91,10 @@ public class ParserUtils {
     public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width, Integer height, boolean transparency, Environment env) throws ApplicationException {
         String pathProject = env.getProperty("spring.servlet.multipart.location");
 
-        String fileInputUnix = Long.toString(Instant.now().getEpochSecond());
-        String fileInputHtml = fileInputUnix + ".html";
+        String unique = UUID.randomUUID().toString();
+        String fileInputHtml = unique + ".html";
+        String fileOutputImage = unique + ".png";
 
-        String fileOutputUnix = Long.toString(Instant.now().getEpochSecond() + 1);
-        String fileOutputImage = fileOutputUnix + ".png";
         try {
             String content = new String(htmlContent.getBytes());
             FileWriter fw = new FileWriter(pathProject + "/" + fileInputHtml, true); //the true will append the new data
@@ -142,8 +141,7 @@ public class ParserUtils {
 
             return imageContentExport;
         } catch (IOException ioe) {
-            System.err.println("IOException: " + ioe.getMessage());
-            return null;
+            throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
         }
     }
 }

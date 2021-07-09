@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
@@ -19,12 +19,14 @@ import { ICertificate } from 'app/shared/model/certificate.model';
 export class SigningOfficeInvisibleComponent implements OnInit {
   selectFiles: File[] = [];
   currentFile?: File;
-  listCertificate?: ICertificate[];
+  listCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
   resFile = '';
-  disable = false;
+  serial = '';
+  page = 0;
+  timer: NodeJS.Timeout | undefined;
   editForm = this.fb.group({
     pinCode: [],
     serial: [],
@@ -41,11 +43,45 @@ export class SigningOfficeInvisibleComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.getListCertificate();
+    this.getListCertificate('', 0);
   }
 
-  getListCertificate(): void {
-    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+  getListCertificate(s: string, p: number): void {
+    const data = {
+      page: p,
+      size: 20,
+      sort: ['id,desc'],
+      alias: null,
+      ownerId: this.account?.login,
+      serial: s,
+      validDate: null,
+      expiredDate: null,
+    };
+    if (p === 0) this.listCertificate = [];
+    this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+      this.listCertificate.push(...(res.body || []));
+    });
+  }
+
+  @HostListener('scroll', ['$event'])
+  getMoreCert(e: any): void {
+    if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
+      this.getListCertificate(this.serial, ++this.page);
+    }
+  }
+
+  selectSerial(serial: string): void {
+    this.serial = serial;
+  }
+
+  filter(part: string): void {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => {
+      this.page = 0;
+      this.getListCertificate(part, this.page);
+    }, 1000);
   }
 
   selectFile(event: any): void {
@@ -72,13 +108,15 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         ],
         tokenInfo: {
           pin: this.editForm.get(['pinCode'])!.value,
-          serial: this.editForm.get(['serial'])!.value,
+          // serial: this.editForm.get(['serial'])!.value,
+          serial: this.serial,
         },
         optional: {
           otpCode: '621143',
         },
       };
       this.signingService.signDocInvisible(request).subscribe((res: any) => {
+        if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
         this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
         const byteArray = this.base64ToArrayBuffer(this.resFile);
         saveAs(
