@@ -18,9 +18,9 @@ import java.util.Calendar;
 @Service
 public class InvisiblePDFSigning {
 
-    public byte[] signPdf(byte[] pdfToSign, String name, String reason, PrivateKey privateKey, Certificate[] certificates, String algorithm) throws ApplicationException {
+    public byte[] signPdf(byte[] pdfToSign, String name, String reason, PrivateKey privateKey, Certificate[] certificates, String algorithm, String providerName) throws ApplicationException {
         try {
-            Signature signature = new Signature(privateKey, certificates, algorithm);
+            Signature signature = new Signature(privateKey, certificates, algorithm, providerName);
             //create temporary pdf file
             File pdfFile = File.createTempFile("pdf", "");
             //write bytes to created pdf file

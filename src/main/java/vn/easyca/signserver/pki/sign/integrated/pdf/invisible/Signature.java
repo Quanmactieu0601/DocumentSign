@@ -1,12 +1,14 @@
 package vn.easyca.signserver.pki.sign.integrated.pdf.invisible;
 
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.apache.pdfbox.pdmodel.interactive.digitalsignature.SignatureInterface;
 import org.bouncycastle.cert.jcajce.JcaCertStore;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
+import org.bouncycastle.cms.SignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.jcajce.JcaSignerInfoGeneratorBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -29,11 +31,13 @@ public class Signature implements SignatureInterface {
     private Certificate[] certificateChain;
     private String algorithm;
     private String tsaUrl;
+    private String provider;
 
-    Signature(PrivateKey privateKey, Certificate[] certificateChain, String algorithm) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, CertificateNotYetValidException, CertificateExpiredException {
+    Signature(PrivateKey privateKey, Certificate[] certificateChain, String algorithm, String provider) throws KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, IOException, CertificateNotYetValidException, CertificateExpiredException {
         this.certificateChain = certificateChain;
         this.privateKey = privateKey;
         this.algorithm = algorithm;
+        this.provider = provider;
         Certificate certificate = this.certificateChain[0];
         if (certificate instanceof X509Certificate) {
             ((X509Certificate) certificate).checkValidity();
@@ -44,9 +48,14 @@ public class Signature implements SignatureInterface {
     @Override
     public byte[] sign(InputStream content) throws IOException {
         try {
+
             CMSSignedDataGenerator gen = new CMSSignedDataGenerator();
             X509Certificate cert = (X509Certificate) this.certificateChain[0];
-            ContentSigner sha1Signer = new JcaContentSignerBuilder(algorithm).build(this.privateKey);
+            JcaContentSignerBuilder contentSignerBuilder = new
+                JcaContentSignerBuilder(algorithm);
+            if (StringUtils.isNotBlank(provider))
+                contentSignerBuilder.setProvider(provider);
+            ContentSigner sha1Signer = contentSignerBuilder.build(this.privateKey);
             gen.addSignerInfoGenerator(new JcaSignerInfoGeneratorBuilder(new JcaDigestCalculatorProviderBuilder().build()).build(sha1Signer, cert));
             gen.addCertificates(new JcaCertStore(Arrays.asList(this.certificateChain)));
             CMSProcessableInputStream msg = new CMSProcessableInputStream(content);
