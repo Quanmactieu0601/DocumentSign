@@ -189,6 +189,4 @@ public class SigningService {
         }
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
-
-    
 }
