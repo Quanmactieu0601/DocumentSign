@@ -54,7 +54,7 @@ public class SigningService {
             file.mkdir();
     }
 
-    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException {
+    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException, IOException {
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getTokenInfo().getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
