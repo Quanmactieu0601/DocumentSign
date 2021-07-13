@@ -307,15 +307,17 @@ public class SignPDFLib {
         }
         RandomAccessSource readerSource = reader.getSafeFile().createSourceView();
         InputStream rg = new RASInputStream(new RandomAccessSourceFactory().createRanged(readerSource, gaps));
-        BouncyCastleDigest digest = new BouncyCastleDigest();
-        PdfPKCS7 sgn = new PdfPKCS7(null, chain, this.hashAlg, null, digest, false);
-        byte[] hash = DigestAlgorithms.digest(rg, digest.getMessageDigest(this.hashAlg));
-        byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, getSigningDate(signDate), null, null, CryptoStandard.CMS);
-
-        byte[] toSign = MessageDigest.getInstance("SHA-1").digest(sh);
-
-        result.add(toSign);
-        result.add(hash);
+        try {
+            BouncyCastleDigest digest = new BouncyCastleDigest();
+            PdfPKCS7 sgn = new PdfPKCS7(null, chain, this.hashAlg, null, digest, false);
+            byte[] hash = DigestAlgorithms.digest(rg, digest.getMessageDigest(this.hashAlg));
+            byte[] sh = sgn.getAuthenticatedAttributeBytes(hash, getSigningDate(signDate), null, null, CryptoStandard.CMS);
+            byte[] toSign = MessageDigest.getInstance("SHA-1").digest(sh);
+            result.add(toSign);
+            result.add(hash);
+        } finally {
+            rg.close();
+        }
         return result;
     }
 
