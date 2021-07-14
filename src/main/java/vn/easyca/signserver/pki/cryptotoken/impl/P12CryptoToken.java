@@ -1,6 +1,7 @@
 package vn.easyca.signserver.pki.cryptotoken.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.Certificate;
@@ -52,6 +53,13 @@ public class P12CryptoToken implements CryptoToken {
         try {
             keyStore.load(is, modulePin.toCharArray());
         } catch (Exception e) {
+
+        } finally {
+            try {
+                is.close();
+            } catch (IOException ioe) {
+                throw new InitCryptoTokenException("init error");
+            }
 
         }
         this.ks = keyStore;
