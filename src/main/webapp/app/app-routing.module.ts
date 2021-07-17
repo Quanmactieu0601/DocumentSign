@@ -32,7 +32,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'verify',
           data: {
-            authorities: [Authority.USER, Authority.VERIFY, Authority.SUPER_ADMIN, Authority.SUPER_ADMIN],
+            authorities: [Authority.USER, Authority.VERIFY, Authority.ADMIN, Authority.SUPER_ADMIN],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
