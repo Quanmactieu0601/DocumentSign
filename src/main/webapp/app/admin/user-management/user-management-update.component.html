@@ -29,7 +29,9 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.login">Login</label>
                                             <input type="text" class="form-control form-control-sm" name="login"
-                                                   formControlName="login"/>
+                                                   formControlName="login"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="51"/>
                                             <div
                                                 *ngIf="editForm.get('login')!.invalid && (editForm.get('login')!.dirty || editForm.get('login')!.touched)">
                                                 <small
@@ -76,7 +78,9 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.firstName">First Name</label>
                                             <input type="text" class="form-control form-control-sm" name="firstName"
-                                                   formControlName="firstName"/>
+                                                   formControlName="firstName"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="51"/>
 
                                             <div
                                                 *ngIf="editForm.get('firstName')!.invalid && (editForm.get('firstName')!.dirty || editForm.get('firstName')!.touched)">
@@ -94,7 +98,9 @@
                                             <label jhiTranslate="userManagement.lastName" class="font-weight-bold">Last
                                                 Name</label>
                                             <input type="text" class="form-control form-control-sm" name="lastName"
-                                                   formControlName="lastName"/>
+                                                   formControlName="lastName"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="51"/>
 
                                             <div
                                                 *ngIf="editForm.get('lastName')!.invalid && (editForm.get('lastName')!.dirty || editForm.get('lastName')!.touched)">
@@ -112,7 +118,9 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.email">Email</label>
                                             <input type="email" class="form-control form-control-sm" name="email"
-                                                   formControlName="email"/>
+                                                   formControlName="email"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="101"/>
 
                                             <div
                                                 *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)">
@@ -148,7 +156,9 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.phone">Phone</label>
                                             <input type="text" class="form-control form-control-sm" name="phone"
-                                                   formControlName="phone"/>
+                                                   formControlName="phone"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="51"/>
 
                                             <div
                                                 *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
@@ -249,7 +259,9 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold">New Password</label>
                                             <input type="password" class="form-control form-control-sm" name="password"
-                                                   formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
+                                                   formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="101"/>
 
                                             <div
                                                 *ngIf="editForm.get('password')!.invalid && (editForm.get('password')!.dirty || editForm.get('password')!.touched)">
@@ -285,7 +297,9 @@
                                             <label class="form-control-label font-weight-bold">Confirm
                                                 Password</label>
                                             <input type="password" class="form-control form-control-sm" name="confirmPassword"
-                                                   formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
+                                                   formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"
+                                                   oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
+                                                   maxlength="101"/>
                                             <div
                                                 *ngIf="
                     editForm.get('confirmPassword')!.invalid &&
