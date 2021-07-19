@@ -102,11 +102,11 @@ public abstract class AbstractXmlSignatureService implements SignatureService {
 
     public void postSign(byte[] signatureValue, List<X509Certificate> signingCertificateChain) {
         TemporaryDataStorage temporaryDataStorage = getTemporaryDataStorage();
-        InputStream documentInputStream = temporaryDataStorage.getTempInputStream();
+
 
         String signatureId = (String) temporaryDataStorage.getAttribute("signature-id");
         Document document;
-        try {
+        try (InputStream documentInputStream = temporaryDataStorage.getTempInputStream()) {
             document = loadDocument(documentInputStream);
         } catch (Exception e) {
             throw new RuntimeException("DOM error: " + e.getMessage(), e);

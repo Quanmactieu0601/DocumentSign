@@ -40,14 +40,14 @@ public class OOXMLSignatureAspect implements SignatureAspect {
 
     @Override
     public void preSign(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         addManifestObject(signatureFactory, document, signatureId, references, objects);
 
         addSignatureInfo(signatureFactory, document, signatureId, references, objects);
     }
 
     private void addManifestObject(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         Manifest manifest = constructManifest(signatureFactory, document);
         String objectId = "idPackageObject";
         List objectContent = new LinkedList();
@@ -65,7 +65,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     private Manifest constructManifest(XMLSignatureFactory signatureFactory, Document document)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         List manifestReferences = new LinkedList();
         try {
             addRelationshipsReferences(signatureFactory, document, manifestReferences);
@@ -130,7 +130,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     private void addSignatureInfo(XMLSignatureFactory signatureFactory, Document document, String signatureId, List<Reference> references, List<XMLObject> objects)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         List objectContent = new LinkedList();
 
         Element signatureInfoElement = document.createElementNS("http://schemas.microsoft.com/office/2006/digsig", "SignatureInfoV1");
@@ -165,22 +165,24 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     private void addRelationshipsReferences(XMLSignatureFactory signatureFactory, Document document, List<Reference> manifestReferences)
-            throws IOException, ParserConfigurationException, SAXException, TransformerException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
-        InputStream inputStream = this.signatureService.getOfficeOpenXMLDocumentInputStream();
-        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-        ZipEntry zipEntry;
-        while (null != (zipEntry = zipInputStream.getNextEntry())) {
-            if (false == zipEntry.getName().endsWith(".rels")) {
-                continue;
-            }
-            Document relsDocument = loadDocumentNoClose(zipInputStream);
+        throws IOException, ParserConfigurationException, SAXException, TransformerException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        try (InputStream inputStream = this.signatureService.getOfficeOpenXMLDocumentInputStream();
+             ZipInputStream zipInputStream = new ZipInputStream(inputStream)) {
+            ZipEntry zipEntry;
+            while (null != (zipEntry = zipInputStream.getNextEntry())) {
+                if (false == zipEntry.getName().endsWith(".rels")) {
+                    continue;
+                }
+                Document relsDocument = loadDocumentNoClose(zipInputStream);
 
-            addRelationshipsReference(signatureFactory, document, zipEntry.getName(), relsDocument, manifestReferences);
+                addRelationshipsReference(signatureFactory, document, zipEntry.getName(), relsDocument, manifestReferences);
+            }
         }
+
     }
 
     private void addRelationshipsReference(XMLSignatureFactory signatureFactory, Document document, String zipEntryName, Document relsDocument, List<Reference> manifestReferences)
-            throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+        throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         RelationshipTransformParameterSpec parameterSpec = new RelationshipTransformParameterSpec();
 
         NodeList nodeList = relsDocument.getDocumentElement().getChildNodes();
@@ -243,36 +245,36 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     private List<String> getResourceNames(InputStream inputStream, String contentType)
-            throws IOException, ParserConfigurationException, SAXException, TransformerException {
-         List<String> signatureResourceNames = new LinkedList<String>();
-		ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-		ZipEntry zipEntry;
-		while (null != (zipEntry = zipInputStream.getNextEntry())) {
-			if (false == "[Content_Types].xml".equals(zipEntry.getName())) {
-				continue;
-			}
-			Document contentTypesDocument = loadDocument(zipInputStream);
-			Element nsElement = contentTypesDocument.createElement("ns");
-			nsElement
-					.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tns",
-							"http://schemas.openxmlformats.org/package/2006/content-types");
-			NodeList nodeList = XPathAPI.selectNodeList(contentTypesDocument,
-					"/tns:Types/tns:Override[@ContentType='" + contentType
-							+ "']/@PartName", nsElement);
-			for (int nodeIdx = 0; nodeIdx < nodeList.getLength(); nodeIdx++) {
-				String partName = nodeList.item(nodeIdx).getTextContent();
+        throws IOException, ParserConfigurationException, SAXException, TransformerException {
+        List<String> signatureResourceNames = new LinkedList<String>();
+        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+        ZipEntry zipEntry;
+        while (null != (zipEntry = zipInputStream.getNextEntry())) {
+            if (false == "[Content_Types].xml".equals(zipEntry.getName())) {
+                continue;
+            }
+            Document contentTypesDocument = loadDocument(zipInputStream);
+            Element nsElement = contentTypesDocument.createElement("ns");
+            nsElement
+                .setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:tns",
+                    "http://schemas.openxmlformats.org/package/2006/content-types");
+            NodeList nodeList = XPathAPI.selectNodeList(contentTypesDocument,
+                "/tns:Types/tns:Override[@ContentType='" + contentType
+                    + "']/@PartName", nsElement);
+            for (int nodeIdx = 0; nodeIdx < nodeList.getLength(); nodeIdx++) {
+                String partName = nodeList.item(nodeIdx).getTextContent();
 
-				partName = partName.substring(1); // remove '/'
-				signatureResourceNames.add(partName);
-			}
-			break;
-		}
-		return signatureResourceNames;
+                partName = partName.substring(1); // remove '/'
+                signatureResourceNames.add(partName);
+            }
+            break;
+        }
+        return signatureResourceNames;
 
     }
 
     protected Document loadDocument(String zipEntryName)
-            throws IOException, ParserConfigurationException, SAXException {
+        throws IOException, ParserConfigurationException, SAXException {
         Document document = findDocument(zipEntryName);
         if (null != document) {
             return document;
@@ -281,22 +283,23 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     protected Document findDocument(String zipEntryName)
-            throws IOException, ParserConfigurationException, SAXException {
-        InputStream inputStream = this.signatureService.getOfficeOpenXMLDocumentInputStream();
-        ZipInputStream zipInputStream = new ZipInputStream(inputStream);
-        ZipEntry zipEntry;
-        while (null != (zipEntry = zipInputStream.getNextEntry())) {
-            if (false == zipEntryName.equals(zipEntry.getName())) {
-                continue;
+        throws IOException, ParserConfigurationException, SAXException {
+        try (InputStream inputStream = this.signatureService.getOfficeOpenXMLDocumentInputStream()) {
+            ZipInputStream zipInputStream = new ZipInputStream(inputStream);
+            ZipEntry zipEntry;
+            while (null != (zipEntry = zipInputStream.getNextEntry())) {
+                if (false == zipEntryName.equals(zipEntry.getName())) {
+                    continue;
+                }
+                Document document = loadDocument(zipInputStream);
+                return document;
             }
-            Document document = loadDocument(zipInputStream);
-            return document;
         }
         return null;
     }
 
     private Document loadDocumentNoClose(InputStream documentInputStream)
-            throws ParserConfigurationException, SAXException, IOException {
+        throws ParserConfigurationException, SAXException, IOException {
         NoCloseInputStream noCloseInputStream = new NoCloseInputStream(documentInputStream);
         InputSource inputSource = new InputSource(noCloseInputStream);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -308,7 +311,7 @@ public class OOXMLSignatureAspect implements SignatureAspect {
     }
 
     private Document loadDocument(InputStream documentInputStream)
-            throws ParserConfigurationException, SAXException, IOException {
+        throws ParserConfigurationException, SAXException, IOException {
         InputSource inputSource = new InputSource(documentInputStream);
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setNamespaceAware(true);

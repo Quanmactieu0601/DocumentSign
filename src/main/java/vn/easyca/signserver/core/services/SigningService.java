@@ -28,9 +28,7 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -109,13 +107,22 @@ public class SigningService {
         signPDFDto.setVisibleY(location.getVisibleY());
         signPDFDto.setSignatureImage(firstContent.getImageSignature());
         signPDFDto.setPageNumber(firstContent.getExtraInfo().getPageNum());
+
+        InputStream fileInputStream = null;
         try {
             signPDFPlugin.sign(signPDFDto);
-            byte[] res = IOUtils.toByteArray(new FileInputStream(temFilePath));
+            fileInputStream = new FileInputStream(temFilePath);
+            byte[] res = IOUtils.toByteArray(fileInputStream);
             file.delete();
             return new PDFSigningDataRes(res);
         } catch (Exception exception) {
             throw new SigningAppException("Sign PDF occurs error", exception);
+        } finally {
+            try {
+                fileInputStream.close();
+            } catch (IOException ioe) {
+                throw new ApplicationException("Read file temp error", ioe);
+            }
         }
     }
 
@@ -190,5 +197,5 @@ public class SigningService {
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 
-    
+
 }
