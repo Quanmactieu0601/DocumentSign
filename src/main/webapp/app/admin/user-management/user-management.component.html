@@ -133,8 +133,8 @@
                         <input type="checkbox" name="checkboxElement" (change)="changeSelect(this.$event)"
                                value="{{ user.id }}"/>
                     </td>
-                    <td class="custom-left-align">{{ user.login }}</td>
-                    <td class="custom-left-align">{{ user.firstName }} {{user.lastName}}</td>
+                    <td class="custom-left-align align-middle">{{ user.login }}</td>
+                    <td class="custom-left-align align-middle">{{ user.firstName }} {{user.lastName}}</td>
 
                     <td class="custom-middle-align">
                         <fa-icon icon="check-circle" *ngIf="user.activated" class="green"></fa-icon>
