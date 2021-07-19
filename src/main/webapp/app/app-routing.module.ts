@@ -16,7 +16,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'admin',
           data: {
-            authorities: [Authority.ADMIN],
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.SIGN, Authority.USER],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./admin/admin-routing.module').then(m => m.AdminRoutingModule),
@@ -25,7 +25,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'home',
           data: {
-            authorities: [Authority.USER, Authority.ADMIN],
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.USER, Authority.VERIFY, Authority.SIGN],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./entities/entity.module').then(m => m.WebappEntityModule),
@@ -33,7 +33,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'verify',
           data: {
-            authorities: [Authority.USER],
+            authorities: [Authority.USER, Authority.VERIFY, Authority.ADMIN, Authority.SUPER_ADMIN],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),

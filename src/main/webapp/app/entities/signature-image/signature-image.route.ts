@@ -39,7 +39,7 @@ export const signatureImageRoute: Routes = [
     path: '',
     component: SignatureImageComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.SUPER_ADMIN, Authority.ADMIN],
       defaultSort: 'id,asc',
       pageTitle: 'webappApp.signatureImage.home.title',
     },
@@ -52,7 +52,7 @@ export const signatureImageRoute: Routes = [
       signatureImage: SignatureImageResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.SUPER_ADMIN, Authority.ADMIN],
       pageTitle: 'webappApp.signatureImage.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -64,7 +64,7 @@ export const signatureImageRoute: Routes = [
       signatureImage: SignatureImageResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.SUPER_ADMIN, Authority.ADMIN],
       pageTitle: 'webappApp.signatureImage.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -76,7 +76,7 @@ export const signatureImageRoute: Routes = [
       signatureImage: SignatureImageResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.SUPER_ADMIN, Authority.ADMIN],
       pageTitle: 'webappApp.signatureImage.home.title',
     },
     canActivate: [UserRouteAccessService],

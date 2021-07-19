@@ -4,6 +4,7 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
 import { HomeComponent } from 'app/home/home.component';
 import { SigningComponent } from 'app/signing/signing.component';
 import { SignRawComponent } from 'app/signing/sign-raw/sign-raw.component';
+import { Authority } from 'app/shared/constants/authority.constants';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
@@ -55,6 +56,9 @@ import { SignRawComponent } from 'app/signing/sign-raw/sign-raw.component';
           {
             path: 'pdfSigning',
             component: SigningComponent,
+            data: {
+              authorities: [Authority.ADMIN, Authority.SIGN, Authority.USER, Authority.SUPER_ADMIN],
+            },
           },
           {
             path: 'rawSigning',

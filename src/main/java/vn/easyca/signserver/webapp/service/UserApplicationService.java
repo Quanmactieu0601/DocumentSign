@@ -300,8 +300,16 @@ public class UserApplicationService {
                 user.setLogin(userDTO.getLogin().toLowerCase());
                 user.setFirstName(userDTO.getFirstName());
                 user.setLastName(userDTO.getLastName());
-                if (userDTO.getEmail() != null) {
-                    user.setEmail(userDTO.getEmail().toLowerCase());
+                try{
+                    if (userDTO.getEmail() != null) {
+                        user.setEmail(userDTO.getEmail().toLowerCase());
+                    }
+                    if (userDTO.getEmail().length() == 0) {
+                        user.setEmail(null);
+                    }
+                }
+                catch (NullPointerException ex) {
+                    System.out.println("Exception in NPE1()" + ex);
                 }
                 user.setCommonName(userDTO.getCommonName());
                 user.setOrganizationName(userDTO.getOrganizationName());
@@ -436,7 +444,7 @@ public class UserApplicationService {
      */
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
-        return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+        return authorityRepository.getAuthoritiesName();
     }
 
 

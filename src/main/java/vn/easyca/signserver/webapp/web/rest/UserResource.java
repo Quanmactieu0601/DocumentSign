@@ -111,7 +111,7 @@ public class UserResource extends BaseResource {
      * @throws BadRequestAlertException {@code 400 (Bad Request)} if the login or email is already in use.
      */
     @PostMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<UserEntity> createUser(@Valid @RequestBody UserDTO userDTO) throws URISyntaxException {
         log.debug("REST request to save User : {}", userDTO);
         if (userDTO.getId() != null) {
@@ -139,7 +139,7 @@ public class UserResource extends BaseResource {
     }
 
     @PostMapping("users/uploadUser")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> uploadUser(@RequestParam("file") MultipartFile file) {
         try {
             List<UserDTO> userDTOList = ExcelUtils.convertExcelToUserDTO(file.getInputStream());
@@ -170,31 +170,37 @@ public class UserResource extends BaseResource {
      * @throws LoginAlreadyUsedException {@code 400 (Bad Request)} if the login is already in use.
      */
     @PutMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
-        Optional<UserEntity> existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
-        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
-            throw new EmailAlreadyUsedException();
-        }
-
-        existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
-        if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
-            asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
-            throw new LoginAlreadyUsedException();
-        }
-
-        if (!Strings.isNullOrEmpty(userDTO.getCurrentPassword())) {
-            if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
+        Optional<UserEntity> existingUser;
+        try {
+            if (userDTO.getEmail().length() > 0) {
+                existingUser = userRepository.findOneByEmailIgnoreCase(userDTO.getEmail());
+                if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
+                    asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                        TransactionStatus.FAIL, "Email Already Used", AccountUtils.getLoggedAccount());
+                    throw new EmailAlreadyUsedException();
+                }
+            }
+            existingUser = userRepository.findOneByLogin(userDTO.getLogin().toLowerCase());
+            if (existingUser.isPresent() && (!existingUser.get().getId().equals(userDTO.getId()))) {
                 asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
-                    TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
-                throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
+                    TransactionStatus.FAIL, "Login Already Used", AccountUtils.getLoggedAccount());
+                throw new LoginAlreadyUsedException();
+            }
+
+            if (!Strings.isNullOrEmpty(userDTO.getCurrentPassword())) {
+                if (!passwordEncoder.matches(userDTO.getCurrentPassword(), existingUser.get().getPassword())) {
+                    asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
+                        TransactionStatus.FAIL, "Current Password does not match", AccountUtils.getLoggedAccount());
+                    throw new BadRequestAlertException("Current Password does not match", "user", "currentPassNotMatch");
+                }
             }
         }
-
+        catch (NullPointerException ex) {
+            System.out.println("Exception in NPE1()" + ex);
+        }
         Optional<UserDTO> updatedUser = userApplicationService.updateUser(userDTO);
         asyncTransactionService.newThread("/api/users", TransactionType.SYSTEM, Action.CREATE, Extension.NONE, Method.PUT,
             TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
@@ -218,7 +224,7 @@ public class UserResource extends BaseResource {
 
 
     @GetMapping("users/templateFile")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
         try {
             InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx");
@@ -242,7 +248,7 @@ public class UserResource extends BaseResource {
      * @return a string list of all roles.
      */
     @GetMapping("/users/authorities")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public List<String> getAuthorities() {
         return userApplicationService.getAuthorities();
     }
@@ -277,7 +283,7 @@ public class UserResource extends BaseResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userApplicationService.deleteUser(login);
