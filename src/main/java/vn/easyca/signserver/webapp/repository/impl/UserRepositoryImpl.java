@@ -30,31 +30,31 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         sqlBuilder.append(" WHERE 1 = 1 ");
         if (!QueryUtils.isNullOrEmptyProperty(account)) {
             sqlBuilder.append("AND a.login like :login ");
-            params.put("login", "%" + account + "%");
+            params.put("login", "%" + account.trim() + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(name)) {
-            sqlBuilder.append("AND concat(a.firstName, a.lastName) like :name ");
-            params.put("name", "%" + name + "%");
+            sqlBuilder.append("AND concat(a.firstName, ' ', a.lastName) like :name ");
+            params.put("name", "%" + name.trim() + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(email)) {
             sqlBuilder.append("AND a.email like :email ");
-            params.put("email",  email );
+            params.put("email",  email.trim() );
         }
         if (!QueryUtils.isNullOrEmptyProperty(ownerId)) {
             sqlBuilder.append("AND a.ownerId like :ownerId ");
-            params.put("ownerId", "%" + ownerId + "%");
+            params.put("ownerId", "%" + ownerId.trim() + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(commonName)) {
             sqlBuilder.append("AND a.commonName like :commonName ");
-            params.put("commonName", "%" + commonName + "%");
+            params.put("commonName", "%" + commonName.trim() + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(country)) {
             sqlBuilder.append("AND a.country like :country ");
-            params.put("country", "%" + country + "%");
+            params.put("country", "%" + country.trim() + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(phone)) {
             sqlBuilder.append("AND a.phone like :phone ");
-            params.put("phone", "%" + phone + "%");
+            params.put("phone", "%" + phone.trim() + "%");
         }
         if (activated) {
             sqlBuilder.append("And a.activated = true ");
