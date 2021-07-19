@@ -103,6 +103,19 @@ public class SignatureVerificationService {
             currentStatus = CertStatus.INVALID;
         }
         RevocationStatus revocationStatus = RevocationStatus.UNCHECKED;
+        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+        ks.load(null, null);
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
+        ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
+        OCSP.RevocationStatus revoStatus =  OCSP.check(x509Certificate, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(x509Certificate)), null, null);
+        if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
+            revocationStatus = RevocationStatus.REVOKED;
+        else if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
+            revocationStatus = RevocationStatus.GOOD;
+        else if(revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
+            revocationStatus = RevocationStatus.CANT_VERIFY;
+
 
         CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
         certificateVfDTO.setIssuer(issuer);

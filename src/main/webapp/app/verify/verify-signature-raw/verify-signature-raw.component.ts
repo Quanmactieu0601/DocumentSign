@@ -68,7 +68,7 @@ export class VerifySignatureRawComponent implements OnInit {
         {
           ...new ElementVM(),
           base64Signature: this.editForm.get(['base64Signature'])!.value,
-          base64OriginalData: btoa(this.editForm.get(['base64OriginalData'])!.value),
+          base64OriginalData: btoa(unescape(encodeURIComponent(this.editForm.get(['base64OriginalData'])!.value))),
           key: '123',
         },
       ],
