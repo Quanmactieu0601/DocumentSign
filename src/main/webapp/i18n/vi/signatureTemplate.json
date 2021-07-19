@@ -3,7 +3,7 @@
     "signatureTemplate": {
       "home": {
         "title": "Danh sách mẫu chữ ký",
-        "createLabel": "Thêm mới một mẫu chứ ký",
+        "createLabel": "Thêm mới mẫu chứ ký",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Signature Template",
         "notFound": "No Signature Templates found"
       },
