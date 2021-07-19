@@ -1,0 +1,57 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span>Ký số</span>&nbsp;<span> Raw</span>
+    </li>
+</ol>
+
+<!--Nhập thông tin ký sô-->
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup ">
+            <form class="form" name="signingForm" [formGroup]="signingForm">
+                <!--  serial-->
+                    <div  class="form-group">
+                        <label  class="form-control-label">
+                            <span jhitranslate="webappApp.certificate.alias"ng-reflect-jhi-translate="webappApp.certificate.alias">
+                                Serial
+                            </span>
+                        </label>
+                        <input  type="text" name="serial" formControlName="serial"
+                               class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
+                               ng-reflect-name="alias">
+                    </div>
+                <!-- pinCode-->
+
+                    <div  class="form-group">
+                        <label  class="form-control-label">
+                            <span jhitranslate="webappApp.certificate.ownerId"  ng-reflect-jhi-translate="webappApp.certificate.ownerId">
+                                Pin
+                            </span>
+                        </label>
+                        <input  type="password" name="pin" formControlName="pin"
+                               class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
+                               ng-reflect-name="ownerId">
+                    </div>
+            </form>
+                    <div  class="" >
+                        <label  for="base64OriginalData" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label " ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Nội dung cần ký số</label>
+                        <textarea   type="text" id="base64OriginalData" name="base64OriginalData" formcontrolname="base64OriginalData" class="  form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64OriginalData" [(ngModel)]="textToSign" ></textarea>
+                    </div>
+
+
+            <div  class="row justify-content-center align-items-center padding-top">
+                <label   type="button" jhitranslate="webappApp.signatureVerify.originalData"
+                       class="signbt justify-content-center align-items-center  "  ng-reflect-jhi-translate="webappApp.signatureVerify.orig"
+                        (click)="signRaw()">
+                    Ký số
+                </label>
+            </div>
+            <div  class="" *ngIf="!hide"   >
+                <label  for="base64Signature" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label " ng-reflect-jhi-translate="webappApp.signatureVerify.orig">Kết quả</label>
+                <textarea  type="" id="base64Signature" name="base64Signature" formcontrolname="base64Signature" class=" form-control ng-untouched ng-pristine ng-valid" ng-reflect-name="base64Signature">{{textResult}}</textarea>
+            </div>
+
+        </div>
+    </div>
+</div>

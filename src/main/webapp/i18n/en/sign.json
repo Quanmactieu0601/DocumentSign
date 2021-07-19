@@ -2,29 +2,31 @@
   "sign": {
     "title": "Sign",
     "pdf": {
-      "signFile": "Sign",
-      "cancel": "Cancel",
-      "next": "Next",
-      "searchContent": "Search content",
-      "setSignatureInPage": "Set signature in page",
-      "position": "Signing position",
-      "validateSignature": "Validate Signature",
-      "chooseSignatureTemplate": "Choose signature template",
-      "choose": "Select"
+      "signFile": "Ký điện tử",
+      "cancel": "Hủy",
+      "next": "Tiếp theo",
+      "searchContent": "Tìm kiếm nội dung",
+      "setSignatureInPage": "Đặt chữ ký tại trang",
+      "position": "Vị trí ký",
+      "validateSignature": "Kiểm tra ảnh chữ ký",
+      "chooseSignatureTemplate": "Chọn mẫu chữ ký",
+      "choose": "Chọn"
     },
-    "signatureImage": "Signature Image",
-    "dragAndDrop": "Drag or drop pdf file for signing",
+    "signatureImage": "Ảnh chữ ký",
+    "dragAndDrop": "Kéo thả file pdf cần ký vào đây hoặc click để chọn",
     "messages": {
+      "signingFail": "Ký lỗi.",
+      "signingSuccessful": "Ký thành công.",
       "validate": {
-        "validated": "Your signature is validated",
+        "validated": "Chữ ký số hợp lệ",
         "serial": {
-          "required": "Your serial is required."
+          "required": "Mời bạn nhập serial."
         },
         "pin": {
-          "required": "Your pin is required."
+          "required": "Mời bạn nhập mã pin."
         },
         "signatureTemplate": {
-          "required": "Your template is required."
+          "required": "Mời bạn chọn mẫu chữ ký."
         }
       }
     }

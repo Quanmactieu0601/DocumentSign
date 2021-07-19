@@ -5,7 +5,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { VerifySignatureService } from 'app/verify/verify-signature.service';
 import { ISignatureVfVM, SignatureVfVM } from 'app/shared/model/signatureVfVM.model';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { ElementVM, IElementVM } from 'app/shared/model/elementVM.model';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
