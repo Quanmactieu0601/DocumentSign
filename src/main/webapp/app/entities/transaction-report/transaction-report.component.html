@@ -13,7 +13,7 @@
                             jhiTranslate="webappApp.transactionReport.startDate">Start Date</span></label>
                         <input type="datetime-local" class="form-control form-control-sm"
                                name="startDate"
-                               formControlName="startDate">
+                               formControlName="startDate" [(ngModel)]="date">
                     </div>
                 </div>
                 <div class="col">
@@ -21,7 +21,7 @@
                         <label class="form-control-label"><span
                             jhiTranslate="webappApp.transactionReport.endDate">End Date</span></label>
                         <input type="datetime-local" class="form-control form-control-sm" name="endDate"
-                               formControlName="endDate">
+                               formControlName="endDate"  min='{{date}}'>
                     </div>
                 </div>
                 <div class="col">
