@@ -223,7 +223,7 @@
                                     <div class="row">
                                         <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">Current Password</label>
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.currentPassword">Current Password</label>
                                             <input type="password" class="form-control form-control-sm" name="currentPassword"
                                                    formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
                                             <div
@@ -257,7 +257,7 @@
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">New Password</label>
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
                                             <input type="password" class="form-control form-control-sm" name="password"
                                                    formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"
                                                    oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)"
@@ -294,7 +294,7 @@
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">Confirm
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.confirmPassword">Confirm
                                                 Password</label>
                                             <input type="password" class="form-control form-control-sm" name="confirmPassword"
                                                    formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"
