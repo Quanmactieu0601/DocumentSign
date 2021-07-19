@@ -24,7 +24,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'home',
           data: {
-            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.USER],
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.USER, Authority.VERIFY, Authority.SIGN],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./entities/entity.module').then(m => m.WebappEntityModule),
