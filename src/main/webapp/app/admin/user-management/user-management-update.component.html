@@ -629,6 +629,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-10 form-check form-group">
+                                            <div id="divCheckAll"><input style="font-weight: bold;" type="checkbox" name="checkall" onclick="for(c in document.getElementsByName('checkboxElement')) document.getElementsByName('checkboxElement').item(c).checked = this.checked"> Select All</div><hr>
                                             <div class="form-check-label"
                                                  *ngFor="let authority of authorities"
                                             >
