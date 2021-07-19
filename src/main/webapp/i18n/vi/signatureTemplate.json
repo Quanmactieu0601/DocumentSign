@@ -63,7 +63,7 @@
         "validTo": "Có hiệu lực đến",
         "revocationStatus": "Trạng thái thu hồi",
         "currentStatus": "Trạng thái chữ kí thời điểm hiện tại",
-        "signtimeStatus": "Trạng thái chứ kí thời điểm kí",
+        "signtimeStatus": "Trạng thái chữ kí thời điểm kí",
         "revocationStatus": {
           "title": "Trạng thái thu hồi",
           "UNCHECKED": "Không kiểm tra",
@@ -78,7 +78,7 @@
           "INVALID": "Không hợp lệ"
         },
         "signtimeStatus": {
-          "title": "Trạng thái chứ kí thời điểm kí",
+          "title": "Trạng thái chữ kí thời điểm kí",
           "VALID": "Hợp lệ",
           "EXPIRED": "Đã hết hạn",
           "INVALID": "Không hợp lệ"
