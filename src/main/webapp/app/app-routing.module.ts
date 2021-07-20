@@ -35,7 +35,15 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
             authorities: [Authority.USER, Authority.VERIFY, Authority.ADMIN, Authority.SUPER_ADMIN],
           },
           canActivate: [UserRouteAccessService],
-          loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
+          loadChildren: () => import('./verify/verify.module').then(m => m.VerifyModule),
+        },
+        {
+          path: 'signing',
+          // data: {
+          //   authorities: [Authority.USER],
+          // },
+          canActivate: [UserRouteAccessService],
+          loadChildren: () => import('./signing/signing.module').then(m => m.SigningModule),
         },
         {
           path: 'account',

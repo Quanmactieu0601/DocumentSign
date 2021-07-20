@@ -1,5 +1,6 @@
 {
   "sign": {
+    "title": "Sign",
     "pdf": {
       "signFile": "Sign",
       "cancel": "Cancel",

@@ -6,7 +6,7 @@ import { SERVER_API_URL } from 'app/app.constants';
 import { ISignatureVfVM } from 'app/shared/model/signatureVfVM.model';
 
 @Injectable({ providedIn: 'root' })
-export class VerifySignatureService {
+export class VerifyService {
   public resourceUrl = SERVER_API_URL + 'api/verification';
 
   constructor(protected http: HttpClient) {}

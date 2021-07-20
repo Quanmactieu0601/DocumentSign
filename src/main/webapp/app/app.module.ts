@@ -15,15 +15,14 @@ import { ToastrModule } from 'ngx-toastr';
 import { LoginComponent } from './login/login.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
-import { PdfViewComponent } from 'app/signing/pdf-view/pdf-view.component';
+import { PdfViewComponent } from 'app/signing/signing-pdf-visible/pdf-view/pdf-view.component';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { SigningComponent } from './signing/signing.component';
+import { SigningPdfVisibleComponent } from './signing/signing-pdf-visible/signing-pdf-visible.component';
 import { ArchwizardModule } from 'angular-archwizard';
-import { VerifySignatureDocModule } from 'app/verify/verify-signature-doc/verify-signature-doc.module';
-import { UploadDocComponent } from './signing/upload-doc/upload-doc.component';
-import { SignatureListComponent } from './signing/pdf-view/signature-list/signature-list.component';
-import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
+import { UploadDocComponent } from './signing/signing-pdf-visible/upload-doc/upload-doc.component';
+import { SignatureListComponent } from './signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
+import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signature-image-view/signature-image-view.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -40,19 +39,8 @@ import { SignatureImageViewComponent } from './signing/signature-image-view/sign
     ArchwizardModule,
     ToastrModule.forRoot(),
     PdfViewerModule,
-    VerifySignatureDocModule,
   ],
-  declarations: [
-    MainComponent,
-    ErrorComponent,
-    LoginComponent,
-    HomeLayoutComponent,
-    PdfViewComponent,
-    SigningComponent,
-    UploadDocComponent,
-    SignatureListComponent,
-    SignatureImageViewComponent,
-  ],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}

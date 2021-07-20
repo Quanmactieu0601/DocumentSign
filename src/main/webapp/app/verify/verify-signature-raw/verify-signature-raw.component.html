@@ -19,7 +19,6 @@
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="field_serial" jhiTranslate="webappApp.signatureVerify.serial">Serial</label>
-<!--                    <input type="text" class="form-control" id="field_serial" name="serial" formControlName="serial"/>-->
                     <select class="form-control" id="field_serial" name="serial" formControlName="serial" size="1">
                         <option class="form-control" jhiTranslate="webappApp.signatureVerify.serial" selected>Serial</option>
                         <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
