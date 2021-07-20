@@ -17,16 +17,25 @@
     "messages": {
       "signingFail": "Ký lỗi.",
       "signingSuccessful": "Ký thành công.",
-      "validate": {
-        "validated": "Chữ ký số hợp lệ",
-        "serial": {
-          "required": "Mời bạn nhập serial."
-        },
-        "pin": {
-          "required": "Mời bạn nhập mã pin."
-        },
-        "signatureTemplate": {
-          "required": "Mời bạn chọn mẫu chữ ký."
+
+      "signXml": "Sign XML File",
+      "dragAndDropXML": "Drag or drop xml file for signing",
+      "signatureImage": "Signature Image",
+      "dragAndDrop": "Drag or drop pdf file for signing",
+      "messages": {
+        "signingFail": "Signing fail.",
+        "signingSuccessful": "Signing Successful.",
+        "validate": {
+          "validated": "Chữ ký số hợp lệ",
+          "serial": {
+            "required": "Mời bạn nhập serial."
+          },
+          "pin": {
+            "required": "Mời bạn nhập mã pin."
+          },
+          "signatureTemplate": {
+            "required": "Mời bạn chọn mẫu chữ ký."
+          }
         }
       }
     }

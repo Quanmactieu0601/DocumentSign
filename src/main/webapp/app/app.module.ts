@@ -26,7 +26,7 @@ import { SignatureListComponent } from './signing/pdf-view/signature-list/signat
 import { SignatureImageViewComponent } from './signing/signature-image-view/signature-image-view.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { SignRawComponent } from './signing/sign-raw/sign-raw.component';
-
+import { XmlfileComponent } from './signing/xmlfile/xmlfile.component';
 @NgModule({
   imports: [
     BrowserModule,
@@ -56,6 +56,7 @@ import { SignRawComponent } from './signing/sign-raw/sign-raw.component';
     SignatureListComponent,
     SignatureImageViewComponent,
     SignRawComponent,
+    XmlfileComponent,
   ],
   bootstrap: [MainComponent],
   providers: [NgbActiveModal],

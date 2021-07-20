@@ -5,6 +5,7 @@ import { HomeComponent } from 'app/home/home.component';
 import { SigningComponent } from 'app/signing/signing.component';
 import { SignRawComponent } from 'app/signing/sign-raw/sign-raw.component';
 import { Authority } from 'app/shared/constants/authority.constants';
+import { XmlfileComponent } from 'app/signing/xmlfile/xmlfile.component';
 
 /* jhipster-needle-add-admin-module-import - JHipster will add admin modules imports here */
 
@@ -63,6 +64,10 @@ import { Authority } from 'app/shared/constants/authority.constants';
           {
             path: 'rawSigning',
             component: SignRawComponent,
+          },
+          {
+            path: 'xmlSigning',
+            component: XmlfileComponent,
           },
           /* jhipster-needle-add-admin-route - JHipster will add admin routes here */
         ],
