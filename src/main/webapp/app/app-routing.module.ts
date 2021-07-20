@@ -39,9 +39,9 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         },
         {
           path: 'signing',
-          // data: {
-          //   authorities: [Authority.USER],
-          // },
+          data: {
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.SIGN, Authority.USER],
+          },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./signing/signing.module').then(m => m.SigningModule),
         },
