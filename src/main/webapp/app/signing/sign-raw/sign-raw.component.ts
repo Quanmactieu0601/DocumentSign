@@ -3,7 +3,7 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { Subscription } from 'rxjs';
@@ -22,11 +22,13 @@ export class SignRawComponent implements OnInit {
   authSubscription?: Subscription;
   account: Account | null = null;
   signingForm = this.fb.group({
-    pin: [],
-    serial: [],
+    serial: ['', Validators.required],
+    pin: ['', Validators.required],
+    //templateId: ['', Validators.required],
     otpCode: [],
   });
   hide = true;
+
   constructor(
     private accountService: AccountService,
     private toastrService: ToastrService,
