@@ -41,7 +41,6 @@ import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signa
     ArchwizardModule,
     ToastrModule.forRoot(),
     PdfViewerModule,
-    c,
   ],
   declarations: [
     MainComponent,
