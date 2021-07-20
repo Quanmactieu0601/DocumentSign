@@ -427,24 +427,31 @@ public class SignatureVerificationService {
 
             KeyInfo keyInfo = signature.getKeyInfo();
             Iterator ki = keyInfo.getContent().iterator();
-            XMLStructure info = (XMLStructure) ki.next();
-            X509Data x509Data = (X509Data) info;
-            Iterator xi = x509Data.getContent().iterator();
-            SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
-            signatureVfDTO.setIntegrity(coreValidity);
+            while(ki.hasNext()){
+                XMLStructure info = (XMLStructure) ki.next();
+                if(info instanceof X509Data){
+                    X509Data x509Data = (X509Data) info;
+                    Iterator xi = x509Data.getContent().iterator();
+                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                    signatureVfDTO.setIntegrity(coreValidity);
 
-            while(xi.hasNext()){
-                Object o = xi.next();
-                if (o instanceof X509Certificate) {
-                    X509Certificate cert = (X509Certificate) o;
-                    certificateVfDTOList.add(getCertificateInfoXml(cert));
-                    signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                    while(xi.hasNext()){
+                        Object o = xi.next();
+                        if (o instanceof X509Certificate) {
+                            X509Certificate cert = (X509Certificate) o;
+                            certificateVfDTOList.add(getCertificateInfoXml(cert));
+                            signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                        }
+                    }
+                    signatureVfDTOList.add(signatureVfDTO);
+                    result.setSignatureVfDTOs(signatureVfDTOList);
+
                 }
             }
 
 
-            signatureVfDTOList.add(signatureVfDTO);
-            result.setSignatureVfDTOs(signatureVfDTOList);
+
+
 
             return result;
         }catch (Exception ex){
@@ -485,14 +492,13 @@ public class SignatureVerificationService {
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
         ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
-//        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"));
-//        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
-//        if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
-//            revocationStatus = RevocationStatus.REVOKED;
-//        else if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
-//            revocationStatus = RevocationStatus.GOOD;
-//        else if(revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
-//            revocationStatus = RevocationStatus.CANT_VERIFY;
+        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
+        if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
+            revocationStatus = RevocationStatus.REVOKED;
+        else if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
+            revocationStatus = RevocationStatus.GOOD;
+        else if(revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
+            revocationStatus = RevocationStatus.CANT_VERIFY;
 
         certificateVfDTO.setIssuer(cert.getIssuerDN().toString());
         certificateVfDTO.setSubjectDn(cert.getSubjectDN().toString());
