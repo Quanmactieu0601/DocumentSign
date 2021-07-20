@@ -17,7 +17,7 @@
                     <input type="text" class="form-control form-control-sm" name="serial"  formControlName="serial"
                            #serialElement` >
                     <div
-                        *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)) || this.showMessageSerialRequired ">
+                        *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched))">
                         <small
                             class="form-text text-danger"
                             *ngIf="signingForm.get('serial')?.errors?.required"
