@@ -89,9 +89,9 @@ public class RelationshipTransformService extends TransformService {
 
     public Data transform(Data data, XMLCryptoContext context) throws TransformException {
         OctetStreamData octetStreamData = (OctetStreamData) data;
-        InputStream octetStream = octetStreamData.getOctetStream();
+
         Document relationshipsDocument;
-        try {
+        try (InputStream octetStream = octetStreamData.getOctetStream()) {
             relationshipsDocument = loadDocument(octetStream);
         } catch (Exception e) {
             throw new TransformException(e.getMessage(), e);
