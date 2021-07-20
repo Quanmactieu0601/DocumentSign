@@ -3,10 +3,10 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'jhi-signing',
-  templateUrl: './signing.component.html',
-  styleUrls: ['./signing.component.scss'],
+  templateUrl: './signing-pdf-visible.component.html',
+  styleUrls: ['./signing-pdf-visible.component.scss'],
 })
-export class SigningComponent implements OnInit {
+export class SigningPdfVisibleComponent implements OnInit {
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;

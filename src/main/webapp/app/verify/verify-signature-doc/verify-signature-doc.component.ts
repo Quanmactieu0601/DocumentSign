@@ -5,7 +5,7 @@ import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { HttpEventType, HttpResponse } from '@angular/common/http';
-import { VerifySignatureService } from 'app/verify/verify-signature.service';
+import { VerifyService } from 'app/verify/verify.service';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { ICaptchaModel } from 'app/shared/model/captcha.model';
 import { Md5 } from 'ts-md5';
@@ -32,7 +32,7 @@ export class VerifySignatureDocComponent implements OnInit {
   disable = false;
   constructor(
     private accountService: AccountService,
-    private verifySignatureService: VerifySignatureService,
+    private verifySignatureService: VerifyService,
     private toastrService: ToastrService,
     private captchaService: CaptchaService,
     private translateService: TranslateService

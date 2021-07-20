@@ -3,7 +3,7 @@ import { Account } from 'app/core/user/account.model';
 import { Subscription } from 'rxjs';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { VerifySignatureService } from 'app/verify/verify-signature.service';
+import { VerifyService } from 'app/verify/verify.service';
 import { ISignatureVfVM, SignatureVfVM } from 'app/shared/model/signatureVfVM.model';
 import { HttpResponse } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
@@ -43,7 +43,7 @@ export class VerifySignatureRawComponent implements OnInit {
 
   constructor(
     private accountService: AccountService,
-    private verifySignatureService: VerifySignatureService,
+    private verifySignatureService: VerifyService,
     private toastrService: ToastrService,
     private certificateService: CertificateService,
     private fb: FormBuilder,
