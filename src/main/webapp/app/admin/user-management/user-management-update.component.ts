@@ -172,7 +172,7 @@ export class UserManagementUpdateComponent implements OnInit {
 
   private onSaveSuccess(): void {
     this.isSaving = false;
-    this.toastrService.success(this.translateService.instant('userManagement.created'));
+    this.toastrService.success(this.translateService.instant('userManagement.updated'));
     this.previousState();
   }
 
