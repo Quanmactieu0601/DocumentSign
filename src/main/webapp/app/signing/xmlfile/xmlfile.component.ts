@@ -6,7 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { HttpResponse } from '@angular/common/http';
 import { saveAs } from 'file-saver';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { SigningService } from 'app/core/signing/signing.service';
@@ -26,8 +26,8 @@ export class XmlfileComponent implements OnInit {
   resFile = '';
   disable = false;
   signingForm = this.fb.group({
-    pin: [],
-    serial: [],
+    serial: ['', Validators.required],
+    pin: ['', Validators.required],
     otpCode: [],
   });
   constructor(
