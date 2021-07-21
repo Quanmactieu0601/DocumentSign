@@ -9,41 +9,27 @@
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
             <form class="form" name="signingForm" [formGroup]="signingForm">
-                <div  class="row row-cols-12">
-                    <div  class="col">
-                        <div class="form-group">
-                            <label class="form-control-label"><span
-                                jhiTranslate="webappApp.certificate.serial">Serial</span></label>
-                            <input type="text" class="form-control form-control-sm" name="serial"  formControlName="serial"
-                                   #serialElement` >
-                            <div
-                                *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)) ">
-                                <small
-                                    class="form-text text-danger"
-                                    *ngIf="signingForm.get('serial')?.errors?.required"
-                                    jhiTranslate="sign.messages.validate.serial.required"
-                                >
-                                    Your serial is required.
-                                </small>
-                            </div>
+                <div _ngcontent-ehj-c247="" class="row row-cols-12">
+                    <div _ngcontent-ehj-c247="" class="col">
+                        <div _ngcontent-ehj-c247="" class="form-group">
+                            <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
+                                                                                           jhitranslate="webappApp.certificate.alias"
+                                                                                           ng-reflect-jhi-translate="webappApp.certificate.alias">Serial</span></label>
+                            <select class="form-control" id="serial" name="serial" formControlName="serial" size="1">
+                                <option class="form-control" jhiTranslate="webappApp.signatureVerify.serial" selected>Serial
+                                </option>
+                                <option class="form-control" *ngFor="let cert of listCertificate">{{cert.serial}}</option>
+                            </select>
                         </div>
                     </div>
-                    <div  class="col">
-                        <div class="form-group">
-                            <label class="form-control-label"><span
-                                jhiTranslate="webappApp.certificate.pin">Pin</span></label>
-                            <input type="password" class="form-control form-control-sm" name="pin" formControlName="pin" >
-
-                            <div
-                                *ngIf="signingForm.get('pin')!.invalid && (signingForm.get('pin')!.dirty || signingForm.get('pin')!.touched)">
-                                <small
-                                    class="form-text text-danger"
-                                    *ngIf="signingForm.get('pin')?.errors?.required"
-                                    jhiTranslate="sign.messages.validate.pin.required"
-                                >
-                                    Your pin is required.
-                                </small>
-                            </div>
+                    <div _ngcontent-ehj-c247="" class="col">
+                        <div _ngcontent-ehj-c247="" class="form-group">
+                            <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
+                                                                                           jhitranslate="webappApp.certificate.ownerId"
+                                                                                           ng-reflect-jhi-translate="webappApp.certificate.ownerId">PIN</span></label>
+                            <input _ngcontent-ehj-c247="" type="password" name="pin" formControlName="pin"
+                                   class="form-control form-control-label ng-untouched ng-pristine ng-valid"
+                                   ng-reflect-name="ownerId">
                         </div>
                     </div>
 
@@ -71,16 +57,16 @@
                 </ngx-dropzone-preview>
             </div>
             <br>
-
-            <div class="signbt col">
-                <button
-                    class="btn btn-success"
-                    [disabled]="!selectFiles || this.selectFiles.length == 0"
-                    (click)="signxml()">
-                    <span>Ký</span>
-                </button>
+            <div _ngcontent-ehj-c247="" class="signbt col">
+                <div _ngcontent-ehj-c247="" class="form-group">
+                    <button
+                        class="btn btn-success"
+                        [disabled]="!selectFiles || this.selectFiles.length == 0"
+                        (click)="signxml()">
+                        <span>Ký</span>
+                    </button>
+                </div>
             </div>
-
         </div>
     </div>
 </div>
