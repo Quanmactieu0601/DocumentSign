@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
@@ -19,15 +19,18 @@ import { error } from '@angular/compiler/src/util';
 export class XmlfileComponent implements OnInit {
   selectFiles: File[] = [];
   currentFile?: File;
-  listCertificate?: ICertificate[];
+  listCertificate: ICertificate[] = [];
+  filterCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
   resFile = '';
-  disable = false;
+  serial = '';
+  page = 0;
+  timer: NodeJS.Timeout | undefined;
   signingForm = this.fb.group({
-    serial: ['', Validators.required],
-    pin: ['', Validators.required],
+    pin: [],
+    serial: [],
     otpCode: [],
   });
   constructor(
@@ -43,8 +46,23 @@ export class XmlfileComponent implements OnInit {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.getListCertificate();
   }
+
   getListCertificate(): void {
-    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+    const data = {
+      page: 0,
+      size: 100,
+      sort: ['id,desc'],
+      alias: null,
+      ownerId: this.account?.login,
+      serial: null,
+      validDate: null,
+      expiredDate: null,
+    };
+
+    this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+      this.listCertificate = res.body || [];
+      this.filterCertificate = this.listCertificate;
+    });
   }
 
   selectFile(event: any): void {
@@ -52,7 +70,6 @@ export class XmlfileComponent implements OnInit {
     this.selectFiles.push(...event.addedFiles);
     this.fileName = this.selectFiles[0].name;
   }
-
   removeFile(event: any): void {
     this.selectFiles.splice(this.selectFiles.indexOf(event), 1);
   }
@@ -71,7 +88,7 @@ export class XmlfileComponent implements OnInit {
         ],
         tokenInfo: {
           pin: this.signingForm.get(['pin'])!.value,
-          serial: this.signingForm.get(['serial'])!.value,
+          serial: this.serial,
         },
         optional: {
           otpCode: '621143',
@@ -79,6 +96,7 @@ export class XmlfileComponent implements OnInit {
       };
       this.signingService.signXml(request).subscribe(
         (res: any) => {
+          if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
           const resStatus = JSON.parse(res).status;
           if (resStatus === 0) {
             this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
@@ -108,5 +126,15 @@ export class XmlfileComponent implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
+  }
+
+  selectSerial(serial: string): void {
+    this.serial = serial;
+  }
+
+  filter(part: string): void {
+    this.filterCertificate = this.listCertificate.filter(item => {
+      return item.serial?.includes(part);
+    });
   }
 }
