@@ -326,6 +326,23 @@ public class CertificateResource extends BaseResource {
         }
     }
 
+    @PutMapping("/update-ownerid")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    public ResponseEntity<BaseResponseVM> updateOwnerId( @RequestParam("ownerId") String ownerId, @RequestParam("certId") Long certId) {
+        log.info("updateOwnerId:  certid {}", certId);
+        try {
+            certificateService.updateOwnerId(ownerId, certId);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(null));
+        } catch (Exception e) {
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/update-active/status", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.PUT,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
     @PutMapping("/update-active-status")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> updateActiveStatus(@RequestBody Long id) {

@@ -160,6 +160,11 @@
                                     class="btn btn-secondary btn-sm" ngbTooltip="{{ 'webappApp.signatureImage.showImageSign.showImageSign' | translate}}">
                                 <fa-icon icon="eye"></fa-icon>
                             </button>
+
+                            <button type="button" (click)="changeownerId(certificate)"
+                                    class="btn btn-warning btn-sm" ngbTooltip="{{ 'webappApp.certificate.changeCertPIN.header' | translate}}">
+                                <fa-icon icon="pencil-alt"></fa-icon>
+                            </button>
                         </div>
                     </td>
                 </tr>

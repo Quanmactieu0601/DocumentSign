@@ -115,6 +115,16 @@ public class CertificateService {
         }
         certificateRepository.save(certificate);
     }
+    @Transactional
+    public void updateOwnerId(String ownerId, long id) {
+        Certificate certificate = certificateRepository.updateOwnerId(ownerId, id);
+        if (certificate.getActiveStatus() == 1) {
+            certificate.setActiveStatus(0);
+        } else {
+            certificate.setActiveStatus(1);
+        }
+        certificateRepository.save(certificate);
+    }
 
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {

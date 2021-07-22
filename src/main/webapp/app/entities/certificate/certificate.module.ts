@@ -15,6 +15,7 @@ import { CertPINComponent } from 'app/entities/certificate/pin/certificate-pin.c
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
+import { ChangeOwnerIdComponent } from './change-owner-id/change-owner-id.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -31,6 +32,7 @@ import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/gene
     CertificateDeactiveDialogComponent,
     ExportSerialComponent,
     GenerateCsrComponent,
+    ChangeOwnerIdComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

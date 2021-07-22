@@ -24,6 +24,7 @@ import { CertificateSignatureComponent } from 'app/entities/signature-image/cert
 import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/certificate-deactive-dialog.component';
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
+import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id/change-owner-id.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -222,6 +223,11 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   changePIN(certificate: ICertificate): void {
     const modalRef = this.modalService.open(CertPINComponent, { size: '300px', backdrop: 'static' });
+    modalRef.componentInstance.certificate = certificate;
+    modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
+  }
+  changeownerId(certificate: ICertificate): void {
+    const modalRef = this.modalService.open(ChangeOwnerIdComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }
