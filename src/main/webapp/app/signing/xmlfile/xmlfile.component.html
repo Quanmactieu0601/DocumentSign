@@ -28,7 +28,7 @@
                                                                                            jhitranslate="webappApp.certificate.ownerId"
                                                                                            ng-reflect-jhi-translate="webappApp.certificate.ownerId">PIN</span></label>
                             <input _ngcontent-ehj-c247="" type="password" name="pin" formControlName="pin"
-                                   class="form-control form-control-sm ng-untouched ng-pristine ng-valid"
+                                   class="form-control form-control-label ng-untouched ng-pristine ng-valid"
                                    ng-reflect-name="ownerId">
                         </div>
                     </div>
@@ -57,16 +57,16 @@
                 </ngx-dropzone-preview>
             </div>
             <br>
-
-            <div class="signbt col">
-                <button
-                    class="btn btn-success"
-                    [disabled]="!selectFiles || this.selectFiles.length == 0"
-                    (click)="signxml()">
-                    <span>Ký</span>
-                </button>
+            <div _ngcontent-ehj-c247="" class="signbt col">
+                <div _ngcontent-ehj-c247="" class="form-group">
+                    <button
+                        class="btn btn-success"
+                        [disabled]="!selectFiles || this.selectFiles.length == 0"
+                        (click)="signxml()">
+                        <span>Ký</span>
+                    </button>
+                </div>
             </div>
-
         </div>
     </div>
 </div>
