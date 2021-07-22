@@ -37,8 +37,8 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             params.put("alias", "%" + alias + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(ownerId)) {
-            sqlBuilder.append("AND a.ownerId like :ownerId ");
-            params.put("ownerId", "%" + ownerId + "%");
+            sqlBuilder.append("AND a.ownerId = :ownerId ");
+            params.put("ownerId",ownerId);
         }
         if (!QueryUtils.isNullOrEmptyProperty(serial)) {
             sqlBuilder.append("AND a.serial like :serial ");
