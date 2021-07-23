@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
@@ -33,6 +35,7 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
@@ -54,13 +57,13 @@ public class CertificateService {
     private final Environment env;
     private final UserRepository userRepository;
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
-
+    private final FileResourceService fileResourceService;
 
     public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper,
                               SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
                               CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService,
                               SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository,
-                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, Environment env) {
+                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, Environment env, FileResourceService fileResourceService) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
@@ -72,6 +75,7 @@ public class CertificateService {
         this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.userRepository = userRepository;
         this.env = env;
+        this.fileResourceService = fileResourceService;
     }
 
     public List<Certificate> getByOwnerId(String ownerId) throws ApplicationException {
@@ -179,28 +183,50 @@ public class CertificateService {
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
 
-        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findById(templateId);
-        if (!signatureTemplateOptional.isPresent()) {
-            throw new ApplicationException("Signature template is not configured");
-        }
-        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
-
-        Long signImageId = certificateDTO.getSignatureImageId();
+        String htmlContent = "";
+        Integer width = 320;
+        Integer height = 150;
+        boolean isTransparency = false;
         String signatureImageData = "";
-        String htmlTemplate = signatureTemplate.getHtmlTemplate();
+        X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
+        String subjectDN = x509Certificate.getSubjectDN().getName();
+        Long signImageId = certificateDTO.getSignatureImageId();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
             if (signatureImage.isPresent())
                 signatureImageData = signatureImage.get().getImgData();
         }
-        X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
-        String subjectDN = x509Certificate.getSubjectDN().getName();
 
+        if (templateId == null) {
+            Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
+            if (signatureTemplateOptional.isPresent()) {
+                templateId = signatureTemplateOptional.get().getId();
+            } else {
+                try {
+                    String signer = ParserUtils.getElementContentNameInCertificate(subjectDN, "CN=([^,]+)").replace("\"", "").replace("\'", "");
+                    htmlContent = IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name());
+                    htmlContent = htmlContent
+                        .replaceFirst("_signer_", signer)
+                        .replaceFirst("_signatureImage_", signatureImageData)
+                        .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                    return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
+                } catch (IOException ioe) {
+                    throw new ApplicationException("Error reading file");
+                }
+            }
+        }
+
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findById(templateId);
+        if (!signatureTemplateOptional.isPresent()) {
+            throw new ApplicationException("Signature template is not configured");
+        }
+        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
+        String htmlTemplate = signatureTemplate.getHtmlTemplate();
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
-        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
-        Integer width = signatureTemplate.getWidth();
-        Integer height = signatureTemplate.getHeight();
-        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
+        htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
+        width = signatureTemplate.getWidth();
+        height = signatureTemplate.getHeight();
+        return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
     }
 
 

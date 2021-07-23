@@ -54,7 +54,7 @@ export class SigningComponent implements OnInit {
   editForm = this.fb.group({
     serial: ['', Validators.required],
     pin: ['', Validators.required],
-    templateId: ['', Validators.required],
+    templateId: [''],
     fileSelect: ['', Validators.required],
   });
   constructor(
