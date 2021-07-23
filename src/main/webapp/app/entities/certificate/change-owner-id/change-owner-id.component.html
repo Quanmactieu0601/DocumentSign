@@ -18,17 +18,16 @@
     <form [formGroup]="changeOwnerIDForm">
         <div class="row mt-3">
             <div class="col-12 form-group">
-                <h6 jhiTranslate="webappApp.certificate.changeOwnerID.OwnerId">OwnerId</h6>
-                <input required="required" class="form-control" type="text" formControlName="OwnerID"
-                       [placeholder]="'webappApp.certificate.changeOwnerID.placeholder' | translate">
+                <select class="form-control" name="OwnerID" formControlName="OwnerID" size="1">
+                    <option class="form-control" jhiTranslate="webappApp.certificate.changeOwnerID.OwnerId" selected>OwnerId
+                    </option>
+                    <option class="form-control" *ngFor="let user of users" value="{{user.login}}">{{user.login}}</option>
+                </select>
+<!--                <h6 jhiTranslate="webappApp.certificate.changeOwnerID.OwnerId">OwnerId</h6>-->
+<!--                <input required="required" class="form-control" type="text" formControlName="OwnerID"-->
+<!--                       [placeholder]="'webappApp.certificate.changeOwnerID.placeholder' | translate">-->
 
-                <div
-                    *ngIf="changeOwnerIDForm.get('OwnerID')!.invalid && (changeOwnerIDForm.get('OwnerID')!.dirty || changeOwnerIDForm.get('OwnerID')!.touched)">
-                    <small class="form-text text-danger"
-                           *ngIf="changeOwnerIDForm.get('OwnerID')?.errors?.required"
-                           jhiTranslate="webappApp.certificate.changeOwnerID.required">
-                         OwnerID is required.
-                    </small>
+                <div>
                 </div>
             </div>
 

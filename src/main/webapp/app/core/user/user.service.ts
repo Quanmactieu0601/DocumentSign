@@ -42,7 +42,7 @@ export class UserService {
   }
 
   getAllUsers(): Observable<HttpResponse<IUser[]>> {
-    return this.http.get<IUser[]>(this.resourceUrl + '/getAll', { observe: 'response' });
+    return this.http.get<IUser[]>(this.resourceUrl, { observe: 'response' });
   }
 
   delete(login: string): Observable<{}> {
