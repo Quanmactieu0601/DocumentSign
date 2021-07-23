@@ -530,7 +530,7 @@ public class SignatureVerificationService {
 
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, null);
-            ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
+            ks.setCertificateEntry("root", issuesCert);
             OCSP.RevocationStatus revoStatus = OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
             if (revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
                 revocationStatus = RevocationStatus.REVOKED;
