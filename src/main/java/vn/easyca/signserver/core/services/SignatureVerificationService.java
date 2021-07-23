@@ -493,41 +493,6 @@ public class SignatureVerificationService {
         X509Certificate x509IssuesCert = (X509Certificate) issuesCert;
 
         if(x509IssuesCert.getSubjectDN().equals(cert.getIssuerDN())) {
-
-//        X509TrustManager defaultTrustManager = getDefaultJavaTrustManager();
-//        X509Certificate[] defaultJavaTrustedCerts = defaultTrustManager.getAcceptedIssuers();
-
-            //String alias="";
-
-
-            //ks.setCertificateEntry("digitalCert",cert);
-            //X500Principal issuer = cert.getIssuerX500Principal();
-            //Set<X509Certificate> subjectCaCerts = subjectToCaCerts.get(issuer);
-            //Certificate[] x = ks.getCertificateChain("digitalCert");
-            //Enumeration<String> aliases = ks.aliases();
-            //List<String> keyStoreAliases = Collections.list(aliases);
-
-//            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-//            trustManagerFactory.init((KeyStore) null);
-//            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-//            X509TrustManager x509TrustManager = (X509TrustManager) trustManagers[0];
-//            X509Certificate[] x509Certificates = x509TrustManager.getAcceptedIssuers();
-//
-//            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-//            //keyManagerFactory.init(ManagerFactoryParameters a);
-//            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-//            X509KeyManager keyManager = (X509KeyManager) keyManagers[0];
-//            Principal[] principals = {cert.getIssuerDN()};
-//        try {
-//            keyManagerFactory.init(ks,null);
-//            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
-//            X509KeyManager keyManager = (X509KeyManager) keyManagers[0];
-//            Principal[] principals = {cert.getIssuerDN()};
-//            String[] aliases = keyManager.getClientAliases(cert.getSigAlgName(),principals);
-//        } catch (UnrecoverableKeyException e) {
-//            e.printStackTrace();
-//        }
-
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, null);
             ks.setCertificateEntry("root", issuesCert);
