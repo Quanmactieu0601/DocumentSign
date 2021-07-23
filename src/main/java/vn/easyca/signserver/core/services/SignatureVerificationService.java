@@ -33,6 +33,8 @@ import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
 
+import javax.net.ssl.*;
+import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.*;
 import javax.xml.crypto.dsig.SignatureMethod;
 import javax.xml.crypto.dsig.XMLSignature;
@@ -412,10 +414,10 @@ public class SignatureVerificationService {
             if(context.getAttribute("Id") != ""){
                 context.setIdAttribute("Id",true);
             }
-            if (context.getAttribute("ID") != ""){
+            else if (context.getAttribute("ID") != ""){
                 context.setIdAttribute("ID",true);
             }
-            if(context.getAttribute("id") != ""){
+            else if(context.getAttribute("id") != ""){
                 context.setIdAttribute("id",true);
             }
 
@@ -425,6 +427,7 @@ public class SignatureVerificationService {
             XMLSignature signature = fac.unmarshalXMLSignature(valContext);
             boolean coreValidity = signature.validate(valContext);
 
+            //get signature value
             KeyInfo keyInfo = signature.getKeyInfo();
             Iterator ki = keyInfo.getContent().iterator();
             while(ki.hasNext()){
@@ -444,11 +447,10 @@ public class SignatureVerificationService {
                         }
                     }
                     signatureVfDTOList.add(signatureVfDTO);
-                    result.setSignatureVfDTOs(signatureVfDTOList);
 
                 }
             }
-
+            result.setSignatureVfDTOs(signatureVfDTOList);
 
 
 
@@ -485,21 +487,58 @@ public class SignatureVerificationService {
             currentStatus = CertStatus.INVALID;
         }
         RevocationStatus revocationStatus = RevocationStatus.UNCHECKED;
-//        if (isSigningCert)
-//            revocationStatus = checkRevocation(pkcs7, cert, issuerCert, signDate);
-        KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-        ks.load(null, null);
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
-        ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
-        OCSP.RevocationStatus revoStatus =  OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
-        if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
-            revocationStatus = RevocationStatus.REVOKED;
-        else if(revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
-            revocationStatus = RevocationStatus.GOOD;
-        else if(revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
-            revocationStatus = RevocationStatus.CANT_VERIFY;
+        Certificate issuesCert = cf.generateCertificate(rootCaStream);
+        X509Certificate x509IssuesCert = (X509Certificate) issuesCert;
 
+        if(x509IssuesCert.getSubjectDN().equals(cert.getIssuerDN())) {
+
+//        X509TrustManager defaultTrustManager = getDefaultJavaTrustManager();
+//        X509Certificate[] defaultJavaTrustedCerts = defaultTrustManager.getAcceptedIssuers();
+
+            //String alias="";
+
+
+            //ks.setCertificateEntry("digitalCert",cert);
+            //X500Principal issuer = cert.getIssuerX500Principal();
+            //Set<X509Certificate> subjectCaCerts = subjectToCaCerts.get(issuer);
+            //Certificate[] x = ks.getCertificateChain("digitalCert");
+            //Enumeration<String> aliases = ks.aliases();
+            //List<String> keyStoreAliases = Collections.list(aliases);
+
+//            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+//            trustManagerFactory.init((KeyStore) null);
+//            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+//            X509TrustManager x509TrustManager = (X509TrustManager) trustManagers[0];
+//            X509Certificate[] x509Certificates = x509TrustManager.getAcceptedIssuers();
+//
+//            KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+//            //keyManagerFactory.init(ManagerFactoryParameters a);
+//            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+//            X509KeyManager keyManager = (X509KeyManager) keyManagers[0];
+//            Principal[] principals = {cert.getIssuerDN()};
+//        try {
+//            keyManagerFactory.init(ks,null);
+//            KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+//            X509KeyManager keyManager = (X509KeyManager) keyManagers[0];
+//            Principal[] principals = {cert.getIssuerDN()};
+//            String[] aliases = keyManager.getClientAliases(cert.getSigAlgName(),principals);
+//        } catch (UnrecoverableKeyException e) {
+//            e.printStackTrace();
+//        }
+
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null, null);
+            ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
+            OCSP.RevocationStatus revoStatus = OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
+            if (revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
+                revocationStatus = RevocationStatus.REVOKED;
+            else if (revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
+                revocationStatus = RevocationStatus.GOOD;
+            else if (revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
+                revocationStatus = RevocationStatus.CANT_VERIFY;
+        }
         certificateVfDTO.setIssuer(cert.getIssuerDN().toString());
         certificateVfDTO.setSubjectDn(cert.getSubjectDN().toString());
         certificateVfDTO.setValidFrom(simpleDateFormat.format(cert.getNotBefore()));
