@@ -36,7 +36,7 @@ export class SigningComponent implements OnInit {
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;
-  serial: any;
+  serial = '';
   pin: any;
 
   showMessageSerialRequired = false;
