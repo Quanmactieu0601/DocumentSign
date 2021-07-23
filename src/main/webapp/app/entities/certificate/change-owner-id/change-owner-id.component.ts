@@ -14,10 +14,8 @@ import { TranslateService } from '@ngx-translate/core';
 export class ChangeOwnerIdComponent implements OnInit {
   certificate?: ICertificate;
   isAuthenOTP = false;
-  changeCertPINForm = this.fb.group({
-    currentPINInput: [''],
-    newPINInput: ['', [Validators.minLength(4), Validators.maxLength(50)]],
-    confirmPINInput: ['', [Validators.minLength(4), Validators.maxLength(50)]],
+  changeOwnerIDForm = this.fb.group({
+    OwnerID: ['', [Validators.minLength(4), Validators.maxLength(50)]],
   });
 
   constructor(
@@ -35,13 +33,13 @@ export class ChangeOwnerIdComponent implements OnInit {
   ngOnInit(): void {}
 
   changeCertPIN(): void {
-    const currentPIN = this.changeCertPINForm.get(['currentPINInput'])!.value;
-
+    const currentPIN = this.changeOwnerIDForm.get(['OwnerID'])!.value;
     this.certificateService.changeOwnerId(currentPIN, this.certificate?.id).subscribe((res: any) => {
       if (res.status !== 0) {
         this.toastService.error(res.msg);
       } else {
-        this.toastService.success(this.translate.instant('webappApp.certificate.changeCertPIN.success'));
+        this.toastService.success(this.translate.instant('webappApp.certificate.changeOwnerID.success'));
+        window.location.reload();
       }
     });
   }

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h5 class="modal-title" jhiTranslate="webappApp.certificate.changeCertPIN.header">Modal title</h5>
+    <h5 class="modal-title" jhiTranslate="webappApp.certificate.changeOwnerID.title">Modal title</h5>
     <a class="close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</a>
 </div>
 <div class="modal-body">
@@ -15,19 +15,19 @@
             </div>
         </div>
     </div>
-    <form [formGroup]="changeCertPINForm">
+    <form [formGroup]="changeOwnerIDForm">
         <div class="row mt-3">
             <div class="col-12 form-group">
-                <h6 jhiTranslate="webappApp.certificate.changeCertPIN.currentPIN">Current PIN</h6>
-                <input required="required" class="form-control" type="text" formControlName="currentPINInput"
-                       [placeholder]="'webappApp.certificate.changeCertPIN.placeholder' | translate">
+                <h6 jhiTranslate="webappApp.certificate.changeOwnerID.OwnerId">OwnerId</h6>
+                <input required="required" class="form-control" type="text" formControlName="OwnerID"
+                       [placeholder]="'webappApp.certificate.changeOwnerID.placeholder' | translate">
 
                 <div
-                    *ngIf="changeCertPINForm.get('currentPINInput')!.invalid && (changeCertPINForm.get('currentPINInput')!.dirty || changeCertPINForm.get('currentPINInput')!.touched)">
+                    *ngIf="changeOwnerIDForm.get('OwnerID')!.invalid && (changeOwnerIDForm.get('OwnerID')!.dirty || changeOwnerIDForm.get('OwnerID')!.touched)">
                     <small class="form-text text-danger"
-                           *ngIf="changeCertPINForm.get('currentPINInput')?.errors?.required"
-                           jhiTranslate="webappApp.certificate.changeCertPIN.required.currentPIN">
-                        Your PIN is required.
+                           *ngIf="changeOwnerIDForm.get('OwnerID')?.errors?.required"
+                           jhiTranslate="webappApp.certificate.changeOwnerID.required">
+                         OwnerID is required.
                     </small>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 <div class="modal-footer text-right">
     <div class="col-md-12">
         <button type=submit class="btn btn-success" (click)="changeCertPIN()"
-                [disabled]="!changeCertPINForm.valid">
+                [disabled]="!changeOwnerIDForm.valid">
             {{'webappApp.certificate.changeCertPIN.save' | translate}}</button>
         <button type=submit class="btn btn-light" (click)="cancel()">
             {{'webappApp.certificate.changeCertPIN.cancel' | translate}}</button>

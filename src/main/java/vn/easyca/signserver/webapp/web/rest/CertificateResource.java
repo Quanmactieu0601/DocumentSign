@@ -38,10 +38,7 @@ import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
-import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
-import vn.easyca.signserver.webapp.web.rest.vm.request.P12PinVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.*;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
@@ -326,12 +323,12 @@ public class CertificateResource extends BaseResource {
         }
     }
 
-    @PutMapping("/update-ownerid")
+    @PutMapping("/ownerid")
     @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
-    public ResponseEntity<BaseResponseVM> updateOwnerId( @RequestParam("ownerId") String ownerId, @RequestParam("certId") Long certId) {
-        log.info("updateOwnerId:  certid {}", certId);
+    public ResponseEntity<BaseResponseVM> updateOwnerId( @RequestBody CertificateChangeOwnVN cert) {
         try {
-            certificateService.updateOwnerId(ownerId, certId);
+
+            certificateService.updateOwnerId(cert.getOwnerId(), cert.getId());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(null));
         } catch (Exception e) {

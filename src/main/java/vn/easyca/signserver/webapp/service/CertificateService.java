@@ -117,12 +117,8 @@ public class CertificateService {
     }
     @Transactional
     public void updateOwnerId(String ownerId, long id) {
-        Certificate certificate = certificateRepository.updateOwnerId(ownerId, id);
-        if (certificate.getActiveStatus() == 1) {
-            certificate.setActiveStatus(0);
-        } else {
-            certificate.setActiveStatus(1);
-        }
+        Certificate certificate = certificateRepository.getOne(id);
+        certificate.setOwnerId(ownerId);
         certificateRepository.save(certificate);
     }
 

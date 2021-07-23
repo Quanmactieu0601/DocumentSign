@@ -28,10 +28,9 @@ export class CertificateService {
   update(certificate: ICertificate): Observable<EntityResponseType> {
     return this.http.put<ICertificate>(this.resourceUrl, certificate, { observe: 'response' });
   }
-  changeOwnerId(OwnerID: string, certID: number | undefined): Observable<{}> {
-    return this.http.put(`${this.resourceUrl}/update-ownerid`, { OwnerID, certID });
+  changeOwnerId(ownerId: string | undefined, id: number | undefined): Observable<{}> {
+    return this.http.put(this.resourceUrl + '/ownerid', { ownerId, id });
   }
-
   updateActiveStatus(id: number): Observable<EntityResponseType> {
     return this.http.put<ICertificate>(this.resourceUrl + '/update-active-status', id, { observe: 'response' });
   }
