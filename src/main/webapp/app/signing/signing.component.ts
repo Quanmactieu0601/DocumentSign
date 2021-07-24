@@ -27,12 +27,6 @@ export class SigningComponent implements OnInit {
   @ViewChild('wizzard') wizzard: any;
   @Output() nextActionEvent = new EventEmitter<any>();
   isShowMessage = false;
-  // signingForm = this.fb.group({
-  //   serial: ['', Validators.required],
-  //   pin: ['', Validators.required],
-  //   templateId: ['', Validators.required],
-  // });
-
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;
