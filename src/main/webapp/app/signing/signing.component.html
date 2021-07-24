@@ -24,8 +24,7 @@
                             </ngx-dropzone-label>
                         </ngx-dropzone-preview>
                     </div>
-                    <input type="text" class="form-control form-control-sm"  name="fileSelect" hidden
-                           formControlName="fileSelect" />
+
                     <div
                         *ngIf="selectFiles.length == 0">
                         <small
@@ -38,6 +37,8 @@
                     <label class="form-control-label"></label>
                 </div>
                 <form name="editForm" [formGroup]="editForm">
+                    <input type="text" class="form-control form-control-sm"  name="fileSelect" hidden
+                           formControlName="fileSelect" />
                     <div class="row">
                         <div class="col-4">
                             <div class="form-group">
