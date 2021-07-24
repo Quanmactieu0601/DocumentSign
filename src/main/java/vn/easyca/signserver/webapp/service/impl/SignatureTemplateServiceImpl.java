@@ -1,8 +1,10 @@
 package vn.easyca.signserver.webapp.service.impl;
 
-import org.hibernate.loader.plan.spi.Return;
-import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.data.domain.PageImpl;
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
@@ -16,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -35,10 +40,13 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
 
     private final UserRepository userRepository;
 
-    public SignatureTemplateServiceImpl(SignatureTemplateRepository signatureTemplateRepository, SignatureTemplateMapper signatureTemplateMapper, UserRepository userRepository) {
+    private final FileResourceService fileResourceService;
+
+    public SignatureTemplateServiceImpl(SignatureTemplateRepository signatureTemplateRepository, SignatureTemplateMapper signatureTemplateMapper, UserRepository userRepository, FileResourceService fileResourceService) {
         this.signatureTemplateRepository = signatureTemplateRepository;
         this.signatureTemplateMapper = signatureTemplateMapper;
         this.userRepository = userRepository;
+        this.fileResourceService = fileResourceService;
     }
 
     /**
@@ -97,8 +105,22 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) {
+    public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException {
         log.debug("Request to get SignatureImage with id : {}", userId);
-        return signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
+        Page<SignatureTemplateDTO> signatureTemplateDTOPage = signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
+        Page<SignatureTemplateDTO> page;
+        try{
+            String htmlContent = IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name());
+            SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
+            templateDTO.setHtmlTemplate(htmlContent);
+            templateDTO.setWidth(320);
+            templateDTO.setHeight(150);
+            List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
+            listSignatureTempDto.add(templateDTO);
+            page = new PageImpl<>(listSignatureTempDto);
+        } catch (IOException ioe) {
+            throw new ApplicationException(ioe.getMessage());
+        }
+        return page;
     }
 }

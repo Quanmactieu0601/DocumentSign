@@ -1,11 +1,13 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -45,5 +47,5 @@ public interface SignatureTemplateService {
      */
     void delete(Long id);
 
-    Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId);
+    Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException, IOException;
 }

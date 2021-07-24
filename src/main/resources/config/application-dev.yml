@@ -78,7 +78,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: E:/image
+      location: D:/image
 server:
   port: 8080
 #  ssl:

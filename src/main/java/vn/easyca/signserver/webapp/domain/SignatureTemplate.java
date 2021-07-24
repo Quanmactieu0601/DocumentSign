@@ -41,7 +41,6 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
 
     @Column(name = "transparency")
     private Boolean transparency;
-
     public Integer getWidth() { return width; }
 
     public void setWidth(Integer width) { this.width = width; }

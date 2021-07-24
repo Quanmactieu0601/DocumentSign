@@ -1,10 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
@@ -28,8 +30,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,8 +54,7 @@ public class SignatureTemplateResource extends BaseResource {
     private String applicationName;
 
     private final SignatureTemplateService signatureTemplateService;
-
-    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, SignatureTemplateService signatureTemplateService) {
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, SignatureTemplateService signatureTemplateService, CertificateService certificateService) {
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
         this.env = env;
@@ -123,7 +126,7 @@ public class SignatureTemplateResource extends BaseResource {
     }
 
     @GetMapping("/signature-templates/getByUserId")
-    public ResponseEntity<List<SignatureTemplateDTO>> getAllSignatureTemplatesByUserId(Pageable pageable, @RequestParam(required = true) Long userId) {
+    public ResponseEntity<List<SignatureTemplateDTO>> getAllSignatureTemplatesByUserId(Pageable pageable, @RequestParam(required = true) Long userId) throws IOException, ApplicationException {
         log.debug("REST request to get a page of SignatureTemplates by UserId");
 //        Page<SignatureTemplateDTO> page = signatureTemplateService.findAll(pageable);
 //        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);

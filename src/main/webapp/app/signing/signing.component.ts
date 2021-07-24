@@ -119,39 +119,6 @@ export class SigningComponent implements OnInit {
     this.setDisableButton();
   }
 
-  signDoc(): void {
-    this.currentFile = this.selectFiles[0];
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(this.currentFile);
-    reader.onload = () => {
-      const request = {
-        signingRequestContents: [
-          {
-            data: this.arrayBufferToBase64(reader.result),
-            documentName: '123',
-          },
-        ],
-        tokenInfo: {
-          pin: this.editForm.get(['pinCode'])!.value,
-          // serial: this.editForm.get(['serial'])!.value,
-          serial: this.serial,
-        },
-        optional: {
-          otpCode: '621143',
-        },
-      };
-      this.signingService.signDocInvisible(request).subscribe((res: any) => {
-        if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
-        this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
-        const byteArray = this.base64ToArrayBuffer(this.resFile);
-        saveAs(
-          new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
-          Date.now().toString()
-        );
-      });
-    };
-  }
-
   arrayBufferToBase64(buffer: any): string {
     return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
       .toString()
@@ -233,8 +200,6 @@ export class SigningComponent implements OnInit {
       this.srcPdfResult = signedFile;
     }
   }
-
-  nextStep(content: any): void {}
 
   setDisableButton(): void {
     this.nexBtnElement!.nativeElement.disabled = true;
