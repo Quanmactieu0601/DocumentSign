@@ -76,6 +76,7 @@ public class CoreParser implements Serializable {
         return "CoreParser{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", description='" + getDescription() + "'" +
             "}";
     }
 }

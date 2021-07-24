@@ -120,7 +120,7 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label>Core Parser</label>
-                                    <select class="form-control form-control-sm" name="coreParser" formControlName="coreParser">
+                                    <select (ngModelChange)="getSignatureImage()" class="form-control form-control-sm" name="coreParser" formControlName="coreParser">
                                         <option [selected]="true" [value]="undefined" [disabled]="true"><span
                                             jhiTranslate="webappApp.signatureTemplate.chooseParser"></span>
                                         </option>

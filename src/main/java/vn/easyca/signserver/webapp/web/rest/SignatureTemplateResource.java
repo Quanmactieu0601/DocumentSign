@@ -7,9 +7,17 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.CoreParserService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
+import vn.easyca.signserver.webapp.service.dto.CoreParserDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
+import vn.easyca.signserver.webapp.service.impl.parser.BvAnPhuocSignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.BvBenhNhietDoiSignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.Bvq11SignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.Bvq11v2SignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
@@ -47,16 +55,20 @@ public class SignatureTemplateResource extends BaseResource {
 
     private final AsyncTransactionService asyncTransactionService;
     private final FileResourceService fileResourceService;
-
+    private final CoreParserService coreParserService;
+    private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private static final String ENTITY_NAME = "signatureTemplate";
     private final Environment env;
     @Value("${jhipster.clientApp.name}")
     private String applicationName;
 
     private final SignatureTemplateService signatureTemplateService;
-    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, SignatureTemplateService signatureTemplateService, CertificateService certificateService) {
+
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, CoreParserService coreParserService, SignatureTemplateParserFactory signatureTemplateParserFactory, Environment env, SignatureTemplateService signatureTemplateService) {
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
+        this.coreParserService = coreParserService;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.env = env;
         this.signatureTemplateService = signatureTemplateService;
     }
@@ -175,21 +187,7 @@ public class SignatureTemplateResource extends BaseResource {
     @PostMapping("/signature-templates/signExample")
     public ResponseEntity<BaseResponseVM> getSignExample(@RequestBody SignatureExampleDTO signatureExampleDTO) {
         try {
-            String htmlTemplate = signatureExampleDTO.getHtmlTemplate(fileResourceService);
-            String signer = signatureExampleDTO.getSigner();
-            String signingImageB64 = signatureExampleDTO.getSigningImage(fileResourceService);
-            int width = signatureExampleDTO.getWidth();
-            int height = signatureExampleDTO.getHeight();
-            boolean transparency = signatureExampleDTO.isTransparency();
-
-            String htmlContent = htmlTemplate
-                .replaceFirst("_signer_", signer)
-                .replaceFirst("_position_", "TPDV. ")
-                .replaceFirst("_address_", "Hà Nội")
-                .replaceFirst("_signatureImage_", signingImageB64)
-                .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
-
-            String imageBase64 = ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
+            String imageBase64 = signatureTemplateService.getSignatureExample(signatureExampleDTO);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(imageBase64));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);

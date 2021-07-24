@@ -2,6 +2,7 @@ package vn.easyca.signserver.webapp.service;
 
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
+import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO;
 
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ public interface SignatureTemplateService {
      * @param signatureTemplateDTO the entity to save.
      * @return the persisted entity.
      */
-    SignatureTemplateDTO save(SignatureTemplateDTO signatureTemplateDTO);
+    SignatureTemplateDTO save(SignatureTemplateDTO signatureTemplateDTO) throws ApplicationException;
 
     /**
      * Get all the signatureTemplates.
@@ -48,4 +49,6 @@ public interface SignatureTemplateService {
     void delete(Long id);
 
     Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException, IOException;
+
+    String getSignatureExample(SignatureExampleDTO signatureExampleDTO) throws ApplicationException;
 }

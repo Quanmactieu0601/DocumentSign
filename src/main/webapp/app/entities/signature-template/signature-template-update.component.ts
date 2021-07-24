@@ -124,6 +124,7 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
       width: this.editForm.get(['width'])?.value ? this.editForm.get(['width'])!.value : 355,
       height: this.editForm.get(['height'])?.value ? this.editForm.get(['height'])!.value : 130,
       htmlTemplate: this.editForm.get(['htmlTemplate'])!.value,
+      coreParser: this.editForm.get(['coreParser'])!.value,
       transparency: this.editForm.get(['transparency'])!.value,
     };
     this.signatureTemplateService.getSignatureImageExamp(signatureImageCustom).subscribe((res: any) => {

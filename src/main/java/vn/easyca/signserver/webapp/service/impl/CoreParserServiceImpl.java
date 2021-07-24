@@ -77,6 +77,13 @@ public class CoreParserServiceImpl implements CoreParserService {
             .map(coreParserMapper::toDto);
     }
 
+    @Override
+    public Optional<CoreParserDTO> findByName(String s) {
+        log.debug("Request to get CoreParser : {}", s);
+        return coreParserRepository.findByName(s)
+            .map(coreParserMapper::toDto);
+    }
+
     /**
      * Delete the coreParser by id.
      *
