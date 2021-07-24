@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { SigningService } from 'app/core/signing/signing.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
@@ -17,11 +17,11 @@ import { HttpResponse } from '@angular/common/http';
   templateUrl: './pdf-view.component.html',
   styleUrls: ['./pdf-view.component.scss'],
 })
-export class PdfViewComponent implements OnInit {
+export class PdfViewComponent implements OnInit, OnChanges {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @Input() pdfSrc = '';
-  @Input() imageSrc: any;
+  @Input() imageSrc = '';
   @Input() serial: any;
   @Input() pin: any;
   @Output() cancelEvent = new EventEmitter();
@@ -58,7 +58,10 @@ export class PdfViewComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  // Event for search operation
+  ngOnChanges(changes: SimpleChanges): void {
+    const child = document.getElementById('signature-box');
+    child?.setAttribute('src', changes.imageSrc.currentValue);
+  }
   searchQueryChanged(newQuery: any): void {
     if (newQuery !== this.pdfQuery) {
       this.pdfQuery = newQuery;
@@ -73,19 +76,6 @@ export class PdfViewComponent implements OnInit {
       });
     }
   }
-
-  // onFileSelected(): void {
-  //   const $pdf: any = document.querySelector('#file');
-  //   if (typeof FileReader !== 'undefined') {
-  //     const reader = new FileReader();
-  //
-  //     reader.onload = (e: any) => {
-  //       this.pdfSrc = e.target.result;
-  //     };
-  //     reader.readAsArrayBuffer($pdf.files[0]);
-  //     this.renderTextMode = 1;
-  //   }
-  // }
 
   callBackFn(event: any): void {
     console.warn('callBackFn', event);

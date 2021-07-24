@@ -41,7 +41,7 @@ public class SignatureExampleDTO {
     }
 
     public String getSigner() {
-        return StringUtils.isNullOrEmpty(signer) ? "Lê Duy Thanh" : signer;
+        return StringUtils.isNullOrEmpty(signer) ? " Lê Duy Thanh" : signer;
     }
 
     public void setSigner(String signer) {

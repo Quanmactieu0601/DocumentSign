@@ -197,11 +197,12 @@ public class CertificateService {
                 signatureImageData = signatureImage.get().getImgData();
         }
 
-        if (templateId == null) {
-            Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
-            if (signatureTemplateOptional.isPresent()) {
-                templateId = signatureTemplateOptional.get().getId();
-            } else {
+        Long DEFAULT_OPTION = 0L;
+        if (templateId == DEFAULT_OPTION) {
+//            Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
+//            if (signatureTemplateOptional.isPresent()) {
+//                templateId = signatureTemplateOptional.get().getId();
+//            } else {
                 try {
                     String signer = ParserUtils.getElementContentNameInCertificate(subjectDN, "CN=([^,]+)").replace("\"", "").replace("\'", "");
                     htmlContent = IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name());
@@ -213,7 +214,7 @@ public class CertificateService {
                 } catch (IOException ioe) {
                     throw new ApplicationException("Error reading file");
                 }
-            }
+//            }
         }
 
         Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findById(templateId);

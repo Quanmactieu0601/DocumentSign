@@ -41,6 +41,14 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
 
     @Column(name = "transparency")
     private Boolean transparency;
+
+    @Column(name = "thumbnail")
+    private String thumbnail;
+
+    public String getThumbnail() { return thumbnail; }
+
+    public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
+
     public Integer getWidth() { return width; }
 
     public void setWidth(Integer width) { this.width = width; }

@@ -75,6 +75,7 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     public SignatureTemplateDTO save(SignatureTemplateDTO signatureTemplateDTO) throws ApplicationException {
         log.debug("Request to save SignatureTemplate : {}", signatureTemplateDTO);
         String thumnailImage = createThumbnail(signatureTemplateDTO);
+        signatureTemplateDTO.setThumbnail(thumnailImage);
         SignatureTemplate signatureTemplate = signatureTemplateMapper.toEntity(signatureTemplateDTO);
         signatureTemplate = signatureTemplateRepository.save(signatureTemplate);
         return signatureTemplateMapper.toDto(signatureTemplate);
@@ -143,6 +144,8 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
             templateDTO.setHtmlTemplate(htmlContent);
             templateDTO.setWidth(320);
             templateDTO.setHeight(150);
+            templateDTO.setCoreParser("DEFAULT");
+            templateDTO.setThumbnail(this.createThumbnail(templateDTO));
             List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
             listSignatureTempDto.add(templateDTO);
             page = new PageImpl<>(listSignatureTempDto);

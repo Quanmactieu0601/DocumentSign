@@ -1,5 +1,4 @@
 import { Component, ElementRef, EventEmitter, HostListener, OnInit, Output, ViewChild } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
@@ -10,7 +9,6 @@ import { SigningService } from 'app/signing/signing.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { HttpResponse } from '@angular/common/http';
-import { saveAs } from 'file-saver';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
 import { ResponseBody } from 'app/shared/model/response-body';
@@ -30,7 +28,7 @@ export class SigningComponent implements OnInit {
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;
-  serial = '';
+  serial: any;
   pin: any;
 
   showMessageSerialRequired = false;
@@ -119,26 +117,11 @@ export class SigningComponent implements OnInit {
     this.setDisableButton();
   }
 
-  arrayBufferToBase64(buffer: any): string {
-    return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-      .toString()
-      .replace('data:application/pdf;base64,', '');
-  }
-
-  base64ToArrayBuffer(base64: any): ArrayBuffer {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
-  }
-
   openModalTemplateList(): void {
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.modalRef.result.then(templateId => {
-      this.editForm.controls['templateId'].setValue(templateId);
+      templateId == null ? this.editForm.controls['templateId'].setValue(0) : this.editForm.controls['templateId'].setValue(templateId);
+      this.checkValidatedImage();
     });
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
@@ -156,7 +139,9 @@ export class SigningComponent implements OnInit {
     }
 
     const data = {
-      ...this.editForm.value,
+      pin: this.editForm.get(['pin'])?.value,
+      serial: this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value,
+      templateId: this.editForm.get(['templateId'])?.value,
     };
 
     this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
