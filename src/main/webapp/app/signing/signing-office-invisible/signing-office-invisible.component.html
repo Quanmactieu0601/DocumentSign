@@ -27,23 +27,25 @@
             </div>
         </div>
         <form name="editForm" [formGroup]="editForm">
-            <label class="form-control-label" for="field_serial">Serial</label>
-            <div ngbDropdown class="d-block">
-                <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
-                       value="{{serial}}"
-                       placeholder="Select serial"
-                       (keyup)="filter(part.value)"
-                />
-                <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
-                (scroll)="getMoreCert($event)">
-                    <div *ngIf="listCertificate.length !== 0; else nothing">
-                        <div ngbDropdownItem *ngFor="let cert of listCertificate"
-                             (click)="selectSerial(cert.serial||'')"
-                             style="cursor: pointer">
-                            {{cert.serial}} <br> {{cert.subjectInfo}}
+            <div class="form-group">
+                <label class="form-control-label" for="field_serial">Serial</label>
+                <div ngbDropdown class="d-block">
+                    <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
+                           value="{{serial}}"
+                           placeholder="Select serial"
+                           (keyup)="filter(part.value)"
+                    />
+                    <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
+                         (scroll)="getMoreCert($event)">
+                        <div *ngIf="listCertificate.length !== 0; else nothing">
+                            <div ngbDropdownItem *ngFor="let cert of listCertificate"
+                                 (click)="selectSerial(cert.serial||'')"
+                                 style="cursor: pointer">
+                                {{cert.serial}} <br> {{cert.subjectInfo}}
+                            </div>
                         </div>
+                        <ng-template #nothing ngbDropdownItem>Don't have any certificate matches</ng-template>
                     </div>
-                    <ng-template #nothing ngbDropdownItem>Don't have any certificate matches</ng-template>
                 </div>
             </div>
             <div class="form-group">
@@ -58,7 +60,7 @@
             <!--                       formControlName="otpCode"/>-->
             <!--            </div>-->
         </form>
-        <button class="btn btn-success btn-primary" [disabled]="!selectFiles || this.selectFiles.length == 0"
+        <button class="btn btn-success btn-primary text-right" [disabled]="!selectFiles || this.selectFiles.length == 0"
                 (click)="signDoc()" style="alignment: center">
             <span jhiTranslate="sign.title">Sign</span>
         </button>

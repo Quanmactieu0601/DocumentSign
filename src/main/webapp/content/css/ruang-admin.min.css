@@ -35,6 +35,13 @@ a:focus {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
+
+@media (max-width: 768px) {
+  .container-fluid {
+    min-width: 100vw;
+  }
+}
+
 @media (min-width: 768px) {
   .container-login {
     margin-left: 25rem;
