@@ -198,7 +198,7 @@ public class CertificateService {
         }
 
         Long DEFAULT_OPTION = 0L;
-        if (templateId == DEFAULT_OPTION) {
+        if (templateId == DEFAULT_OPTION | templateId == null) {
 //            Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
 //            if (signatureTemplateOptional.isPresent()) {
 //                templateId = signatureTemplateOptional.get().getId();

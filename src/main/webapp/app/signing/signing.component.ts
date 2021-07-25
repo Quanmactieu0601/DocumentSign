@@ -121,23 +121,14 @@ export class SigningComponent implements OnInit {
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.modalRef.result.then(templateId => {
       templateId == null ? this.editForm.controls['templateId'].setValue(0) : this.editForm.controls['templateId'].setValue(templateId);
-      this.checkValidatedImage();
+      this.viewSignatureImage();
     });
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
     });
   }
 
-  checkValidatedImage(): void {
-    for (const key of Object.keys(this.editForm.controls)) {
-      if (this.editForm.controls[key].invalid) {
-        const invalidControl = this.el.nativeElement.querySelector('[formcontrolname="' + key + '"]');
-        invalidControl.focus();
-        this.isShowMessage = true;
-        return;
-      }
-    }
-
+  viewSignatureImage(): void {
     const data = {
       pin: this.editForm.get(['pin'])?.value,
       serial: this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value,
@@ -150,17 +141,50 @@ export class SigningComponent implements OnInit {
         this.signatureImage && this.signatureImage.nativeElement
           ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
           : null;
-        this.nexBtnElement!.nativeElement.disabled = false;
-        this.isShowMessage = true;
       } else {
         this.toastrService.error(res.msg);
+        this.imageSrc = '';
+        return;
+      }
+    });
+  }
+
+  checkValidatedImage(): void {
+    const data = {
+      pin: this.editForm.get(['pin'])?.value,
+      serial: this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value,
+      templateId: this.editForm.get(['templateId'])?.value,
+    };
+
+    this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
+      if (res.status === ResponseBody.SUCCESS) {
+        this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
+        this.signatureImage && this.signatureImage.nativeElement
+          ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
+          : null;
+        this.imageSrc = this.signatureImage?.nativeElement.src;
+        this.wizzard.goToNextStep();
+        // }
+      } else {
+        this.toastrService.error(res.msg);
+        this.imageSrc = '';
+        return;
       }
     });
   }
 
   nextAction(): void {
-    this.imageSrc = this.signatureImage?.nativeElement.src;
-    this.wizzard.goToNextStep();
+    for (const key of Object.keys(this.editForm.controls)) {
+      if (this.editForm.controls[key].invalid) {
+        const invalidControl = this.el.nativeElement.querySelector('[formcontrolname="' + key + '"]');
+        invalidControl.focus();
+        this.isShowMessage = true;
+        this.nexBtnElement!.nativeElement.disabled = false;
+        this.isShowMessage = true;
+        return;
+      }
+    }
+    this.checkValidatedImage();
   }
 
   validateFileInput(FileToSign: File): any {

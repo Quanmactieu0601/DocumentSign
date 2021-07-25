@@ -35,7 +35,7 @@
                                         *ngIf="selectFiles.length == 0">
                                         <small
                                             class="form-text text-danger text-center"
-                                            *ngIf="editForm.get('fileSelect')?.invalid && isShowMessage"
+                                            *ngIf="editForm.get('fileSelect')?.invalid"
                                         >
                                             Mời bạn chọn file ký.
                                         </small>
@@ -68,7 +68,7 @@
                                                            value="{{serial}}"
                                                            placeholder="Select serial"
                                                            (keyup)="filter(part.value)"
-                                                           (click)="setDisableButton()"
+
                                                     />
                                                     <div
                                                         *ngIf="(editForm.get('serial')!.invalid && (editForm.get('serial')!.dirty || editForm.get('serial')!.touched))">
@@ -106,7 +106,7 @@
                                                     Code</label>
                                                 <input type="password" class="form-control form-control-sm"
                                                        id="field_pinCode" name="pin"
-                                                       formControlName="pin" (click)="setDisableButton()"/>
+                                                       formControlName="pin" />
                                                 <div
                                                     *ngIf="editForm.get('pin')!.invalid && (editForm.get('pin')!.dirty || editForm.get('pin')!.touched)">
                                                     <small
@@ -184,7 +184,7 @@
 
                         <button type="button"
                                 class="btn btn-primary btn-sm"
-                                [disabled]="true" #nextBtnElement (click)="nextAction()">
+                                [disabled]="this.editForm.invalid" #nextBtnElement (click)="nextAction()">
                             <span jhiTranslate="sign.pdf.next">Tiếp theo</span>
                         </button>
 
