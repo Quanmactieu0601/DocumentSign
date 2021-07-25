@@ -35,6 +35,7 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
@@ -173,7 +174,6 @@ public class CertificateService {
     }
 
 
-
     public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
@@ -199,22 +199,17 @@ public class CertificateService {
 
         Long DEFAULT_OPTION = 0L;
         if (templateId == DEFAULT_OPTION | templateId == null) {
-//            Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
-//            if (signatureTemplateOptional.isPresent()) {
-//                templateId = signatureTemplateOptional.get().getId();
-//            } else {
-                try {
-                    String signer = ParserUtils.getElementContentNameInCertificate(subjectDN, "CN=([^,]+)").replace("\"", "").replace("\'", "");
-                    htmlContent = IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name());
-                    htmlContent = htmlContent
-                        .replaceFirst("_signer_", signer)
-                        .replaceFirst("_signatureImage_", signatureImageData)
-                        .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
-                    return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
-                } catch (IOException ioe) {
-                    throw new ApplicationException("Error reading file");
-                }
-//            }
+            String signer = ParserUtils.getElementContentNameInCertificate(subjectDN, "CN=([^,]+)").replace("\"", "").replace("\'", "");
+            try (InputStream inputFileStream = fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html")) {
+                htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
+                htmlContent = htmlContent
+                    .replaceFirst("_signer_", signer)
+                    .replaceFirst("_signatureImage_", signatureImageData)
+                    .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
+            } catch (IOException ioe) {
+                throw new ApplicationException("Error reading file");
+            }
         }
 
         Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findById(templateId);

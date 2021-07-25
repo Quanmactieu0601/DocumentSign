@@ -27,6 +27,7 @@ import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -138,8 +139,8 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         log.debug("Request to get SignatureImage with id : {}", userId);
         Page<SignatureTemplateDTO> signatureTemplateDTOPage = signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
         Page<SignatureTemplateDTO> page;
-        try{
-            String htmlContent = IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name());
+        try (InputStream inputFileStream = fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html")) {
+            String htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
             SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
             templateDTO.setHtmlTemplate(htmlContent);
             templateDTO.setWidth(320);
