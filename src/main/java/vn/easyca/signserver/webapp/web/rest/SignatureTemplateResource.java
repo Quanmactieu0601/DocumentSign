@@ -142,12 +142,6 @@ public class SignatureTemplateResource extends BaseResource {
     public ResponseEntity<List<SignatureTemplateDTO>> getAllSignatureTemplatesByUserId(Pageable pageable, @RequestParam(required = true) Long userId) throws IOException, ApplicationException {
         try {
             log.debug("REST request to get a page of SignatureTemplates by UserId");
-//        Page<SignatureTemplateDTO> page = signatureTemplateService.findAll(pageable);
-//        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-//        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
-//            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-//        return ResponseEntity.ok().headers(headers).body(page.getContent());
-
             Page<SignatureTemplateDTO> page = signatureTemplateService.findAllWithUserId(pageable, userId);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
             asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
@@ -156,14 +150,13 @@ public class SignatureTemplateResource extends BaseResource {
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
-//            return ResponseEntity<>(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
             return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             log.error(e.getMessage());
             message = e.getMessage();
             return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
         } finally {
-            asyncTransactionService.newThread("/api/signature-templates/getByUserId", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+            asyncTransactionService.newThread("/api/signature-templates/getByUserId", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
