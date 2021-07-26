@@ -3,6 +3,10 @@ import { SigningService } from 'app/core/signing/signing.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
+
+(window as any).jQuery = $;
+require('jquery-ui-touch-punch');
+
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
 import { ResponseBody } from 'app/shared/model/response-body';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
