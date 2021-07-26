@@ -29,11 +29,16 @@ a:focus {
   display: -ms-flexbox;
   display: flex;
 }
-
 #wrapper #content-wrapper {
   background-color: #f1f4f5;
   width: 100%;
   overflow-x: hidden;
+}
+
+@media (max-width: 768px) {
+  .container-fluid {
+    min-width: 100vw;
+  }
 }
 
 #wrapper #content-wrapper #content {
@@ -945,13 +950,18 @@ a:focus {
   padding: 3rem !important;
 }
 
+#wrapper #content-wrapper {
+  /*min-width: 100vw;*/
+}
+
 @media (max-width: 768px) {
-  #container-wrapper {
+  #wrapper #container-wrapper {
     min-width: 100vw;
   }
 
   .sidebar.toggled {
-    width: 100vw !important;
+    /*width: 100vw !important;*/
+    width: 55vw !important;
     transition: all 0.3s ease-in-out;
     -webkit-transition: all 0.3s ease-in-out;
   }
