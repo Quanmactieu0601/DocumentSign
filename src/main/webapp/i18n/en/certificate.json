@@ -45,6 +45,13 @@
         "error": "Create QR code failure",
         "guide": "Guide"
       },
+      "changeOwnerID": {
+        "title": "Change OwnerID",
+        "OwnerId": "OwnerId",
+        "placeholder": "Enter OwnerID",
+        "success": "OwnerID changed successfully",
+        "required": "OwnerID is required"
+      },
       "changeCertPIN": {
         "changePIN": "PIN",
         "header": "Change PIN",

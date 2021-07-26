@@ -41,6 +41,13 @@
         "error": "Tạo mã QR thất bại",
         "guide": "Hướng dẫn"
       },
+      "changeOwnerID": {
+        "title": "Thay đổi OwnerID",
+        "OwnerId": "OwnerId",
+        "placeholder": "Nhập OwnerID",
+        "success": "OwnerID thay đổi thành công",
+        "required": "OwnerID là bắt buộc"
+      },
       "changeCertPIN": {
         "changePIN": "Mã PIN",
         "header": "Thay đổi mã PIN",
