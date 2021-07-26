@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.utils;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.swing.Java2DRenderer;

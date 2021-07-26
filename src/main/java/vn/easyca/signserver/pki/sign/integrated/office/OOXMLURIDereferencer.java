@@ -38,13 +38,11 @@ public class OOXMLURIDereferencer
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        try {
-            InputStream dataInputStream = findDataInputStream(uri);
+        try (InputStream dataInputStream = findDataInputStream(uri)) {
             this.ooxmlIn.reset();
             if (null == dataInputStream) {
                 return this.baseUriDereferencer.dereference(uriReference, context);
             }
-
             return new OctetStreamData(dataInputStream, uri, null);
         } catch (IOException e) {
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);

@@ -3,6 +3,7 @@ package vn.easyca.signserver.webapp.service.dto;
 import com.itextpdf.text.BadElementException;
 import jdk.nashorn.internal.ir.ReturnNode;
 import org.apache.commons.io.IOUtils;
+import org.postgresql.util.StreamWrapper;
 import org.springframework.core.env.Environment;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
@@ -14,7 +15,9 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -64,7 +67,7 @@ public class VaccinationCertDTO {
         this.fileType = fileType;
     }
 
-    public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService, Environment env) throws IOException, ApplicationException, BadElementException {
+    public SigningRequest<VisibleRequestContent> createSigningRequest(FileResourceService fileResourceService, Environment env) throws ApplicationException {
         SigningRequest<VisibleRequestContent> signingRequest = new SigningRequest<>();
         List<VisibleRequestContent> visibleRequestContentList = new ArrayList<VisibleRequestContent>();
         VisibleRequestContent visibleRequestContent = new VisibleRequestContent();
@@ -74,7 +77,6 @@ public class VaccinationCertDTO {
         Date date = new Date();
         String fullDate = formatter.format(date) + " +07'00'";
         htmlContentImage = htmlContentImage.replace("Time", fullDate);
-
 
 
         Location location = new Location();
@@ -109,8 +111,17 @@ public class VaccinationCertDTO {
         return signingRequest;
     }
 
-    private String getSignatureImage(FileResourceService fileResourceService) throws ApplicationException, IOException {
+    private String getSignatureImage(FileResourceService fileResourceService) throws ApplicationException {
         String signatureImagePath = fileType == 0 ? "/templates/signature/vaccinationCertImageHtml.html" : "/templates/signature/prctest-vaccinationCertImage.html";
-        return new String(IOUtils.toByteArray(fileResourceService.getTemplateFile(signatureImagePath)));
+        try {
+            InputStream inputStream = fileResourceService.getTemplateFile(signatureImagePath);
+            byte[] fileContent = IOUtils.toByteArray(inputStream);
+            inputStream.close();
+            return new String(fileContent);
+        } catch (IOException ex) {
+            throw new ApplicationException("Read File vaccinationCertImageHtml Error" + ex.getMessage());
+        }
     }
+
+
 }

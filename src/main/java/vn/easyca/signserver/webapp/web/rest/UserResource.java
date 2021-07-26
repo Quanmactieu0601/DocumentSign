@@ -226,8 +226,7 @@ public class UserResource extends BaseResource {
     @GetMapping("users/templateFile")
     @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
-        try {
-            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx");
+        try (InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/UserUploadTemplate.xlsx")) {
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
         } catch (Exception e) {
             log.debug(e.getMessage());

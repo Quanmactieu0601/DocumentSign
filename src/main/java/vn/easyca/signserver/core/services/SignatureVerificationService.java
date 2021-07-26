@@ -227,9 +227,10 @@ public class SignatureVerificationService {
             KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
             ks.load(null, null);
             CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
-            ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
 
+            try (InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA)) {
+                ks.setCertificateEntry("root", cf.generateCertificate(rootCaStream));
+            }
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfStream));
             SignatureUtil signUtil = new SignatureUtil(pdfDoc);
             List<String> signatureNames = signUtil.getSignatureNames();
@@ -363,33 +364,33 @@ public class SignatureVerificationService {
 
             for(SignatureInfo.SignaturePart sp : si.getSignatureParts()){
                 if(sp.validate()){
-                    InputStream inputStream = new ByteArrayInputStream(sp.getSignatureDocument().toString().getBytes());
-                    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document doc = db.parse(inputStream);
-                    doc.getDocumentElement().normalize();
+                    try (InputStream inputStream = new ByteArrayInputStream(sp.getSignatureDocument().toString().getBytes())){
+                        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                        DocumentBuilder db = dbf.newDocumentBuilder();
+                        Document doc = db.parse(inputStream);
+                        doc.getDocumentElement().normalize();
 
-                    NodeList nodeList = doc.getElementsByTagName("mdssi:SignatureTime");
-                    Node node = nodeList.item(0);
-                    Element element = (Element) node;
+                        NodeList nodeList = doc.getElementsByTagName("mdssi:SignatureTime");
+                        Node node = nodeList.item(0);
+                        Element element = (Element) node;
+                        String dateStr = element.getElementsByTagName("mdssi:Value").item(0).getTextContent();
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+                        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Universal"));
+                        Date date = simpleDateFormat.parse(dateStr);
+                        String signTime = DateTimeUtils.format(date, DateTimeUtils.HHmmss_ddMMyyyy);
 
-                    String dateStr = element.getElementsByTagName("mdssi:Value").item(0).getTextContent();
-                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                    simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Universal"));
-                    Date date = simpleDateFormat.parse(dateStr);
-                    String signTime = DateTimeUtils.format(date, DateTimeUtils.HHmmss_ddMMyyyy);
-
-                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
-                    signatureVfDTO.setIntegrity(si.verifySignature());
-                    signatureVfDTO.setSignTime(signTime);
-                    X509Certificate signer = sp.getSigner();
-                    certificateVfDTOList.add(getCertificateInfoDoc(signer, DateTimeUtils.parse(dateStr)));
-                    signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                        SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                        signatureVfDTO.setIntegrity(si.verifySignature());
+                        signatureVfDTO.setSignTime(signTime);
+                        X509Certificate signer = sp.getSigner();
+                        certificateVfDTOList.add(getCertificateInfoDoc(signer, DateTimeUtils.parse(dateStr)));
+                        signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
 
 
 //                    result.add(sp.getSigner());
-                    signatureVfDTOList.add(signatureVfDTO);
-                    result.setSignatureVfDTOs(signatureVfDTOList);
+                        signatureVfDTOList.add(signatureVfDTO);
+                        result.setSignatureVfDTOs(signatureVfDTOList);
+                    }
                 }
             }
 //            X509Certificate signer = result.get(0);

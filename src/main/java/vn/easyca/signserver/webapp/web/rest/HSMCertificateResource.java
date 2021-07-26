@@ -68,9 +68,8 @@ public class HSMCertificateResource extends BaseResource {
     @GetMapping("/download-csr-template")
     @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<Object> getTemplateFileCertificate() {
-        try {
+        try (InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx")) {
             log.info("--- download-certificate-request-template ---");
-            InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx");
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
         } catch (Exception e) {
             log.debug(e.getMessage());

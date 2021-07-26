@@ -20,27 +20,39 @@ public class FileIOHelper {
         File fout = new File(filePath);
         FileOutputStream fos = new FileOutputStream(fout);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-        bw.write(content);
-        bw.newLine();
-        bw.close();
+        try {
+            bw.write(content);
+            bw.newLine();
+        } finally {
+            bw.close();
+            fos.close();
+        }
     }
 
     public static void writeFileLine(List<String> contents, String filePath) throws IOException {
         File fout = new File(filePath);
         FileOutputStream fos = new FileOutputStream(fout);
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-        for (int i = 0; i < contents.size(); i++) {
-            bw.write(contents.get(i));
-            bw.newLine();
+        try {
+            for (int i = 0; i < contents.size(); i++) {
+                bw.write(contents.get(i));
+                bw.newLine();
+            }
+        } finally {
+            bw.close();
+            fos.close();
         }
-        bw.close();
     }
 
     public static String getBase64EncodedImage(String imageURL) throws IOException {
         java.net.URL url = new java.net.URL(imageURL);
         InputStream is = url.openStream();
-        byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
-        return Base64.encodeBase64String(bytes);
+        try {
+            byte[] bytes = org.apache.commons.io.IOUtils.toByteArray(is);
+            return Base64.encodeBase64String(bytes);
+        } finally {
+            is.close();
+        }
     }
 
     public static void createDirectory(String directory) {
