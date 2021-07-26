@@ -10,7 +10,7 @@ import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/sign
 import { AccountService } from 'app/core/auth/account.service';
 import { HttpResponse } from '@angular/common/http';
 // import * as PDFJS from "pdfjs-dist";
-(window as any).pdfWorkerSrc = '/assets/pdfjs/pdf.worker1.js';
+(window as any).pdfWorkerSrc = '/content/libs/pdf.worker1.js';
 
 @Component({
   selector: 'jhi-pdf-view',
