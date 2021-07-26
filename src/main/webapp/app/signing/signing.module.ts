@@ -12,6 +12,8 @@ import { PdfViewComponent } from 'app/signing/signing-pdf-visible/pdf-view/pdf-v
 import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { SignatureImageViewComponent } from 'app/signing/signing-pdf-visible/signature-image-view/signature-image-view.component';
 import { UploadDocComponent } from 'app/signing/signing-pdf-visible/upload-doc/upload-doc.component';
+import { SignRawComponent } from 'app/signing/sign-raw/sign-raw.component';
+import { XmlfileComponent } from 'app/signing/xmlfile/xmlfile.component';
 
 @NgModule({
   imports: [
@@ -29,6 +31,8 @@ import { UploadDocComponent } from 'app/signing/signing-pdf-visible/upload-doc/u
     SignatureListComponent,
     SignatureImageViewComponent,
     UploadDocComponent,
+    SignRawComponent,
+    XmlfileComponent,
   ],
   exports: [UploadDocComponent, SignatureImageViewComponent, PdfViewComponent],
 })
