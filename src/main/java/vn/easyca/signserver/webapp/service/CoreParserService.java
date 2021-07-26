@@ -39,6 +39,15 @@ public interface CoreParserService {
      */
     Optional<CoreParserDTO> findOne(Long id);
 
+
+    /**
+     * Get the "name" coreParser.
+     *
+     * @param name the id of the entity.
+     * @return the entity.
+     */
+    Optional<CoreParserDTO> findByName(String s);
+
     /**
      * Delete the "id" coreParser.
      *
@@ -47,4 +56,5 @@ public interface CoreParserService {
     void delete(Long id);
 
     List<CoreParser> getAllCoreParsers();
+
 }

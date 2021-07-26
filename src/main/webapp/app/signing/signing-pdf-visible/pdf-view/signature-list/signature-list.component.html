@@ -15,7 +15,10 @@
                     <tr class="col-12">
 
                         <td class="custom-left-align col-6">
-                            <div [innerHTML]="template.htmlTemplate"></div>
+<!--                            <div [innerHTML]="template.htmlTemplate"></div>-->
+                            <div>
+                                <img [src]="convertToSafeImgContent(template.thumbnail)">
+                            </div>
                         </td>
                         <td class="custom-middle-align col-6">
                             <button type="submit" class="btn btn-primary btn-sm" (click)="chooseSignatureTemplate(template.id!)">

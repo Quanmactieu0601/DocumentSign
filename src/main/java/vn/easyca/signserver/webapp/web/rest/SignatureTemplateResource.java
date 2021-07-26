@@ -1,13 +1,24 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
+import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.CoreParserService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.service.SignatureTemplateService;
+import vn.easyca.signserver.webapp.service.dto.CoreParserDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
+import vn.easyca.signserver.webapp.service.impl.parser.BvAnPhuocSignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.BvBenhNhietDoiSignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.Bvq11SignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.impl.parser.Bvq11v2SignatureTemplateParserImpl;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
+import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
@@ -28,8 +39,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,7 +56,8 @@ public class SignatureTemplateResource extends BaseResource {
 
     private final AsyncTransactionService asyncTransactionService;
     private final FileResourceService fileResourceService;
-
+    private final CoreParserService coreParserService;
+    private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private static final String ENTITY_NAME = "signatureTemplate";
     private final Environment env;
     @Value("${jhipster.clientApp.name}")
@@ -51,9 +65,11 @@ public class SignatureTemplateResource extends BaseResource {
 
     private final SignatureTemplateService signatureTemplateService;
 
-    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, SignatureTemplateService signatureTemplateService) {
+    public SignatureTemplateResource(AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, CoreParserService coreParserService, SignatureTemplateParserFactory signatureTemplateParserFactory, Environment env, SignatureTemplateService signatureTemplateService) {
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
+        this.coreParserService = coreParserService;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.env = env;
         this.signatureTemplateService = signatureTemplateService;
     }
@@ -66,7 +82,7 @@ public class SignatureTemplateResource extends BaseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/signature-templates")
-    public ResponseEntity<SignatureTemplateDTO> createSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException {
+    public ResponseEntity<SignatureTemplateDTO> createSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException, ApplicationException {
         log.debug("REST request to save SignatureTemplate : {}", signatureTemplateDTO);
         if (signatureTemplateDTO.getId() != null) {
             asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.CREATE, Extension.NONE, Method.POST,
@@ -91,7 +107,7 @@ public class SignatureTemplateResource extends BaseResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/signature-templates")
-    public ResponseEntity<SignatureTemplateDTO> updateSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException {
+    public ResponseEntity<SignatureTemplateDTO> updateSignatureTemplate(@RequestBody SignatureTemplateDTO signatureTemplateDTO) throws URISyntaxException, ApplicationException {
         log.debug("REST request to update SignatureTemplate : {}", signatureTemplateDTO);
         if (signatureTemplateDTO.getId() == null) {
             asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.MODIFY, Extension.NONE, Method.PUT,
@@ -123,19 +139,26 @@ public class SignatureTemplateResource extends BaseResource {
     }
 
     @GetMapping("/signature-templates/getByUserId")
-    public ResponseEntity<List<SignatureTemplateDTO>> getAllSignatureTemplatesByUserId(Pageable pageable, @RequestParam(required = true) Long userId) {
-        log.debug("REST request to get a page of SignatureTemplates by UserId");
-//        Page<SignatureTemplateDTO> page = signatureTemplateService.findAll(pageable);
-//        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-//        asyncTransactionService.newThread("/api/signature-templates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
-//            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-//        return ResponseEntity.ok().headers(headers).body(page.getContent());
-
-         Page<SignatureTemplateDTO> page = signatureTemplateService.findAllWithUserId(pageable, userId);
-         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-         asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
-            TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
-         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public ResponseEntity<List<SignatureTemplateDTO>> getAllSignatureTemplatesByUserId(Pageable pageable, @RequestParam(required = true) Long userId) throws IOException, ApplicationException {
+        try {
+            log.debug("REST request to get a page of SignatureTemplates by UserId");
+            Page<SignatureTemplateDTO> page = signatureTemplateService.findAllWithUserId(pageable, userId);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            asyncTransactionService.newThread("/api/signature-templates/{id}", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
+        } finally {
+            asyncTransactionService.newThread("/api/signature-templates/getByUserId", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
+        }
     }
 
 
@@ -172,21 +195,7 @@ public class SignatureTemplateResource extends BaseResource {
     @PostMapping("/signature-templates/signExample")
     public ResponseEntity<BaseResponseVM> getSignExample(@RequestBody SignatureExampleDTO signatureExampleDTO) {
         try {
-            String htmlTemplate = signatureExampleDTO.getHtmlTemplate(fileResourceService);
-            String signer = signatureExampleDTO.getSigner();
-            String signingImageB64 = signatureExampleDTO.getSigningImage(fileResourceService);
-            int width = signatureExampleDTO.getWidth();
-            int height = signatureExampleDTO.getHeight();
-            boolean transparency = signatureExampleDTO.isTransparency();
-
-            String htmlContent = htmlTemplate
-                .replaceFirst("_signer_", signer)
-                .replaceFirst("_position_", "TPDV. ")
-                .replaceFirst("_address_", "Hà Nội")
-                .replaceFirst("_signatureImage_", signingImageB64)
-                .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
-
-            String imageBase64 = ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
+            String imageBase64 = signatureTemplateService.getSignatureExample(signatureExampleDTO);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(imageBase64));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
