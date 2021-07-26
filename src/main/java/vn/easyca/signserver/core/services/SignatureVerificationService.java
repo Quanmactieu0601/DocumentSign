@@ -409,16 +409,17 @@ public class SignatureVerificationService {
             while(node.getParentNode() .getParentNode()!= null){
                 node = node.getParentNode();
             }
-            Node content = node.getChildNodes().item(0);
-            Element context = (Element) content;
-            if(context.getAttribute("Id") != ""){
-                context.setIdAttribute("Id",true);
-            }
-            else if (context.getAttribute("ID") != ""){
-                context.setIdAttribute("ID",true);
-            }
-            else if(context.getAttribute("id") != ""){
-                context.setIdAttribute("id",true);
+            NodeList content = node.getChildNodes();
+            int i=0;
+            while (content.item(i).getLocalName()==null) i++;
+
+            Element context = (Element) content.item(i);
+            if (context.getAttribute("Id") != "") {
+                context.setIdAttribute("Id", true);
+            } else if (context.getAttribute("ID") != "") {
+                context.setIdAttribute("ID", true);
+            } else if (context.getAttribute("id") != "") {
+                context.setIdAttribute("id", true);
             }
 
             XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
