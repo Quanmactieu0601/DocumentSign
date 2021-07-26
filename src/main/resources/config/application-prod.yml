@@ -49,9 +49,9 @@ spring:
     #    password: 123
 
     # BV Nhi Dong - cau hinh DB master 2
-    url: jdbc:postgresql://192.168.200.213:5432/signserver
-    username: postgres
-    password: 123@@nd1
+    #    url: jdbc:postgresql://192.168.200.213:5432/signserver
+    #    username: postgres
+    #    password: 123@@nd1
 
     # SDS - Cau hinh Test
     url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
