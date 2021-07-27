@@ -12,6 +12,8 @@
       "chooseSignatureTemplate": "Choose signature template",
       "choose": "Select"
     },
+    "signXml": "Sign XML File",
+    "dragAndDropXML": "Drag or drop xml file for signing",
     "signatureImage": "Signature Image",
     "dragAndDrop": "Drag or drop pdf file for signing",
     "messages": {
