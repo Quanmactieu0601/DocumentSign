@@ -11,22 +11,44 @@
         <div class="form-group col-md-12 uploadFormGroup ">
             <form class="form" name="signingForm" [formGroup]="signingForm">
                 <!--  serial-->
-                    <div class="form-group">
-                    <label class="form-control-label"><span
-                        jhiTranslate="webappApp.certificate.serial">Serial</span></label>
-                    <input type="text" class="form-control form-control-sm" name="serial"  formControlName="serial"
-                           #serialElement` >
-                    <div
-                        *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched))">
-                        <small
-                            class="form-text text-danger"
-                            *ngIf="signingForm.get('serial')?.errors?.required"
-                            jhiTranslate="sign.messages.validate.serial.required"
-                        >
-                            Your serial is required.
-                        </small>
+                <div class="form-group">
+                    <label class="form-control-label font-weight-bold" for="field_serial" >Serial</label>
+                    <div ngbDropdown class="d-block">
+                        <input #part type="text" id="field_serial"
+                               class="form-control form-control-sm" name="serial"
+                               formControlName="serial" ngbDropdownToggle
+                               value="{{serial}}"
+                               placeholder="Select serial"
+                               (keyup)="filter(part.value)"
+
+                        />
+                        <div
+                            *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched))">
+                            <small
+                                class="form-text text-danger"
+                                *ngIf="signingForm.get('serial')?.errors?.required"
+                                jhiTranslate="sign.messages.validate.serial.required"
+                            >
+                                Your serial is required.
+                            </small>
+                        </div>
+                        <div ngbDropdownMenu
+                             style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
+                             (scroll)="getMoreCert($event)">
+                            <div *ngIf="listCertificate.length !== 0; else nothing">
+                                <div ngbDropdownItem *ngFor="let cert of listCertificate"
+                                     (click)="selectSerial(cert.serial||'')"
+                                     style="cursor: pointer">
+                                    {{cert.serial}} <br> {{cert.subjectInfo}}
+                                </div>
+                            </div>
+                            <ng-template #nothing ngbDropdownItem>Don't have any certificate
+                                matches
+                            </ng-template>
+                        </div>
                     </div>
                 </div>
+
                 <!-- pinCode-->
                 <div class="form-group">
                     <label class="form-control-label"><span
