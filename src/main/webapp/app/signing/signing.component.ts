@@ -28,7 +28,7 @@ export class SigningComponent implements OnInit {
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;
-  serial: any;
+  serial = '';
   pin: any;
 
   showMessageSerialRequired = false;
@@ -90,7 +90,7 @@ export class SigningComponent implements OnInit {
   }
 
   selectSerial(serial: string): void {
-    this.serial = serial;
+    this.editForm.controls['serial'].setValue(serial);
   }
 
   filter(part: string): void {
@@ -130,9 +130,7 @@ export class SigningComponent implements OnInit {
 
   viewSignatureImage(): void {
     const data = {
-      pin: this.editForm.get(['pin'])?.value,
-      serial: this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value,
-      templateId: this.editForm.get(['templateId'])?.value,
+      ...this.editForm.value,
     };
 
     this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
@@ -151,9 +149,7 @@ export class SigningComponent implements OnInit {
 
   checkValidatedImage(): void {
     const data = {
-      pin: this.editForm.get(['pin'])?.value,
-      serial: this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value,
-      templateId: this.editForm.get(['templateId'])?.value,
+      ...this.editForm.value,
     };
 
     this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
