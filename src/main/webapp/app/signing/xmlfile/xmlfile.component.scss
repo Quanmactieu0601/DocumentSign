@@ -1,5 +1,4 @@
 button {
-  position: absolute;
   top: 80px;
   margin: auto;
   width: 100px;
@@ -7,7 +6,7 @@ button {
 .signbt {
   position: absolute;
   right: 40%;
-  top: 200px;
+  top: 400px;
   height: inherit;
   width: 180px;
 }
@@ -18,4 +17,8 @@ button {
   margin: 0px !important;
   padding: 0px !important;
   background-image: none !important;
+}
+.btn-down {
+  margin-top: 5px;
+  margin-right: 5px;
 }

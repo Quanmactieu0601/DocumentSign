@@ -1,10 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
@@ -19,6 +21,7 @@ import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.webapp.enm.*;
+import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.dto.VaccinationCertDTO;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
@@ -28,6 +31,11 @@ import vn.easyca.signserver.core.services.XMLSigningService;
 import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.enm.Method;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
 
@@ -231,6 +239,16 @@ public class SigningResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
+    @GetMapping("xml/templateFile")
+    public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
+        try {
+            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/TemplateXML.xml");
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
 
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
+        }
+    }
 
 }

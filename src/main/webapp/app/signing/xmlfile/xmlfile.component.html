@@ -8,9 +8,15 @@
 <div class="card mb-1">
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
+            <div class="row">
+                <button class="btn btn-warning btn-sm btn-down"  style="width: 140px;height: 40px; margin-right: 15px" (click)="downLoadFileTemplate()">
+                    <fa-icon icon="download"></fa-icon>
+                    <span jhiTranslate="userManagement.fileTemplate">File Template</span>
+                </button>
+            </div>
             <form class="form" name="signingForm" [formGroup]="signingForm">
-                <div _ngcontent-ehj-c247="" class="row row-cols-12">
-                    <div _ngcontent-ehj-c247="" class="col">
+                <div  class="row row-cols-12">
+                    <div  class="col">
                         <div _ngcontent-ehj-c247="" class="form-group">
                             <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
                                                                                            jhitranslate="webappApp.certificate.alias"
@@ -33,7 +39,7 @@
                         </div>
                     </div>
                     </div>
-                    <div _ngcontent-ehj-c247="" class="col">
+                    <div  class="col">
                         <div _ngcontent-ehj-c247="" class="form-group">
                             <label _ngcontent-ehj-c247="" class="form-control-label"><span _ngcontent-ehj-c247=""
                                                                                            jhitranslate="webappApp.certificate.ownerId"
@@ -68,8 +74,8 @@
                 </ngx-dropzone-preview>
             </div>
             <br>
-            <div _ngcontent-ehj-c247="" class="signbt col">
-                <div _ngcontent-ehj-c247="" class="form-group">
+            <div  class="signbt col" style="top : 325px">
+                <div  class="form-group">
                     <button
                         class="btn btn-success"
                         [disabled]="!selectFiles || this.selectFiles.length == 0"
@@ -81,3 +87,5 @@
         </div>
     </div>
 </div>
+
+
