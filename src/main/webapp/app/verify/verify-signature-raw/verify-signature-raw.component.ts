@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Account } from 'app/core/user/account.model';
 import { Subscription } from 'rxjs';
 import { AccountService } from 'app/core/auth/account.service';
@@ -30,10 +30,15 @@ export class VerifySignatureRawComponent implements OnInit {
   elementVM: IElementVM | undefined;
   result = false;
   bar = false;
+
   certificateVfDTO?: CertificateVfDTO;
-  listCertificate?: ICertificate[];
+  listCertificate: ICertificate[] = [];
+
   captcha?: ICaptchaModel | null;
   img?: any;
+  serial = '';
+  page = 0;
+  timer: NodeJS.Timeout | undefined;
   editForm = this.fb.group({
     base64Signature: [],
     base64OriginalData: [],
@@ -53,12 +58,46 @@ export class VerifySignatureRawComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.getListCertificate();
+    this.getListCertificate('', 0);
     this.reloadCaptcha();
   }
 
-  getListCertificate(): void {
-    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+  getListCertificate(s: string, p: number): void {
+    const data = {
+      page: p,
+      size: 20,
+      sort: ['id,desc'],
+      alias: null,
+      ownerId: this.account?.login,
+      serial: s,
+      validDate: null,
+      expiredDate: null,
+    };
+    if (p === 0) this.listCertificate = [];
+    this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+      this.listCertificate.push(...(res.body || []));
+    });
+  }
+
+  @HostListener('scroll', ['$event'])
+  getMoreCert(e: any): void {
+    if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
+      this.getListCertificate(this.serial, ++this.page);
+    }
+  }
+
+  selectSerial(serial: string): void {
+    this.serial = serial;
+  }
+
+  filter(part: string): void {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => {
+      this.page = 0;
+      this.getListCertificate(part, this.page);
+    }, 1000);
   }
 
   private createFromForm(): ISignatureVfVM {
