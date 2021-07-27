@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { Subscription } from 'rxjs';
@@ -18,15 +18,20 @@ import { Account } from 'app/core/user/account.model';
 export class SignRawComponent implements OnInit {
   textToSign: String = '';
   textResult: String = '';
-  listCertificate?: ICertificate[];
+  listCertificate: ICertificate[] = [];
   authSubscription?: Subscription;
   account: Account | null = null;
+  serial: any;
+  pin: any;
+  page = 0;
+  timer: NodeJS.Timeout | undefined;
   signingForm = this.fb.group({
-    pin: [],
-    serial: [],
+    serial: ['', Validators.required],
+    pin: ['', Validators.required],
     otpCode: [],
   });
   hide = true;
+
   constructor(
     private accountService: AccountService,
     private toastrService: ToastrService,
@@ -38,10 +43,44 @@ export class SignRawComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.getListCertificate();
+    this.getListCertificate('', 0);
   }
-  getListCertificate(): void {
-    this.certificateService.query().subscribe((res: HttpResponse<ICertificate[]>) => (this.listCertificate = res.body || []));
+  getListCertificate(s: string, p: number): void {
+    const data = {
+      page: p,
+      size: 20,
+      sort: ['id,desc'],
+      alias: null,
+      ownerId: this.account?.login,
+      serial: s,
+      validDate: null,
+      expiredDate: null,
+    };
+    if (p === 0) this.listCertificate = [];
+    this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+      this.listCertificate.push(...(res.body || []));
+    });
+  }
+
+  @HostListener('scroll', ['$event'])
+  getMoreCert(e: any): void {
+    if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
+      this.getListCertificate(this.serial, ++this.page);
+    }
+  }
+
+  selectSerial(serial: string): void {
+    this.serial = serial;
+  }
+
+  filter(part: string): void {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => {
+      this.page = 0;
+      this.getListCertificate(part, this.page);
+    }, 1000);
   }
 
   signRaw(): void {
