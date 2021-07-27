@@ -155,10 +155,9 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.phone">Phone</label>
-
-                                            <input type="text" class="form-control form-control-sm" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 46 || event.keyCode == 110)"
-                                                   formControlName="phone"  maxlength="51" oninput="javascript: (this.value.length > this.maxlength) this.value = this.value.slice(0, this.maxlength)" />
-
+                                            
+                                            <input type="text" class="form-control form-control-sm" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 8)"
+                                                   formControlName="phone"/>
                                             <div
                                                 *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
                                                 <small
