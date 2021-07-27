@@ -20,4 +20,7 @@ export class SigningService {
     const requestData = JSON.stringify(req);
     return this.http.post(SERVER_API_URL + '/api/sign/xml', requestData, httpOptions);
   }
+  downLoadTemplateFile(): Observable<any> {
+    return this.http.get(SERVER_API_URL + '/api/sign/xml/templateFile', { observe: 'body' });
+  }
 }

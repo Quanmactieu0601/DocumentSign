@@ -11,6 +11,8 @@ import { CertificateService } from 'app/entities/certificate/certificate.service
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { SigningService } from 'app/core/signing/signing.service';
 import { error } from '@angular/compiler/src/util';
+import { ResponseBody } from 'app/shared/model/response-body';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
 @Component({
   selector: 'jhi-xmlfile',
   templateUrl: './xmlfile.component.html',
@@ -110,6 +112,18 @@ export class XmlfileComponent implements OnInit {
         () => this.toastrService.error(this.translateService.instant('sign.messages.signingFail'))
       );
     };
+  }
+
+  downLoadFileTemplate(): void {
+    this.signingService.downLoadTemplateFile().subscribe((res: ResponseBody) => {
+      if (res.status === ResponseBody.SUCCESS) {
+        const byteArray = res.data;
+        saveAs(new Blob([byteArray], { type: 'application/xml' }), Date.now().toString());
+        this.toastrService.success(this.translateService.instant('userManagement.downloadSampleFileUser.success'));
+      } else {
+        this.toastrService.error(this.translateService.instant('userManagement.downloadSampleFileUser.error'));
+      }
+    });
   }
 
   arrayBufferToBase64(buffer: any): string {
