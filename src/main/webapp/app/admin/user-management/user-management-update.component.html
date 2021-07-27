@@ -220,9 +220,9 @@
                                     <div class="row">
                                         <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.currentPassword">Current Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="100"
 
+                                            <label class="form-control-label font-weight-bold">Current Password</label>
+                                            <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="20"
                                                    formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
                                             <div
                                                 *ngIf="editForm.get('currentPassword')!.invalid && (editForm.get('currentPassword')!.dirty || editForm.get('currentPassword')!.touched)">
@@ -250,14 +250,18 @@
                                                     [translateValues]="{ max: 30 }"
                                                 >
                                                     This field cannot be longer than 30 characters.
+                                                    [translateValues]="{ max: 20 }"
+                                                >
+                                                    This field cannot be longer than 20 characters.
+
                                                 </small>
                                             </div>
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                    <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="password" maxlength="100"
-                                                   formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
+
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
+                                            <input type="password" class="form-control form-control-sm" name="password" maxlength="20"
 
                                             <div
                                                 *ngIf="editForm.get('password')!.invalid && (editForm.get('password')!.dirty || editForm.get('password')!.touched)">
@@ -282,9 +286,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('password')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 20 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 20 characters.
                                                 </small>
                                             </div>
                                         </div>
@@ -292,7 +296,11 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.confirmPassword">Confirm
                                                 Password</label>
+<<<<<<< HEAD
                         <input type="password" class="form-control form-control-sm" name="confirmPassword" maxlength = "100"
+=======
+                                            <input type="password" class="form-control form-control-sm" name="confirmPassword" maxlength = "20"
+>>>>>>> origin/fixbug/linhntt/SIG-1-block-the-keyboar-when-maxlength
                                                    formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
 
                                             <div
@@ -322,9 +330,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('confirmPassword')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 20 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 20 characters.
                                                 </small>
                                             </div>
                                         </div>
