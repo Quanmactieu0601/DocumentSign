@@ -39,7 +39,7 @@ export class UserManagementUpdateComponent implements OnInit {
     localityName: ['', [Validators.maxLength(250)]],
     stateName: ['', [Validators.maxLength(250)]],
     country: ['', [Validators.minLength(2), Validators.maxLength(2)]],
-    phone: ['', [Validators.minLength(5), Validators.maxLength(50)]],
+    phone: ['', [Validators.minLength(5), Validators.maxLength(20)]],
     activated: [],
     langKey: [],
     authorities: [],
