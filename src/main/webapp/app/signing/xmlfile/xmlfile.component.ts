@@ -117,8 +117,7 @@ export class XmlfileComponent implements OnInit {
   downLoadFileTemplate(): void {
     this.signingService.downLoadTemplateFile().subscribe((res: ResponseBody) => {
       if (res.status === ResponseBody.SUCCESS) {
-        const byteArray = res.data;
-        saveAs(new Blob([byteArray], { type: 'application/xml' }), Date.now().toString());
+        saveAs(FileDataUtil.base64toBlob(res.data), 'XML-Template-File.xml');
         this.toastrService.success(this.translateService.instant('userManagement.downloadSampleFileUser.success'));
       } else {
         this.toastrService.error(this.translateService.instant('userManagement.downloadSampleFileUser.error'));

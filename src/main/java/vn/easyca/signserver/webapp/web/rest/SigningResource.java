@@ -220,7 +220,7 @@ public class SigningResource extends BaseResource {
     @GetMapping("xml/templateFile")
     public ResponseEntity<BaseResponseVM> getTemplateFileUpload(HttpServletResponse response) throws IOException {
         try {
-            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/testVerifyXML.xml");
+            InputStream inputStream = fileResourceService.getTemplateFile("/templates/upload/TemplateXML.xml");
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(IOUtils.toByteArray(inputStream)));
 
         } catch (Exception e) {

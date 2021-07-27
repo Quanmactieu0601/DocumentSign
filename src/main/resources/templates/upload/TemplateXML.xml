@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Thebao>
+	<Noidungky>
+		<Noidungky1> noi dung phu 1 </Noidungky1>
+		<Noidungky2> noi dung phu 2 </Noidungky2>
+		<Noidungky3> noi dung phu 3 </Noidungky3>
+	</Noidungky>
+	<Noidungphu>
+		<Noidungphu1> noi dung phu 1 </Noidungphu1>
+		<Noidungphu2> noi dung phu 2 </Noidungphu2>
+	</Noidungphu>	
+</Thebao>
