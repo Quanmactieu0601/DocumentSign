@@ -70,7 +70,7 @@ export class SignRawComponent implements OnInit {
   }
 
   selectSerial(serial: string): void {
-    this.serial = serial;
+    this.signingForm.controls['serial'].setValue(serial);
   }
 
   filter(part: string): void {
