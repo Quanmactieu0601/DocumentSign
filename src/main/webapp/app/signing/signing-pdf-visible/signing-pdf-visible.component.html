@@ -196,7 +196,7 @@
 
     <aw-wizard-step stepTitle="Chọn vị trí ký">
         <jhi-pdf-view [pdfSrc]="FileToSign" (cancelEvent)="cancel()" (signEvent)="signResult($event)"
-                      [imageSrc]="this.imageSrc" [serial]="this.serial !== undefined ? this.serial : this.editForm.get(['serial'])?.value"
+                      [imageSrc]="this.imageSrc" [serial]="this.editForm.get(['serial'])?.value"
                       [pin]="this.editForm.get('pin')?.value"></jhi-pdf-view>
     </aw-wizard-step>
 
