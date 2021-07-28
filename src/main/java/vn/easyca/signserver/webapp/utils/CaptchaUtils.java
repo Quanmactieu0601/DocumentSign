@@ -52,7 +52,7 @@ public class CaptchaUtils {
     public static String drawCaptchaImgFromText(String text) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(100, 40, Transparency.OPAQUE);
         Graphics graphics = bufferedImage.createGraphics();
-        graphics.setFont(new Font("MS Mincho", Font.BOLD, 30));
+        graphics.setFont(new Font("MS Mincho", Font.BOLD, 28));
         graphics.setColor(new Color(96, 147, 172));
         graphics.fillRect(0, 0, 100, 40);
         graphics.setColor(new Color(10, 10, 10));
