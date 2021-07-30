@@ -5,8 +5,8 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { VerifyService } from 'app/verify/verify.service';
 import { ISignatureVfVM, SignatureVfVM } from 'app/shared/model/signatureVfVM.model';
-import { HttpResponse } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
+import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { FormBuilder, Validators } from '@angular/forms';
 import { ElementVM, IElementVM } from 'app/shared/model/elementVM.model';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
@@ -40,9 +40,9 @@ export class VerifySignatureRawComponent implements OnInit {
   page = 0;
   timer: NodeJS.Timeout | undefined;
   editForm = this.fb.group({
-    base64Signature: [],
-    base64OriginalData: [],
-    serial: [],
+    base64Signature: ['', Validators.required],
+    base64OriginalData: ['', Validators.required],
+    serial: ['', Validators.required],
     text: [],
   });
 
@@ -87,7 +87,7 @@ export class VerifySignatureRawComponent implements OnInit {
   }
 
   selectSerial(serial: string): void {
-    this.serial = serial;
+    this.editForm.controls['serial'].setValue(serial);
   }
 
   filter(part: string): void {
