@@ -97,10 +97,10 @@ public class VaccinationCertDTO {
         } else if (fileType == 2) {
             String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
             visibleRequestContent.setImageSignature(contentImage);
-            location.setVisibleX(170);
-            location.setVisibleY(70);
-            location.setVisibleWidth(227);
-            location.setVisibleHeight(90);
+            location.setVisibleX(230);
+            location.setVisibleY(95);
+            location.setVisibleHeight(130);
+            location.setVisibleWidth(305);
         }
 
         visibleRequestContent.setLocation(location);
