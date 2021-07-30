@@ -26,11 +26,21 @@
                 <div class="form-group">
                     <label class="form-control-label" for="field_serial">Serial</label>
                     <div ngbDropdown class="d-block">
-                        <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
+                        <input #part type="text" id="field_serial" class="form-control form-control-sm" name="serial" formControlName="serial" ngbDropdownToggle
                                value="{{serial}}"
                                placeholder="Select serial"
                                (keyup)="filter(part.value)"
                         />
+                        <div
+                            *ngIf="(editForm.get('serial')!.invalid && (editForm.get('serial')!.dirty || editForm.get('serial')!.touched))">
+                            <small
+                                class="form-text text-danger"
+                                *ngIf="editForm.get('serial')?.errors?.required"
+                                jhiTranslate="sign.messages.validate.serial.required"
+                            >
+                                Your serial is required.
+                            </small>
+                        </div>
                         <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
                              (scroll)="getMoreCert($event)">
                             <div *ngIf="listCertificate.length !== 0; else nothing">
