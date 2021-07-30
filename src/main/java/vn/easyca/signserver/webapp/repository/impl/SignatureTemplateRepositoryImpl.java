@@ -43,7 +43,7 @@ public class SignatureTemplateRepositoryImpl implements SignatureTemplateReposit
             String sort = QueryUtils.addMultiSort(pageable.getSort());
             StringBuilder mainQuery = new StringBuilder();
             mainQuery.append("select new vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO");
-            mainQuery.append("(a.id, a.userId, a.createdBy, a.createdDate, a.htmlTemplate, a.coreParser, a.width, a.height, ");
+            mainQuery.append("(a.id, a.userId, a.createdBy, a.createdDate, a.htmlTemplate, a.coreParser, a.width, a.height, a.thumbnail, ");
             mainQuery.append("  CASE WHEN b.firstName is null THEN b.lastName ");
             mainQuery.append("  WHEN b.lastName is null THEN b.firstName ");
             mainQuery.append("  else concat(b.lastName, ' ', b.firstName) ");
@@ -78,7 +78,7 @@ public class SignatureTemplateRepositoryImpl implements SignatureTemplateReposit
         if (total.longValue() > 0) {
             StringBuilder mainQuery = new StringBuilder();
             mainQuery.append("select new vn.easyca.signserver.webapp.service.dto.SignatureTemplateDTO");
-            mainQuery.append("(a.id, a.userId, a.createdBy, a.createdDate, a.htmlTemplate, a.coreParser, a.width, a.height, ");
+            mainQuery.append("(a.id, a.userId, a.createdBy, a.createdDate, a.htmlTemplate, a.coreParser, a.width, a.height, a.thumbnail, ");
             mainQuery.append("  CASE WHEN b.firstName is null THEN b.lastName ");
             mainQuery.append("  WHEN b.lastName is null THEN b.firstName ");
             mainQuery.append("  else concat(b.lastName, ' ', b.firstName) ");

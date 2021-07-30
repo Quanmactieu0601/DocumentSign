@@ -68,6 +68,9 @@ export class SignatureListComponent implements OnInit {
     this.ngbPaginationPage = this.page;
   }
 
+  convertToSafeImgContent(base64Content: any): string {
+    return 'data:image/png;base64,' + base64Content;
+  }
   chooseSignatureTemplate(templateId: number): void {
     this.activeModal.close(templateId);
   }

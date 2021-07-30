@@ -22,4 +22,5 @@ public interface CoreParserMapper extends EntityMapper<CoreParserDTO, CoreParser
         coreParser.setId(id);
         return coreParser;
     }
+
 }

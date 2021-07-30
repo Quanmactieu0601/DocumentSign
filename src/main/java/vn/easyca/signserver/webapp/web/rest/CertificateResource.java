@@ -365,7 +365,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @GetMapping("/getImageByTemplateId")
-    public ResponseEntity<BaseResponseVM> getSignatureImageByTemplateId(@RequestParam String serial, @RequestParam String pin, @RequestParam Long templateId) {
+    public ResponseEntity<BaseResponseVM> getSignatureImageByTemplateId(@RequestParam String serial, @RequestParam String pin, @RequestParam(required = false) Long templateId) {
         log.info(" --- getImage --- serial: {}", serial);
         try {
             String base64Image = certificateService.getSignatureImageByTemplateId(serial, pin, templateId);

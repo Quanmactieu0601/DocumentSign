@@ -34,14 +34,19 @@ public class SignatureTemplateDTO implements Serializable {
 
     private Boolean transparency;
 
+    private String thumbnail;
+
+
+
     public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
                                 String htmlTemplate, SignatureTemplateParserType coreParser,
-                                Integer width, Integer height, String fullName) {
+                                Integer width, Integer height, String thumbnail, String fullName) {
         this.id = id;
         this.userId = userId;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.coreParser = coreParser.toString();
+        this.thumbnail = thumbnail;
         this.fullName = fullName;
         this.width = width;
         this.height = height;
@@ -77,11 +82,14 @@ public class SignatureTemplateDTO implements Serializable {
         this.height = signatureTemplate.getHeight();
         this.htmlTemplate = signatureTemplate.getHtmlTemplate();
         this.transparency = signatureTemplate.getTransparency();
+        this.thumbnail = signatureTemplate.getThumbnail();
     }
 
     public String getFullName() { return fullName; }
 
-    public void setFullName(String fullName) { this.fullName = fullName; }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public String getCoreParser() { return coreParser; }
 
@@ -132,6 +140,10 @@ public class SignatureTemplateDTO implements Serializable {
     public void setTransparency(Boolean transparency) {
         this.transparency = transparency;
     }
+
+    public String getThumbnail() { return thumbnail; }
+
+    public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
 
     @Override
     public boolean equals(Object o) {

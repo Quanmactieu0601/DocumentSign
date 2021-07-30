@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.pki.sign.utils.FileUtils;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
+import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.util.Base64;
 
 public class SignatureExampleDTO {
     private String htmlTemplate;
+    private SignatureTemplateParserType coreParser ;
     private String signer;
     private String signingImage;
     private Integer width;
@@ -30,8 +32,16 @@ public class SignatureExampleDTO {
         this.htmlTemplate = htmlTemplate;
     }
 
+    public SignatureTemplateParserType getCoreParser() {
+        return coreParser;
+    }
+
+    public void setCoreParser(SignatureTemplateParserType coreParser) {
+        this.coreParser = coreParser;
+    }
+
     public String getSigner() {
-        return StringUtils.isNullOrEmpty(signer) ? "Lê Duy Thanh" : signer;
+        return StringUtils.isNullOrEmpty(signer) ? " Lê Duy Thanh" : signer;
     }
 
     public void setSigner(String signer) {
