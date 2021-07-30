@@ -5,8 +5,7 @@
   padding: inherit;
   border: 1px dashed #3a3b45;
   border-radius: 12px;
-  margin-left: 50px;
-  margin-right: 200px;
+  width: 100%;
   .dragndrop,
   .icon {
     display: none;
@@ -75,38 +74,32 @@
   background-image: none !important;
 }
 
-.captcha {
-  position: relative;
-}
 img {
-  position: absolute;
   border-radius: 5px;
 }
-input {
-  position: absolute;
-  top: 60px;
-  width: 100px;
-}
-.verify {
-  position: absolute;
-  right: 0px;
-  top: 10px;
-  height: inherit;
-  width: 180px;
-}
 
-.reload {
-  position: absolute;
-  text-align: center;
-  opacity: 0;
-  background-image: none;
-}
-button {
-  position: absolute;
-  top: 120px;
-  margin: auto;
-  width: 100px;
-}
+//.verify {
+//  position: absolute;
+//  right: 0px;
+//  top: 10px;
+//  height: inherit;
+//  width: 180px;
+//}
+
 .captcha:hover .reload {
   opacity: 1;
+}
+
+@media screen and (max-width: 768px) {
+  .info {
+    margin-top: 20px;
+  }
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.btn-action {
+  width: 100%;
 }
