@@ -200,7 +200,7 @@ public class CertificateService {
         String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         Integer width = signatureTemplate.getWidth();
         Integer height = signatureTemplate.getHeight();
-        return ParserUtils.convertHtmlContentToBase64Resize(htmlContent, width, height, signatureTemplate.getTransparency());
+        return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
     }
 
 

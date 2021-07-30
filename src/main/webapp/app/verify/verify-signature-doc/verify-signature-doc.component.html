@@ -8,38 +8,76 @@
 
 <div class="card mb-1">
     <div class="card-body">
-        <div class="form-group col-md-12 uploadFormGroup">
-            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"
-                 [disableClick]="selectFiles.length!=0">
-                <ngx-dropzone-label style="font-family: Nunito">
-                    <i class="fas fa-upload fa-2x"></i>
-                    <br>
-                    Kéo thả file doc cần xác thực vào đây hoặc click để chọn
-                </ngx-dropzone-label>
-                <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
-                                      (removed)="removeFile($event)">
-                    <ngx-dropzone-label>
-                        <i class="fas fa-file-word fa-2x"></i>
-                        <label style="font-family: Nunito; font-size-adjust: inherit">
-                            {{f.name}}
-                        </label>
-                    </ngx-dropzone-label>
-                </ngx-dropzone-preview>
-            </div>
-            <br>
-            <div class="verify col">
-                <div class="captcha">
-                    <img alt="captcha" src="{{img}}"/>
-                    <div class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></div>
-                </div>
-                <input type="text" class="form-control" [(ngModel)]="text">
-                <button
-                    class="btn btn-success"
-                    [disabled]="!selectFiles || this.selectFiles.length == 0"
-                    (click)="verifyDoc()">
-                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
-                </button>
+<!--        <div class="form-group col-md-12 uploadFormGroup">-->
+<!--            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"-->
+<!--                 [disableClick]="selectFiles.length!=0">-->
+<!--                <ngx-dropzone-label style="font-family: Nunito">-->
+<!--                    <i class="fas fa-upload fa-2x"></i>-->
+<!--                    <br>-->
+<!--                    Kéo thả file doc cần xác thực vào đây hoặc click để chọn-->
+<!--                </ngx-dropzone-label>-->
+<!--                <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"-->
+<!--                                      (removed)="removeFile($event)">-->
+<!--                    <ngx-dropzone-label>-->
+<!--                        <i class="fas fa-file-word fa-2x"></i>-->
+<!--                        <label style="font-family: Nunito; font-size-adjust: inherit">-->
+<!--                            {{f.name}}-->
+<!--                        </label>-->
+<!--                    </ngx-dropzone-label>-->
+<!--                </ngx-dropzone-preview>-->
+<!--            </div>-->
+<!--            <br>-->
+<!--            <div class="verify col">-->
+<!--                <div class="captcha">-->
+<!--                    <img alt="captcha" src="{{img}}"/>-->
+<!--                    <div class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></div>-->
+<!--                </div>-->
+<!--                <input type="text" class="form-control" [(ngModel)]="text">-->
+<!--                <button-->
+<!--                    class="btn btn-success"-->
+<!--                    [disabled]="!selectFiles || this.selectFiles.length == 0"-->
+<!--                    (click)="verifyDoc()">-->
+<!--                    <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>-->
+<!--                </button>-->
 
+<!--            </div>-->
+<!--        </div>-->
+        <div class="row">
+            <div class="col-md-10">
+                <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"
+                     [disableClick]="selectFiles.length!=0">
+                    <ngx-dropzone-label style="font-family: Nunito">
+                        <i class="fas fa-upload fa-2x"></i>
+                        <br>
+                        Kéo thả file doc cần xác thực vào đây hoặc click để chọn
+                    </ngx-dropzone-label>
+                    <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
+                                          (removed)="removeFile($event)">
+                        <ngx-dropzone-label>
+                            <i class="fas fa-file-word fa-2x"></i>
+                            <label style="font-family: Nunito; font-size-adjust: inherit">
+                                {{f.name}}
+                            </label>
+                        </ngx-dropzone-label>
+                    </ngx-dropzone-preview>
+                </div>
+            </div>
+            <div class="col-md-2 col-sm-12 info">
+                <div class="col-md-12 col-sm-4">
+                    <img alt="captcha" src="{{img}}" width="90"/>
+                    <i class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></i>
+                </div>
+                <div class="col-md-12 col-sm-4 mt-10">
+                    <input type="text" class="form-control" [(ngModel)]="text">
+                </div>
+                <div class="col-md-12 col-sm-4 mt-10">
+                    <button
+                        class="btn-action btn btn-success"
+                        [disabled]="!selectFiles || this.selectFiles.length == 0"
+                        (click)="verifyDoc()">
+                        <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
