@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
-import { Resolve, ActivatedRouteSnapshot, Routes, Router } from '@angular/router';
-import { Observable, of, EMPTY } from 'rxjs';
+import { ActivatedRouteSnapshot, Resolve, Router, Routes } from '@angular/router';
+import { EMPTY, Observable, of } from 'rxjs';
 import { flatMap } from 'rxjs/operators';
 
 import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
-import { ICertificate, Certificate } from 'app/shared/model/certificate.model';
+import { Certificate, ICertificate } from 'app/shared/model/certificate.model';
 import { CertificateService } from './certificate.service';
 import { CertificateComponent } from './certificate.component';
 import { CertificateDetailComponent } from './certificate-detail.component';
@@ -39,7 +39,7 @@ export const certificateRoute: Routes = [
     path: '',
     component: CertificateComponent,
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.ADMIN, Authority.SUPER_ADMIN],
       defaultSort: 'id,desc',
       pageTitle: 'webappApp.certificate.home.title',
     },
@@ -52,7 +52,7 @@ export const certificateRoute: Routes = [
       certificate: CertificateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.certificate.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -64,7 +64,7 @@ export const certificateRoute: Routes = [
       certificate: CertificateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.certificate.home.title',
     },
     canActivate: [UserRouteAccessService],
@@ -76,7 +76,7 @@ export const certificateRoute: Routes = [
       certificate: CertificateResolve,
     },
     data: {
-      authorities: [Authority.USER],
+      authorities: [Authority.USER, Authority.ADMIN, Authority.SUPER_ADMIN],
       pageTitle: 'webappApp.certificate.home.title',
     },
     canActivate: [UserRouteAccessService],

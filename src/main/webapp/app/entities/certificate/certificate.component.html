@@ -64,30 +64,30 @@
             </div>
             <div class="right">
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
-                        (click)="openModalGenerateCSR()" *ngIf="isSuperAdmin()">
+                        (click)="openModalGenerateCSR()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="download"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.generateCSR.generateCsr"></span>
                 </button>
 
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
-                        (click)="openModalUploadCert()">
+                        (click)="openModalUploadCert()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="upload"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.installCertIntoHsm.title"></span>
                 </button>
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
-                        (click)="openModalP12Upload()" *ngIf="isSuperAdmin()">
+                        (click)="openModalP12Upload()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="upload"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.uploadP12Cert"></span>
                 </button>
 
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
-                        (click)="openModalUploadSignatureImage()" *ngIf="isSuperAdmin()">
+                        (click)="openModalUploadSignatureImage()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="upload"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.uploadSignatureImage"></span>
                 </button>
 
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
-                        (click)="openModalExportSerial()" *ngIf="isSuperAdmin()">
+                        (click)="openModalExportSerial()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="file-excel"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.exportSerial.exportSerial"></span>
                 </button>
