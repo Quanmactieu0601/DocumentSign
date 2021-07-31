@@ -5,6 +5,7 @@
       "createLabel": "Create a new user",
       "createOrEditLabel": "Create or edit a user",
       "uploadUser": "Upload Users",
+      "uploadP12": "Upload P12",
       "upload": "Upload",
       "notfound": "No User Found",
       "cancel": "Cancel",
