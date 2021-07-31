@@ -28,7 +28,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.login">Login</label>
-                                            <input type="text" class="form-control form-control-sm" name="login"
+                                            <input type="text" class="form-control form-control-sm" name="login"  maxlength="51"
                                                    formControlName="login"/>
                                             <div
                                                 *ngIf="editForm.get('login')!.invalid && (editForm.get('login')!.dirty || editForm.get('login')!.touched)">
@@ -75,7 +75,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.firstName">First Name</label>
-                                            <input type="text" class="form-control form-control-sm" name="firstName"
+                                            <input type="text" class="form-control form-control-sm" name="firstName" maxlength="51"
                                                    formControlName="firstName"/>
 
                                             <div
@@ -93,7 +93,7 @@
                                         <div class="form-group col-3">
                                             <label jhiTranslate="userManagement.lastName" class="font-weight-bold">Last
                                                 Name</label>
-                                            <input type="text" class="form-control form-control-sm" name="lastName"
+                                            <input type="text" class="form-control form-control-sm" name="lastName" maxlength="51"
                                                    formControlName="lastName"/>
 
                                             <div
@@ -111,7 +111,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.email">Email</label>
-                                            <input type="email" class="form-control form-control-sm" name="email"
+                                            <input type="email" class="form-control form-control-sm" name="email" maxlength="51"
                                                    formControlName="email"/>
 
                                             <div
@@ -121,9 +121,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('email')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 50 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 50 characters.
                                                 </small>
 
                                                 <small
@@ -147,7 +147,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.phone">Phone</label>
-                                            <input type="text" class="form-control form-control-sm" name="phone"
+                                            <input type="text" class="form-control form-control-sm" maxlength="21" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 8)"
                                                    formControlName="phone"/>
 
                                             <div
@@ -164,9 +164,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('phone')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 50 }"
+                                                    [translateValues]="{ max: 20 }"
                                                 >
-                                                    This field cannot be longer than 50 characters.
+                                                    This field cannot be longer than 20 characters.
                                                 </small>
 
                                                 <small
@@ -213,8 +213,8 @@
                                     <div class="row">
                                         <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">Current Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="currentPassword"
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.currentPassword">Current Password</label>
+                                            <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="31"
                                                    formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
                                             <div
                                                 *ngIf="editForm.get('currentPassword')!.invalid && (editForm.get('currentPassword')!.dirty || editForm.get('currentPassword')!.touched)">
@@ -239,16 +239,16 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('currentPassword')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 30 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 30 characters.
                                                 </small>
                                             </div>
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">New Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="password"
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
+                                            <input type="password" class="form-control form-control-sm" name="password" maxlength="31"
                                                    formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
 
                                             <div
@@ -274,17 +274,17 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('password')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 30 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 30 characters.
                                                 </small>
                                             </div>
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">Confirm
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.confirmPassword">Confirm
                                                 Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="confirmPassword"
+                                            <input type="password" class="form-control form-control-sm" name="confirmPassword" maxlength = "31"
                                                    formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
                                             <div
                                                 *ngIf="
@@ -313,9 +313,9 @@
                                                     class="form-text text-danger"
                                                     *ngIf="editForm.get('confirmPassword')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
-                                                    [translateValues]="{ max: 100 }"
+                                                    [translateValues]="{ max: 30 }"
                                                 >
-                                                    This field cannot be longer than 100 characters.
+                                                    This field cannot be longer than 30 characters.
                                                 </small>
                                             </div>
                                         </div>
@@ -336,7 +336,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.commonName">commonName</label>
-                                            <input type="text" class="form-control form-control-sm" name="commonName"
+                                            <input type="text" class="form-control form-control-sm" name="commonName" maxlength="101"
                                                    formControlName="commonName"/>
 
                                             <div
@@ -382,7 +382,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.organizationName">OrganizationName</label>
-                                            <input type="text" class="form-control form-control-sm" name="organizationName"
+                                            <input type="text" class="form-control form-control-sm" name="organizationName" maxlength="101"
                                                    formControlName="organizationName"/>
 
                                             <div
@@ -429,7 +429,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.organizationUnit">organizationUnit</label>
-                                            <input type="text" class="form-control form-control-sm" name="organizationUnit"
+                                            <input type="text" class="form-control form-control-sm" name="organizationUnit" maxlength="101"
                                                    formControlName="organizationUnit"/>
 
                                             <div
@@ -478,7 +478,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.stateName">stateName</label>
-                                            <input type="text" class="form-control form-control-sm" name="stateName"
+                                            <input type="text" class="form-control form-control-sm" name="stateName" maxlength="101"
                                                    formControlName="stateName"/>
 
                                             <div
@@ -521,7 +521,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.localityName">localityName</label>
-                                            <input type="text" class="form-control form-control-sm" name="localityName"
+                                            <input type="text" class="form-control form-control-sm" name="localityName" maxlength="101"
                                                    formControlName="localityName"/>
 
                                             <div
@@ -567,7 +567,7 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.country">country</label>
-                                            <input type="text" class="form-control form-control-sm" name="country"
+                                            <input type="text" class="form-control form-control-sm" name="country" maxlength="2"
                                                    formControlName="country"/>
 
                                             <div

@@ -26,6 +26,8 @@
     "certificateInformation": "Certificate Information",
     "changePassword": "Change Password",
     "newPassword": "New Password",
+    "currentPassword": "Current Password",
+    "confirmPassword": "Confirm Password",
     "create": "Create",
     "edit": "Edit",
     "activeStatus": "Active Status",
