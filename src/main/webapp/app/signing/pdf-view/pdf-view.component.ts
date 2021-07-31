@@ -92,7 +92,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
     (child as HTMLElement).style.backgroundColor = 'red';
     (child as HTMLElement).style.position = 'absolute';
     (child as HTMLElement).style.top = `${this.heightPage}px`;
-    (child as HTMLElement).style.left = '220px';
+    (child as HTMLElement).style.left = '500px';
     (child as HTMLElement).style.zIndex = '9';
     (child as HTMLElement).style.background = 'transparent';
     // (child as HTMLElement).style.width = '256px';
@@ -136,7 +136,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
     if (Number(numberPage) === 1) {
       $('#signature-box').animate(
         {
-          left: 300,
+          left: 500,
           top: 20,
         },
         0
@@ -144,7 +144,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
     } else {
       $('#signature-box').animate(
         {
-          left: 300,
+          left: 500,
           top: Number(numberPage) * this.heightPage,
         },
         0
