@@ -10,6 +10,7 @@
       "position": "Signing position",
       "validateSignature": "Validate Signature",
       "chooseSignatureTemplate": "Choose signature template",
+      "choosePageToSign": "Choose page to sign",
       "choose": "Select"
     },
     "signatureImage": "Signature Image",

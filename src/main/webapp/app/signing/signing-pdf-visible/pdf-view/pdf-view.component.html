@@ -1,104 +1,65 @@
 <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
-<div class="pdf-viewer-wrap">
-    <div class="pdf-viewer-controls-wrap">
-<!--        <h2>Ký tệp PDF</h2>-->
-        <div class="pdf-viewer-controls">
-            <div class="pdfv-control" *ngIf="renderText">
-                <span jhiTranslate="sign.pdf.searchContent"></span>
-                <input class="form-control form-control-sm" #queryInp id="pdfQueryInput" type="text" placeholder="Search..." [value]="pdfQuery"
-                       (input)="searchQueryChanged(queryInp.value)" (keyup.enter)="searchQueryChanged(queryInp.value)">
-            </div>
-
-<!--            <div class="pdfv-control">-->
-<!--                Select PDF:-->
-<!--                <input (change)="onFileSelected()" type="file" id="file">-->
-<!--                <div>Total Pages:{{totalPages}}</div>-->
-<!--            </div>-->
-
-            <div class="pdfv-control">
-                <span jhiTranslate="sign.pdf.chooseSignatureTemplate"></span>
-                <select class="form-control form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode" (change)="setSignatureInPage(renderTextMode)">
-                    <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index" selected >{{i + 1}}</option>
-                </select>
-            </div>
-
-            <div class="pdfv-control">
-                <span jhiTranslate="sign.pdf.position"></span>
-                <label id="xPos"></label>
-                <label id="yPos"></label>
-            </div>
-
-<!--            <div class="pdfv-control">-->
-<!--                <form class="form" [formGroup]="signingForm">-->
-<!--                    <div class="form-group">-->
-<!--                        <label class="form-control-label"><span-->
-<!--                            jhiTranslate="webappApp.certificate.serial">Serial</span></label>-->
-<!--                        <input type="text" value="540110000b4525650231e39369660895" class="form-control form-control-sm" name="serial" formControlName="serial" #serialElement>-->
-<!--                        <div *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched)) || this.showMessageSerialRequired " >-->
-<!--                            <small-->
-<!--                                class="form-text text-danger"-->
-<!--                                *ngIf="signingForm.get('serial')?.errors?.required"-->
-<!--                                jhiTranslate="sign.messages.validate.serial.required"-->
-<!--                            >-->
-<!--                                Your serial is required.-->
-<!--                            </small>-->
-<!--                        </div>-->
 
 
-<!--                    </div>-->
-<!--                    <div>-->
-<!--&lt;!&ndash;                        <div class="input-group" style="text-align: left;">&ndash;&gt;-->
-<!--&lt;!&ndash;                <span class="input-group-btn" style="display: table-cell" >&ndash;&gt;-->
-<!--&lt;!&ndash;                                                                <button class="btn btn-default btn-sm btn-file" (click)="openModalTemplateList()" style="vertical-align: unset; border-color: darkgray; border-radius: 1px;">&ndash;&gt;-->
-<!--&lt;!&ndash;                                                                    Chọn mẫu chữ ký&ndash;&gt;-->
-<!--&lt;!&ndash;                                                                </button>&ndash;&gt;-->
-<!--&lt;!&ndash;                                                    </span>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <input class="form-control form-control-sm" style="border-radius: 1px !important; height: 33px !important;" type="text" readonly>&ndash;&gt;-->
-<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mr-auto">
+<!--    <a class="navbar-brand" href="#">Navbar</a>-->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
-<!--                        &lt;!&ndash; Ảnh chữ ký !&ndash;&gt;-->
-<!--&lt;!&ndash;                        <div>&ndash;&gt;-->
-<!--&lt;!&ndash;                            <img #signatureImage class="signatureImage">&ndash;&gt;-->
-<!--&lt;!&ndash;                        </div>&ndash;&gt;-->
-<!--                    </div>-->
+        <div class="collapse navbar-collapse navbar-center justify-content-center" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <form class="form-inline">
+                    <span jhiTranslate="sign.pdf.choosePageToSign"></span>
+                    <select class="form-control mx-sm-2 form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode"
+                            (change)="setSignatureInPage(renderTextMode)">
+                        <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index"
+                                selected>{{i + 1}}</option>
+                    </select>
+                </form>
 
-
-<!--                    <div class="form-group">-->
-<!--                        <label class="form-control-label"><span-->
-<!--                            jhiTranslate="webappApp.certificate.pin">Pin</span></label>-->
-<!--                        <input type="password" class="form-control form-control-sm" name="pin" formControlName="pin" value="079073009568">-->
-
-<!--                        <div *ngIf="signingForm.get('pin')!.invalid && (signingForm.get('pin')!.dirty || signingForm.get('pin')!.touched)">-->
-<!--                            <small-->
-<!--                                class="form-text text-danger"-->
-<!--                                *ngIf="signingForm.get('pin')?.errors?.required"-->
-<!--                                jhiTranslate="sign.messages.validate.pin.required"-->
-<!--                            >-->
-<!--                                Your pin is required.-->
-<!--                            </small>-->
-<!--                        </div>-->
-<!--                    </div>-->
+<!--                <form class="form-inline">-->
+<!--                    <span jhiTranslate="sign.pdf.position"></span>-->
+<!--                    <span id="xPos" class="mx-2"></span>-->
+<!--                    <span id="yPos" class="mr-2"></span>-->
 <!--                </form>-->
-<!--            </div>-->
 
-            <div class="pdfv-control">
-                    <button type="submit" class="btn btn-primary btn-sm" (click)="sign()" [disabled]="this.signingForm.invalid">
+                <form class="form-inline">
+                    <button type="submit" class="btn btn-primary btn-sm mr-2" (click)="sign()"
+                            [disabled]="this.signingForm.invalid">
                         <span jhiTranslate="sign.pdf.signFile"></span>
                     </button>
 
                     <button type="submit" class="btn btn btn-danger btn-sm" (click)="cancel()">
                         <span jhiTranslate="sign.pdf.cancel"></span>
                     </button>
+                </form>
             </div>
         </div>
+</nav>
 
-    </div>
+<div class="pdf-viewer-wrap">
+<!--    <div class="pdf-viewer-controls-wrap">-->
+<!--        &lt;!&ndash;        <h2>Ký tệp PDF</h2>&ndash;&gt;-->
+<!--        <div class="pdf-viewer-controls">-->
+<!--            <div class="pdfv-control">-->
+<!--                <span jhiTranslate="sign.pdf.chooseSignatureTemplate"></span>-->
+<!--                <select class="form-control form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode"-->
+<!--                        (change)="setSignatureInPage(renderTextMode)">-->
+<!--                    <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index"-->
+<!--                            selected>{{i + 1}}</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
     <div class="pdf-viewer-viewer-window">
         <pdf-viewer [src]=pdfSrc [render-text]="renderText" [render-text-mode]="renderTextMode" [rotation]="rotation"
                     [original-size]="originalSize" [fit-to-page]="fitToPage"
                     [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"
                     (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"
-                    (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)" (on-progress)="onProgress($event)">
+                    (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)"
+                    (on-progress)="onProgress($event)">
         </pdf-viewer>
 
     </div>
