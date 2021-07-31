@@ -25,6 +25,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
         "AND (t.triggerTime <= :endDate or :endDate is null) " +
         "AND (t.type = :type or :type is null) ")
     Map<String, BigInteger> findAllTransactionTypeAndDate(@Param("startDate") LocalDateTime startDate,
-                                                          @Param("endDate") LocalDateTime endDate, @Param("type") String type);
+                                                          @Param("endDate") LocalDateTime endDate, @Param("type") TransactionType type);
 
 }

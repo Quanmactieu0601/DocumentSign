@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import vn.easyca.signserver.webapp.enm.TransactionType;
 import vn.easyca.signserver.webapp.service.TransactionService;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 import vn.easyca.signserver.webapp.web.rest.errors.BadRequestAlertException;
@@ -146,7 +147,7 @@ public class TransactionResource {
     @GetMapping("/transactions/report")
     public ResponseEntity<Map<String, BigInteger>> getAllTransactionBetweenDate(@RequestParam("startDate") String startDate,
                                                                                 @RequestParam("endDate") String endDate,
-                                                                                @RequestParam("type") String type) {
+                                                                                @RequestParam("type") TransactionType type) {
         log.debug("REST request to get all Transactions beween date and type ");
         Map<String, BigInteger> transactionDTOList = transactionService.findTransactionType(startDate, endDate, type);
         return ResponseEntity.ok().body(transactionDTOList);
