@@ -23,6 +23,7 @@ import { ArchwizardModule } from 'angular-archwizard';
 import { UploadDocComponent } from './signing/signing-pdf-visible/upload-doc/upload-doc.component';
 import { SignatureListComponent } from './signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signature-image-view/signature-image-view.component';
+
 @NgModule({
   imports: [
     BrowserModule,

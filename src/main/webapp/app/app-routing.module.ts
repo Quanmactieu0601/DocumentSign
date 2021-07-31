@@ -4,6 +4,7 @@ import { errorRoute } from './layouts/error/error.route';
 import { DEBUG_INFO_ENABLED } from 'app/app.constants';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+
 import { loginRoute } from 'app/login/login.route';
 
 const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
@@ -49,6 +50,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
           path: 'account',
           loadChildren: () => import('./account/account.module').then(m => m.AccountModule),
         },
+
         ...LAYOUT_ROUTES,
       ],
       { enableTracing: DEBUG_INFO_ENABLED }

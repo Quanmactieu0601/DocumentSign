@@ -1,0 +1,68 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page">
+        <span>Ký số</span>&nbsp;<span> Raw</span>
+    </li>
+</ol>
+
+<!--Nhập thông tin ký sô-->
+<div class="card mb-1">
+    <div class="card-body">
+        <div class="form-group col-md-12 uploadFormGroup ">
+            <form class="form" name="signingForm" [formGroup]="signingForm">
+                <!--  serial-->
+                    <div class="form-group">
+                    <label class="form-control-label"><span
+                        jhiTranslate="webappApp.certificate.serial">Serial</span></label>
+                    <input type="text" class="form-control form-control-sm" name="serial"  formControlName="serial"
+                           #serialElement` >
+                    <div
+                        *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched))">
+                        <small
+                            class="form-text text-danger"
+                            *ngIf="signingForm.get('serial')?.errors?.required"
+                            jhiTranslate="sign.messages.validate.serial.required"
+                        >
+                            Your serial is required.
+                        </small>
+                    </div>
+                </div>
+                <!-- pinCode-->
+                <div class="form-group">
+                    <label class="form-control-label"><span
+                        jhiTranslate="webappApp.certificate.pin">Pin</span></label>
+                    <input type="password" class="form-control form-control-sm" name="pin" formControlName="pin" >
+
+                    <div
+                        *ngIf="signingForm.get('pin')!.invalid && (signingForm.get('pin')!.dirty || signingForm.get('pin')!.touched)">
+                        <small
+                            class="form-text text-danger"
+                            *ngIf="signingForm.get('pin')?.errors?.required"
+                            jhiTranslate="sign.messages.validate.pin.required"
+                        >
+                            Your pin is required.
+                        </small>
+                    </div>
+                </div>
+            </form>
+                    <div  class="" >
+                        <label  for="base64OriginalData" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label ">Nội dung cần ký số</label>
+                        <textarea   type="text" id="base64OriginalData" name="base64OriginalData" formcontrolname="base64OriginalData" class="  form-control ng-untouched ng-pristine ng-valid"  [(ngModel)]="textToSign" ></textarea>
+                    </div>
+
+
+            <div  class="row justify-content-center align-items-center padding-top">
+                <label   type="button" jhitranslate="webappApp.signatureVerify.originalData"
+                       class="signbt justify-content-center align-items-center  "
+                        (click)="signRaw()">
+                    Ký số
+                </label>
+            </div>
+            <div  class="" *ngIf="!hide"   >
+                <label  for="base64Signature" jhitranslate="webappApp.signatureVerify.originalData" class="form-control-label" >Kết quả</label>
+                <textarea  type="" id="base64Signature" name="base64Signature" formcontrolname="base64Signature" class=" form-control ng-untouched ng-pristine ng-valid" >{{textResult}}</textarea>
+            </div>
+
+        </div>
+    </div>
+</div>

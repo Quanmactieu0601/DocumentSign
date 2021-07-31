@@ -15,6 +15,8 @@
     "signatureImage": "Signature Image",
     "dragAndDrop": "Drag or drop pdf file for signing",
     "messages": {
+      "signingFail": "Signing fail.",
+      "signingSuccessful": "Signing Successful.",
       "validate": {
         "validated": "Your signature is validated",
         "serial": {
