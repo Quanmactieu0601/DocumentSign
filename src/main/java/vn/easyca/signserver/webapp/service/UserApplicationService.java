@@ -272,15 +272,19 @@ public class UserApplicationService {
         // new user gets registration key
         newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
         newUserEntity.setRemindChangePassword(true);
-            Set<Authority> authorities1 = userDTO
-                .getAuthorities()
-                .stream()
-                .map(authorityRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
-            newUserEntity.setAuthorities(authorities1);
-        authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities1::add);
+
+        Set<Authority> authorities = userDTO
+            .getAuthorities()
+            .stream()
+            .map(authorityRepository::findById)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toSet());
+        newUserEntity.setAuthorities(authorities);
+        if( userDTO.getAuthorities().size() == 0){
+            authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
+        }
+
         userRepository.save(newUserEntity);
         this.clearUserCaches(newUserEntity);
         log.debug("Created Information for User: {}", newUserEntity);
