@@ -23,4 +23,5 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long>,
         "set signatureImageId = :signatureImageId " +
         "where id = :certId ")
     void updateSignatureImageInCert(@Param("signatureImageId") Long signatureImageId, @Param("certId") Long certId);
+
 }

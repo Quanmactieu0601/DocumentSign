@@ -120,6 +120,12 @@ public class CertificateService {
         }
         certificateRepository.save(certificate);
     }
+    @Transactional
+    public void updateOwnerId(String ownerId, long id) {
+        Certificate certificate = certificateRepository.getOne(id);
+        certificate.setOwnerId(ownerId);
+        certificateRepository.save(certificate);
+    }
 
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
