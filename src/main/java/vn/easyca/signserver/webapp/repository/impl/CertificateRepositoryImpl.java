@@ -7,11 +7,13 @@ import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -39,22 +41,18 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             params.put("ownerId", "%" + ownerId + "%");
         }
         if (!QueryUtils.isNullOrEmptyProperty(serial)) {
-            sqlBuilder.append("AND a.serial like :serial ");
-            params.put("serial", "%" + serial + "%");
+            sqlBuilder.append("AND a.serial = :serial ");
+            params.put("serial", serial);
         }
         if (!QueryUtils.isNullOrEmptyProperty(validDate)) {
-            String validDatebonus = validDate + " 00:00";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.validDate >= :validDate ");
-            params.put("validDate", dateTime);
+            LocalDateTime localDateTime = LocalDate.parse(validDate, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+            params.put("validDate", localDateTime);
         }
         if (!QueryUtils.isNullOrEmptyProperty(expiredDate)) {
-            String validDatebonus = validDate + " 23:59";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.expiredDate <= :expiredDate ");
-            params.put("expiredDate", dateTime);
+            LocalDateTime localDateTime = LocalDate.parse(expiredDate, DateTimeFormatter.ISO_LOCAL_DATE).atTime(23, 59, 59);
+            params.put("expiredDate", localDateTime);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
