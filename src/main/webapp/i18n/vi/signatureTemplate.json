@@ -3,7 +3,7 @@
     "signatureTemplate": {
       "home": {
         "title": "Danh sách mẫu chữ ký",
-        "createLabel": "Thêm mới một Signature Template",
+        "createLabel": "Thêm mới một mẫu chữ ký",
         "createOrEditLabel": "Thêm mới hoặc cập nhật Signature Template",
         "notFound": "No Signature Templates found"
       },
@@ -24,7 +24,7 @@
       },
       "signatureImage": "Signature Image",
       "userId": "User Id",
-      "signatureTemplate": "Mẫu chứ ký",
+      "signatureTemplate": "Mẫu chữ ký",
       "fullName": "Tên khách hàng",
       "createdBy": "Người tạo",
       "createdDate": "Ngày tạo",
@@ -62,8 +62,8 @@
         "validFrom": "Có hiệu lực từ",
         "validTo": "Có hiệu lực đến",
         "revocationStatus": "Trạng thái thu hồi",
-        "currentStatus": "Trạng thái chữ kí thời điểm hiện tại",
-        "signtimeStatus": "Trạng thái chứ kí thời điểm kí",
+        "currentStatus": "Trạng thái chữ ký thời điểm hiện tại",
+        "signtimeStatus": "Trạng thái chữ ký thời điểm kí",
         "revocationStatus": {
           "title": "Trạng thái thu hồi",
           "UNCHECKED": "Không kiểm tra",
@@ -72,13 +72,13 @@
           "GOOD": "Đang hoạt động"
         },
         "currentStatus": {
-          "title": "Trạng thái chữ kí thời điểm hiện tại",
+          "title": "Trạng thái chữ ký thời điểm hiện tại",
           "VALID": "Hợp lệ",
           "EXPIRED": "Đã hết hạn",
           "INVALID": "Không hợp lệ"
         },
         "signtimeStatus": {
-          "title": "Trạng thái chứ kí thời điểm kí",
+          "title": "Trạng thái chữ ký thời điểm kí",
           "VALID": "Hợp lệ",
           "EXPIRED": "Đã hết hạn",
           "INVALID": "Không hợp lệ"
