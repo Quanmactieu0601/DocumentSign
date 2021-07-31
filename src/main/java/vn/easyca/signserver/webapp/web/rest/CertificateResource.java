@@ -118,7 +118,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/import/p12")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
             log.info("--- importP12File ---");
@@ -139,7 +139,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/import/p12file")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> importP12File2(@RequestParam("file") MultipartFile file, @RequestParam String ownerId, @RequestParam String pin) {
         try {
             String base64File = "";
@@ -170,7 +170,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/gen/p11")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             log.info("--- genCertificate ---");
@@ -202,7 +202,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/createCSRAndUser")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             log.info("--- createCSRAndUser ---");
@@ -234,7 +234,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/createCSR")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
         try {
             log.info("--- createCSR ---");
@@ -260,7 +260,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/exportCsr")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<Resource> createCSRs(@RequestBody CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
@@ -327,7 +327,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PutMapping("/update-active-status")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> updateActiveStatus(@RequestBody Long id) {
         log.info("updateActiveStatus:  certid {}", id);
         try {
@@ -386,7 +386,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @GetMapping("/getQRCodeOTP")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> getQRCodeOTP(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getQRCodeOTP --- serial: {}", serial);
         try {
@@ -407,7 +407,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/changeCertPIN")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> changeCertPIN(@RequestBody P12PinVM p12PinVM) {
         try {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);

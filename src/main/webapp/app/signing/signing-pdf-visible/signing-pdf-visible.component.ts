@@ -10,15 +10,15 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { HttpResponse } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { SignatureListComponent } from 'app/signing/pdf-view/signature-list/signature-list.component';
+import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { ResponseBody } from 'app/shared/model/response-body';
 
 @Component({
   selector: 'jhi-signing',
-  templateUrl: './signing.component.html',
-  styleUrls: ['./signing.component.scss'],
+  templateUrl: './signing-pdf-visible.component.html',
+  styleUrls: ['./signing-pdf-visible.component.scss'],
 })
-export class SigningComponent implements OnInit {
+export class SigningPdfVisibleComponent implements OnInit {
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @ViewChild('signatureImage') signatureImage: ElementRef | undefined;
   @ViewChild('nextBtnElement') nexBtnElement: ElementRef | undefined;

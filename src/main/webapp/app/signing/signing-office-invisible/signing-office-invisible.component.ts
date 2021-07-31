@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { AccountService } from 'app/core/auth/account.service';
 import { Subscription } from 'rxjs';
 import { Account } from 'app/core/user/account.model';
@@ -59,29 +59,29 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     };
     if (p === 0) this.listCertificate = [];
     this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
-      this.listCertificate.push(...res.body || [])
+      this.listCertificate.push(...(res.body || []));
     });
   }
 
   @HostListener('scroll', ['$event'])
   getMoreCert(e: any): void {
     if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
-      this.getListCertificate(this.serial, ++this.page)
+      this.getListCertificate(this.serial, ++this.page);
     }
   }
 
   selectSerial(serial: string): void {
-    this.serial = serial
+    this.serial = serial;
   }
 
   filter(part: string): void {
     if (this.timer) {
-      clearTimeout(this.timer)
+      clearTimeout(this.timer);
     }
     this.timer = setTimeout(() => {
       this.page = 0;
-      this.getListCertificate(part, this.page)
-    }, 1000)
+      this.getListCertificate(part, this.page);
+    }, 1000);
   }
 
   selectFile(event: any): void {
@@ -116,7 +116,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         },
       };
       this.signingService.signDocInvisible(request).subscribe((res: any) => {
-        if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg)
+        if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
         this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
         const byteArray = this.base64ToArrayBuffer(this.resFile);
         saveAs(
@@ -142,5 +142,4 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     }
     return bytes.buffer;
   }
-
 }

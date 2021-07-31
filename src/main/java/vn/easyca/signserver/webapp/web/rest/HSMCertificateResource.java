@@ -45,7 +45,7 @@ public class HSMCertificateResource extends BaseResource {
     }
 
     @PostMapping("/generate-bulk-csr")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> generateBulkCSR(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- generate-bulk-csr ---");
@@ -66,7 +66,7 @@ public class HSMCertificateResource extends BaseResource {
     }
 
     @GetMapping("/download-csr-template")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<Object> getTemplateFileCertificate() {
         try (InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/Certificate-Request-Infomation.xlsx")) {
             log.info("--- download-certificate-request-template ---");
@@ -78,7 +78,7 @@ public class HSMCertificateResource extends BaseResource {
     }
 
     @PostMapping("/import-cert-to-hsm")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
     public ResponseEntity<BaseResponseVM> importCertToHSM(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- import-cert-to-hsm ---");

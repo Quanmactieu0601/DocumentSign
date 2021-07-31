@@ -148,7 +148,7 @@ public class SignatureImageResource extends BaseResource {
     }
 
     @GetMapping("/getBase64Image/{id}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BaseResponseVM> getBase64Image(@PathVariable Long id) {
         try {
             String base64Image = signatureImageService.getBase64Image(id);
@@ -159,7 +159,7 @@ public class SignatureImageResource extends BaseResource {
     }
 
     @PostMapping("/saveBase64Image")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BaseResponseVM> saveSignatureImageByCert(@RequestParam("files") MultipartFile[] files, @RequestParam("certId") Long certId) throws ApplicationException {
         if (files == null) {
             throw new ApplicationException("files is empty");

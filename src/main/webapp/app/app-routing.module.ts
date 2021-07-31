@@ -1,10 +1,10 @@
-import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
-import {errorRoute} from './layouts/error/error.route';
-import {DEBUG_INFO_ENABLED} from 'app/app.constants';
-import {Authority} from 'app/shared/constants/authority.constants';
-import {UserRouteAccessService} from 'app/core/auth/user-route-access-service';
-import {loginRoute} from 'app/login/login.route';
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { errorRoute } from './layouts/error/error.route';
+import { DEBUG_INFO_ENABLED } from 'app/app.constants';
+import { Authority } from 'app/shared/constants/authority.constants';
+import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
+import { loginRoute } from 'app/login/login.route';
 
 const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
 
@@ -24,7 +24,7 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'home',
           data: {
-            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.USER],
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.USER, Authority.VERIFY, Authority.SIGN],
           },
           canActivate: [UserRouteAccessService],
           loadChildren: () => import('./entities/entity.module').then(m => m.WebappEntityModule),
@@ -32,18 +32,18 @@ const LAYOUT_ROUTES = [loginRoute, ...errorRoute];
         {
           path: 'verify',
           data: {
-            authorities: [Authority.USER, Authority.VERIFY, Authority.SUPER_ADMIN, Authority.SUPER_ADMIN],
+            authorities: [Authority.USER, Authority.VERIFY, Authority.ADMIN, Authority.SUPER_ADMIN],
           },
           canActivate: [UserRouteAccessService],
-          loadChildren: () => import('./verify/verify-routing.module').then(m => m.VerifyRoutingModule),
+          loadChildren: () => import('./verify/verify.module').then(m => m.VerifyModule),
         },
         {
           path: 'signing',
           data: {
-            authorities: [Authority.USER],
+            authorities: [Authority.SUPER_ADMIN, Authority.ADMIN, Authority.SIGN, Authority.USER],
           },
           canActivate: [UserRouteAccessService],
-          loadChildren: () => import('./signing/signing-routing.module').then(m => m.SigningRoutingModule)
+          loadChildren: () => import('./signing/signing.module').then(m => m.SigningModule),
         },
         {
           path: 'account',

@@ -6,8 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import vn.easyca.signserver.webapp.domain.Authority;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.repository.TransactionRepositoryCustom;
+import vn.easyca.signserver.webapp.repository.UserRepository;
+import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.QueryUtils;
 import vn.easyca.signserver.webapp.service.dto.TransactionDTO;
 
@@ -19,17 +24,31 @@ import java.util.*;
 public class TransactionRepositoryImpl implements TransactionRepositoryCustom {
     @Autowired
     private EntityManager entityManager;
+    private final UserRepository userRepository;
+
+    public TransactionRepositoryImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public Page<TransactionDTO> findByFilter(Pageable pageable, String api, String triggerTime, TransactionStatus statusEnum, String message, String data, TransactionType typeEnum, String host, Method methodEnum, String createdBy, String fullName, LocalDateTime startDateConverted, LocalDateTime endDateConverted, Action actionEnum, Extension extensionEnum) {
         Map<String, Object> params = new HashMap<>();
         List transactionList = new ArrayList<>();
+        String acc = AccountUtils.getLoggedAccount();
         StringBuilder sqlBuilder = new StringBuilder();
         sqlBuilder.append("from Transaction a ");
         sqlBuilder.append("left join UserEntity b ");
         sqlBuilder.append("on a.createdBy = b.login ");
         sqlBuilder.append("WHERE 1 = 1 ");
-
+        Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+        if (userEntityOptional.isPresent()) {
+            Set<Authority> userAuthority = userEntityOptional.get().getAuthorities();
+            boolean isAdmin = userAuthority.stream().anyMatch(ua -> "ROLE_ADMIN".equals(ua.getName()) || "ROLE_SUPER_ADMIN".equals(ua.getName()));
+            if (!isAdmin) {
+                sqlBuilder.append("AND b.login = :login ");
+                params.put("login", acc);
+            }
+        }
         if (actionEnum != null) {
             sqlBuilder.append("AND a.action = :action ");
             params.put("action", actionEnum);
