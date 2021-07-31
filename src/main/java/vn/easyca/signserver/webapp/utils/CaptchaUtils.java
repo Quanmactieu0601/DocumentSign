@@ -52,11 +52,11 @@ public class CaptchaUtils {
     public static String drawCaptchaImgFromText(String text) throws IOException {
         BufferedImage bufferedImage = new BufferedImage(100, 40, Transparency.OPAQUE);
         Graphics graphics = bufferedImage.createGraphics();
-        graphics.setFont(new Font("Brush Script MT", Font.BOLD, 35));
-        graphics.setColor(new Color(0, 0, 255));
+        graphics.setFont(new Font("MS Mincho", Font.BOLD, 28));
+        graphics.setColor(new Color(96, 147, 172));
         graphics.fillRect(0, 0, 100, 40);
-        graphics.setColor(new Color(255, 255, 255));
-        graphics.drawString(text, 20, 25);
+        graphics.setColor(new Color(10, 10, 10));
+        graphics.drawString(text, 10, 28);
         graphics.dispose();
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
