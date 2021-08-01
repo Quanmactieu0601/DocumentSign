@@ -16,6 +16,11 @@ public class BvBenhNhietDoiSignatureTemplateParserImpl implements SignatureTempl
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
         try {
+            // cho trường hợp xem trước mẫu
+            if (subjectDN == null | subjectDN.equals("")) {
+                subjectDN = "UID=CMND:079073009568, UID=MST:0301824642, CN=\"Nguyễn Văn A, A101.0001 - 003848/HCM-CCHN\", T=BS CK II, O=Bệnh viện Quận 11, ST=TP Hồ Chí Minh, C=VN";
+            }
+
             String regexT = ", T=([^,]+)";
             String CN = getSigner(subjectDN);
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);

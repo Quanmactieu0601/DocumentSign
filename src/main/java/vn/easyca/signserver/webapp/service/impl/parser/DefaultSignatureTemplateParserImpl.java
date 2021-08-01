@@ -22,7 +22,7 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
-                .replaceFirst("_signer_", "Lê Duy Thanh")
+                .replaceFirst("_signer_", "Nguyễn Văn A")
                 .replaceFirst("_position_", "TPDV")
                 .replaceFirst("_address_", "Hà Nội")
                 .replaceFirst("_signatureImage_", signatureImage)
