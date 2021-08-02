@@ -37,4 +37,9 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
     public String getSigner(String subjectDN) throws ApplicationException {
         return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
     }
+
+    @Override
+    public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
+        return this.buildSignatureTemplate("", signatureTemplate, signatureImage);
+    }
 }

@@ -172,7 +172,7 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         }
 
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(coreParser);
-        htmlContent = signatureTemplateParseService.buildSignatureTemplate("", htmlTemplate, signingImageB64);
+        htmlContent = signatureTemplateParseService.previewSignatureTemplate(htmlTemplate, signingImageB64);
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
     }
 }
