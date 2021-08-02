@@ -241,4 +241,11 @@ export class CertificateComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  refresh() {
+    let currentUrl = this.router.url;
+    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
+    this.router.onSameUrlNavigation = 'reload';
+    this.router.navigate([currentUrl]);
+  }
 }
