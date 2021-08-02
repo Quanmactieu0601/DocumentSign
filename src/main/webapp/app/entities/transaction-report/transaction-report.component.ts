@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Type } from 'app/shared/constants/transaction.constants';
 import { Router } from '@angular/router';
+import { RefreshPage } from 'app/shared/util/refreshPage';
 
 @Component({
   selector: 'jhi-transaction-report',
@@ -56,7 +57,8 @@ export class TransactionReportComponent implements OnInit {
     private fb: FormBuilder,
     private toastService: ToastrService,
     private translate: TranslateService,
-    private router: Router
+    private router: Router,
+    private refreshPage: RefreshPage
   ) {}
 
   ngOnInit(): void {}
@@ -106,9 +108,6 @@ export class TransactionReportComponent implements OnInit {
   }
 
   refresh() {
-    let currentUrl = this.router.url;
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.onSameUrlNavigation = 'reload';
-    this.router.navigate([currentUrl]);
+    this.refreshPage.refresh();
   }
 }

@@ -11,6 +11,7 @@ import { TransactionDeleteDialogComponent } from './transaction-delete-dialog.co
 import { FormBuilder } from '@angular/forms';
 import { Action, Status } from 'app/shared/constants/transaction.constants';
 import { DetailTransactionComponent } from 'app/entities/transaction/detail/detail-transaction.component';
+import { RefreshPage } from 'app/shared/util/refreshPage';
 
 @Component({
   selector: 'jhi-transaction',
@@ -51,7 +52,8 @@ export class TransactionComponent implements OnInit, OnDestroy {
     protected router: Router,
     protected eventManager: JhiEventManager,
     protected modalService: NgbModal,
-    protected fb: FormBuilder
+    protected fb: FormBuilder,
+    private refreshPage: RefreshPage
   ) {}
 
   loadPage(page?: number): void {
@@ -189,9 +191,6 @@ export class TransactionComponent implements OnInit, OnDestroy {
   }
 
   refresh() {
-    let currentUrl = this.router.url;
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.onSameUrlNavigation = 'reload';
-    this.router.navigate([currentUrl]);
+    this.refreshPage.refresh();
   }
 }
