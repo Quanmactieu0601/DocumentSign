@@ -129,7 +129,7 @@
                         </h5>
                         <div class="card-body">
                             <div class="row">
-                                <div class="form-group col-12">
+                                <div class="form-group col-6">
                                     <label class="form-control-label font-weight-bold"><span
                                         jhiTranslate="sign.pdf.chooseSignatureTemplate">Chọn mẫu</span></label>
                                     <input type="text" class="form-control form-control-sm" name="templateId"
@@ -162,16 +162,17 @@
                                         </small>
                                     </div>
                                 </div>
+                                <div class="form-group col-6 text-center">
+                                    <label class="form-control-label font-weight-bold"><span>Ảnh hiển thị</span></label>
+                                    <div>
+                                        <img #signatureImage class="signatureImage">
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="row">
-                                    <div class="form-group col-12 text-center">
-                                        <label class="form-control-label font-weight-bold"><span>Ảnh hiển thị</span></label>
-                                        <div>
-                                            <img #signatureImage class="signatureImage">
-                                        </div>
-                                    </div>
-                            </div>
+
+
+
                         </div>
                     </div>
                     <div style="text-align: center">

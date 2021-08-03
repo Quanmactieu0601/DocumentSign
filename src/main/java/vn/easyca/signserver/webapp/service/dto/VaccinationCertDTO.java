@@ -94,6 +94,13 @@ public class VaccinationCertDTO {
             location.setVisibleY(70);
             location.setVisibleWidth(395);
             location.setVisibleHeight(150);
+        } else if (fileType == 2) {
+            String contentImage = ParserUtils.convertHtmlContentToImageByProversion(htmlContentImage, 703, 278, false, env);
+            visibleRequestContent.setImageSignature(contentImage);
+            location.setVisibleX(230);
+            location.setVisibleY(95);
+            location.setVisibleHeight(130);
+            location.setVisibleWidth(305);
         }
 
         visibleRequestContent.setLocation(location);
@@ -112,7 +119,8 @@ public class VaccinationCertDTO {
     }
 
     private String getSignatureImage(FileResourceService fileResourceService) throws ApplicationException {
-        String signatureImagePath = fileType == 0 ? "/templates/signature/vaccinationCertImageHtml.html" : "/templates/signature/prctest-vaccinationCertImage.html";
+        String signatureImagePath = fileType == 0 ? "/templates/signature/vaccinationCertImageHtml.html" :
+            fileType == 1 ? "/templates/signature/prctest-vaccinationCertImage.html" : "/templates/signature/France_vaccinationCertImage.html";
         try {
             InputStream inputStream = fileResourceService.getTemplateFile(signatureImagePath);
             byte[] fileContent = IOUtils.toByteArray(inputStream);

@@ -225,10 +225,11 @@ public class CertificateService {
         SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
         String htmlTemplate = signatureTemplate.getHtmlTemplate();
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+
+
         htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         width = signatureTemplate.getWidth();
         height = signatureTemplate.getHeight();
-
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
     }
 

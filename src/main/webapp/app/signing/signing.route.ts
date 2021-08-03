@@ -26,6 +26,10 @@ export const signingRoute: Routes = [
         path: 'signing-xml',
         component: XmlfileComponent,
       },
+      {
+        path: 'rawSigning',
+        component: SignRawComponent,
+      },
     ],
   },
 ];

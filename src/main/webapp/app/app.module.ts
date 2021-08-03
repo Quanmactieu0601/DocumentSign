@@ -16,7 +16,6 @@ import { LoginComponent } from './login/login.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
 import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { AngularDraggableModule } from 'angular2-draggable';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ArchwizardModule } from 'angular-archwizard';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 

@@ -41,22 +41,20 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             params.put("ownerId",ownerId);
         }
         if (!QueryUtils.isNullOrEmptyProperty(serial)) {
-            sqlBuilder.append("AND a.serial like :serial ");
-            params.put("serial", "%" + serial + "%");
+            sqlBuilder.append("AND a.serial = :serial ");
+            params.put("serial", serial);
         }
         if (!QueryUtils.isNullOrEmptyProperty(validDate)) {
-            String validDatebonus = validDate + " 00:00";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.validDate >= :validDate ");
-            params.put("validDate", dateTime);
+//            params.put("validDate", dateTime);
+            LocalDateTime localDateTime = LocalDate.parse(validDate, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay();
+            params.put("validDate", localDateTime);
         }
         if (!QueryUtils.isNullOrEmptyProperty(expiredDate)) {
-            String validDatebonus = validDate + " 23:59";
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            LocalDateTime dateTime = LocalDateTime.parse(validDatebonus, formatter);
             sqlBuilder.append("AND a.expiredDate <= :expiredDate ");
-            params.put("expiredDate", dateTime);
+//            params.put("expiredDate", dateTime);
+            LocalDateTime localDateTime = LocalDate.parse(expiredDate, DateTimeFormatter.ISO_LOCAL_DATE).atTime(23, 59, 59);
+            params.put("expiredDate", localDateTime);
         }
 
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());

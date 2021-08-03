@@ -88,7 +88,6 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         exampleDTO.setWidth(signatureTemplateDTO.getWidth());
         exampleDTO.setHtmlTemplate(signatureTemplateDTO.getHtmlTemplate());
         exampleDTO.setTransparency(false);
-        exampleDTO.setCoreParser(SignatureTemplateParserType.valueOf(signatureTemplateDTO.getCoreParser()));
         String thumbnailImage = this.getSignatureExample(exampleDTO);
         return thumbnailImage;
     }
@@ -105,7 +104,6 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         log.debug("Request to get all SignatureTemplates");
         return signatureTemplateRepository.findAllSignatureTemplate(pageable);
     }
-
 
 
     /**
@@ -139,33 +137,28 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         log.debug("Request to get SignatureImage with id : {}", userId);
         Page<SignatureTemplateDTO> signatureTemplateDTOPage = signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
         Page<SignatureTemplateDTO> page;
-        try (InputStream inputFileStream = fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html")) {
-            String htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
-            SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
-            templateDTO.setHtmlTemplate(htmlContent);
-            templateDTO.setWidth(320);
-            templateDTO.setHeight(150);
-            templateDTO.setCoreParser("DEFAULT");
-            templateDTO.setThumbnail(this.createThumbnail(templateDTO));
-            List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
-            listSignatureTempDto.add(templateDTO);
-            page = new PageImpl<>(listSignatureTempDto);
-        } catch (IOException ioe) {
-            throw new ApplicationException(ioe.getMessage());
-        }
+
+        SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
+        templateDTO.setWidth(320);
+        templateDTO.setHeight(150);
+        templateDTO.setThumbnail(this.createThumbnail(templateDTO));
+        List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
+        listSignatureTempDto.add(templateDTO);
+
+        page = new PageImpl<>(listSignatureTempDto);
         return page;
     }
 
 
     @Override
     public String getSignatureExample(SignatureExampleDTO signatureExampleDTO) throws ApplicationException {
-        String htmlContent="";
+        String htmlContent = "";
         Optional<CoreParserDTO> coreParserDTO;
         String htmlTemplate;
         String signingImageB64;
         try {
-             htmlTemplate = signatureExampleDTO.getHtmlTemplate(fileResourceService);
-             signingImageB64 = signatureExampleDTO.getSigningImage(fileResourceService);
+            htmlTemplate = signatureExampleDTO.getHtmlTemplate(fileResourceService);
+            signingImageB64 = signatureExampleDTO.getSigningImage(fileResourceService);
         } catch (IOException ioException) {
             throw new ApplicationException(ioException.getMessage());
         }
@@ -174,16 +167,12 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         int height = signatureExampleDTO.getHeight();
         boolean transparency = signatureExampleDTO.isTransparency();
 
-        if (coreParser == null){
+        if (coreParser == null) {
             coreParser = SignatureTemplateParserType.DEFAULT;
-            SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(coreParser);
-            htmlContent = signatureTemplateParseService.buildSignatureTemplate("", htmlTemplate, signingImageB64);
         }
-        else{
-            SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(coreParser);
-            coreParserDTO = this.coreParserService.findByName(coreParser.toString());
-            htmlContent = signatureTemplateParseService.buildSignatureTemplate(coreParserDTO.get().getDescription(), htmlTemplate, signingImageB64);
-        }
+
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(coreParser);
+        htmlContent = signatureTemplateParseService.previewSignatureTemplate(htmlTemplate, signingImageB64);
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
     }
 }

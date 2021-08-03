@@ -10,8 +10,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { HttpResponse } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ResponseBody } from 'app/shared/model/response-body';
 import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
+import { ResponseBody } from 'app/shared/model/response-body';
 
 @Component({
   selector: 'jhi-signing',
@@ -25,7 +25,6 @@ export class SigningPdfVisibleComponent implements OnInit {
   @ViewChild('wizzard') wizzard: any;
   @Output() nextActionEvent = new EventEmitter<any>();
   isShowMessage = false;
-
   FileToSign: any = null;
   srcPdfResult: any;
   imageSrc: any;

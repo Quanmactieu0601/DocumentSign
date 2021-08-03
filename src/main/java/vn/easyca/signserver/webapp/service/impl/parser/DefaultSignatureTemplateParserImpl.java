@@ -22,7 +22,7 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
-                .replaceFirst("_signer_", "Lê Duy Thanh")
+                .replaceFirst("_signer_", "Nguyễn Văn A")
                 .replaceFirst("_position_", "TPDV")
                 .replaceFirst("_address_", "Hà Nội")
                 .replaceFirst("_signatureImage_", signatureImage)
@@ -36,5 +36,10 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
     @Override
     public String getSigner(String subjectDN) throws ApplicationException {
         return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
+    }
+
+    @Override
+    public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
+        return this.buildSignatureTemplate("", signatureTemplate, signatureImage);
     }
 }
