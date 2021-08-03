@@ -8,7 +8,6 @@ import { FormBuilder } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { Type } from 'app/shared/constants/transaction.constants';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'jhi-transaction-report',
@@ -55,8 +54,7 @@ export class TransactionReportComponent implements OnInit {
     protected transactionService: TransactionService,
     private fb: FormBuilder,
     private toastService: ToastrService,
-    private translate: TranslateService,
-    private router: Router
+    private translate: TranslateService
   ) {}
 
   ngOnInit(): void {}
