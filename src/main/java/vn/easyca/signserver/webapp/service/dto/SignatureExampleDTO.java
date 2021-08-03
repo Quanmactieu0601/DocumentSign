@@ -25,7 +25,7 @@ public class SignatureExampleDTO {
     }
 
     public String getHtmlTemplate(FileResourceService fileResourceService) throws ApplicationException, IOException {
-        return StringUtils.isNullOrEmpty(htmlTemplate) ? IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signature.html"), StandardCharsets.UTF_8.name()) : htmlTemplate;
+        return StringUtils.isNullOrEmpty(htmlTemplate) ? IOUtils.toString(fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html"), StandardCharsets.UTF_8.name()) : htmlTemplate;
     }
 
     public void setHtmlTemplate(String htmlTemplate) {

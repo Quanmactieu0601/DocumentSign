@@ -31,11 +31,16 @@ public class Bvq11SignatureTemplateParserImpl implements SignatureTemplateParseS
         } catch (Exception ex) {
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s - ex: %s", subjectDN, ex.getMessage()), ex);
         }
-
     }
 
     @Override
     public String getSigner(String subjectDN) throws ApplicationException {
         return ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
+    }
+
+    @Override
+    public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
+        String subjectDN = "UID=CMND:079073009568, UID=MST:0301824642, CN=\"Nguyễn Văn A, A101.0001 - 003848/HCM-CCHN\", T=BS CK II, O=Bệnh viện Quận 11, ST=TP Hồ Chí Minh, C=VN";
+        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage);
     }
 }
