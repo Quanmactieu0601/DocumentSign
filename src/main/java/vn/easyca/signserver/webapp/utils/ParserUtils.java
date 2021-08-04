@@ -131,7 +131,6 @@ public class ParserUtils {
             // close parent process
             Process proc = Runtime.getRuntime().exec(command);
             close(proc);
-
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
@@ -145,11 +144,14 @@ public class ParserUtils {
     }
 
 
-    private static void close(Process p) {
+    private static void close(Process p) throws ApplicationException {
         try {
+            p.waitFor(); // wait for process running command finished.
             IOUtils.closeQuietly(p.getInputStream());
             IOUtils.closeQuietly(p.getOutputStream());
             IOUtils.closeQuietly(p.getErrorStream());
+        } catch (InterruptedException e) {
+            throw new ApplicationException("Error when running command wkhtmltoimage :", e);
         } finally {
             if (p != null) {
                 p.destroy();
