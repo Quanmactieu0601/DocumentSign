@@ -127,8 +127,9 @@ public class ParserUtils {
             String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
                 prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
             Process proc = Runtime.getRuntime().exec(command);
+            proc.waitFor(); // wait for process running command finished.
             close(proc);
-            
+
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
@@ -136,20 +137,17 @@ public class ParserUtils {
             Files.deleteIfExists(Paths.get(fileOutputPath));
 
             return imageContentExport;
-        } catch (IOException ioe) {
+        } catch (IOException | InterruptedException ioe) {
             throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
         }
     }
 
 
-    private static void close(Process p) throws ApplicationException {
+    private static void close(Process p) {
         try {
-            p.waitFor(); // wait for process running command finished.
             IOUtils.closeQuietly(p.getInputStream());
             IOUtils.closeQuietly(p.getOutputStream());
             IOUtils.closeQuietly(p.getErrorStream());
-        } catch (InterruptedException e) {
-            throw new ApplicationException("Error when running command wkhtmltoimage :", e);
         } finally {
             if (p != null) {
                 p.destroy();
