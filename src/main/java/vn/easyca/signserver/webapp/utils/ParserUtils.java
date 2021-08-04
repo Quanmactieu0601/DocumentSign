@@ -130,15 +130,7 @@ public class ParserUtils {
 
             // close parent process
             Process proc = Runtime.getRuntime().exec(command);
-            proc.getInputStream().close();
-
-            // close output of subprocess
-            InputStream eos = proc.getErrorStream();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(eos));
-            for (String line = null; (line = reader.readLine()) != null; ) {
-                System.err.println(line);
-            }
-            System.out.println(proc.waitFor());
+            close(proc);
 
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
@@ -147,8 +139,21 @@ public class ParserUtils {
             Files.deleteIfExists(Paths.get(fileOutputPath));
 
             return imageContentExport;
-        } catch (IOException | InterruptedException ioe) {
+        } catch (IOException ioe) {
             throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
+        }
+    }
+
+
+    private static void close(Process p) {
+        try {
+            IOUtils.closeQuietly(p.getInputStream());
+            IOUtils.closeQuietly(p.getOutputStream());
+            IOUtils.closeQuietly(p.getErrorStream());
+        } finally {
+            if (p != null) {
+                p.destroy();
+            }
         }
     }
 }
