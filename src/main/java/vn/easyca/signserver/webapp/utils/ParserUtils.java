@@ -126,11 +126,9 @@ public class ParserUtils {
 
             String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
                 prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
-
-
-            // close parent process
             Process proc = Runtime.getRuntime().exec(command);
             close(proc);
+            
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
