@@ -126,23 +126,32 @@ public class ParserUtils {
 
             String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
                 prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
-            cmdLine = CommandLine.parse(command);
+            Process proc = Runtime.getRuntime().exec(command);
+            proc.waitFor(); // wait for process running command finished.
+            close(proc);
 
-
-            DefaultExecutor executor = new DefaultExecutor();
-
-            // run command line
-            int exitValue = executor.execute(cmdLine);
             Files.deleteIfExists(Paths.get(fileInputPath));
-
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
             String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
             Files.deleteIfExists(Paths.get(fileOutputPath));
 
             return imageContentExport;
-        } catch (IOException ioe) {
+        } catch (IOException | InterruptedException ioe) {
             throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
+        }
+    }
+
+
+    private static void close(Process p) {
+        try {
+            IOUtils.closeQuietly(p.getInputStream());
+            IOUtils.closeQuietly(p.getOutputStream());
+            IOUtils.closeQuietly(p.getErrorStream());
+        } finally {
+            if (p != null) {
+                p.destroy();
+            }
         }
     }
 }
