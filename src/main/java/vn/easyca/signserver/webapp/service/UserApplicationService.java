@@ -193,7 +193,9 @@ public class UserApplicationService {
         newUserEntity.setImageUrl(userDTO.getImageUrl());
         newUserEntity.setLangKey(userDTO.getLangKey());
         // new user is not active
-        newUserEntity.setActivated(false);
+        newUserEntity.setActivated(true);
+        //test_branch, develope_branch error when create user by excel because not set RemindChangePassword yet
+        newUserEntity.setRemindChangePassword(true);
         // new user gets registration key
         newUserEntity.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
