@@ -25,6 +25,7 @@ import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/cer
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id/change-owner-id.component';
+import { RefreshPage } from 'app/shared/util/refreshPage';
 
 @Component({
   selector: 'jhi-certificate',
@@ -59,7 +60,8 @@ export class CertificateComponent implements OnInit, OnDestroy {
     protected modalService: NgbModal,
     protected fb: FormBuilder,
     protected systemConfigService: SystemConfigService,
-    protected accountService: AccountService
+    protected accountService: AccountService,
+    private refreshPage: RefreshPage
   ) {}
 
   loadPage(page?: number): void {
@@ -240,5 +242,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
         certificate.signatureImageId = result;
       }
     });
+  }
+
+  refresh() {
+    this.refreshPage.refresh();
   }
 }

@@ -16,6 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UserManagementViewCertificateComponent } from './user-management-view-certificate-dialog.component';
 import { IUser, User } from '../../core/user/user.model';
 import { UploadUserComponent } from 'app/admin/user-management/upload-user/upload-user-component';
+import { RefreshPage } from 'app/shared/util/refreshPage';
 
 @Component({
   selector: 'jhi-user-mgmt',
@@ -65,7 +66,8 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private alertService: JhiAlertService,
     private toastrService: ToastrService,
-    public translateService: TranslateService
+    public translateService: TranslateService,
+    private refreshPage: RefreshPage
   ) {}
 
   ngOnInit(): void {
@@ -310,5 +312,9 @@ export class UserManagementComponent implements OnInit, OnDestroy {
         (res: HttpResponse<IUser[]>) => this.onSuccess(res.body, res.headers),
         () => this.onError()
       );
+  }
+
+  refresh(): void {
+    this.refreshPage.refresh();
   }
 }

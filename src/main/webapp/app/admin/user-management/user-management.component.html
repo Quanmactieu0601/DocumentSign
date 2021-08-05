@@ -55,6 +55,7 @@
                     <fa-icon icon="search"></fa-icon>
                     <span jhiTranslate="userManagement.search"></span>
                 </button>
+                <button type="reset" class="btn btn-primary btn-sm" (click)="refresh()"><fa-icon icon="sync"></fa-icon></button>
             </div>
         </form>
     </div>
@@ -98,7 +99,7 @@
         </div>
 
         <div class="alert alert-warning" id="no-result" *ngIf="this.users?.length === 0">
-            <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
+            <span jhiTranslate="userManagement.home.notfound">No User found</span>
         </div>
 
         <div class="card table-responsive" id="entities" *ngIf="this.users && this.users.length > 0">
