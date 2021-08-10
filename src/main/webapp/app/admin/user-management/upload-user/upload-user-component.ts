@@ -60,7 +60,11 @@ export class UploadUserComponent implements OnInit {
             this.toastrService.success(this.translateService.instant('userManagement.alert.success.uploaded'));
             this.cancel();
           } else if (res.body.status === 417) {
-            this.toastrService.error(res.body.msg);
+            if (res.body.msg === 'Login name already used!') {
+              this.toastrService.error(this.translateService.instant('userManagement.accountUsed'));
+            } else {
+              this.toastrService.error(res.body.msg);
+            }
           }
         }
       });

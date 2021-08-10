@@ -60,6 +60,7 @@
     "chooseFile": "Chọn tệp",
     "action": "Hành động",
     "search": "Tìm kiếm",
+    "accountUsed": "Tài khoản đã tồn tại!",
     "alert": {
       "success": {
         "csrExported": "Tạo tệp CSR thành công",
