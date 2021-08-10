@@ -90,9 +90,11 @@ export class TransactionComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
     return item.id!;
   }
+
   registerChangeInTransactions(): void {
     this.eventSubscriber = this.eventManager.subscribe('transactionListModification', () => this.loadPage());
   }
+
   searchTransactions(page?: number): any {
     const pageToLoad: number = page || this.page || 1;
     const fieldTransaction = {
@@ -190,7 +192,7 @@ export class TransactionComponent implements OnInit, OnDestroy {
     }
   }
 
-  refresh() {
+  refresh(): void {
     this.refreshPage.refresh();
   }
 }

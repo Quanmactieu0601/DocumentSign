@@ -244,7 +244,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     });
   }
 
-  refresh() {
+  refresh(): void {
     this.refreshPage.refresh();
   }
 }

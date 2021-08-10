@@ -107,7 +107,7 @@ export class TransactionReportComponent implements OnInit {
     });
   }
 
-  refresh() {
+  refresh(): void {
     this.refreshPage.refresh();
   }
 }
