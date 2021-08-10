@@ -15,7 +15,7 @@
     </div>
 </div>
 <div class="modal-footer footer-custom">
-    <button class="btn btn-primary btn-sm" (click)="upload()">
+    <button class="btn btn-primary btn-sm" [disabled]="this.chooseFile ==false" (click)="upload()">
         <fa-icon icon="upload"></fa-icon>&nbsp;
         <span jhiTranslate="entity.action.upload">Upload</span>
     </button>

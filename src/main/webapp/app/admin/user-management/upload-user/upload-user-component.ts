@@ -24,7 +24,7 @@ export class UploadUserComponent implements OnInit {
   account: Account | null = null;
   fileName: any = this.translateService.instant('userManagement.chooseFile');
   authSubscription?: Subscription;
-
+  chooseFile: boolean = false;
   constructor(
     public activeModal: NgbActiveModal,
     private toastrService: ToastrService,
@@ -46,6 +46,7 @@ export class UploadUserComponent implements OnInit {
     }
     const file = event.target.files[0];
     this.fileName = file.name;
+    this.chooseFile = true;
   }
 
   upload(): void {
