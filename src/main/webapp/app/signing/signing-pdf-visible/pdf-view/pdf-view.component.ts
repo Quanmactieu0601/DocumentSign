@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
 import { SigningService } from 'app/core/signing/signing.service';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import * as $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable.js';
 
@@ -8,11 +8,9 @@ import 'jquery-ui/ui/widgets/draggable.js';
 require('jquery-ui-touch-punch');
 
 import { PdfViewerComponent } from 'ng2-pdf-viewer';
-import { ResponseBody } from 'app/shared/model/response-body';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { AccountService } from 'app/core/auth/account.service';
-import { HttpResponse } from '@angular/common/http';
 // import * as PDFJS from "pdfjs-dist";
 (window as any).pdfWorkerSrc = '/content/libs/pdf.worker1.js';
 

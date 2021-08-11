@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { VerifyService } from 'app/verify/verify.service';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { ICaptchaModel } from 'app/shared/model/captcha.model';

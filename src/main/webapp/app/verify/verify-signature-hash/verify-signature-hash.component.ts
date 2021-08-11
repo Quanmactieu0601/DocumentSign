@@ -5,12 +5,11 @@ import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { VerifyService } from 'app/verify/verify.service';
 import { ISignatureVfVM, SignatureVfVM } from 'app/shared/model/signatureVfVM.model';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ElementVM, IElementVM } from 'app/shared/model/elementVM.model';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
-
 import { ICaptchaModel } from 'app/shared/model/captcha.model';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { Md5 } from 'ts-md5';
