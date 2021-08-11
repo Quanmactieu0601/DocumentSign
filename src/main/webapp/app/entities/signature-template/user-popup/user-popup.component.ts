@@ -69,7 +69,7 @@ export class UserPopupComponent implements OnInit {
     this.ngbPaginationPage = this.page ?? 1;
   }
 
-  searchUser(page?: number): any {
+  searchUser(): any {
     const data = {
       ...this.userSearch.value,
       page: this.page - 1,
@@ -100,7 +100,7 @@ export class UserPopupComponent implements OnInit {
   }
 
   transition(): void {
-    this.searchUser(this.page);
+    this.searchUser();
   }
 
   private handleNavigation(): void {

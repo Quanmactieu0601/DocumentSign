@@ -1,13 +1,12 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ICertificate } from 'app/shared/model/certificate.model';
 import { FormBuilder, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { IUser, User } from 'app/core/user/user.model';
+import { User } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
-import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'jhi-change-owner-id',

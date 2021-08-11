@@ -24,7 +24,6 @@ export class SignRawComponent implements OnInit {
   signingForm = this.fb.group({
     serial: ['', Validators.required],
     pin: ['', Validators.required],
-    //templateId: ['', Validators.required],
     otpCode: [],
   });
   hide = true;

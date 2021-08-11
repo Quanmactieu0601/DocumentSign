@@ -3,7 +3,7 @@ import { Account } from 'app/core/user/account.model';
 import { Subscription } from 'rxjs';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
-import { HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpResponse } from '@angular/common/http';
 import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
 import { VerifyService } from 'app/verify/verify.service';
 import { ICaptchaModel } from 'app/shared/model/captcha.model';

@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 
 import { MetricsComponent } from './metrics.component';
-import { HealthComponent } from 'app/admin/health/health.component';
 import { Authority } from 'app/shared/constants/authority.constants';
 import { UserRouteAccessService } from 'app/core/auth/user-route-access-service';
 
