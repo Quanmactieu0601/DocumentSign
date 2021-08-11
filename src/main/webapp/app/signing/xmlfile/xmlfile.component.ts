@@ -74,6 +74,7 @@ export class XmlfileComponent implements OnInit {
 
   selectSerial(serial: string): void {
     this.signingForm.controls['serial'].setValue(serial);
+    this.serial = serial;
   }
 
   filter(part: string): void {
