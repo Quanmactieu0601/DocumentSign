@@ -28,7 +28,11 @@ public class ParserUtils {
             final Matcher matcher = pattern.matcher(contentInformation);
             String CN = null;
             while (matcher.find()) {
-                CN = matcher.group(1);
+                for (int i = 1; i <= matcher.groupCount(); i++ ) { // get last group result 
+                    if (matcher.group(i) != null) {
+                        CN = matcher.group(i);
+                    }
+                }
             }
             return CN;
         } catch (Exception ex) {
