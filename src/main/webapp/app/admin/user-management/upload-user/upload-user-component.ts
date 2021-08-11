@@ -24,7 +24,7 @@ export class UploadUserComponent implements OnInit {
   account: Account | null = null;
   fileName: any = this.translateService.instant('userManagement.chooseFile');
   authSubscription?: Subscription;
-  chooseFile: boolean = false;
+  chooseFile!: boolean;
   constructor(
     public activeModal: NgbActiveModal,
     private toastrService: ToastrService,
