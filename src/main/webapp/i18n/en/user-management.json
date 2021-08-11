@@ -60,6 +60,7 @@
     "chooseFile": "Choose File",
     "action": "Action",
     "search": "Search",
+    "accountUsed": "Login name already used!",
     "alert": {
       "success": {
         "csrExported": "Export CSR successfully",
