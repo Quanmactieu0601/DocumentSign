@@ -27,7 +27,8 @@ export class XmlfileComponent implements OnInit {
   account: Account | null = null;
   fileName: string | undefined;
   resFile = '';
-  serial = '';
+  serial: any;
+  pin: any;
   page = 0;
   timer: NodeJS.Timeout | undefined;
   signingForm = this.fb.group({
@@ -46,25 +47,46 @@ export class XmlfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.getListCertificate();
+    this.getListCertificate('', 0);
   }
 
-  getListCertificate(): void {
+  getListCertificate(s: string, p: number): void {
     const data = {
-      page: 0,
-      size: 100,
+      page: p,
+      size: 20,
       sort: ['id,desc'],
       alias: null,
       ownerId: this.account?.login,
-      serial: null,
+      serial: s,
       validDate: null,
       expiredDate: null,
     };
-
+    if (p === 0) this.listCertificate = [];
     this.certificateService.findCertificate(data).subscribe((res: HttpResponse<ICertificate[]>) => {
-      this.listCertificate = res.body || [];
-      this.filterCertificate = this.listCertificate;
+      this.listCertificate.push(...(res.body || []));
     });
+  }
+
+  @HostListener('scroll', ['$event'])
+  getMoreCert(e: any): void {
+    if (e.target.scrollHeight === e.target.scrollTop + e.target.clientHeight) {
+      this.getListCertificate(this.serial, ++this.page);
+    }
+  }
+
+  selectSerial(serial: string): void {
+    this.signingForm.controls['serial'].setValue(serial);
+    this.serial = serial;
+  }
+
+  filter(part: string): void {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+    this.timer = setTimeout(() => {
+      this.page = 0;
+      this.getListCertificate(part, this.page);
+    }, 1000);
   }
 
   selectFile(event: any): void {
@@ -139,15 +161,5 @@ export class XmlfileComponent implements OnInit {
       bytes[i] = binaryString.charCodeAt(i);
     }
     return bytes.buffer;
-  }
-
-  selectSerial(serial: string): void {
-    this.serial = serial;
-  }
-
-  filter(part: string): void {
-    this.filterCertificate = this.listCertificate.filter(item => {
-      return item.serial?.includes(part);
-    });
   }
 }

@@ -22,21 +22,39 @@
                                                                                            jhitranslate="webappApp.certificate.alias"
                                                                                            ng-reflect-jhi-translate="webappApp.certificate.alias">Serial</span></label>
                             <div ngbDropdown class="d-block">
-                                <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
+                                <input #part type="text" id="field_serial"
+                                       class="form-control form-control-sm" name="serial"
+                                       formControlName="serial" ngbDropdownToggle
                                        value="{{serial}}"
                                        placeholder="Select serial"
-                                       (keyup)="filter(part.value)"/>
-                                <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content">
-                                    <div *ngIf="filterCertificate.length !== 0; else nothing">
-                                        <div ngbDropdownItem *ngFor="let cert of filterCertificate"
+                                       (keyup)="filter(part.value)"
+
+                                />
+                                <div
+                                    *ngIf="(signingForm.get('serial')!.invalid && (signingForm.get('serial')!.dirty || signingForm.get('serial')!.touched))">
+                                    <small
+                                        class="form-text text-danger"
+                                        *ngIf="signingForm.get('serial')?.errors?.required"
+                                        jhiTranslate="sign.messages.validate.serial.required"
+                                    >
+                                        Your serial is required.
+                                    </small>
+                                </div>
+                                <div ngbDropdownMenu
+                                     style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
+                                     (scroll)="getMoreCert($event)">
+                                    <div *ngIf="listCertificate.length !== 0; else nothing">
+                                        <div ngbDropdownItem *ngFor="let cert of listCertificate"
                                              (click)="selectSerial(cert.serial||'')"
                                              style="cursor: pointer">
                                             {{cert.serial}} <br> {{cert.subjectInfo}}
                                         </div>
                                     </div>
-                                    <ng-template #nothing ngbDropdownItem>Don't have any certificate matches</ng-template>
+                                    <ng-template #nothing ngbDropdownItem>Don't have any certificate
+                                        matches
+                                    </ng-template>
                                 </div>
-                        </div>
+                            </div>
                     </div>
                     </div>
                     <div  class="col">
