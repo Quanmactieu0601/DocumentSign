@@ -193,7 +193,7 @@ public class CertificateService {
 
         String htmlContent = "";
         Integer width = 355;
-        Integer height = 160;
+        Integer height = 170;
         boolean isTransparency = false;
         String signatureImageData = "";
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
