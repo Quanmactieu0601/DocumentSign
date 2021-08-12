@@ -101,7 +101,7 @@ public class SigningService {
 
         // create Unique ID SignField element for signing multiple time with one certificate
         UUID uniqueIdSignField = java.util.UUID.randomUUID();
-        signPDFDto.setSignField(signer + uniqueIdSignField);
+        signPDFDto.setSignField(signer.replaceAll(".","") + uniqueIdSignField);
         signPDFDto.setSigner(signer);
         signPDFDto.setSignDate(new Date());
         signPDFDto.setVisibleWidth(location.getVisibleWidth());
