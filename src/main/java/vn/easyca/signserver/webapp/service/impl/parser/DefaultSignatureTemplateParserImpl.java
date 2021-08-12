@@ -8,23 +8,15 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
 public class DefaultSignatureTemplateParserImpl implements SignatureTemplateParseService {
-    final String regexCN = "CN=\"([^\"]+),";
+    final String regexCN = "CN=\"([^\"]+)|CN=([^,]+)";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
         try {
-//            final String regexT = ", T=([^,]+)";
-//            String CN = getSigner(subjectDN);
-//            String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
-//            String[] signerInfor = CN.split(",");
-//            String signerName = signerInfor[0];
-//            String address = signerInfor[1];
-
+            String CN = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
-                .replaceFirst("_signer_", "Nguyễn Văn A")
-                .replaceFirst("_position_", "TPDV")
-                .replaceFirst("_address_", "Hà Nội")
+                .replaceFirst("_signer_", CN)
                 .replaceFirst("_signatureImage_", signatureImage)
                 .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
             return htmlContent;
@@ -40,6 +32,7 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
 
     @Override
     public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
-        return this.buildSignatureTemplate("", signatureTemplate, signatureImage);
+        String subjectDN = "UID=MST:0500329988, CN=Nguyễn Văn A, OU=IT, O=QUỸ TÍN DỤNG NHÂN DÂN VẠN PHÚC, ST=Hà Nội, C=VN";
+        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage);
     }
 }

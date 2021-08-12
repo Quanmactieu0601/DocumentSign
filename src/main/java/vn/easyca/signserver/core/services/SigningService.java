@@ -34,6 +34,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SigningService {
@@ -98,7 +99,9 @@ public class SigningService {
 
         Location location = firstContent.getLocation();
 
-        signPDFDto.setSignField(signer);
+        // create Unique ID SignField element for signing multiple time with one certificate
+        UUID uniqueIdSignField = java.util.UUID.randomUUID();
+        signPDFDto.setSignField(signer.replaceAll(".","") + uniqueIdSignField);
         signPDFDto.setSigner(signer);
         signPDFDto.setSignDate(new Date());
         signPDFDto.setVisibleWidth(location.getVisibleWidth());

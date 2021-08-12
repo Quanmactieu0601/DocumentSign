@@ -139,7 +139,7 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         Page<SignatureTemplateDTO> page;
 
         SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
-        templateDTO.setWidth(320);
+        templateDTO.setWidth(355);
         templateDTO.setHeight(150);
         templateDTO.setThumbnail(this.createThumbnail(templateDTO));
         List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());

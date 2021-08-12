@@ -18,6 +18,7 @@ import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.*;
 import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
@@ -120,6 +121,7 @@ public class CertificateService {
         }
         certificateRepository.save(certificate);
     }
+
     @Transactional
     public void updateOwnerId(String ownerId, long id) {
         Certificate certificate = certificateRepository.getOne(id);
@@ -190,8 +192,8 @@ public class CertificateService {
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
 
         String htmlContent = "";
-        Integer width = 320;
-        Integer height = 150;
+        Integer width = 355;
+        Integer height = 170;
         boolean isTransparency = false;
         String signatureImageData = "";
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
@@ -205,13 +207,10 @@ public class CertificateService {
 
         Long DEFAULT_OPTION = 0L;
         if (templateId == DEFAULT_OPTION | templateId == null) {
-            String signer = ParserUtils.getElementContentNameInCertificate(subjectDN, "CN=([^,]+)").replace("\"", "").replace("\'", "");
             try (InputStream inputFileStream = fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html")) {
                 htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
-                htmlContent = htmlContent
-                    .replaceFirst("_signer_", signer)
-                    .replaceFirst("_signatureImage_", signatureImageData)
-                    .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy));
+                SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(SignatureTemplateParserType.DEFAULT);
+                htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlContent, signatureImageData);
                 return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
             } catch (IOException ioe) {
                 throw new ApplicationException("Error reading file");
