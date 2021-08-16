@@ -214,7 +214,7 @@ public class CertificateService {
 
                 // th: ko co anh chu ky, thay doi kich thuoc anh
                 if (signatureImageData.equals("")) {
-                    height = 80;
+                    height = 90;
                     htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden" );
                 }
 
