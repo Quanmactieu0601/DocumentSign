@@ -193,7 +193,7 @@ public class CertificateService {
 
         String htmlContent = "";
         Integer width = 355;
-        Integer height = 160;
+        Integer height = 170;
         boolean isTransparency = false;
         String signatureImageData = "";
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
@@ -211,6 +211,13 @@ public class CertificateService {
                 htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
                 SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(SignatureTemplateParserType.DEFAULT);
                 htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlContent, signatureImageData);
+
+                // th: ko co anh chu ky, thay doi kich thuoc anh
+                if (signatureImageData.equals("")) {
+                    height = 90;
+                    htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden" );
+                }
+
                 return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
             } catch (IOException ioe) {
                 throw new ApplicationException("Error reading file");
