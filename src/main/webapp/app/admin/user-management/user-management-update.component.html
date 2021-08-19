@@ -147,7 +147,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.phone">Phone</label>
-                                            <input type="text" class="form-control form-control-sm" name="phone" maxlength="20"
+                                            <input type="text" class="form-control form-control-sm" maxlength="20" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 8)"
                                                    formControlName="phone"/>
 
                                             <div
@@ -213,7 +213,8 @@
                                     <div class="row">
                                         <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">Current Password</label>
+
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.currentPassword">Current Password</label>
                                             <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="30"
                                                    formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
                                             <div
@@ -247,7 +248,8 @@
                                         </div>
 <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
-                                            <label class="form-control-label font-weight-bold">New Password</label>
+
+                                            <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
                                             <input type="password" class="form-control form-control-sm" name="password" maxlength="30"
                                                    formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
 
