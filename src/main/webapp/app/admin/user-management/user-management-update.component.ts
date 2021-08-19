@@ -37,7 +37,7 @@ export class UserManagementUpdateComponent implements OnInit {
     organizationName: ['', [Validators.maxLength(99)]],
     organizationUnit: ['', [Validators.maxLength(99)]],
     localityName: ['', [Validators.maxLength(99)]],
-    stateName: ['', [Validators.maxLength(249)]],
+    stateName: ['', [Validators.maxLength(99)]],
     country: ['', [Validators.minLength(2), Validators.maxLength(1)]],
     phone: ['', [Validators.minLength(5), Validators.maxLength(19)]],
     activated: [],
@@ -172,7 +172,10 @@ export class UserManagementUpdateComponent implements OnInit {
 
   private onSaveSuccess(): void {
     this.isSaving = false;
-    this.toastrService.success(this.translateService.instant('userManagement.created'));
+    if (this.user.id === undefined) this.toastrService.success(this.translateService.instant('userManagement.created'));
+    else {
+      this.toastrService.success(this.translateService.instant('userManagement.updated'));
+    }
     this.previousState();
   }
 
