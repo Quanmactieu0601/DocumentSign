@@ -28,9 +28,7 @@
                                         <div class="form-group col-3">
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.login">Login</label>
-
-                                            <input type="text" class="form-control form-control-sm" name="login"  maxlength="51"
-                                                   formControlName="login"/>
+                                            <input type="text" class="form-control form-control-sm" name="login"  maxlength="50" formControlName="login"/>
                                             <div
                                                 *ngIf="editForm.get('login')!.invalid && (editForm.get('login')!.dirty || editForm.get('login')!.touched)">
                                                 <small
@@ -77,8 +75,7 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.firstName">First Name</label>
 
-                                            <input type="text" class="form-control form-control-sm" name="firstName" maxlength="51"
-                                                   formControlName="firstName"/>
+                                            <input type="text" class="form-control form-control-sm" name="firstName" maxlength="50" formControlName="firstName"/>
 
                                             <div
                                                 *ngIf="editForm.get('firstName')!.invalid && (editForm.get('firstName')!.dirty || editForm.get('firstName')!.touched)">
@@ -96,8 +93,8 @@
                                             <label jhiTranslate="userManagement.lastName" class="font-weight-bold">Last
                                                 Name</label>
 
-                                            <input type="text" class="form-control form-control-sm" name="lastName" maxlength="51"
-                                                   formControlName="lastName"/>
+
+                                            <input type="text" class="form-control form-control-sm" name="lastName" maxlength="50" formControlName="lastName"/>
 
                                             <div
                                                 *ngIf="editForm.get('lastName')!.invalid && (editForm.get('lastName')!.dirty || editForm.get('lastName')!.touched)">
@@ -116,8 +113,8 @@
                                                    jhiTranslate="userManagement.email">Email</label>
 
 
-                                            <input type="email" class="form-control form-control-sm" name="email" maxlength="51"
-                                                   formControlName="email"/>
+
+                                            <input type="email" class="form-control form-control-sm" name="email" maxlength="50" formControlName="email"/>
 
 
                                             <div
@@ -154,8 +151,8 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.phone">Phone</label>
 
-                                            <input type="text" class="form-control form-control-sm" maxlength="21" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 8)"
-                                                   formControlName="phone"/>
+
+                                            <input type="text" class="form-control form-control-sm" maxlength="20" name="phone" onkeypress="return (event.charCode >= 48 && event.charCode <= 57 || event.keyCode == 8)" formControlName="phone"/>
                                             <div
                                                 *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
                                                 <small
@@ -217,12 +214,12 @@
 
                                 <div class="card-body">
                                     <div class="row">
-                                        <!--                                        <div class="form-group col-12" [hidden]="user.id">-->
+<!--                                        <div class="form-group col-12" [hidden]="user.id">-->
                                         <div class="form-group col-4">
 
                                             <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.currentPassword">Current Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="31"
-                                                   formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
+
+                                            <input type="password" class="form-control form-control-sm" name="currentPassword" maxlength="30" formControlName="currentPassword" [required]="user.id && isChangePassword" [readOnly]="user.id === undefined || !isChangePassword " />
                                             <div
                                                 *ngIf="editForm.get('currentPassword')!.invalid && (editForm.get('currentPassword')!.dirty || editForm.get('currentPassword')!.touched)">
                                                 <small
@@ -244,7 +241,7 @@
 
                                                 <small
                                                     class="form-text text-danger"
-                                                        *ngIf="editForm.get('currentPassword')?.errors?.maxlength"
+                                                    *ngIf="editForm.get('currentPassword')?.errors?.maxlength"
                                                     jhiTranslate="entity.validation.maxlength"
                                                     [translateValues]="{ max: 30 }"
                                                 >
@@ -256,8 +253,8 @@
                                         <div class="form-group col-4">
 
                                             <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.newPassword">New Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="password" maxlength="31"
-                                                   formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
+
+                                            <input type="password" class="form-control form-control-sm" name="password" maxlength="30" formControlName="password" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
 
                                             <div
                                                 *ngIf="editForm.get('password')!.invalid && (editForm.get('password')!.dirty || editForm.get('password')!.touched)">
@@ -292,8 +289,8 @@
                                         <div class="form-group col-4">
                                             <label class="form-control-label font-weight-bold" jhiTranslate="userManagement.confirmPassword">Confirm
                                                 Password</label>
-                                            <input type="password" class="form-control form-control-sm" name="confirmPassword" maxlength = "31"
-                                                   formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
+
+                                            <input type="password" class="form-control form-control-sm" name="confirmPassword" maxlength = "30" formControlName="confirmPassword" [required]="user.id === undefined || isChangePassword" [readOnly]="!isChangePassword"/>
                                             <div
                                                 *ngIf="
                     editForm.get('confirmPassword')!.invalid &&
@@ -341,8 +338,8 @@
                                             <label class="form-control-label font-weight-bold"
                                                    jhiTranslate="userManagement.commonName">commonName</label>
 
-                                            <input type="text" class="form-control form-control-sm" name="commonName" maxlength="101"
-                                                   formControlName="commonName"/>
+
+                                            <input type="text" class="form-control form-control-sm" name="commonName" maxlength="100" formControlName="commonName"/>
 
                                             <div
                                                 *ngIf="editForm.get('commonName')!.invalid && (editForm.get('commonName')!.dirty || editForm.get('commonName')!.touched)"
