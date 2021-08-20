@@ -47,14 +47,16 @@
 <div class="card mb-1" *ngIf="disable">
     <div class="card-body">
         <div *ngIf="signatureVfDTOs">
+
+            <li><span class="font-weight-bold"
+                      jhiTranslate="webappApp.signatureVerify.integrity">integrity</span>:
+                <fa-icon *ngIf="signatureVfDTOs[0].integrity" icon="check" class="text-success"></fa-icon>
+                <fa-icon *ngIf="!signatureVfDTOs[0].integrity" icon="times" class="text-unsuccess"></fa-icon>
+            </li>
+            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:
             <ul *ngFor="let signatureVfDTO of signatureVfDTOs">
 
-                <li><span class="font-weight-bold"
-                          jhiTranslate="webappApp.signatureVerify.integrity">integrity</span>:
-                    <fa-icon *ngIf="signatureVfDTO.integrity" icon="check" class="text-success"></fa-icon>
-                    <fa-icon *ngIf="!signatureVfDTO.integrity" icon="times" class="text-unsuccess"></fa-icon>
-                </li>
-                <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:
+
                     <ul *ngFor="let certificateVfDTO of signatureVfDTO.certificateVfDTOs; let i = index">
                         <span class="font-weight-bolder"><span
                             jhiTranslate="webappApp.signatureVerify.certificate.title">Cert order </span> {{i + 1}}</span>

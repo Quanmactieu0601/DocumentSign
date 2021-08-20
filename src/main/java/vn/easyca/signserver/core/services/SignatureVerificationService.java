@@ -409,22 +409,22 @@ public class SignatureVerificationService {
             while(node.getParentNode() .getParentNode()!= null){
                 node = node.getParentNode();
             }
-            NodeList content = node.getChildNodes();
-            int i=0;
-            while (content.item(i).getLocalName()==null) i++;
-
-            Element context = (Element) content.item(i);
-            if (context.getAttribute("Id") != "") {
-                context.setIdAttribute("Id", true);
-            } else if (context.getAttribute("ID") != "") {
-                context.setIdAttribute("ID", true);
-            } else if (context.getAttribute("id") != "") {
-                context.setIdAttribute("id", true);
-            }
+//            NodeList content = node.getChildNodes();
+//            int i=0;
+//            while (content.item(i).getLocalName()==null) i++;
+//
+//            Element context = (Element) content.item(i);
+//            if (context.getAttribute("Id") != "") {
+//                context.setIdAttribute("Id", true);
+//            } else if (context.getAttribute("ID") != "") {
+//                context.setIdAttribute("ID", true);
+//            } else if (context.getAttribute("id") != "") {
+//                context.setIdAttribute("id", true);
+//            }
 
             XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
             DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(0));
-
+            setIdAttribute(valContext,node);
             XMLSignature signature = fac.unmarshalXMLSignature(valContext);
             boolean coreValidity = signature.validate(valContext);
 
@@ -463,6 +463,28 @@ public class SignatureVerificationService {
 
 
     }
+
+    public  void setIdAttribute(DOMValidateContext validateContext,Node node){
+        final NamedNodeMap attributes = node.getAttributes();
+        if(attributes != null) {
+            for (int jj = 0; jj < attributes.getLength(); jj++) {
+                final Node item = attributes.item(jj);
+                final String localName = item.getNodeName();
+                if (localName != null) {
+                    final String id = localName.toLowerCase();
+                    if ("id".equals(id)) {
+                        validateContext.setIdAttributeNS((Element) node, null, localName);
+                        break;
+                    }
+                }
+            }
+        }
+        NodeList nl = node.getChildNodes();
+        for(int jj = 0; jj < nl.getLength(); jj++){
+            setIdAttribute(validateContext, nl.item(jj));
+        }
+    }
+
 
 
 
