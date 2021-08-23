@@ -3,8 +3,8 @@ package vn.easyca.signserver.webapp.web.rest;
 import io.github.jhipster.web.util.HeaderUtil;
 import io.github.jhipster.web.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+//import net.sf.jasperreports.engine.*;
+//import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -158,25 +158,25 @@ public class TransactionResource {
      * * @param startdate, enddate, type from transaction
      * @return the file pdf transaction report
      */
-    @GetMapping("/transactions/exportPDFJasper")
-    public void exportPDF(@RequestParam("startDate") String startDate,
-                          @RequestParam("endDate") String endDate,
-                          @RequestParam("type") String type, HttpServletResponse response) throws JRException, IOException {
-
-        log.debug("REST request to export  PDF Transactions ");
-        Map<String, Object> parameter = new HashMap<>();
-        System.out.println("type:" + type);
-        System.out.println("date " + startDate);
-        List<TransactionDTO> listTransaction = transactionService.findTransaction(startDate, endDate, type);
-        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTransaction);
-        parameter.put("transactionDataSource", TransactionCollectionDataSource);
-        parameter.put("title", "Transaction Report");
-        JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
-        OutputStream out = response.getOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, out);
-        response.setContentType("application/pdf");
-        response.addHeader("Content-Disposition", "inline; filename=TransactionReport.pdf;");
-        log.debug("Export file transaction report.pdf success !");
-    }
+//    @GetMapping("/transactions/exportPDFJasper")
+//    public void exportPDF(@RequestParam("startDate") String startDate,
+//                          @RequestParam("endDate") String endDate,
+//                          @RequestParam("type") String type, HttpServletResponse response) throws JRException, IOException {
+//
+//        log.debug("REST request to export  PDF Transactions ");
+//        Map<String, Object> parameter = new HashMap<>();
+//        System.out.println("type:" + type);
+//        System.out.println("date " + startDate);
+//        List<TransactionDTO> listTransaction = transactionService.findTransaction(startDate, endDate, type);
+//        JRBeanCollectionDataSource TransactionCollectionDataSource = new JRBeanCollectionDataSource(listTransaction);
+//        parameter.put("transactionDataSource", TransactionCollectionDataSource);
+//        parameter.put("title", "Transaction Report");
+//        JasperReport jasperDesign = JasperCompileManager.compileReport(fileName);
+//        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperDesign, parameter, new JREmptyDataSource());
+//        OutputStream out = response.getOutputStream();
+//        JasperExportManager.exportReportToPdfStream(jasperPrint, out);
+//        response.setContentType("application/pdf");
+//        response.addHeader("Content-Disposition", "inline; filename=TransactionReport.pdf;");
+//        log.debug("Export file transaction report.pdf success !");
+//    }
 }

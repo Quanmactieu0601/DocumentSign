@@ -45,6 +45,10 @@ spring:
     username: easysign_test
     password: easysign999
 
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
+
     # db configuration for SQL SERVER
     #    url: jdbc:sqlserver://172.16.10.66:1433;database=signserver_bvq11
     #    username: sdshd
