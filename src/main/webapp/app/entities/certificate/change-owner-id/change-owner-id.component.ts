@@ -5,7 +5,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { User } from 'app/core/user/user.model';
+import { IUser } from 'app/core/user/user.model';
 import { UserService } from 'app/core/user/user.service';
 import { HttpResponse } from '@angular/common/http';
 
