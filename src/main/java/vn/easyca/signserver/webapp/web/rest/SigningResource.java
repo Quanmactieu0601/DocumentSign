@@ -63,6 +63,7 @@ public class SigningResource extends BaseResource {
         try {
             PDFSigningDataRes signResponse = signService.signPDFFile(signingRequest);
             String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
+            status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, "Ký tệp pdf thành công"));
         } catch (ApplicationException applicationException) {
              log.error(applicationException.getMessage(), applicationException);
