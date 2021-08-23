@@ -53,39 +53,36 @@
                 <fa-icon *ngIf="signatureVfDTOs[0].integrity" icon="check" class="text-success"></fa-icon>
                 <fa-icon *ngIf="!signatureVfDTOs[0].integrity" icon="times" class="text-unsuccess"></fa-icon>
             </li>
-            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:
+            <li><span class="font-weight-bold" jhiTranslate="webappApp.signatureVerify.certificate.title">Certificate</span>:</li>
             <ul *ngFor="let signatureVfDTO of signatureVfDTOs">
-
-
-                    <ul *ngFor="let certificateVfDTO of signatureVfDTO.certificateVfDTOs; let i = index">
+                <ul *ngFor="let certificateVfDTO of signatureVfDTO.certificateVfDTOs; let i = index">
                         <span class="font-weight-bolder"><span
                             jhiTranslate="webappApp.signatureVerify.certificate.title">Cert order </span> {{i + 1}}</span>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.issuer">issuer</span>: {{certificateVfDTO?.issuer}}
-                        </li>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.subjectDn">subjectDn</span>: {{certificateVfDTO?.subjectDn}}
-                        </li>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.validFrom">valid from</span>: {{certificateVfDTO?.validFrom}}
-                        </li>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.validTo">valid to</span>: {{certificateVfDTO?.validTo}}
-                        </li>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.title">revocation status</span>:
-                            <span
-                                jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.{{certificateVfDTO?.revocationStatus}}"></span>
-                        </li>
-                        <li><span class="font-weight-bolder"
-                                  jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.title">current status</span>:
-                            <span
-                                jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.{{certificateVfDTO?.currentStatus}}"></span>
-                        </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.issuer">issuer</span>: {{certificateVfDTO?.issuer}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.subjectDn">subjectDn</span>: {{certificateVfDTO?.subjectDn}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.validFrom">valid from</span>: {{certificateVfDTO?.validFrom}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.validTo">valid to</span>: {{certificateVfDTO?.validTo}}
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.title">revocation status</span>:
+                        <span
+                            jhiTranslate="webappApp.signatureVerify.certificate.revocationStatus.{{certificateVfDTO?.revocationStatus}}"></span>
+                    </li>
+                    <li><span class="font-weight-bolder"
+                              jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.title">current status</span>:
+                        <span
+                            jhiTranslate="webappApp.signatureVerify.certificate.currentStatus.{{certificateVfDTO?.currentStatus}}"></span>
+                    </li>
 
-                        <br>
-                    </ul>
-                </li>
+                    <br>
+                </ul>
             </ul>
         </div>
     </div>
