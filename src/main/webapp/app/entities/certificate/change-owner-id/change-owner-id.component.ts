@@ -17,10 +17,10 @@ import { HttpResponse } from '@angular/common/http';
 export class ChangeOwnerIdComponent implements OnInit {
   certificate?: ICertificate;
   isAuthenOTP = false;
-  users: User[] = [];
+  users: IUser[] = [];
   page = 0;
   pin: any;
-  OwnerID: any;
+  OwnerID = '';
   account: Account | null = null;
   timer: NodeJS.Timeout | undefined;
   changeOwnerIDForm = this.fb.group({
@@ -41,7 +41,6 @@ export class ChangeOwnerIdComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.userService.query().subscribe((res: any) => (this.users = res.body));
     this.getListOwnerID('', 0);
   }
 
@@ -50,9 +49,17 @@ export class ChangeOwnerIdComponent implements OnInit {
       page: p,
       size: 20,
       sort: ['id,desc'],
+      account: s,
+      name: null,
+      email: null,
+      ownerId: null,
+      commonName: null,
+      country: null,
+      phone: null,
+      activated: true,
     };
     if (p === 0) this.users = [];
-    this.userService.query(data).subscribe((res: HttpResponse<ICertificate[]>) => {
+    this.userService.findByUser(data).subscribe((res: HttpResponse<IUser[]>) => {
       this.users.push(...(res.body || []));
     });
   }
