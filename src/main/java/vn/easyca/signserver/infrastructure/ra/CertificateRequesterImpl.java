@@ -12,6 +12,8 @@ import vn.easyca.signserver.core.domain.SubjectDN;
 import vn.easyca.signserver.core.domain.RawCertificate;
 import vn.easyca.signserver.webapp.config.Constants;
 
+import java.util.List;
+
 @Component
 public class CertificateRequesterImpl implements CertificateRequester {
 
@@ -49,6 +51,16 @@ public class CertificateRequesterImpl implements CertificateRequester {
         }
     }
 
+    @Override
+    public List<RegisterResultDto> request(List<RegisterInputDto> csrs) throws CertificateRequesterException {
+        try {
+            RegisterCertificateApi registerCertificateApi  = raServiceFade.createMultipleRegisterCertificateApi();
+            List<RegisterResultDto> certs = registerCertificateApi.registerMultipleCertificates(csrs);
+            return certs;
+        } catch (Exception ex) {
+            throw new CertificateRequesterException(ex);
+        }
+    }
 
 
 }

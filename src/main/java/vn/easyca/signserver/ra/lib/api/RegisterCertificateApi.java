@@ -6,6 +6,8 @@ import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
 import vn.easyca.signserver.ra.lib.network.PostRequester;
 import vn.easyca.signserver.ra.lib.exception.RAUnAuthorized;
 
+import java.util.List;
+
 public class RegisterCertificateApi {
 
     private final String url;
@@ -24,6 +26,15 @@ public class RegisterCertificateApi {
         }
     }
 
+    public List<RegisterResultDto> registerMultipleCertificates(List<RegisterInputDto> registerInputDtos) throws Exception {
+        try {
+            List<RegisterResultDto> result = postToGetList(0, registerInputDtos);
+            return result;
+        } catch (Exception ex) {
+            throw new Exception("Has err to connect ra service", ex);
+        }
+    }
+
     private RegisterResultDto post(int tryingCounter, RegisterInputDto dto) throws Exception {
         try {
             String token = RAAuthenticate.getToken();
@@ -34,6 +45,19 @@ public class RegisterCertificateApi {
             if (tryingCounter >= 2)
                 throw authenticateErr;
             return post(tryingCounter, dto);
+        }
+    }
+
+    private List<RegisterResultDto> postToGetList(int tryingCounter, Object dto) throws Exception {
+        try {
+            String token = RAAuthenticate.getToken();
+            PostRequester postRequester = new PostRequester(url, token);
+            return postRequester.postToGetListData(dto);
+        } catch (RAUnAuthorized authenticateErr) {
+            tryingCounter++;
+            if (tryingCounter >= 2)
+                throw authenticateErr;
+            return postToGetList(tryingCounter, dto);
         }
     }
 }

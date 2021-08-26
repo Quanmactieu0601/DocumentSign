@@ -10,6 +10,11 @@ public class RegisterResultDto {
     private String p12Pass;
     private int status;
     private String message;
+    private String key;
+
+    public String getKey() { return key; }
+
+    public void setKey(String key) { this.key = key; }
 
     public String getActiveCode() {
         return activeCode;

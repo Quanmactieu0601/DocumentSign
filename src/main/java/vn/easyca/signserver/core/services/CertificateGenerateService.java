@@ -9,6 +9,8 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
+import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -29,6 +31,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
@@ -94,6 +97,52 @@ public class CertificateGenerateService {
         return result;
     }
 
+
+    public List<RegisterResultDto> genCertificates(List<CertificateGenerateDTO> dtos) throws ApplicationException {
+        List<RegisterResultDto> result = new ArrayList<>();
+        // create new cert.
+        try {
+            result = createP12Cert(dtos);
+        } catch (CertificateRequester.CertificateRequesterException e) {
+            throw ApplicationException.throwServerInternalError("can not create new certificate. check log for know detail reason", e);
+        } catch (CryptoTokenException e) {
+            throw ApplicationException.throwCryptoTokenError(e);
+        } catch (CSRGenerator.CSRGeneratorException e) {
+            throw ApplicationException.throwGenCSRError(e);
+        } catch (CryptoTokenProxyException e) {
+            throw new ApplicationException(-1, "Cannot resolve token");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+
+
+
+
+//    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
+//        CertificateRequester.CertificateRequesterException,
+//        CryptoTokenException,
+//        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException {
+////        String alias = CertUtils.genRandomAlias();
+//        String alias = dto.getOwnerId();
+//        CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
+//        KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
+//        String csr = new CSRGenerator().genCsr(
+//            dto.getSubjectDN().toString(),
+//            cryptoToken.getProviderName(),
+//            keyPair.getPrivate(),
+//            keyPair.getPublic(),
+//            null,
+//            false,
+//            false);
+//        RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
+//        CertificateDTO certificateDTO = saveAndInstallCert(rawCertificate.getCert(), alias, alias, cryptoToken);
+//        return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
+//    }
+
+
     private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
@@ -113,6 +162,36 @@ public class CertificateGenerateService {
         RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
         CertificateDTO certificateDTO = saveAndInstallCert(rawCertificate.getCert(), alias, alias, cryptoToken);
         return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
+    }
+
+    private List<RegisterResultDto> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
+        CertificateRequester.CertificateRequesterException,
+        CryptoTokenException,
+        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException, NoSuchAlgorithmException {
+
+        List<RegisterInputDto> inputDtos = new ArrayList<>();
+        for (CertificateGenerateDTO dto: certificateGenerateDTOS) {
+            CertPackage certPackage= dto.getCertPackage(CERT_METHOD, CERT_TYPE);
+            SubjectDN subjectDN = dto.getSubjectDN();
+            OwnerInfo ownerInfo = dto.getOwnerInfo();
+
+            RegisterInputDto registerInputDto = new RegisterInputDto();
+//            registerInputDto.setCsr(csr);
+            registerInputDto.setCsr("");
+            registerInputDto.setCertMethod(certPackage.getCertMethod());
+            registerInputDto.setCertProfile(certPackage.getCertProfile());
+            registerInputDto.setCertProfileType(certPackage.getCertProfileType());
+            registerInputDto.setCn(subjectDN.getCn());
+            registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
+            registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
+            registerInputDto.setId(ownerInfo.getOwnerId());
+            registerInputDto.setO(subjectDN.getO());
+            registerInputDto.setOu(subjectDN.getOu());
+            registerInputDto.setSt(subjectDN.getS());
+            registerInputDto.genHash();
+            inputDtos.add(registerInputDto);
+        }
+        return certificateRequester.request(inputDtos);
     }
 
     @Transactional

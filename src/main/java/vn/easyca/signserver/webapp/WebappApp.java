@@ -84,7 +84,7 @@ public class WebappApp {
     private static void init() {
         // init ra-service
         // TODO: Refactor this code
-        if (raConfig.isConnectToRA())
+        if (!raConfig.isConnectToRA())
             CertificateRequesterImpl.init(new RAServiceFade(raConfig));
 
 
