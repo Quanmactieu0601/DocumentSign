@@ -129,6 +129,14 @@ public class CertificateService {
         certificateRepository.save(certificate);
     }
 
+    @Transactional
+    public void updateSignedTurn(long id) {
+        Certificate certificate = certificateRepository.getOne(id);
+        certificate.setSignedTurnCount(certificate.getSignedTurnCount() + 1);
+        certificateRepository.save(certificate);
+    }
+
+
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
         Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());

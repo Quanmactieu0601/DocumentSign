@@ -47,6 +47,10 @@ public class CertificateDTO {
 
     private String secretKey;
 
+    private Integer signedTurnCount;
+
+    public Long packageId;
+
     public Long getId() {
         return id;
     }
@@ -179,4 +183,13 @@ public class CertificateDTO {
     public void setRawPin(String rawPin) {
         this.rawPin = rawPin;
     }
+
+    public Integer getSignedTurnCount() { return signedTurnCount; }
+
+    public void setSignedTurnCount(Integer signedTurnCount) { this.signedTurnCount = signedTurnCount; }
+
+    public Long getPackageId() { return packageId; }
+
+    public void setPackageId(Long packageId) { this.packageId = packageId; }
+
 }

@@ -1,0 +1,28 @@
+{
+  "webappApp": {
+    "certPackage": {
+      "home": {
+        "title": "Cert Packages",
+        "createLabel": "Thêm mới một Cert Package",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Cert Package",
+        "notFound": "No Cert Packages found"
+      },
+      "created": "Một Cert Package mới được tạo với định danh {{ param }}",
+      "updated": "Một Cert Package cập nhật với định danh {{ param }}",
+      "deleted": "Một Cert Package đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Cert Package {{ id }}?"
+      },
+      "detail": {
+        "title": "Cert Package"
+      },
+      "packageCode": "Package Code",
+      "certType": "Cert Type",
+      "nameCert": "Name Cert",
+      "keyLength": "Key Length",
+      "expiredDate": "Expired Date",
+      "signingTurn": "Signing Turn",
+      "price": "Price"
+    }
+  }
+}

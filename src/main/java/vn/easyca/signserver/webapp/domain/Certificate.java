@@ -68,6 +68,20 @@ public class Certificate implements Serializable {
     @Column(name = "secret_key")
     private String secretKey;
 
+    @Column(name = "signed_turn_count")
+    private Integer signedTurnCount;
+
+    @Column(name = "package_id")
+    private Long packageId;
+
+    public Long getPackageId() { return packageId; }
+
+    public void setPackageId(Long packageId) { this.packageId = packageId; }
+
+    public Integer getSignedTurnCount() { return signedTurnCount; }
+
+    public void setSignedTurnCount(Integer signedTurnCount) { this.signedTurnCount = signedTurnCount; }
+
     public Long getSignatureImageId() {
         return signatureImageId;
     }

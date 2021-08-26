@@ -1,0 +1,72 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-cert-package-heading" jhiTranslate="webappApp.certPackage.home.createOrEditLabel">Create or edit a Cert Package</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.packageCode" for="field_packageCode">Package Code</label>
+                    <input type="text" class="form-control" name="packageCode" id="field_packageCode"
+                           formControlName="packageCode"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.certType" for="field_certType">Cert Type</label>
+                    <input type="number" class="form-control" name="certType" id="field_certType"
+                           formControlName="certType"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.nameCert" for="field_nameCert">Name Cert</label>
+                    <input type="text" class="form-control" name="nameCert" id="field_nameCert"
+                           formControlName="nameCert"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.keyLength" for="field_keyLength">Key Length</label>
+                    <input type="number" class="form-control" name="keyLength" id="field_keyLength"
+                           formControlName="keyLength"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.expiredDate" for="field_expiredDate">Expired Date</label>
+                    <div class="input-group">
+                        <input id="field_expiredDate" type="text" class="form-control" name="expiredDate" ngbDatepicker #expiredDateDp="ngbDatepicker" formControlName="expiredDate"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="expiredDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.signingTurn" for="field_signingTurn">Signing Turn</label>
+                    <input type="number" class="form-control" name="signingTurn" id="field_signingTurn"
+                           formControlName="signingTurn"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="webappApp.certPackage.price" for="field_price">Price</label>
+                    <input type="number" class="form-control" name="price" id="field_price"
+                           formControlName="price"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

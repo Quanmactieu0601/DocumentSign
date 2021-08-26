@@ -1,0 +1,54 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="certPackage">
+            <h2><span jhiTranslate="webappApp.certPackage.detail.title">Cert Package</span> {{ certPackage.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="webappApp.certPackage.packageCode">Package Code</span></dt>
+                <dd>
+                    <span>{{ certPackage.packageCode }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.certType">Cert Type</span></dt>
+                <dd>
+                    <span>{{ certPackage.certType }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.nameCert">Name Cert</span></dt>
+                <dd>
+                    <span>{{ certPackage.nameCert }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.keyLength">Key Length</span></dt>
+                <dd>
+                    <span>{{ certPackage.keyLength }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.expiredDate">Expired Date</span></dt>
+                <dd>
+                    <span>{{ certPackage.expiredDate }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.signingTurn">Signing Turn</span></dt>
+                <dd>
+                    <span>{{ certPackage.signingTurn }}</span>
+                </dd>
+                <dt><span jhiTranslate="webappApp.certPackage.price">Price</span></dt>
+                <dd>
+                    <span>{{ certPackage.price }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/cert-package', certPackage.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>
