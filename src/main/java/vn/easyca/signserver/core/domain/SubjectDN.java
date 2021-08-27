@@ -78,7 +78,7 @@ public class SubjectDN {
             builder.append(",L=").append(l);
         }
         if(StringUtils.isNotEmpty(s)) {
-            builder.append(",S=").append(s);
+            builder.append(",ST=").append(s);
         }
         if(StringUtils.isNotEmpty(c)) {
             builder.append(",C=").append(c);
