@@ -1,6 +1,7 @@
 package vn.easyca.signserver.core.dto.sign.newrequest;
 
 import java.util.Arrays;
+import java.util.Base64;
 
 public class SigningRequestContent {
     /***
@@ -21,6 +22,10 @@ public class SigningRequestContent {
         this.data = data;
     }
 
+    public void setData(String dataBase64) {
+        byte[] decodedBytes = Base64.getDecoder().decode(dataBase64);
+        this.data = decodedBytes;
+    }
     public String getDocumentName() {
         return documentName;
     }

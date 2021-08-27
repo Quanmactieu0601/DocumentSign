@@ -130,6 +130,13 @@ public class CertificateService {
     }
 
     @Transactional
+    public void updateSignTurn(Long id, Integer signedCurrentCount ) {
+        Certificate certificate = certificateRepository.getOne(id);
+        certificate.setSignedTurnCount(certificate.getSignedTurnCount() + signedCurrentCount);
+        certificateRepository.save(certificate);
+    }
+
+    @Transactional
     public void updateSignedTurn(long id) {
         Certificate certificate = certificateRepository.getOne(id);
         certificate.setSignedTurnCount(certificate.getSignedTurnCount() + 1);
