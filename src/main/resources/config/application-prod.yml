@@ -89,10 +89,15 @@ spring:
     #    username: ctch
     #    password: ctch@654@$!
 
-    # BV Hung Vuong - cau hinh DB Prod
+    # BV Hung Vuong - cau hinh DB Prod SDS
     #    url: jdbc:mariadb://10.200.150.10:3306/signserver_bvhungvuong?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: hungvuong
     #    password: HungVuong@2o2!
+
+    # BV Hung Vuong - cau hinh DB Prod
+    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign
+    password: bvhungvuong#2o2!
 
     # BV Benh Nhiet Doi - cau hinh DB Prod
     #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -100,9 +105,9 @@ spring:
     #    password: easysign@#2021
 
     # BV Tam Anh - cau hinh DB Prod
-    url: jdbc:mariadb://localhost:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign
-    password: tamanh@2021##
+    #    url: jdbc:mariadb://localhost:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: tamanh@2021##
 
     hikari:
       poolName: Hikari
@@ -150,7 +155,7 @@ spring:
 #     ciphers: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 ,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA,TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
 # ===================================================================
 server:
-  #  port: 8080
+  port: 8080
   #  port: 8888 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443
@@ -164,14 +169,14 @@ server:
   #=========END SSL==========
 
   #========SSL - TAM ANH HN PRODUCTION==========
-  port: 443
-  ssl:
-    key-store: file:/opt/signserver/bvta.pfx
-    key-store-password: 123456
-    key-store-type: PKCS12
-    key-alias: '1'
-    ciphers: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256, TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
-    enabled-protocols: TLSv1.2
+  #  port: 443
+  #  ssl:
+  #    key-store: file:/opt/signserver/bvta.pfx
+  #    key-store-password: 123456
+  #    key-store-type: PKCS12
+  #    key-alias: '1'
+  #    ciphers: TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384, TLS_DHE_RSA_WITH_AES_128_GCM_SHA256, TLS_DHE_RSA_WITH_AES_256_GCM_SHA384, TLS_DHE_RSA_WITH_AES_128_CBC_SHA, TLS_DHE_RSA_WITH_AES_256_CBC_SHA, TLS_DHE_RSA_WITH_AES_128_CBC_SHA256, TLS_DHE_RSA_WITH_AES_256_CBC_SHA256
+  #    enabled-protocols: TLSv1.2
   #=========END SSL==========
   compression:
     enabled: true
