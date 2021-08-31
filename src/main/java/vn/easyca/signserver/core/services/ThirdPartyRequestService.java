@@ -19,6 +19,7 @@ import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.service.CertPackageService;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.dto.CertPackageDTO;
@@ -27,6 +28,7 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SignElementVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.TokenVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
 import java.util.*;
 
@@ -39,7 +41,8 @@ public class ThirdPartyRequestService {
     private final OfficeSigningService officeSigningService;
     private final XMLSigningService xmlSigningService;
     private final PDFSigningService pdfSigningService;
-
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
 
     public ThirdPartyRequestService(SigningService signingService, CertificateGenerateService certificateGenerateService, CertificateService certificateService, CertPackageService certPackageService, OfficeSigningService officeSigningService, XMLSigningService xmlSigningService, PDFSigningService pdfSigningService) {
         this.signingService = signingService;
@@ -51,11 +54,20 @@ public class ThirdPartyRequestService {
         this.pdfSigningService = pdfSigningService;
     }
 
-    public void registerCertificate(List<CertificateGenerateDTO> certificateGenerateDTO) throws ApplicationException {
+    public List<P12CertificateRegisterResult> registerCertificate(List<CertificateGenerateDTO> certificateGenerateDTO) throws ApplicationException {
         List<RegisterResultDto> registerResultDtoList = certificateGenerateService.genCertificates(certificateGenerateDTO);
-        for (int i = 0; i <= registerResultDtoList.size(); i++) {
-            String serial = registerResultDtoList.get(0).getCertSerial();
+        List<P12CertificateRegisterResult> listResult = new ArrayList<>();
+        for (RegisterResultDto dto : registerResultDtoList) {
+            P12CertificateRegisterResult result = new P12CertificateRegisterResult();
+            if (dto.getStatus() == RESULT_OK) {
+                dto.getCert();
+            } else {
+                result.setMessage(dto.getMessage());
+                result.setStatus(RESULT_ERROR);
+            }
+            listResult.add(result);
         }
+        return listResult;
     }
 
     public Object sign(SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
@@ -126,14 +138,14 @@ public class ThirdPartyRequestService {
                         signedCurrentCount++;
                         listResultSigningResponse.add(BaseResponseVM.createNewSuccessResponse(signResponse));
                         break;
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         String fileName = "Thứ tự thứ " + index;
                         listResultSigningResponse.add(new BaseResponseVM(-1, "Tệp - " + fileName + " ký lỗi", e.getMessage()));
                         break;
                     }
                 }
                 case "hash": {
-                    try{
+                    try {
                         checkSignTurn(signedTurn + signedCurrentCount, signingTurnOfPackage);
                         SigningVM<String> signingVM = mapper.convertValue(requestValue, SigningVM.class);
                         TokenVM tokenVM = new TokenVM();
@@ -167,7 +179,7 @@ public class ThirdPartyRequestService {
                         signedCurrentCount++;
                         listResultSigningResponse.add(signingDataResponse);
                         break;
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         String fileName = "Thứ tự thứ " + index;
                         listResultSigningResponse.add(new BaseResponseVM(-1, "Tệp - " + fileName + " ký lỗi", e.getMessage()));
                         break;

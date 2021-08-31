@@ -24,9 +24,9 @@ public class RegisterInputDto {
     private String p12RegisterPass = "";
     private String st;
     private String hashData;
-
-
-    // Getter Methods
+    private String taxCode;
+    private String identification;
+// Getter Methods
 
     public float getActivationCodeEnabled() {
         return activationCodeEnabled;
@@ -95,6 +95,14 @@ public class RegisterInputDto {
     public String getSt() {
         return st;
     }
+
+    public String getTaxCode() { return taxCode; }
+
+    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
+
+    public String getIdentification() { return identification; }
+
+    public void setIdentification(String identification) { this.identification = identification; }
 
     public String genHash() throws NoSuchAlgorithmException {
 

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.ra.lib.network;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -10,6 +11,7 @@ import org.apache.http.client.fluent.Response;
 import org.apache.http.entity.ContentType;
 import org.bouncycastle.util.encoders.UTF8;
 import org.h2.util.json.JSONObject;
+import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.ra.lib.exception.RAUnAuthorized;
 
 import java.io.IOException;
@@ -41,10 +43,11 @@ public class PostRequester {
         return gson.fromJson(content, responseType);
     }
 
-    public <T> List<T> postToGetListData(Object data) throws JsonSyntaxException, IOException, RAUnAuthorized {
+    public <T> List<T> postToGetListData(Object data, Class<T> responseType) throws JsonSyntaxException, IOException, RAUnAuthorized {
         String content = post(data);
-         Type type = new TypeToken<T>() {}.getType();
-       return new Gson().fromJson(content, type);
+        ObjectMapper mapper = new ObjectMapper();
+        List<T> myObjects = mapper.readValue(content, mapper.getTypeFactory().constructCollectionType(List.class, responseType));
+        return myObjects;
     }
 
     public String post(Object data) throws IOException, RAUnAuthorized {

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.ra.lib.api;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import vn.easyca.signserver.ra.lib.authenticate.RAAuthenticate;
 import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
 import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
@@ -52,7 +53,7 @@ public class RegisterCertificateApi {
         try {
             String token = RAAuthenticate.getToken();
             PostRequester postRequester = new PostRequester(url, token);
-            return postRequester.postToGetListData(dto);
+            return (List<RegisterResultDto>) postRequester.postToGetListData(dto, RegisterResultDto.class);
         } catch (RAUnAuthorized authenticateErr) {
             tryingCounter++;
             if (tryingCounter >= 2)

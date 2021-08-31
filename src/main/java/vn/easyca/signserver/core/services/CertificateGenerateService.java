@@ -4,11 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
+import vn.easyca.signserver.pki.cryptotoken.utils.Pkcs12Utils;
 import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
 import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
@@ -32,11 +35,9 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CertificateGenerateService {
@@ -113,6 +114,8 @@ public class CertificateGenerateService {
             throw new ApplicationException(-1, "Cannot resolve token");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (Exception exception) {
+            throw new ApplicationException("can not create new p12");
         }
         return result;
     }
@@ -165,22 +168,31 @@ public class CertificateGenerateService {
     }
 
     private List<RegisterResultDto> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
-        CertificateRequester.CertificateRequesterException,
-        CryptoTokenException,
-        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException, NoSuchAlgorithmException {
+        Exception {
+
+        // xử lý p12
 
         List<RegisterInputDto> inputDtos = new ArrayList<>();
+        Hashtable<String, KeyPair> keyPairInList = new Hashtable<>();
         for (CertificateGenerateDTO dto: certificateGenerateDTOS) {
+            // tạo key pair
             CertPackage certPackage= dto.getCertPackage(CERT_METHOD, CERT_TYPE);
             SubjectDN subjectDN = dto.getSubjectDN();
             OwnerInfo ownerInfo = dto.getOwnerInfo();
 
+            // lưu private key
+            KeyPair keyPair = Pkcs12Utils.createKeyPair(2048);
+            String keyRequestUnique = dto.getTaxCode() + "_" + dto.getIdentification();
+            keyPairInList.put(keyRequestUnique, keyPair);
+
+
+
+            String csr = Pkcs12Utils.createCSR(subjectDN.toString(), keyPair);
             RegisterInputDto registerInputDto = new RegisterInputDto();
-//            registerInputDto.setCsr(csr);
-            registerInputDto.setCsr("");
+            registerInputDto.setCsr(csr);
             registerInputDto.setCertMethod(certPackage.getCertMethod());
             registerInputDto.setCertProfile(certPackage.getCertProfile());
-            registerInputDto.setCertProfileType(certPackage.getCertProfileType());
+            registerInputDto.setCertProfileType(dto.getCertProfileType());
             registerInputDto.setCn(subjectDN.getCn());
             registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
             registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
@@ -188,10 +200,35 @@ public class CertificateGenerateService {
             registerInputDto.setO(subjectDN.getO());
             registerInputDto.setOu(subjectDN.getOu());
             registerInputDto.setSt(subjectDN.getS());
+            registerInputDto.setTaxCode(dto.getTaxCode());
+            registerInputDto.setIdentification(dto.getIdentification());
             registerInputDto.genHash();
             inputDtos.add(registerInputDto);
+
+
         }
-        return certificateRequester.request(inputDtos);
+        List<RegisterResultDto> cers = certificateRequester.request(inputDtos);
+        // combine cer and private key
+        for (RegisterResultDto result: cers) {
+            String alias = "EasyCA";
+            KeyPair keyPairCer = keyPairInList.get(result.getKey());
+            String pin = CommonUtils.genRandomHsmCertPin();
+            Pkcs12Utils.saveToFile(keyPairCer, "D:\\");
+            String certData = result.getCert();
+            byte[] p12 = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
+        }
+
+        return cers;
+    }
+
+
+    private String getAlias(String inputAlias, P12CryptoToken cryptoToken) throws CryptoTokenException {
+        if (inputAlias != null && !inputAlias.isEmpty())
+            return inputAlias;
+        List<String> aliases = cryptoToken.getAliases();
+        if (aliases != null && aliases.size() > 0)
+            return aliases.get(0);
+        throw new CryptoTokenException("Can not found alias in crypto token");
     }
 
     @Transactional

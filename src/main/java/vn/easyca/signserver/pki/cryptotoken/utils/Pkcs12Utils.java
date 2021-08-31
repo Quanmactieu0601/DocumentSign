@@ -121,4 +121,48 @@ public class Pkcs12Utils {
 //        return bos.toByteArray();
     }
 
+
+    public static byte[] selfSignedCertificateToP12v2(KeyPair keyPair, String cerData, String alias, String password)
+        throws Exception{
+        StringBuilder certBuilder = new StringBuilder();
+        if (!cerData.contains("-----BEGIN CERTIFICATE-----")) {
+            certBuilder.append("-----BEGIN CERTIFICATE-----").append("\n");
+        }
+        certBuilder.append(cerData);
+        if (!cerData.contains("-----END CERTIFICATE-----")) {
+            certBuilder.append("\n").append("-----END CERTIFICATE-----");
+        }
+
+        byte privateKeyData[] = keyPair.getPrivate().getEncoded();
+        byte certificateData[] =  certBuilder.toString().getBytes();
+
+        //Remove PEM header, footer and \n
+//        String b64PrivateKey = Base64.getEncoder().encodeToString(privateKeyData);
+//        String privateKeyPEM = new String (privateKeyData, StandardCharsets.UTF_8);
+//        privateKeyPEM = privateKeyPEM.replace(
+//            "-----BEGIN PRIVATE KEY-----\n", "")
+//            .replace("-----END PRIVATE KEY-----", "")
+//            .replaceAll("\n", "");
+//        byte privateKeyDER[] = Base64.getDecoder().decode(privateKeyPEM);
+        byte privateKeyDER[] = privateKeyData;
+
+        // Used to read User_privkey.pem file to get private key
+        PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(privateKeyDER);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        PrivateKey privateKey = keyFactory.generatePrivate(spec);
+
+        //  Used to read user certificate
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        java.security.cert.Certificate cert = factory.generateCertificate(new ByteArrayInputStream(certificateData));
+
+        //Create keystore, add entry with the provided alias and save
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(null);
+        ks.setKeyEntry(alias, privateKey, password.toCharArray(), new  java.security.cert.Certificate[] { cert });
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ks.store(bos, password.toCharArray());
+        bos.close();
+        return bos.toByteArray();
+    }
 }

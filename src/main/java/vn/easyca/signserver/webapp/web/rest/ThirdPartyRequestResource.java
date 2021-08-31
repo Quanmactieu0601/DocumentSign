@@ -23,7 +23,9 @@ import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -43,16 +45,15 @@ public class ThirdPartyRequestResource extends BaseResource {
 
     @PostMapping("/registerCerts")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
-    public ResponseEntity<BaseResponseVM> registerCertificates(@RequestBody List<CertificateGeneratorVM> certificateGenerators) {
+    public ResponseEntity<BaseResponseVM> registerCertificates(@Valid @RequestBody List<CertificateGeneratorVM> certificateGenerators) {
         try {
             log.info("--- genCertificate ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             List<CertificateGenerateDTO> certificateGenerateDTOList = mapper.map(certificateGenerators);
-            List<CertificateGeneratorResultVM> certificateGeneratorResultVM = new ArrayList<>();
-            thirdPartyRequestService.registerCertificate(certificateGenerateDTOList);
-            Object viewModel = MappingHelper.map(null, certificateGeneratorResultVM.getClass());
+            List<P12CertificateRegisterResult> result = thirdPartyRequestService.registerCertificate(certificateGenerateDTOList);
+//            Object viewModel = MappingHelper.map(result, P12CertificateRegisterResult.class);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(viewModel));
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -88,6 +89,25 @@ public class ThirdPartyRequestResource extends BaseResource {
     }
 
 
+
+    @PostMapping(value = "/quickSign")
+    public ResponseEntity<Object> quickSign(@RequestBody SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
+        try {
+            Object res = thirdPartyRequestService.sign(signingRequest);
+            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, res, ""));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/thirdParty/sign", TransactionType.BUSINESS, Action.SIGN, Extension.PDF, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
 
 
 
