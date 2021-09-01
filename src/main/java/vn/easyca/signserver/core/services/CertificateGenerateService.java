@@ -171,9 +171,10 @@ public class CertificateGenerateService {
         Hashtable<String, KeyPair> keyPairInList = new Hashtable<>();
         for (CertificateGenerateDTO dto : certificateGenerateDTOS) {
             // tạo key pair
-            CertPackage certPackage = dto.getCertPackage(CERT_METHOD, CERT_TYPE);
+
             SubjectDN subjectDN = dto.getSubjectDN();
             OwnerInfo ownerInfo = dto.getOwnerInfo();
+            CertPackage certPackage = dto.getCertPackage(CERT_METHOD, dto.getCertProfileType());
 
             // lưu private key
             String key = dto.getTaxCode() + "_" + dto.getIdentification();
@@ -184,7 +185,7 @@ public class CertificateGenerateService {
             registerInputDto.setCsr(csr);
             registerInputDto.setCertMethod(certPackage.getCertMethod());
             registerInputDto.setCertProfile(certPackage.getCertProfile());
-            registerInputDto.setCertProfileType(dto.getCertProfileType());
+            registerInputDto.setCertProfileType(certPackage.getCertProfileType());
             registerInputDto.setCn(subjectDN.getCn());
             registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
             registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
@@ -229,6 +230,7 @@ public class CertificateGenerateService {
         p12ImportVM.setP12Base64(base64File);
         p12ImportVM.setOwnerId(ownerId);
         p12ImportVM.setPin(pin);
+        p12ImportVM.setCertProfile(certResult.getCertProfile());
 
         log.info("importP12File: {}", p12ImportVM);
         ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);

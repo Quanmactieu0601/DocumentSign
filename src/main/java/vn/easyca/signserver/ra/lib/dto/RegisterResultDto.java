@@ -17,7 +17,7 @@ public class RegisterResultDto {
     private String message;
     private String identification;
     private String taxCode;
-
+    private String certProfile;
 
     public String getActiveCode() {
         return activeCode;
@@ -99,5 +99,8 @@ public class RegisterResultDto {
 
     public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
 
+    public String getCertProfile() { return certProfile; }
+
+    public void setCertProfile(String certProfile) { this.certProfile = certProfile; }
 
 }

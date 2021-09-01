@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import vn.easyca.signserver.webapp.domain.CertPackage;
 import vn.easyca.signserver.webapp.service.dto.CertPackageDTO;
 
 import org.springframework.data.domain.Page;
@@ -43,4 +44,6 @@ public interface CertPackageService {
      * @param id the id of the entity.
      */
     void delete(Long id);
+
+    Optional<CertPackage> findByPackageCode(String packageCode);
 }

@@ -2,7 +2,6 @@ package vn.easyca.signserver.webapp.web.rest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -14,21 +13,19 @@ import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningContainerRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.services.QuickSigningWrapService;
 import vn.easyca.signserver.core.services.ThirdPartyRequestService;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
-import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.QuickSignVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
-import vn.easyca.signserver.webapp.web.rest.vm.response.CertificateGeneratorResultVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 @Validated
@@ -36,12 +33,14 @@ import java.util.List;
 @RequestMapping("/api/thirdPartyRequest")
 public class ThirdPartyRequestResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(ThirdPartyRequestResource.class);
-
     private final AsyncTransactionService asyncTransactionService;
     private final ThirdPartyRequestService thirdPartyRequestService;
-    public ThirdPartyRequestResource(AsyncTransactionService asyncTransactionService, ThirdPartyRequestService thirdPartyRequestService)  {
+    private final QuickSigningWrapService quickSigningWrapService;
+
+    public ThirdPartyRequestResource(AsyncTransactionService asyncTransactionService, ThirdPartyRequestService thirdPartyRequestService, QuickSigningWrapService quickSigningWrapService)  {
         this.asyncTransactionService = asyncTransactionService;
         this.thirdPartyRequestService = thirdPartyRequestService;
+        this.quickSigningWrapService = quickSigningWrapService;
     }
 
     @PostMapping("/registerCerts")
@@ -91,9 +90,9 @@ public class ThirdPartyRequestResource extends BaseResource {
 
 
     @PostMapping(value = "/quickSign")
-    public ResponseEntity<Object> quickSign(@RequestBody SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
+    public ResponseEntity<Object> quickSign(@Valid @RequestBody QuickSignVM quickSignVM) throws Exception {
         try {
-            Object res = thirdPartyRequestService.sign(signingRequest);
+            Object res = quickSigningWrapService.quickSign(quickSignVM);
             return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, res, ""));
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);

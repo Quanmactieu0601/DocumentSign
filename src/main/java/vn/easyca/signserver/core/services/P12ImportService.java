@@ -13,24 +13,21 @@ import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
+import vn.easyca.signserver.webapp.domain.CertPackage;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
+import vn.easyca.signserver.webapp.service.CertPackageService;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,16 +41,17 @@ public class P12ImportService {
     private final CertificateRepository certificateRepository;
     private final SystemConfigCachingService systemConfigCachingService;
     private final AuthenticatorTOTPService authenticatorTOTPService;
-
+    private final CertPackageService certPackageService;
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
-                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTPService authenticatorTOTPService) {
+                            SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTPService authenticatorTOTPService, CertPackageService certPackageService) {
         this.certificateService = certificateService;
         this.userApplicationService = userApplicationService;
         this.symmetricService = symmetricService;
         this.certificateRepository = certificateRepository;
         this.systemConfigCachingService = systemConfigCachingService;
         this.authenticatorTOTPService = authenticatorTOTPService;
+        this.certPackageService = certPackageService;
     }
 
     public CertificateDTO insert(ImportP12FileDTO input) throws ApplicationException {
@@ -167,6 +165,12 @@ public class P12ImportService {
         certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotBefore()));
         certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
         certificateDTO.setActiveStatus(1);
+
+        if (input.getCertProfile() != null) {
+           Optional<CertPackage> certPackage = certPackageService.findByPackageCode(input.getCertProfile());
+           certificateDTO.setPackageId(certPackage.get().getId());
+           certificateDTO.setSignedTurnCount(0);
+        }
 
         CertificateDTO result = certificateService.save(certificateDTO);
 

@@ -86,4 +86,10 @@ public class CertPackageServiceImpl implements CertPackageService {
         log.debug("Request to delete CertPackage : {}", id);
         certPackageRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<CertPackage> findByPackageCode(String packageCode) {
+        log.debug("Request to get certPackage : {}", packageCode);
+        return certPackageRepository.findOneByPackageCode(packageCode);
+    }
 }
