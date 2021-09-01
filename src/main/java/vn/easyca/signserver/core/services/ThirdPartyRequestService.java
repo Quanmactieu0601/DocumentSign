@@ -41,8 +41,7 @@ public class ThirdPartyRequestService {
     private final OfficeSigningService officeSigningService;
     private final XMLSigningService xmlSigningService;
     private final PDFSigningService pdfSigningService;
-    private final int RESULT_OK = 0;
-    private final int RESULT_ERROR = 1;
+
 
     public ThirdPartyRequestService(SigningService signingService, CertificateGenerateService certificateGenerateService, CertificateService certificateService, CertPackageService certPackageService, OfficeSigningService officeSigningService, XMLSigningService xmlSigningService, PDFSigningService pdfSigningService) {
         this.signingService = signingService;
@@ -55,19 +54,8 @@ public class ThirdPartyRequestService {
     }
 
     public List<P12CertificateRegisterResult> registerCertificate(List<CertificateGenerateDTO> certificateGenerateDTO) throws ApplicationException {
-        List<RegisterResultDto> registerResultDtoList = certificateGenerateService.genCertificates(certificateGenerateDTO);
-        List<P12CertificateRegisterResult> listResult = new ArrayList<>();
-        for (RegisterResultDto dto : registerResultDtoList) {
-            P12CertificateRegisterResult result = new P12CertificateRegisterResult();
-            if (dto.getStatus() == RESULT_OK) {
-                dto.getCert();
-            } else {
-                result.setMessage(dto.getMessage());
-                result.setStatus(RESULT_ERROR);
-            }
-            listResult.add(result);
-        }
-        return listResult;
+        List<P12CertificateRegisterResult> registerResultDtoList = certificateGenerateService.genCertificates(certificateGenerateDTO);
+        return registerResultDtoList;
     }
 
     public Object sign(SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {

@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.core.exception.CertificateAppException;
 import vn.easyca.signserver.core.interfaces.CertificateRequester;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
-import vn.easyca.signserver.pki.cryptotoken.impl.P12CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.utils.Pkcs12Utils;
 import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
 import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
@@ -27,15 +25,14 @@ import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
-import vn.easyca.signserver.webapp.utils.CommonUtils;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
+import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
@@ -44,7 +41,8 @@ public class CertificateGenerateService {
     private final Logger log = LoggerFactory.getLogger(CertificateGenerateService.class);
 
     private static final int CERT_TYPE = 2;
-
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
     private static final String CERT_METHOD = "SOFT_TOKEN";
 
     final CertificateRequester certificateRequester;
@@ -56,13 +54,14 @@ public class CertificateGenerateService {
     private final CertificateMapper mapper;
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SymmetricEncryptors symmetricService;
+    private final P12ImportService p12ImportService;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, P12ImportService p12ImportService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -72,6 +71,7 @@ public class CertificateGenerateService {
         this.mapper = mapper;
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
+        this.p12ImportService = p12ImportService;
     }
 
 
@@ -99,8 +99,8 @@ public class CertificateGenerateService {
     }
 
 
-    public List<RegisterResultDto> genCertificates(List<CertificateGenerateDTO> dtos) throws ApplicationException {
-        List<RegisterResultDto> result = new ArrayList<>();
+    public List<P12CertificateRegisterResult> genCertificates(List<CertificateGenerateDTO> dtos) throws ApplicationException {
+        List<P12CertificateRegisterResult> result = new ArrayList<>();
         // create new cert.
         try {
             result = createP12Cert(dtos);
@@ -119,9 +119,6 @@ public class CertificateGenerateService {
         }
         return result;
     }
-
-
-
 
 
 //    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
@@ -167,26 +164,21 @@ public class CertificateGenerateService {
         return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
-    private List<RegisterResultDto> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
+    private List<P12CertificateRegisterResult> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
         Exception {
-
         // xử lý p12
-
         List<RegisterInputDto> inputDtos = new ArrayList<>();
         Hashtable<String, KeyPair> keyPairInList = new Hashtable<>();
-        for (CertificateGenerateDTO dto: certificateGenerateDTOS) {
+        for (CertificateGenerateDTO dto : certificateGenerateDTOS) {
             // tạo key pair
-            CertPackage certPackage= dto.getCertPackage(CERT_METHOD, CERT_TYPE);
+            CertPackage certPackage = dto.getCertPackage(CERT_METHOD, CERT_TYPE);
             SubjectDN subjectDN = dto.getSubjectDN();
             OwnerInfo ownerInfo = dto.getOwnerInfo();
 
             // lưu private key
+            String key = dto.getTaxCode() + "_" + dto.getIdentification();
             KeyPair keyPair = Pkcs12Utils.createKeyPair(2048);
-            String keyRequestUnique = dto.getTaxCode() + "_" + dto.getIdentification();
-            keyPairInList.put(keyRequestUnique, keyPair);
-
-
-
+            keyPairInList.put(key, keyPair);
             String csr = Pkcs12Utils.createCSR(subjectDN.toString(), keyPair);
             RegisterInputDto registerInputDto = new RegisterInputDto();
             registerInputDto.setCsr(csr);
@@ -196,7 +188,6 @@ public class CertificateGenerateService {
             registerInputDto.setCn(subjectDN.getCn());
             registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
             registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
-            registerInputDto.setId(ownerInfo.getOwnerId());
             registerInputDto.setO(subjectDN.getO());
             registerInputDto.setOu(subjectDN.getOu());
             registerInputDto.setSt(subjectDN.getS());
@@ -204,38 +195,58 @@ public class CertificateGenerateService {
             registerInputDto.setIdentification(dto.getIdentification());
             registerInputDto.genHash();
             inputDtos.add(registerInputDto);
-
-
         }
         List<RegisterResultDto> cers = certificateRequester.request(inputDtos);
+        List<P12CertificateRegisterResult> p12CertificateImportedList = new ArrayList<>();
         // combine cer and private key
-        for (RegisterResultDto result: cers) {
-            String alias = "EasyCA";
-            KeyPair keyPairCer = keyPairInList.get(result.getKey());
-            String pin = CommonUtils.genRandomHsmCertPin();
-            Pkcs12Utils.saveToFile(keyPairCer, "D:\\");
-            String certData = result.getCert();
-            byte[] p12 = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
+        for (RegisterResultDto result : cers) {
+            if (result.getStatus() == RESULT_OK) {
+                P12CertificateRegisterResult p12CertificateRegisterResult = saveP12ToDbFromResult(result, keyPairInList);
+                p12CertificateImportedList.add(p12CertificateRegisterResult);
+            } else {
+                P12CertificateRegisterResult registerResult = MappingHelper.map(result, P12CertificateRegisterResult.class);
+                p12CertificateImportedList.add(registerResult);
+            }
         }
-
-        return cers;
+        return p12CertificateImportedList;
     }
 
 
-    private String getAlias(String inputAlias, P12CryptoToken cryptoToken) throws CryptoTokenException {
-        if (inputAlias != null && !inputAlias.isEmpty())
-            return inputAlias;
-        List<String> aliases = cryptoToken.getAliases();
-        if (aliases != null && aliases.size() > 0)
-            return aliases.get(0);
-        throw new CryptoTokenException("Can not found alias in crypto token");
+    @Transactional
+    public P12CertificateRegisterResult saveP12ToDbFromResult(RegisterResultDto certResult, Hashtable<String, KeyPair> keyPairInList) throws Exception {
+        X509Certificate cert = CertUtils.decodeBase64X509(certResult.getCert());
+        String alias = CommonUtils.getCN(cert);
+        String ownerId = AccountUtils.getLoggedAccount();
+        String key = certResult.getTaxCode() + "_" + certResult.getIdentification();
+        KeyPair keyPairCer = keyPairInList.get(key);
+        String pin = CommonUtils.genRandomHsmCertPin();
+        String certData = certResult.getCert();
+        byte[] p12Content = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
+
+        String base64File = "";
+        base64File = Base64.getEncoder().encodeToString(p12Content);
+        P12ImportVM p12ImportVM = new P12ImportVM();
+        p12ImportVM.setP12Base64(base64File);
+        p12ImportVM.setOwnerId(ownerId);
+        p12ImportVM.setPin(pin);
+
+        log.info("importP12File: {}", p12ImportVM);
+        ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+        CertificateDTO p12Cert = p12ImportService.insertP12(serviceInput);
+        P12CertificateRegisterResult importedCert = new P12CertificateRegisterResult();
+        importedCert.setSerial(p12Cert.getSerial());
+        importedCert.setPin(pin);
+        importedCert.setIdentification(certResult.getIdentification());
+        importedCert.setTaxCode(certResult.getTaxCode());
+        importedCert.setStatus(RESULT_OK);
+        return importedCert;
     }
 
     @Transactional
     public CertificateDTO saveAndInstallCert(String certValue,
-                                              String alias,
-                                              String ownerId,
-                                              CryptoToken cryptoToken) throws ApplicationException {
+                                             String alias,
+                                             String ownerId,
+                                             CryptoToken cryptoToken) throws ApplicationException {
         try {
             X509Certificate x509Certificate = null;
             x509Certificate = CertUtils.decodeBase64X509(certValue);
@@ -441,13 +452,14 @@ public class CertificateGenerateService {
 
     /**
      * Tạo private key ở HSM và CSR thông qua file upload chứa thông tin CTS
+     *
      * @param certRequestInfoDTOs
      * @throws Exception
      */
     public void generateBulkCSR(List<CertRequestInfoDTO> certRequestInfoDTOs) throws Exception {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         int keyLength = 2048;
-        for(CertRequestInfoDTO dto : certRequestInfoDTOs) {
+        for (CertRequestInfoDTO dto : certRequestInfoDTOs) {
             String alias = CommonUtils.genRandomAlias();
             String subjectDN = dto.getSubjectDN();
             String csr = createCSR(cryptoToken, alias, subjectDN, keyLength);
@@ -458,13 +470,14 @@ public class CertificateGenerateService {
 
     /**
      * Lưu bản ghi certificate vào DB và cài đặt Cert (tương ứng với CSR đã tạo ở generateBulkCSR) vào HSM
+     *
      * @param dtos
      * @param currentUser
      * @throws ApplicationException
      */
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
-        for(CertRequestInfoDTO dto : dtos) {
+        for (CertRequestInfoDTO dto : dtos) {
             CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
             dto.setSerial(result.getSerial());
             dto.setPin(result.getRawPin());

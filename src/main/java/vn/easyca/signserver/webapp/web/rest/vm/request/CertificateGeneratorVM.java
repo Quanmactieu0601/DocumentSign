@@ -1,7 +1,12 @@
 package vn.easyca.signserver.webapp.web.rest.vm.request;
 
+import org.checkerframework.common.aliasing.qual.Unique;
+import org.hibernate.validator.constraints.UniqueElements;
+
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 public class CertificateGeneratorVM {
     @NotBlank(message = "cn is required. This field is customer's name.")
@@ -11,6 +16,7 @@ public class CertificateGeneratorVM {
     private String s;
     @NotBlank(message = "o is required. This field is customer's name.")
     private String o;
+
     private String ownerId;
     private int keyLen;
     private String certProfile;
@@ -20,9 +26,9 @@ public class CertificateGeneratorVM {
     private String ownerEmail;
     @NotBlank(message = "phone is required.")
     private String ownerPhone;
-
     private String taxCode;
     private String identification;
+
     public String getO() {
         return o;
     }
@@ -106,4 +112,5 @@ public class CertificateGeneratorVM {
     public int getCertProfileType() { return certProfileType; }
 
     public void setCertProfileType(int certProfileType) { this.certProfileType = certProfileType; }
+
 }

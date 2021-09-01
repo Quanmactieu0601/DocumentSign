@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
-
+@Validated
 @RestController
 @RequestMapping("/api/thirdPartyRequest")
 public class ThirdPartyRequestResource extends BaseResource {
@@ -51,7 +52,6 @@ public class ThirdPartyRequestResource extends BaseResource {
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
             List<CertificateGenerateDTO> certificateGenerateDTOList = mapper.map(certificateGenerators);
             List<P12CertificateRegisterResult> result = thirdPartyRequestService.registerCertificate(certificateGenerateDTOList);
-//            Object viewModel = MappingHelper.map(result, P12CertificateRegisterResult.class);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
         } catch (ApplicationException applicationException) {
