@@ -31,10 +31,14 @@ import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
+import java.rmi.ServerException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CertificateGenerateService {
@@ -167,81 +171,133 @@ public class CertificateGenerateService {
     private List<P12CertificateRegisterResult> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
         Exception {
         // xử lý p12
+        // xử lý p12
         List<RegisterInputDto> inputDtos = new ArrayList<>();
-        Hashtable<String, KeyPair> keyPairInList = new Hashtable<>();
+        ConcurrentHashMap<String, KeyPair> keyPairInList = new ConcurrentHashMap<>();
+        List<CompletableFuture<Void>> completableFutures = new ArrayList<>();
+        String ownerId = AccountUtils.getLoggedAccount();
         for (CertificateGenerateDTO dto : certificateGenerateDTOS) {
-            // tạo key pair
+            CompletableFuture<Void> requestCompletableFuture = CompletableFuture.runAsync(() -> {
+                // tạo key pair
 
-            SubjectDN subjectDN = dto.getSubjectDN();
-            OwnerInfo ownerInfo = dto.getOwnerInfo();
-            CertPackage certPackage = dto.getCertPackage(CERT_METHOD, dto.getCertProfileType());
+                KeyPair keyPair = null;
+                String key = dto.getTaxCode() + "_" + dto.getIdentification();
+                if (keyPairInList.contains(key)) {
+                    keyPair = keyPairInList.get(key);
+                } else {
+                    try {
+                        keyPair = Pkcs12Utils.createKeyPair(2048);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }
 
-            // lưu private key
-            String key = dto.getTaxCode() + "_" + dto.getIdentification();
-            KeyPair keyPair = Pkcs12Utils.createKeyPair(2048);
-            keyPairInList.put(key, keyPair);
-            String csr = Pkcs12Utils.createCSR(subjectDN.toString(), keyPair);
-            RegisterInputDto registerInputDto = new RegisterInputDto();
-            registerInputDto.setCsr(csr);
-            registerInputDto.setCertMethod(certPackage.getCertMethod());
-            registerInputDto.setCertProfile(certPackage.getCertProfile());
-            registerInputDto.setCertProfileType(certPackage.getCertProfileType());
-            registerInputDto.setCn(subjectDN.getCn());
-            registerInputDto.setCustomerEmail(ownerInfo.getOwnerEmail());
-            registerInputDto.setCustomerPhone(ownerInfo.getOwnerPhone());
-            registerInputDto.setO(subjectDN.getO());
-            registerInputDto.setOu(subjectDN.getOu());
-            registerInputDto.setSt(subjectDN.getS());
-            registerInputDto.setTaxCode(dto.getTaxCode());
-            registerInputDto.setIdentification(dto.getIdentification());
-            registerInputDto.genHash();
-            inputDtos.add(registerInputDto);
+                keyPairInList.put(key, keyPair);
+                SubjectDN subjectDN = dto.getSubjectDN();
+                CertPackage certPackage = dto.getCertPackage(CERT_METHOD, dto.getCertProfileType());
+                // lưu private key
+                String csr = null;
+                try {
+                    csr = Pkcs12Utils.createCSR(subjectDN.toString(), keyPair);
+                } catch (CSRGenerator.CSRGeneratorException e) {
+                    e.printStackTrace();
+                }
+                RegisterInputDto registerInputDto = new RegisterInputDto();
+                registerInputDto.setCsr(csr);
+                registerInputDto.setCertMethod(certPackage.getCertMethod());
+                registerInputDto.setCertProfile(certPackage.getCertProfile());
+                registerInputDto.setCertProfileType(certPackage.getCertProfileType());
+                registerInputDto.setCn(subjectDN.getCn());
+                registerInputDto.setCustomerEmail(dto.getOwnerEmail());
+                registerInputDto.setCustomerPhone(dto.getOwnerPhone());
+                registerInputDto.setO(subjectDN.getO());
+                registerInputDto.setOu(subjectDN.getOu());
+                registerInputDto.setSt(subjectDN.getS());
+                registerInputDto.setTaxCode(dto.getTaxCode());
+                registerInputDto.setIdentification(dto.getIdentification());
+                try {
+                    registerInputDto.genHash();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                inputDtos.add(registerInputDto);
+            });
+            completableFutures.add(requestCompletableFuture);
         }
+
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]))
+            // avoid throwing an exception in the join() call
+            .exceptionally(ex -> null)
+            .join();
+
         List<RegisterResultDto> cers = certificateRequester.request(inputDtos);
         List<P12CertificateRegisterResult> p12CertificateImportedList = new ArrayList<>();
+        List<CompletableFuture<Void>> asyncProcessRegisterResultList = new ArrayList<>();
+
         // combine cer and private key
         for (RegisterResultDto result : cers) {
-            if (result.getStatus() == RESULT_OK) {
-                P12CertificateRegisterResult p12CertificateRegisterResult = saveP12ToDbFromResult(result, keyPairInList);
-                p12CertificateImportedList.add(p12CertificateRegisterResult);
-            } else {
-                P12CertificateRegisterResult registerResult = MappingHelper.map(result, P12CertificateRegisterResult.class);
-                p12CertificateImportedList.add(registerResult);
-            }
+            CompletableFuture<Void> requestCompletableFuture = CompletableFuture.runAsync(() -> {
+                if (result.getStatus() == RESULT_OK) {
+                    P12CertificateRegisterResult p12CertificateRegisterResult = null;
+                    try {
+                        p12CertificateRegisterResult = saveP12ToDbFromResult(result, keyPairInList, ownerId);
+                    } catch (Exception ex) {
+                        throw new CompletionException("Loi save p12", ex);
+                    }
+                    p12CertificateImportedList.add(p12CertificateRegisterResult);
+                } else {
+                    P12CertificateRegisterResult registerResult = MappingHelper.map(result, P12CertificateRegisterResult.class);
+                    p12CertificateImportedList.add(registerResult);
+                }
+            });
+            asyncProcessRegisterResultList.add(requestCompletableFuture);
         }
+
+
+        try {
+            CompletableFuture.allOf(asyncProcessRegisterResultList.toArray(new CompletableFuture[0])).join();
+        }
+        catch(CompletionException ex) {
+           throw ex;
+        }
+
         return p12CertificateImportedList;
     }
 
 
     @Transactional
-    public P12CertificateRegisterResult saveP12ToDbFromResult(RegisterResultDto certResult, Hashtable<String, KeyPair> keyPairInList) throws Exception {
-        X509Certificate cert = CertUtils.decodeBase64X509(certResult.getCert());
-        String alias = CommonUtils.getCN(cert);
-        String ownerId = AccountUtils.getLoggedAccount();
-        String key = certResult.getTaxCode() + "_" + certResult.getIdentification();
-        KeyPair keyPairCer = keyPairInList.get(key);
-        String pin = CommonUtils.genRandomHsmCertPin();
-        String certData = certResult.getCert();
-        byte[] p12Content = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
+    public P12CertificateRegisterResult saveP12ToDbFromResult(RegisterResultDto certResult, ConcurrentHashMap<String, KeyPair> keyPairInList, String ownerId) throws Exception {
+        try {
+            X509Certificate cert = CertUtils.decodeBase64X509(certResult.getCert());
+            String alias = CommonUtils.getCN(cert);
+            String key = certResult.getTaxCode() + "_" + certResult.getIdentification();
+            KeyPair keyPairCer = keyPairInList.get(key);
+            String pin = CommonUtils.genRandomHsmCertPin();
+            String certData = certResult.getCert();
+            byte[] p12Content = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
 
-        String base64File = "";
-        base64File = Base64.getEncoder().encodeToString(p12Content);
-        P12ImportVM p12ImportVM = new P12ImportVM();
-        p12ImportVM.setP12Base64(base64File);
-        p12ImportVM.setOwnerId(ownerId);
-        p12ImportVM.setPin(pin);
-        p12ImportVM.setCertProfile(certResult.getCertProfile());
+            String base64File = "";
+            base64File = Base64.getEncoder().encodeToString(p12Content);
+            P12ImportVM p12ImportVM = new P12ImportVM();
+            p12ImportVM.setP12Base64(base64File);
+            p12ImportVM.setOwnerId(ownerId);
+            p12ImportVM.setPin(pin);
+            p12ImportVM.setCertProfile(certResult.getCertProfile());
 
-        log.info("importP12File: {}", p12ImportVM);
-        ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
-        CertificateDTO p12Cert = p12ImportService.insertP12(serviceInput);
-        P12CertificateRegisterResult importedCert = new P12CertificateRegisterResult();
-        importedCert.setSerial(p12Cert.getSerial());
-        importedCert.setPin(pin);
-        importedCert.setIdentification(certResult.getIdentification());
-        importedCert.setTaxCode(certResult.getTaxCode());
-        importedCert.setStatus(RESULT_OK);
-        return importedCert;
+            log.info("importP12File: {}", p12ImportVM);
+            ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+            CertificateDTO p12Cert = p12ImportService.insertP12(serviceInput);
+            P12CertificateRegisterResult importedCert = new P12CertificateRegisterResult();
+            importedCert.setSerial(p12Cert.getSerial());
+            importedCert.setPin(pin);
+            importedCert.setIdentification(certResult.getIdentification());
+            importedCert.setTaxCode(certResult.getTaxCode());
+            importedCert.setStatus(RESULT_OK);
+            return importedCert;
+        } catch (Exception ex) {
+            throw new ApplicationException(ApplicationException.APPLICATION_ERROR_CODE, String.format("Save P12 file error : %s", certResult.getTaxCode()), ex);
+        }
+
     }
 
     @Transactional
