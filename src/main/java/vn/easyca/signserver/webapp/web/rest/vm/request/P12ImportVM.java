@@ -8,6 +8,12 @@ public class P12ImportVM {
 
     private String pin;
 
+    private String certProfile;
+
+    public String getCertProfile() { return certProfile; }
+
+    public void setCertProfile(String certProfile) { this.certProfile = certProfile; }
+
     public String getP12Base64() {
         return p12Base64;
     }

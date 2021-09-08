@@ -33,7 +33,8 @@ public class CertificateMapper {
         certificateDTO.setSignatureImageId(entity.getSignatureImageId());
         certificateDTO.setEncryptedPin(entity.getEncryptedPin());
         certificateDTO.setSecretKey(entity.getSecretKey());
-
+        certificateDTO.setPackageId(entity.getPackageId());
+        certificateDTO.setSignedTurnCount(entity.getSignedTurnCount());
         //TODO: update decrypt
         certificateDTO = encryptionHelper.decryptCert(certificateDTO);
         return certificateDTO;
@@ -61,6 +62,8 @@ public class CertificateMapper {
         entity.setSignatureImageId(certificateDTO.getSignatureImageId());
         entity.setEncryptedPin(certificateDTO.getEncryptedPin());
         entity.setSecretKey(certificateDTO.getSecretKey());
+        entity.setPackageId(certificateDTO.getPackageId());
+        entity.setSignedTurnCount(certificateDTO.getSignedTurnCount());
         return entity;
     }
 

@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.dto;
 
+import org.apache.commons.lang3.StringUtils;
 import vn.easyca.signserver.core.domain.CertPackage;
 import vn.easyca.signserver.core.domain.OwnerInfo;
 import vn.easyca.signserver.core.domain.RawCertificate;
@@ -21,7 +22,9 @@ public class CertificateGenerateDTO {
     private String ownerPhone;
     private int keyLen;
     private String certProfile;
-
+    private String taxCode;
+    private String identification;
+    private int certProfileType;
     private RawCertificate rawCertificate; // used to register internal HSM
 
     public String getL() {
@@ -127,6 +130,13 @@ public class CertificateGenerateDTO {
     public CertPackage getCertPackage(String certMethod, int certType) {
         return new CertPackage(certMethod, certProfile, certType);
     }
+    public String getTaxCode() { return taxCode; }
+
+    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
+
+    public String getIdentification() { return identification; }
+
+    public void setIdentification(String identification) { this.identification = identification; }
 
     public String getO() {
         return o;
@@ -155,6 +165,10 @@ public class CertificateGenerateDTO {
     public void setRawCertificate(RawCertificate rawCertificate) {
         this.rawCertificate = rawCertificate;
     }
+
+    public int getCertProfileType() { return certProfileType; }
+
+    public void setCertProfileType(int certProfileType) { this.certProfileType = certProfileType; }
 
     public CertificateGenerateDTO() {
     }

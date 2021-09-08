@@ -1,0 +1,44 @@
+{
+  "fluentMethods": true,
+  "clientRootFolder": "",
+  "relationships": [],
+  "fields": [
+    {
+      "fieldName": "packageCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "certType",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "nameCert",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "keyLength",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "expiredDate",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "signingTurn",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "BigDecimal"
+    }
+  ],
+  "changelogDate": "20210826072202",
+  "dto": "mapstruct",
+  "searchEngine": false,
+  "service": "serviceImpl",
+  "entityTableName": "cert_package",
+  "databaseType": "sql",
+  "readOnly": false,
+  "jpaMetamodelFiltering": false,
+  "pagination": "pagination"
+}

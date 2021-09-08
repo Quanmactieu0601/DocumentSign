@@ -1,0 +1,28 @@
+{
+  "webappApp": {
+    "certPackage": {
+      "home": {
+        "title": "Cert Packages",
+        "createLabel": "Create a new Cert Package",
+        "createOrEditLabel": "Create or edit a Cert Package",
+        "notFound": "No Cert Packages found"
+      },
+      "created": "A new Cert Package is created with identifier {{ param }}",
+      "updated": "A Cert Package is updated with identifier {{ param }}",
+      "deleted": "A Cert Package is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Cert Package {{ id }}?"
+      },
+      "detail": {
+        "title": "Cert Package"
+      },
+      "packageCode": "Package Code",
+      "certType": "Cert Type",
+      "nameCert": "Name Cert",
+      "keyLength": "Key Length",
+      "expiredDate": "Expired Date",
+      "signingTurn": "Signing Turn",
+      "price": "Price"
+    }
+  }
+}

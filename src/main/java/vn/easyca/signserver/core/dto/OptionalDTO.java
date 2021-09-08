@@ -2,8 +2,9 @@ package vn.easyca.signserver.core.dto;
 
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.config.Constants;
+import vn.easyca.signserver.webapp.web.rest.vm.request.sign.OptionalVM;
 
-public class OptionalDTO {
+public class OptionalDTO extends OptionalVM {
     private String hashAlgorithm = Constants.HASH_ALGORITHM.DEFAULT_HASH_ALGORITHM;
     private String signatureAlgorithm = "SHA1withRSA";
     private String otpCode;

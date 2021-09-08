@@ -9,6 +9,9 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.cryptotoken.utils.Pkcs12Utils;
+import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
+import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -22,25 +25,28 @@ import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
-import vn.easyca.signserver.webapp.utils.CommonUtils;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
+import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.P12ImportVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
 
+import java.rmi.ServerException;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class CertificateGenerateService {
     private final Logger log = LoggerFactory.getLogger(CertificateGenerateService.class);
 
     private static final int CERT_TYPE = 2;
-
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
     private static final String CERT_METHOD = "SOFT_TOKEN";
 
     final CertificateRequester certificateRequester;
@@ -52,13 +58,14 @@ public class CertificateGenerateService {
     private final CertificateMapper mapper;
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SymmetricEncryptors symmetricService;
+    private final P12ImportService p12ImportService;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, P12ImportService p12ImportService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -68,6 +75,7 @@ public class CertificateGenerateService {
         this.mapper = mapper;
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
+        this.p12ImportService = p12ImportService;
     }
 
 
@@ -94,6 +102,51 @@ public class CertificateGenerateService {
         return result;
     }
 
+
+    public List<P12CertificateRegisterResult> genCertificates(List<CertificateGenerateDTO> dtos) throws ApplicationException {
+        List<P12CertificateRegisterResult> result = new ArrayList<>();
+        // create new cert.
+        try {
+            result = createP12Cert(dtos);
+        } catch (CertificateRequester.CertificateRequesterException e) {
+            throw ApplicationException.throwServerInternalError("can not create new certificate. check log for know detail reason", e);
+        } catch (CryptoTokenException e) {
+            throw ApplicationException.throwCryptoTokenError(e);
+        } catch (CSRGenerator.CSRGeneratorException e) {
+            throw ApplicationException.throwGenCSRError(e);
+        } catch (CryptoTokenProxyException e) {
+            throw new ApplicationException(-1, "Cannot resolve token");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (Exception exception) {
+            throw new ApplicationException("can not create new p12");
+        }
+        return result;
+    }
+
+
+//    private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
+//        CertificateRequester.CertificateRequesterException,
+//        CryptoTokenException,
+//        CSRGenerator.CSRGeneratorException, CryptoTokenProxyException, ApplicationException {
+////        String alias = CertUtils.genRandomAlias();
+//        String alias = dto.getOwnerId();
+//        CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
+//        KeyPair keyPair = cryptoToken.genKeyPair(alias, dto.getKeyLen());
+//        String csr = new CSRGenerator().genCsr(
+//            dto.getSubjectDN().toString(),
+//            cryptoToken.getProviderName(),
+//            keyPair.getPrivate(),
+//            keyPair.getPublic(),
+//            null,
+//            false,
+//            false);
+//        RawCertificate rawCertificate = certificateRequester.request(csr, dto.getCertPackage(CERT_METHOD, CERT_TYPE), dto.getSubjectDN(), dto.getOwnerInfo());
+//        CertificateDTO certificateDTO = saveAndInstallCert(rawCertificate.getCert(), alias, alias, cryptoToken);
+//        return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
+//    }
+
+
     private CertificateGenerateResult.Cert createCert(CertificateGenerateDTO dto) throws
         CertificateRequester.CertificateRequesterException,
         CryptoTokenException,
@@ -115,11 +168,143 @@ public class CertificateGenerateService {
         return new CertificateGenerateResult.Cert(certificateDTO.getSerial(), certificateDTO.getRawData());
     }
 
+    private List<P12CertificateRegisterResult> createP12Cert(List<CertificateGenerateDTO> certificateGenerateDTOS) throws
+        Exception {
+        // xử lý p12
+        // xử lý p12
+        List<RegisterInputDto> inputDtos = new ArrayList<>();
+        ConcurrentHashMap<String, KeyPair> keyPairInList = new ConcurrentHashMap<>();
+        List<CompletableFuture<Void>> completableFutures = new ArrayList<>();
+        String ownerId = AccountUtils.getLoggedAccount();
+        for (CertificateGenerateDTO dto : certificateGenerateDTOS) {
+            CompletableFuture<Void> requestCompletableFuture = CompletableFuture.runAsync(() -> {
+                // tạo key pair
+
+                KeyPair keyPair = null;
+                String key = dto.getTaxCode() + "_" + dto.getIdentification();
+                if (keyPairInList.contains(key)) {
+                    keyPair = keyPairInList.get(key);
+                } else {
+                    try {
+                        keyPair = Pkcs12Utils.createKeyPair(2048);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                }
+
+                keyPairInList.put(key, keyPair);
+                SubjectDN subjectDN = dto.getSubjectDN();
+                CertPackage certPackage = dto.getCertPackage(CERT_METHOD, dto.getCertProfileType());
+                // lưu private key
+                String csr = null;
+                try {
+                    csr = Pkcs12Utils.createCSR(subjectDN.toString(), keyPair);
+                } catch (CSRGenerator.CSRGeneratorException e) {
+                    e.printStackTrace();
+                }
+                RegisterInputDto registerInputDto = new RegisterInputDto();
+                registerInputDto.setCsr(csr);
+                registerInputDto.setCertMethod(certPackage.getCertMethod());
+                registerInputDto.setCertProfile(certPackage.getCertProfile());
+                registerInputDto.setCertProfileType(certPackage.getCertProfileType());
+                registerInputDto.setCn(subjectDN.getCn());
+                registerInputDto.setCustomerEmail(dto.getOwnerEmail());
+                registerInputDto.setCustomerPhone(dto.getOwnerPhone());
+                registerInputDto.setO(subjectDN.getO());
+                registerInputDto.setOu(subjectDN.getOu());
+                registerInputDto.setSt(subjectDN.getS());
+                registerInputDto.setTaxCode(dto.getTaxCode());
+                registerInputDto.setIdentification(dto.getIdentification());
+                try {
+                    registerInputDto.genHash();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+                inputDtos.add(registerInputDto);
+            });
+            completableFutures.add(requestCompletableFuture);
+        }
+
+        CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]))
+            // avoid throwing an exception in the join() call
+            .exceptionally(ex -> null)
+            .join();
+
+        List<RegisterResultDto> cers = certificateRequester.request(inputDtos);
+        List<P12CertificateRegisterResult> p12CertificateImportedList = new ArrayList<>();
+        List<CompletableFuture<Void>> asyncProcessRegisterResultList = new ArrayList<>();
+
+        // combine cer and private key
+        for (RegisterResultDto result : cers) {
+            CompletableFuture<Void> requestCompletableFuture = CompletableFuture.runAsync(() -> {
+                if (result.getStatus() == RESULT_OK) {
+                    P12CertificateRegisterResult p12CertificateRegisterResult = null;
+                    try {
+                        p12CertificateRegisterResult = saveP12ToDbFromResult(result, keyPairInList, ownerId);
+                    } catch (Exception ex) {
+                        throw new CompletionException("Loi save p12", ex);
+                    }
+                    p12CertificateImportedList.add(p12CertificateRegisterResult);
+                } else {
+                    P12CertificateRegisterResult registerResult = MappingHelper.map(result, P12CertificateRegisterResult.class);
+                    p12CertificateImportedList.add(registerResult);
+                }
+            });
+            asyncProcessRegisterResultList.add(requestCompletableFuture);
+        }
+
+
+        try {
+            CompletableFuture.allOf(asyncProcessRegisterResultList.toArray(new CompletableFuture[0])).join();
+        }
+        catch(CompletionException ex) {
+           throw ex;
+        }
+
+        return p12CertificateImportedList;
+    }
+
+
+    @Transactional
+    public P12CertificateRegisterResult saveP12ToDbFromResult(RegisterResultDto certResult, ConcurrentHashMap<String, KeyPair> keyPairInList, String ownerId) throws Exception {
+        try {
+            X509Certificate cert = CertUtils.decodeBase64X509(certResult.getCert());
+            String alias = CommonUtils.getCN(cert);
+            String key = certResult.getTaxCode() + "_" + certResult.getIdentification();
+            KeyPair keyPairCer = keyPairInList.get(key);
+            String pin = CommonUtils.genRandomHsmCertPin();
+            String certData = certResult.getCert();
+            byte[] p12Content = Pkcs12Utils.selfSignedCertificateToP12v2(keyPairCer, certData, alias, pin);
+
+            String base64File = "";
+            base64File = Base64.getEncoder().encodeToString(p12Content);
+            P12ImportVM p12ImportVM = new P12ImportVM();
+            p12ImportVM.setP12Base64(base64File);
+            p12ImportVM.setOwnerId(ownerId);
+            p12ImportVM.setPin(pin);
+            p12ImportVM.setCertProfile(certResult.getCertProfile());
+
+            log.info("importP12File: {}", p12ImportVM);
+            ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+            CertificateDTO p12Cert = p12ImportService.insertP12(serviceInput);
+            P12CertificateRegisterResult importedCert = new P12CertificateRegisterResult();
+            importedCert.setSerial(p12Cert.getSerial());
+            importedCert.setPin(pin);
+            importedCert.setIdentification(certResult.getIdentification());
+            importedCert.setTaxCode(certResult.getTaxCode());
+            importedCert.setStatus(RESULT_OK);
+            return importedCert;
+        } catch (Exception ex) {
+            throw new ApplicationException(ApplicationException.APPLICATION_ERROR_CODE, String.format("Save P12 file error : %s", certResult.getTaxCode()), ex);
+        }
+
+    }
+
     @Transactional
     public CertificateDTO saveAndInstallCert(String certValue,
-                                              String alias,
-                                              String ownerId,
-                                              CryptoToken cryptoToken) throws ApplicationException {
+                                             String alias,
+                                             String ownerId,
+                                             CryptoToken cryptoToken) throws ApplicationException {
         try {
             X509Certificate x509Certificate = null;
             x509Certificate = CertUtils.decodeBase64X509(certValue);
@@ -325,13 +510,14 @@ public class CertificateGenerateService {
 
     /**
      * Tạo private key ở HSM và CSR thông qua file upload chứa thông tin CTS
+     *
      * @param certRequestInfoDTOs
      * @throws Exception
      */
     public void generateBulkCSR(List<CertRequestInfoDTO> certRequestInfoDTOs) throws Exception {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         int keyLength = 2048;
-        for(CertRequestInfoDTO dto : certRequestInfoDTOs) {
+        for (CertRequestInfoDTO dto : certRequestInfoDTOs) {
             String alias = CommonUtils.genRandomAlias();
             String subjectDN = dto.getSubjectDN();
             String csr = createCSR(cryptoToken, alias, subjectDN, keyLength);
@@ -342,13 +528,14 @@ public class CertificateGenerateService {
 
     /**
      * Lưu bản ghi certificate vào DB và cài đặt Cert (tương ứng với CSR đã tạo ở generateBulkCSR) vào HSM
+     *
      * @param dtos
      * @param currentUser
      * @throws ApplicationException
      */
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
-        for(CertRequestInfoDTO dto : dtos) {
+        for (CertRequestInfoDTO dto : dtos) {
             CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
             dto.setSerial(result.getSerial());
             dto.setPin(result.getRawPin());

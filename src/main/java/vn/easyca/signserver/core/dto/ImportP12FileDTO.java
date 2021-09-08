@@ -11,6 +11,8 @@ public class ImportP12FileDTO {
 
     private String aliasName;
 
+    private String certProfile;
+
     public String getP12Base64() {
         return p12Base64;
     }
@@ -46,6 +48,9 @@ public class ImportP12FileDTO {
     public String getAliasName() {
         return aliasName;
     }
+    public String getCertProfile() { return certProfile; }
+
+    public void setCertProfile(String certProfile) { this.certProfile = certProfile; }
 
     public void setAliasName(String aliasName) {
         this.aliasName = aliasName;

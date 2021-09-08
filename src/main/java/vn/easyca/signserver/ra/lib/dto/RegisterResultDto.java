@@ -1,5 +1,10 @@
 package vn.easyca.signserver.ra.lib.dto;
 
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.utils.CertUtils;
+
+import java.security.cert.X509Certificate;
+
 public class RegisterResultDto {
     private String activeCode;
     private String cert;
@@ -10,6 +15,9 @@ public class RegisterResultDto {
     private String p12Pass;
     private int status;
     private String message;
+    private String identification;
+    private String taxCode;
+    private String certProfile;
 
     public String getActiveCode() {
         return activeCode;
@@ -82,4 +90,17 @@ public class RegisterResultDto {
     public void setMessage(String message) {
         this.message = message;
     }
+
+    public String getIdentification() { return identification; }
+
+    public void setIdentification(String identification) { this.identification = identification; }
+
+    public String getTaxCode() { return taxCode; }
+
+    public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
+
+    public String getCertProfile() { return certProfile; }
+
+    public void setCertProfile(String certProfile) { this.certProfile = certProfile; }
+
 }
