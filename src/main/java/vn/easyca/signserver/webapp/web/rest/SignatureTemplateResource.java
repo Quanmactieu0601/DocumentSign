@@ -1,9 +1,17 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
+import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
+import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
@@ -39,10 +47,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -95,6 +105,25 @@ public class SignatureTemplateResource extends BaseResource {
         return ResponseEntity.created(new URI("/api/signature-templates/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    @PostMapping(value = "/signature-templates/qrCode")
+    public ResponseEntity<Object> createQrCode(@RequestBody QRCodeContent qrCodeContent) {
+        log.info(" --- create QR Code --- ");
+        try {
+            BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent.getData(), BarcodeFormat.QR_CODE, qrCodeContent.getHeight(), qrCodeContent.getWidth());
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            MatrixToImageWriter.writeToStream(matrix, "png", bos);
+            String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
+            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, ""));
+        }catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/signature-templates/qrCode", TransactionType.BUSINESS, Action.CREATE, Extension.QR_CODE, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
     }
 
     /**
