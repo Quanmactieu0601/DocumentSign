@@ -12,8 +12,10 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.webapp.service.SigningWrapRequestHandle;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
+import vn.easyca.signserver.webapp.web.rest.vm.response.SigningResult;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 @Service
 @Transactional
@@ -22,9 +24,10 @@ public class OfficeSigningRequest implements SigningWrapRequestHandle {
     public OfficeSigningRequest(OfficeSigningService officeSigningService) {
         this.officeSigningService = officeSigningService;
     }
-
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
     @Override
-    public Object sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional) throws Exception {
+    public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws Exception {
         SigningRequestContent signingRequestConvert = mapper.convertValue(requestValue, SigningRequestContent.class);
         List<SigningRequestContent> lstTemp = new ArrayList<>();
         lstTemp.add(signingRequestConvert);
@@ -33,6 +36,9 @@ public class OfficeSigningRequest implements SigningWrapRequestHandle {
         signingRequestOffice.setTokenInfo(tokenInfo);
         signingRequestOffice.setOptional(optional);
         SigningResponse signingDataResponse = officeSigningService.sign(signingRequestOffice);
-        return signingDataResponse;
+
+        byte[] signedContent = signingDataResponse.getResponseContentList().get(0).getSignedDocument();
+        String base64Encoded = Base64.getEncoder().encodeToString(signedContent);
+        return new SigningResult(base64Encoded, key, "Ký tệp thành công", RESULT_OK);
     }
 }

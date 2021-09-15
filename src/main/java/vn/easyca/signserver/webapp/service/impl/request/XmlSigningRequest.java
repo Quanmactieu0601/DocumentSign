@@ -10,8 +10,10 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.services.XMLSigningService;
 import vn.easyca.signserver.webapp.service.SigningWrapRequestHandle;
+import vn.easyca.signserver.webapp.web.rest.vm.response.SigningResult;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 @Service
 @Transactional
@@ -21,9 +23,10 @@ public class XmlSigningRequest implements SigningWrapRequestHandle {
     public XmlSigningRequest(XMLSigningService xmlSigningService) {
         this.xmlSigningService = xmlSigningService;
     }
-
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
     @Override
-    public Object sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional) throws Exception {
+    public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws Exception {
         SigningRequestContent signingRequestContent = mapper.convertValue(requestValue, SigningRequestContent.class);
         List<SigningRequestContent> lstTemp = new ArrayList<>();
         lstTemp.add(signingRequestContent);
@@ -32,6 +35,9 @@ public class XmlSigningRequest implements SigningWrapRequestHandle {
         signingRequestXml.setOptional(optional);
         signingRequestXml.setTokenInfo(tokenInfo);
         SigningResponse signingDataResponse = xmlSigningService.sign(signingRequestXml);
-        return signingDataResponse;
+
+        byte[] signedContent = signingDataResponse.getResponseContentList().get(0).getSignedDocument();
+        String base64Encoded = Base64.getEncoder().encodeToString(signedContent);
+        return new SigningResult(base64Encoded, key, "Ký tệp thành công", RESULT_OK);
     }
 }

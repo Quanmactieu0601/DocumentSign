@@ -21,6 +21,7 @@ import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.web.rest.mapper.CertificateGeneratorVMMapper;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CertificateGeneratorVM;
+import vn.easyca.signserver.webapp.web.rest.vm.request.register.RegisterCertVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.QuickSignVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
@@ -45,14 +46,14 @@ public class ThirdPartyRequestResource extends BaseResource {
 
     @PostMapping("/registerCerts")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
-    public ResponseEntity<BaseResponseVM> registerCertificates(@Valid @RequestBody List<CertificateGeneratorVM> certificateGenerators) {
+    public Object registerCertificates(@Valid @RequestBody List<RegisterCertVM> registerCertVMList) {
         try {
             log.info("--- genCertificate ---");
             CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
-            List<CertificateGenerateDTO> certificateGenerateDTOList = mapper.map(certificateGenerators);
+            List<CertificateGenerateDTO> certificateGenerateDTOList = mapper.mapFromRegisterCertVM(registerCertVMList);
             List<P12CertificateRegisterResult> result = thirdPartyRequestService.registerCertificate(certificateGenerateDTOList);
             status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
+            return result;
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -69,10 +70,10 @@ public class ThirdPartyRequestResource extends BaseResource {
 
 
     @PostMapping(value = "/sign")
-    public ResponseEntity<Object> sign(@RequestBody SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
+    public Object sign(@RequestBody SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
         try {
             Object res = thirdPartyRequestService.sign(signingRequest);
-            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, res, ""));
+            return res;
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
@@ -90,10 +91,10 @@ public class ThirdPartyRequestResource extends BaseResource {
 
 
     @PostMapping(value = "/quickSign")
-    public ResponseEntity<Object> quickSign(@Valid @RequestBody QuickSignVM quickSignVM) throws Exception {
+    public Object quickSign(@Valid @RequestBody QuickSignVM quickSignVM) throws Exception {
         try {
             Object res = quickSigningWrapService.quickSign(quickSignVM);
-            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, res, ""));
+            return res;
         } catch (ApplicationException applicationException) {
             log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
