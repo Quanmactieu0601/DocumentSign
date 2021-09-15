@@ -11,7 +11,7 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
     final String regexCN = "CN=\"([^\"]+)|CN=([^,]+)";
 
     @Override
-    public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
+    public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage,String qrCode) throws ApplicationException {
         try {
             String CN = ParserUtils.getElementContentNameInCertificate(subjectDN, regexCN);
             String htmlContent = signatureTemplate;
@@ -33,6 +33,6 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
     @Override
     public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
         String subjectDN = "UID=MST:0500329988, CN=Nguyễn Văn A, OU=IT, O=QUỸ TÍN DỤNG NHÂN DÂN VẠN PHÚC, ST=Hà Nội, C=VN";
-        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage);
+        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage,null);
     }
 }

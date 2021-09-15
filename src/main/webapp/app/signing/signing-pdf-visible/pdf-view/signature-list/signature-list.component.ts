@@ -71,7 +71,7 @@ export class SignatureListComponent implements OnInit {
   convertToSafeImgContent(base64Content: any): string {
     return 'data:image/png;base64,' + base64Content;
   }
-  chooseSignatureTemplate(templateId: number): void {
-    this.activeModal.close(templateId);
+  chooseSignatureTemplate(template: any): void {
+    this.activeModal.close(template);
   }
 }

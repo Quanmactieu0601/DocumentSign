@@ -45,6 +45,19 @@ public class SignatureTemplate extends AbstractAuditingEntity implements Seriali
     @Column(name = "thumbnail")
     private String thumbnail;
 
+    @Column(name = "is_actived")
+    private Integer isActived;
+
+
+    public Integer getIsActived() {
+        return isActived;
+    }
+
+    public void setIsActived(Integer isActived) {
+        this.isActived = isActived;
+    }
+
+
     public String getThumbnail() { return thumbnail; }
 
     public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }

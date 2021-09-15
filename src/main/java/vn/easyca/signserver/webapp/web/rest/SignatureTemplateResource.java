@@ -111,10 +111,11 @@ public class SignatureTemplateResource extends BaseResource {
     public ResponseEntity<Object> createQrCode(@RequestBody QRCodeContent qrCodeContent) {
         log.info(" --- create QR Code --- ");
         try {
-            BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent.getData(), BarcodeFormat.QR_CODE, qrCodeContent.getHeight(), qrCodeContent.getWidth());
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            MatrixToImageWriter.writeToStream(matrix, "png", bos);
-            String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
+//            BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent.getData(), BarcodeFormat.QR_CODE, qrCodeContent.getHeight(), qrCodeContent.getWidth());
+//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+//            MatrixToImageWriter.writeToStream(matrix, "png", bos);
+//            String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
+            String resource = signatureTemplateService.createQrCode(qrCodeContent);
             return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, ""));
         }catch (Exception e) {
             log.error(e.getMessage(), e);

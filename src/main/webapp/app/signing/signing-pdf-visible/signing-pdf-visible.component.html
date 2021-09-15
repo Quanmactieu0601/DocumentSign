@@ -132,8 +132,8 @@
                                 <div class="form-group col-6">
                                     <label class="form-control-label font-weight-bold"><span
                                         jhiTranslate="sign.pdf.chooseSignatureTemplate">Chọn mẫu</span></label>
-                                    <input type="text" class="form-control form-control-sm" name="templateId"
-                                           formControlName="templateId" hidden>
+                                    <input type="text" class="form-control form-control-sm" name="template"
+                                           formControlName="template" hidden>
                                     <div class="form-group">
                                         <div class="input-group" style="text-align: left;">
                 <span class="input-group-btn" style="display: table-cell">
@@ -152,10 +152,10 @@
                                         <!-- Ảnh chữ ký !-->
                                     </div>
                                     <div
-                                        *ngIf="editForm.get('templateId')!.invalid && this.isShowMessage">
+                                        *ngIf="editForm.get('template')!.invalid && this.isShowMessage">
                                         <small
                                             class="form-text text-danger"
-                                            *ngIf="editForm.get('templateId')?.errors?.required"
+                                            *ngIf="editForm.get('template')?.errors?.required"
                                             jhiTranslate="sign.messages.validate.signatureTemplate.required"
                                         >
                                             Your template is required

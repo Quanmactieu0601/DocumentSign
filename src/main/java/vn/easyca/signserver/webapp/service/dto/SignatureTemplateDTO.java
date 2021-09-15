@@ -36,7 +36,23 @@ public class SignatureTemplateDTO implements Serializable {
 
     private String thumbnail;
 
+    private Integer isActived;
 
+
+    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate, String coreParser, String fullName, Integer width, Integer height, String htmlTemplate, Boolean transparency, String thumbnail, Integer isActived) {
+        this.id = id;
+        this.userId = userId;
+        this.createdBy = createdBy;
+        this.createdDate = createdDate;
+        this.coreParser = coreParser;
+        this.fullName = fullName;
+        this.width = width;
+        this.height = height;
+        this.htmlTemplate = htmlTemplate;
+        this.transparency = transparency;
+        this.thumbnail = thumbnail;
+        this.isActived = isActived;
+    }
 
     public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
                                 String htmlTemplate, SignatureTemplateParserType coreParser,
@@ -51,6 +67,7 @@ public class SignatureTemplateDTO implements Serializable {
         this.width = width;
         this.height = height;
         this.htmlTemplate = htmlTemplate;
+
     }
 
     public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
@@ -83,6 +100,7 @@ public class SignatureTemplateDTO implements Serializable {
         this.htmlTemplate = signatureTemplate.getHtmlTemplate();
         this.transparency = signatureTemplate.getTransparency();
         this.thumbnail = signatureTemplate.getThumbnail();
+        this.isActived = signatureTemplate.getIsActived();
     }
 
     public String getFullName() { return fullName; }
@@ -169,5 +187,13 @@ public class SignatureTemplateDTO implements Serializable {
             "id=" + getId() +
             ", userId=" + getUserId() +
             "}";
+    }
+
+    public Integer getIsActived() {
+        return isActived;
+    }
+
+    public void setIsActived(Integer isActived) {
+        this.isActived = isActived;
     }
 }

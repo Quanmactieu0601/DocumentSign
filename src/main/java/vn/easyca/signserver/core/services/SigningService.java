@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.services;
 
+import com.google.zxing.WriterException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -8,6 +9,7 @@ import vn.easyca.signserver.core.dto.sign.newrequest.Location;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.core.dto.sign.request.SignElement;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
@@ -25,10 +27,15 @@ import vn.easyca.signserver.pki.sign.utils.UniqueID;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -43,17 +50,20 @@ public class SigningService {
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private final CertificateService certificateService;
+    private final SignatureTemplateService signatureTemplateService;
 
-    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureTemplateParserFactory signatureTemplateParserFactory) {
+    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureTemplateParserFactory signatureTemplateParserFactory, SignatureTemplateService signatureTemplateService) {
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.certificateService = certificateService;
         this.signatureTemplateParserFactory = signatureTemplateParserFactory;
+        this.signatureTemplateService = signatureTemplateService;
+
         File file = new File(TEM_DIR);
         if (!file.exists())
             file.mkdir();
     }
 
-    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException {
+    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException, WriterException {
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getTokenInfo().getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
@@ -77,7 +87,10 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
+            String dataHash = creatHashData(firstContent.getData().toString(),certificateDTO.getX509Certificate().getPublicKey().getEncoded());
+            QRCodeContent qrCodeContent = new QRCodeContent(dataHash,200,200);
+            String qrCode = signatureTemplateService.createQrCode(qrCodeContent);
+            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCode);
             firstContent.setImageSignature(signatureImage);
         }
 
@@ -127,6 +140,19 @@ public class SigningService {
                 throw new ApplicationException("Read file temp error", ioe);
             }
         }
+    }
+
+    private String creatHashData(String data,byte[] pubKey) {
+        MessageDigest digest = null;
+        try {
+            digest = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));
+        String rs = DatatypeConverter.printHexBinary(hash);
+        String pubKeyToString = DatatypeConverter.printHexBinary(pubKey);
+        return "1: "+ rs +"\n2: "+pubKeyToString;
     }
 
     public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request, boolean withDigestInfo) throws ApplicationException {

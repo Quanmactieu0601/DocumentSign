@@ -5,6 +5,12 @@ public class QRCodeContent {
     Integer height;
     Integer width;
 
+    public QRCodeContent(String data, Integer height, Integer width) {
+        this.data = data;
+        this.height = height;
+        this.width = width;
+    }
+
     public String getData() {
         return data;
     }

@@ -184,7 +184,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
             visibleHeight: Math.floor(($('#signature-box')[0].offsetHeight / 96) * 72),
           },
           extraInfo: { pageNum: Number(this.renderTextMode) },
-          imageSignature: this.imageSrc.replace('data:image/jpeg;base64,', ''),
+          imageSignature: null,
         },
       ],
     };

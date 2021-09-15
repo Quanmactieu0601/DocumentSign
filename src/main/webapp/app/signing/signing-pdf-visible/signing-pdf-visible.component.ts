@@ -12,6 +12,7 @@ import { HttpResponse } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { ISignatureTemplate } from 'app/shared/model/signature-template.model';
 
 @Component({
   selector: 'jhi-signing',
@@ -30,6 +31,7 @@ export class SigningPdfVisibleComponent implements OnInit {
   imageSrc: any;
   serial = '';
   pin: any;
+  template: ISignatureTemplate | null | undefined;
 
   showMessageSerialRequired = false;
   modalRef: NgbModalRef | undefined;
@@ -46,7 +48,7 @@ export class SigningPdfVisibleComponent implements OnInit {
   editForm = this.fb.group({
     serial: ['', Validators.required],
     pin: ['', Validators.required],
-    templateId: [''],
+    template: [''],
     fileSelect: ['', Validators.required],
   });
   constructor(
@@ -119,8 +121,9 @@ export class SigningPdfVisibleComponent implements OnInit {
 
   openModalTemplateList(): void {
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
-    this.modalRef.result.then(templateId => {
-      templateId == null ? this.editForm.controls['templateId'].setValue(0) : this.editForm.controls['templateId'].setValue(templateId);
+    this.modalRef.result.then(template => {
+      template == null ? this.editForm.controls['template'].setValue('') : this.editForm.controls['template'].setValue(template);
+      this.template = template;
       this.viewSignatureImage();
     });
     this.accountService.identity(false).subscribe(res => {
@@ -129,22 +132,26 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   viewSignatureImage(): void {
-    const data = {
-      ...this.editForm.value,
-    };
+    // const data = {
+    //   ...this.editForm.value,
+    // };
 
-    this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-      if (res.status === ResponseBody.SUCCESS) {
-        this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-        this.signatureImage && this.signatureImage.nativeElement
-          ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-          : null;
-      } else {
-        this.toastrService.error(res.msg);
-        this.imageSrc = '';
-        return;
-      }
-    });
+    this.signatureImage && this.signatureImage.nativeElement
+      ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + this.template?.thumbnail)
+      : null;
+
+    // this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
+    //   if (res.status === ResponseBody.SUCCESS) {
+    //     this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
+    //     this.signatureImage && this.signatureImage.nativeElement
+    //       ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
+    //       : null;
+    //   } else {
+    //     this.toastrService.error(res.msg);
+    //     this.imageSrc = '';
+    //     return;
+    //   }
+    // });
   }
 
   checkValidatedImage(): void {
@@ -152,21 +159,21 @@ export class SigningPdfVisibleComponent implements OnInit {
       ...this.editForm.value,
     };
 
-    this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-      if (res.status === ResponseBody.SUCCESS) {
-        this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-        this.signatureImage && this.signatureImage.nativeElement
-          ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-          : null;
-        this.imageSrc = this.signatureImage?.nativeElement.src;
-        this.wizzard.goToNextStep();
-        // }
-      } else {
-        this.toastrService.error(res.msg);
-        this.imageSrc = '';
-        return;
-      }
-    });
+    // this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
+    //   if (res.status === ResponseBody.SUCCESS) {
+    //     this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
+    this.signatureImage && this.signatureImage.nativeElement
+      ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + this.template?.thumbnail)
+      : null;
+    this.imageSrc = this.signatureImage?.nativeElement.src;
+    this.wizzard.goToNextStep();
+    // }
+    //   } else {
+    //     this.toastrService.error(res.msg);
+    //     this.imageSrc = '';
+    //     return;
+    //   }
+    // });
   }
 
   nextAction(): void {

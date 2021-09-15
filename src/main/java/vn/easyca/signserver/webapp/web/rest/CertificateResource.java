@@ -361,7 +361,7 @@ public class CertificateResource extends BaseResource {
     public ResponseEntity<BaseResponseVM> getSignatureTemplateImage(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getImage --- serial: {}", serial);
         try {
-            String base64Image = certificateService.getSignatureImage(serial, pin);
+            String base64Image = certificateService.getSignatureImage(serial, pin,null);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
         } catch (ApplicationException e) {
@@ -394,7 +394,7 @@ public class CertificateResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+            asyncTransactionService.newThread("/api/certificate/getImageByTemplateId", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
