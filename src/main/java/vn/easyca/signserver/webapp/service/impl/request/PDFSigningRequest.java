@@ -16,11 +16,16 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SigningWrapRequestHandle;
 import vn.easyca.signserver.webapp.service.dto.CertPackageDTO;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
+import vn.easyca.signserver.webapp.web.rest.vm.response.SigningResult;
+
 import java.util.*;
 
 @Service
 @Transactional
 public class PDFSigningRequest implements SigningWrapRequestHandle {
+    private final int RESULT_OK = 0;
+    private final int RESULT_ERROR = 1;
+
     private final CertificateService certificateService;
     private final CertPackageService certPackageService;
     private final SigningService signingService;
@@ -31,7 +36,7 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
     }
 
     @Override
-    public Object sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional) throws ApplicationException {
+    public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws ApplicationException {
         VisibleRequestContent visibleRequestContent = mapper.convertValue(requestValue, VisibleRequestContent.class);
         List<VisibleRequestContent> lstTemp = new ArrayList<>();
         lstTemp.add(visibleRequestContent);
@@ -41,6 +46,8 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
         signingPdfRequest.setTokenInfo(tokenInfo);
         PDFSigningDataRes signResponse = signingService.signPDFFile(signingPdfRequest);
         String resource = Base64.getEncoder().encodeToString(signResponse.getContent());
-        return resource;
+
+        SigningResult result = new SigningResult(resource, key, "Ký thành công", RESULT_OK);
+        return result;
     }
 }

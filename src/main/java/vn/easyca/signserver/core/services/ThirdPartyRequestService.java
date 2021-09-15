@@ -16,7 +16,9 @@ import vn.easyca.signserver.webapp.service.impl.request.*;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterResult;
+import vn.easyca.signserver.webapp.web.rest.vm.response.SigningResult;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 @Service
@@ -52,6 +54,10 @@ public class ThirdPartyRequestService {
         TokenInfoDTO tokenInfo = signingRequest.getTokenInfo();
         OptionalDTO optional = signingRequest.getOptional();
         List<Object> result = new ArrayList<>();
+
+        if (tokenInfo == null) {
+            throw new ApplicationException("Thiếu tokenInfo");
+        }
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfo.getSerial());
 
         if (certificateDTO == null) {
@@ -86,31 +92,30 @@ public class ThirdPartyRequestService {
 
                 switch (request.getType().toString()) {
                     case "pdf": {
-                        signingResult = pdfSigningRequest.sign(requestValue, tokenInfo, optional);
+                        signingResult = pdfSigningRequest.sign(requestValue, tokenInfo, optional, request.getKey());
                         break;
                     }
                     case "raw": {
-                        signingResult = rawSigningRequest.sign(requestValue, tokenInfo, optional);
+                        signingResult = rawSigningRequest.sign(requestValue, tokenInfo, optional, request.getKey());
                         break;
                     }
                     case "hash": {
-                        signingResult = hashSigningRequest.sign(requestValue, tokenInfo, optional);
+                        signingResult = hashSigningRequest.sign(requestValue, tokenInfo, optional, request.getKey());
                         break;
                     }
                     case "office": {
-                        signingResult = officeSigningRequest.sign(requestValue, tokenInfo, optional);
+                        signingResult = officeSigningRequest.sign(requestValue, tokenInfo, optional, request.getKey());
                         break;
                     }
                     case "xml": {
-                        signingResult = xmlSigningRequest.sign(requestValue, tokenInfo, optional);
+                        signingResult = xmlSigningRequest.sign(requestValue, tokenInfo, optional, request.getKey());
                         break;
                     }
                 }
                 signedCurrentCount++;
-                listResultSigningResponse.add(new BaseResponseVM(BaseResponseVM.STATUS_OK, signingResult, "Ký tệp thành công"));
+                listResultSigningResponse.add(signingResult);
             } catch (Exception e) {
-                String fileName = " Thứ tự " + index;
-                listResultSigningResponse.add(new BaseResponseVM(-1, "Tệp - " + fileName + " ký lỗi", e.getMessage()));
+                listResultSigningResponse.add(new SigningResult("", request.getKey(), "Ký tệp lỗi " + e.getMessage(), -1));
             }
             index++;
         }
