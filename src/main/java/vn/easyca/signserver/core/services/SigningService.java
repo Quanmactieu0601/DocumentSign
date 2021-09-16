@@ -87,7 +87,7 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            String dataHash = creatHashData(firstContent.getData().toString(),certificateDTO.getX509Certificate().getPublicKey().getEncoded());
+            String dataHash = creatHashData(firstContent.getData().toString());
             QRCodeContent qrCodeContent = new QRCodeContent(dataHash,200,200);
             String qrCode = signatureTemplateService.createQrCode(qrCodeContent);
             String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCode);
@@ -142,7 +142,7 @@ public class SigningService {
         }
     }
 
-    private String creatHashData(String data,byte[] pubKey) {
+    private String creatHashData(String data) {
         MessageDigest digest = null;
         try {
             digest = MessageDigest.getInstance("SHA-1");
@@ -151,8 +151,7 @@ public class SigningService {
         }
         byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));
         String rs = DatatypeConverter.printHexBinary(hash);
-        String pubKeyToString = DatatypeConverter.printHexBinary(pubKey);
-        return "1: "+ rs +"\n2: "+pubKeyToString;
+        return rs ;
     }
 
     public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request, boolean withDigestInfo) throws ApplicationException {
