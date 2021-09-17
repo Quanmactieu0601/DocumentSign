@@ -128,6 +128,8 @@ public class SignPDFLib {
         MakeSignature.signExternalContainer(appearance, external, 8192);
         try {
             os.close();
+            reader.close();
+            stamper.close();
         } catch (Exception localException) {
         }
     }
@@ -215,6 +217,8 @@ public class SignPDFLib {
         StreamUtil.CopyBytes(readerSource, gaps[2] - 1L, gaps[3] + 1L, os);
         os.close();
         bb.close();
+        reader.close();
+        readerSource.close();
     }
 
     private String getFontURLFromResource() {
@@ -317,6 +321,8 @@ public class SignPDFLib {
             result.add(hash);
         } finally {
             rg.close();
+            reader.close();
+            readerSource.close();
         }
         return result;
     }
