@@ -107,25 +107,6 @@ public class SignatureTemplateResource extends BaseResource {
             .body(result);
     }
 
-    @PostMapping(value = "/signature-templates/qrCode")
-    public ResponseEntity<Object> createQrCode(@RequestBody QRCodeContent qrCodeContent) {
-        log.info(" --- create QR Code --- ");
-        try {
-//            BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent.getData(), BarcodeFormat.QR_CODE, qrCodeContent.getHeight(), qrCodeContent.getWidth());
-//            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-//            MatrixToImageWriter.writeToStream(matrix, "png", bos);
-//            String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
-            String resource = signatureTemplateService.createQrCode(qrCodeContent);
-            return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, ""));
-        }catch (Exception e) {
-            log.error(e.getMessage(), e);
-            message = e.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-        } finally {
-            asyncTransactionService.newThread("/api/signature-templates/qrCode", TransactionType.BUSINESS, Action.CREATE, Extension.QR_CODE, Method.POST,
-                status, message, AccountUtils.getLoggedAccount());
-        }
-    }
 
     /**
      * {@code PUT  /signature-templates} : Updates an existing signatureTemplate.

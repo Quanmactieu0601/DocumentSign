@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
+import org.apache.xpath.operations.Bool;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 
@@ -36,10 +37,10 @@ public class SignatureTemplateDTO implements Serializable {
 
     private String thumbnail;
 
-    private Integer isActived;
+    private Boolean activated;
 
 
-    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate, String coreParser, String fullName, Integer width, Integer height, String htmlTemplate, Boolean transparency, String thumbnail, Integer isActived) {
+    public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate, String coreParser, String fullName, Integer width, Integer height, String htmlTemplate, Boolean transparency, String thumbnail, Boolean activated) {
         this.id = id;
         this.userId = userId;
         this.createdBy = createdBy;
@@ -51,12 +52,12 @@ public class SignatureTemplateDTO implements Serializable {
         this.htmlTemplate = htmlTemplate;
         this.transparency = transparency;
         this.thumbnail = thumbnail;
-        this.isActived = isActived;
+        this.activated = activated;
     }
 
     public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
                                 String htmlTemplate, SignatureTemplateParserType coreParser,
-                                Integer width, Integer height, String thumbnail, String fullName) {
+                                Integer width, Integer height, String thumbnail, Boolean activated, String fullName ) {
         this.id = id;
         this.userId = userId;
         this.createdBy = createdBy;
@@ -67,12 +68,12 @@ public class SignatureTemplateDTO implements Serializable {
         this.width = width;
         this.height = height;
         this.htmlTemplate = htmlTemplate;
-
+        this.activated = activated;
     }
 
     public SignatureTemplateDTO(Long id, Long userId, String createdBy, LocalDateTime createdDate,
                                 String htmlTemplate, SignatureTemplateParserType coreParser,
-                                Integer width, Integer height, String fullName, Boolean transparency) {
+                                Integer width, Integer height, String fullName, Boolean transparency, Boolean activated) {
         this.id = id;
         this.userId = userId;
         this.createdBy = createdBy;
@@ -83,6 +84,7 @@ public class SignatureTemplateDTO implements Serializable {
         this.height = height;
         this.htmlTemplate = htmlTemplate;
         this.transparency = transparency;
+        this.activated = activated;
     }
 
     public SignatureTemplateDTO() {
@@ -100,7 +102,7 @@ public class SignatureTemplateDTO implements Serializable {
         this.htmlTemplate = signatureTemplate.getHtmlTemplate();
         this.transparency = signatureTemplate.getTransparency();
         this.thumbnail = signatureTemplate.getThumbnail();
-        this.isActived = signatureTemplate.getIsActived();
+        this.activated = signatureTemplate.getActivated();
     }
 
     public String getFullName() { return fullName; }
@@ -163,6 +165,14 @@ public class SignatureTemplateDTO implements Serializable {
 
     public void setThumbnail(String thumbnail) { this.thumbnail = thumbnail; }
 
+    public Boolean getActivated() {
+        return activated;
+    }
+
+    public void setActivated(Boolean activated) {
+        this.activated = activated;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -189,11 +199,5 @@ public class SignatureTemplateDTO implements Serializable {
             "}";
     }
 
-    public Integer getIsActived() {
-        return isActived;
-    }
 
-    public void setIsActived(Integer isActived) {
-        this.isActived = isActived;
-    }
 }

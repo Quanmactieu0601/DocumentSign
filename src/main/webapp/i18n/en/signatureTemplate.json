@@ -29,6 +29,7 @@
       "createdBy": "Created By",
       "createdDate": "Created Date",
       "user": "User Account",
+      "activated": "Activated",
       "coreParser": "Core Parser",
       "chooseParser": "Choose parser",
       "chooseUser": "Choose account",

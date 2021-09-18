@@ -55,5 +55,4 @@ public interface SignatureTemplateService {
 
     String getSignatureExample(SignatureExampleDTO signatureExampleDTO) throws ApplicationException;
 
-    String createQrCode(QRCodeContent qrCodeContent) throws WriterException;
 }

@@ -39,6 +39,7 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
     width: ['', [Validators.required, Validators.pattern('\\d+')]],
     height: ['', [Validators.required, Validators.pattern('\\d+')]],
     transparency: [],
+    activated: [],
   });
   modalRef: NgbModalRef | undefined;
   isCreateNew = true;
@@ -126,6 +127,7 @@ export class SignatureTemplateUpdateComponent implements OnInit, AfterViewInit {
       htmlTemplate: this.editForm.get(['htmlTemplate'])!.value,
       coreParser: this.editForm.get(['coreParser'])!.value,
       transparency: this.editForm.get(['transparency'])!.value,
+      activated: this.editForm.get(['activated'])!.value,
     };
     this.signatureTemplateService.getSignatureImageExamp(signatureImageCustom).subscribe((res: any) => {
       this.signatureImageExam = res.body;

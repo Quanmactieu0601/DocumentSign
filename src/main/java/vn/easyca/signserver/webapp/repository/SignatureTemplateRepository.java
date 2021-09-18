@@ -27,5 +27,5 @@ public interface SignatureTemplateRepository extends JpaRepository<SignatureTemp
 //    @Query(value = "SELECT c.name" +
 //        " FROM Authority c" +
 //        " WHERE c.name <> 'ROLE_SUPER_ADMIN'")
-    Optional<SignatureTemplate> findOneByUserIdAndIsActived(Long userId,Integer isActived);
+    Optional<SignatureTemplate> findOneByUserIdAndActivated(Long userId,Boolean activated);
 }

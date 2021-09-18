@@ -83,6 +83,14 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Override
     public SignatureTemplateDTO save(SignatureTemplateDTO signatureTemplateDTO) throws ApplicationException {
         log.debug("Request to save SignatureTemplate : {}", signatureTemplateDTO);
+        if(signatureTemplateDTO.getActivated()){
+            Optional<SignatureTemplate> signatureTemplateActivated = signatureTemplateRepository.findOneByUserIdAndActivated(signatureTemplateDTO.getUserId(),true);
+            if(signatureTemplateActivated.isPresent()){
+                SignatureTemplate signatureTemplate1 = signatureTemplateActivated.get();
+                signatureTemplate1.setActivated(false);
+                signatureTemplate1 = signatureTemplateRepository.save(signatureTemplate1);
+            }
+        }
         String thumnailImage = createThumbnail(signatureTemplateDTO);
         signatureTemplateDTO.setThumbnail(thumnailImage);
         SignatureTemplate signatureTemplate = signatureTemplateMapper.toEntity(signatureTemplateDTO);
@@ -145,7 +153,7 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Transactional(readOnly = true)
     public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException {
         log.debug("Request to get SignatureImage with id : {}", userId);
-        Optional<SignatureTemplate> signatureTemplate = signatureTemplateRepository.findOneByUserIdAndIsActived(userId, 1);
+        Optional<SignatureTemplate> signatureTemplate = signatureTemplateRepository.findOneByUserIdAndActivated(userId, true);
         SignatureTemplateDTO signatureTemplateDTO = new SignatureTemplateDTO(signatureTemplate.get()) ;
         Page<SignatureTemplateDTO> page;
 
@@ -191,16 +199,5 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
     }
 
-    @Override
-    public String createQrCode(QRCodeContent qrCodeContent) throws WriterException {
-        BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent.getData(), BarcodeFormat.QR_CODE, qrCodeContent.getHeight(), qrCodeContent.getWidth());
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-            MatrixToImageWriter.writeToStream(matrix, "png", bos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
-        return resource;
-    }
+
 }

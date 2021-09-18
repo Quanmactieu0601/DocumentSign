@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.domain.TokenInfo;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
@@ -25,6 +26,7 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.service.impl.parser.QRCodeSignatureTemplateParserImpl;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -149,7 +151,7 @@ public class CertificateService {
         return mapper.map(entity);
     }
 
-    public String getSignatureImage(String serial, String pin,String qrCode) throws ApplicationException {
+    public String getSignatureImage(String serial, String pin, QRCodeContent qrCodeContent) throws ApplicationException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
@@ -157,7 +159,7 @@ public class CertificateService {
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserIdAndIsActived(userEntity.get().getId(),1);
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserIdAndActivated(userEntity.get().getId(),true);
         if (!signatureTemplateOptional.isPresent()) {
             throw new ApplicationException("Signature template is not configured");
         }
@@ -175,7 +177,10 @@ public class CertificateService {
         String subjectDN = x509Certificate.getSubjectDN().getName();
 
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
-        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData,qrCode);
+        if(signatureTemplateParseService instanceof QRCodeSignatureTemplateParserImpl){
+            ((QRCodeSignatureTemplateParserImpl) signatureTemplateParseService).setData(qrCodeContent.creatHashData());
+        }
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         Integer width = signatureTemplate.getWidth();
         Integer height = signatureTemplate.getHeight();
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
@@ -210,7 +215,7 @@ public class CertificateService {
             try (InputStream inputFileStream = fileResourceService.getTemplateFile("/templates/signature/signatureTemplate_2.0.html")) {
                 htmlContent = IOUtils.toString(inputFileStream, StandardCharsets.UTF_8.name());
                 SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(SignatureTemplateParserType.DEFAULT);
-                htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlContent, signatureImageData,null);
+                htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlContent, signatureImageData);
 
                 // th: ko co anh chu ky, thay doi kich thuoc anh
                 if (signatureImageData.equals("")) {
@@ -232,7 +237,7 @@ public class CertificateService {
         String htmlTemplate = signatureTemplate.getHtmlTemplate();
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
 
-        htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData,null);
+        htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         width = signatureTemplate.getWidth();
         height = signatureTemplate.getHeight();
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);

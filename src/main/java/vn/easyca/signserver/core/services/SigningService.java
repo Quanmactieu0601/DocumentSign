@@ -1,6 +1,5 @@
 package vn.easyca.signserver.core.services;
 
-import com.google.zxing.WriterException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -31,11 +30,7 @@ import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 
-import javax.xml.bind.DatatypeConverter;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
@@ -63,7 +58,7 @@ public class SigningService {
             file.mkdir();
     }
 
-    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException, WriterException {
+    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException{
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getTokenInfo().getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
@@ -87,10 +82,10 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            String dataHash = creatHashData(firstContent.getData().toString());
-            QRCodeContent qrCodeContent = new QRCodeContent(dataHash,200,200);
-            String qrCode = signatureTemplateService.createQrCode(qrCodeContent);
-            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCode);
+            //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
+            QRCodeContent<String> qrCodeContent = new QRCodeContent(firstContent.getData().toString());
+
+            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
             firstContent.setImageSignature(signatureImage);
         }
 
@@ -142,17 +137,6 @@ public class SigningService {
         }
     }
 
-    private String creatHashData(String data) {
-        MessageDigest digest = null;
-        try {
-            digest = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        byte[] hash = digest.digest(data.getBytes(StandardCharsets.UTF_8));
-        String rs = DatatypeConverter.printHexBinary(hash);
-        return rs ;
-    }
 
     public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request, boolean withDigestInfo) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();
