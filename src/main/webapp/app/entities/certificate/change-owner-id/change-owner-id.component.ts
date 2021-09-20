@@ -47,9 +47,9 @@ export class ChangeOwnerIdComponent implements OnInit {
       .subscribe((res: any) => (this.users = res.body));
   }
 
-  changeCertPIN(): void {
-    const currentPIN = this.changeOwnerIDForm.get(['OwnerID'])!.value;
-    this.certificateService.changeOwnerId(currentPIN, this.certificate?.id).subscribe((res: any) => {
+  changeOwnerID(): void {
+    const ownerID = this.changeOwnerIDForm.get(['OwnerID'])!.value;
+    this.certificateService.changeOwnerId(ownerID, this.certificate?.id).subscribe((res: any) => {
       if (res.status !== 0) {
         this.toastService.error(res.msg);
       } else {
