@@ -26,6 +26,10 @@ public class RegisterInputDto {
     private String hashData;
     private String taxCode;
     private String identification;
+    private String t;
+    private String l;
+    private String e;
+    private String telephoneNumber;
 // Getter Methods
 
     public float getActivationCodeEnabled() {
@@ -189,4 +193,24 @@ public class RegisterInputDto {
     public void setSt(String st) {
         this.st = st;
     }
+
+    public String getT() { return t; }
+
+    public void setT(String t) { this.t = t; }
+
+    public String getL() { return l; }
+
+    public void setL(String l) { this.l = l; }
+
+    public String getE() { return e; }
+
+    public void setE(String e) { this.e = e; }
+
+    public String getTelephoneNumber() { return telephoneNumber; }
+
+    public void setTelephoneNumber(String telephoneNumber) { this.telephoneNumber = telephoneNumber; }
+
+    public String getHashData() { return hashData; }
+
+    public void setHashData(String hashData) { this.hashData = hashData; }
 }
