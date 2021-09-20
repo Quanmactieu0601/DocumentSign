@@ -215,6 +215,10 @@ public class CertificateGenerateService {
                 registerInputDto.setSt(subjectDN.getS());
                 registerInputDto.setTaxCode(dto.getTaxCode());
                 registerInputDto.setIdentification(dto.getIdentification());
+                registerInputDto.setT(dto.getT());
+                registerInputDto.setE(dto.getE());
+                registerInputDto.setL(dto.getL());
+                registerInputDto.setTelephoneNumber(dto.getTelephoneNumber());
                 try {
                     registerInputDto.genHash();
                 } catch (NoSuchAlgorithmException e) {
@@ -246,6 +250,9 @@ public class CertificateGenerateService {
                     }
                     p12CertificateImportedList.add(p12CertificateRegisterResult);
                 } else {
+                    if (result.getMessage().contains("Thông tin chứng thư số không được trống")) {
+                        result.setMessage("Gói dịch vụ không phù hợp với loại chứng thư số");
+                    }
                     P12CertificateRegisterResult registerResult = MappingHelper.map(result, P12CertificateRegisterResult.class);
                     p12CertificateImportedList.add(registerResult);
                 }

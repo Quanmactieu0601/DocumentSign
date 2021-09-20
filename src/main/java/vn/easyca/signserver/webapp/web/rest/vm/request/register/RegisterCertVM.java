@@ -9,7 +9,6 @@ public class RegisterCertVM {
     private String locality;
     @NotBlank(message = "State is required. This field is customer's province code.")
     private String state;
-    @NotBlank(message = "organization is required. This field is customer's name.")
     private String organization;
     private String ownerId;
     private int keyLen;
@@ -23,6 +22,9 @@ public class RegisterCertVM {
     private String taxCode;
     private String identification;
     private String title;
+    private String organizationUnit;
+    private String phoneInCert;
+    private String emailInCert;
 
     // file đăng ký kinh doanh
     byte[] businessRegistration;
@@ -88,6 +90,10 @@ public class RegisterCertVM {
 
     public void setTitle(String title) { this.title = title; }
 
+    public String getOrganizationUnit() { return organizationUnit; }
+
+    public void setOrganizationUnit(String organizationUnit) { this.organizationUnit = organizationUnit; }
+
     public byte[] getBusinessRegistration() { return businessRegistration; }
 
     public void setBusinessRegistration(byte[] businessRegistration) { this.businessRegistration = businessRegistration; }
@@ -103,4 +109,12 @@ public class RegisterCertVM {
     public byte[] getUserRegistrantForm() { return userRegistrantForm; }
 
     public void setUserRegistrantForm(byte[] userRegistrantForm) { this.userRegistrantForm = userRegistrantForm; }
+
+    public String getPhoneInCert() { return phoneInCert; }
+
+    public void setPhoneInCert(String phoneInCert) { this.phoneInCert = phoneInCert; }
+
+    public String getEmailInCert() { return emailInCert; }
+
+    public void setEmailInCert(String emailInCert) { this.emailInCert = emailInCert; }
 }

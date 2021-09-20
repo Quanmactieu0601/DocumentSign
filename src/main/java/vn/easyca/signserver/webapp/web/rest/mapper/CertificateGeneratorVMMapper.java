@@ -30,6 +30,8 @@ public class CertificateGeneratorVMMapper {
         cert.setO(certVM.getOrganization());
         cert.setT(certVM.getTitle());
         cert.setCn(certVM.getCommonName());
+        cert.setE(certVM.getEmailInCert());
+        cert.setTelephoneNumber(certVM.getPhoneInCert());
         return cert;
     }
 

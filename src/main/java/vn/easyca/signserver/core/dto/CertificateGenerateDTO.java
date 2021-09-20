@@ -27,109 +27,68 @@ public class CertificateGenerateDTO {
     private int certProfileType;
     private RawCertificate rawCertificate; // used to register internal HSM
 
-    public String getL() {
-        return l;
-    }
+    public String getE() { return e; }
 
-    public void setL(String l) {
-        this.l = l;
-    }
+    public void setE(String e) { this.e = e; }
 
-    public String getS() {
-        return s;
-    }
+    public String getTelephoneNumber() { return telephoneNumber; }
 
-    public void setS(String s) {
-        this.s = s;
-    }
+    public void setTelephoneNumber(String telephoneNumber) { this.telephoneNumber = telephoneNumber; }
 
-    public String getC() {
-        return c;
-    }
+    private String e;
+    private String telephoneNumber;
+    public String getL() { return l; }
 
-    public void setC(String c) {
-        this.c = c;
-    }
+    public void setL(String l) { this.l = l; }
 
-    public String getCn() {
-        return cn;
-    }
+    public String getS() { return s; }
 
-    public void setCn(String cn) {
-        this.cn = cn;
-    }
+    public void setS(String s) { this.s = s; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getC() { return c; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public void setC(String c) { this.c = c; }
 
-    public String getOwnerId() {
-        return ownerId;
-    }
+    public String getCn() { return cn; }
 
-    public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
-    }
+    public void setCn(String cn) { this.cn = cn; }
 
-    public int getKeyLen() {
-        return keyLen;
-    }
+    public String getPassword() { return password; }
 
-    public void setKeyLen(int keyLen) {
-        this.keyLen = keyLen;
-    }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getOu() {
-        return ou;
-    }
+    public String getOwnerId() { return ownerId; }
 
-    public void setOu(String ou) {
-        this.ou = ou;
-    }
+    public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
 
-    public String getOwnerPhone() {
-        return ownerPhone;
-    }
+    public int getKeyLen() { return keyLen; }
 
-    public String getOwnerEmail() {
-        return ownerEmail;
-    }
+    public void setKeyLen(int keyLen) { this.keyLen = keyLen; }
 
-    public void setOwnerEmail(String ownerEmail) {
-        this.ownerEmail = ownerEmail;
-    }
+    public String getOu() { return ou; }
 
-    public void setOwnerPhone(String ownerPhone) {
-        this.ownerPhone = ownerPhone;
-    }
+    public void setOu(String ou) { this.ou = ou; }
 
-    public String getCertProfile() {
-        return certProfile;
-    }
+    public String getOwnerPhone() { return ownerPhone; }
 
-    public void setCertProfile(String certProfile) {
-        this.certProfile = certProfile;
-    }
+    public String getOwnerEmail() { return ownerEmail; }
 
-    public String getOwnerName() {
-        return ownerName;
-    }
+    public void setOwnerEmail(String ownerEmail) { this.ownerEmail = ownerEmail; }
 
-    public SubjectDN getSubjectDN() {
-        return new SubjectDN(cn, t, ou, o, l, s, c);
-    }
+    public void setOwnerPhone(String ownerPhone) { this.ownerPhone = ownerPhone; }
 
-    public OwnerInfo getOwnerInfo() {
-        return new OwnerInfo(ownerId, ownerEmail, ownerPhone);
-    }
+    public String getCertProfile() { return certProfile; }
 
-    public CertPackage getCertPackage(String certMethod, int certType) {
-        return new CertPackage(certMethod, certProfile, certType);
-    }
+    public void setCertProfile(String certProfile) { this.certProfile = certProfile; }
+
+    public String getOwnerName() { return ownerName; }
+
+    public SubjectDN getSubjectDN() { return new SubjectDN(cn, t, ou, o, l, s, c); }
+
+    public OwnerInfo getOwnerInfo() { return new OwnerInfo(ownerId, ownerEmail, ownerPhone); }
+
+    public CertPackage getCertPackage(String certMethod, int certType) { return new CertPackage(certMethod, certProfile, certType); }
+
     public String getTaxCode() { return taxCode; }
 
     public void setTaxCode(String taxCode) { this.taxCode = taxCode; }
