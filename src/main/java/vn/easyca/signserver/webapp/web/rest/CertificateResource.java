@@ -324,7 +324,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PutMapping("/ownerid")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BaseResponseVM> updateOwnerId( @RequestBody CertificateChangeOwnVN cert) {
         try {
 
@@ -421,7 +421,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/changeCertPIN")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BaseResponseVM> changeCertPIN(@RequestBody P12PinVM p12PinVM) {
         try {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
