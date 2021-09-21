@@ -186,7 +186,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
           },
           extraInfo: { pageNum: Number(this.renderTextMode) },
           imageSignature: null,
-          templateId: this.templateId === '' ? 0 : this.templateId,
+          templateId: this.templateId === '' ? -1 : this.templateId,
         },
       ],
     };

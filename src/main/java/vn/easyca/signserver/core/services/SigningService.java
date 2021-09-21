@@ -41,6 +41,7 @@ import java.util.UUID;
 @Service
 public class SigningService {
     private final static String TEM_DIR = "./TemFile/";
+    private final static Integer TEMPLATE_DEFAULT = -1;
 
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
@@ -82,13 +83,13 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            if(firstContent.getTemplateId() == 0 || firstContent.getTemplateId() == null) {
+            if(firstContent.getTemplateId() != null && firstContent.getTemplateId() == TEMPLATE_DEFAULT) {
                 String signatureImage = certificateService.getSignatureImageByTemplateId(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(), null);
                 firstContent.setImageSignature(signatureImage);
             }
             else{
                 //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
-                QRCodeContent<String> qrCodeContent = new QRCodeContent(firstContent.getData().toString());
+                QRCodeContent qrCodeContent = new QRCodeContent(firstContent.getData().toString());
                 String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
                 firstContent.setImageSignature(signatureImage);
             }

@@ -10,19 +10,19 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class QRCodeContent<T> {
-    private T data;
+public class QRCodeContent {
+    private String data;
     private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
 
-    public QRCodeContent(T data) {
+    public QRCodeContent(String data) {
         this.data = data;
     }
 
-    public T getData() {
+    public String getData() {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(String data) {
         this.data = data;
     }
 
@@ -39,5 +39,9 @@ public class QRCodeContent<T> {
         byte[] hash = digest.digest(data.toString().getBytes(StandardCharsets.UTF_8));
         String rs = DatatypeConverter.printHexBinary(hash);
         return rs ;
+    }
+
+    public String toString(){
+        return creatHashData();
     }
 }

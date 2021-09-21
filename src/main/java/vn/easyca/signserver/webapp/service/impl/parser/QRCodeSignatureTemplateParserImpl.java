@@ -6,6 +6,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import org.springframework.stereotype.Service;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -17,19 +18,21 @@ import java.util.Base64;
 
 @Service
 public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParseService {
-    private String data;
+    final String qrCodeExam = "QR Code Exam";
     final String regexCN = "CN=\"([^\"]+)\"";
 
     @Override
-    public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
+    public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage, Object data) throws ApplicationException {
         try {
+            String qrCodeContent =  data.toString();
+
             final String regexT = ", T=([^,]+)";
             String CN = getSigner(subjectDN);
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
             String address = signerInfor[1];
-            String imageQRCode = "<img class=\"qrCode\" src=\"data:image/jpeg;base64,"+ createQrCode() +"\"/>";
+            String imageQRCode = "<img class=\"qrCode\" src=\"data:image/jpeg;base64,"+ createQrCode(qrCodeContent) +"\"/>";
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent
@@ -54,14 +57,13 @@ public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParse
     @Override
     public String previewSignatureTemplate(String signatureTemplate, String signatureImage) throws ApplicationException {
         String subjectDN = "UID=CMND:079073009568, UID=MST:0301824642, CN=\"Nguyễn Văn A, A101.0001 - 003848/HCM-CCHN\", T=BS CK II, O=Bệnh viện Quận 11, ST=TP Hồ Chí Minh, C=VN";
-        this.data = "QR Code Exam";
-        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage);
+        return this.buildSignatureTemplate(subjectDN, signatureTemplate, signatureImage, this.qrCodeExam);
     }
 
-    public String createQrCode() {
+    public String createQrCode(String qrCodeContent) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try{
-            BitMatrix matrix = new MultiFormatWriter().encode(this.data, BarcodeFormat.QR_CODE, 80, 80);
+            BitMatrix matrix = new MultiFormatWriter().encode(qrCodeContent, BarcodeFormat.QR_CODE, 80, 80);
             MatrixToImageWriter.writeToStream(matrix, "png", bos);
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,13 +72,6 @@ public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParse
         }
         String resource = Base64.getEncoder().encodeToString(bos.toByteArray());
         return resource;
-    }
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
     }
 
 }
