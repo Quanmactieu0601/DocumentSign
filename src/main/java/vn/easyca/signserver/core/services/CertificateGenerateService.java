@@ -248,6 +248,7 @@ public class CertificateGenerateService {
                     } catch (Exception ex) {
                         throw new CompletionException("Loi save p12", ex);
                     }
+                    p12CertificateRegisterResult.setMessage("Tạo mới thành công CTS.");
                     p12CertificateImportedList.add(p12CertificateRegisterResult);
                 } else {
                     if (result.getMessage().contains("Thông tin chứng thư số không được trống")) {
