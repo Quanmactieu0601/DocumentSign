@@ -82,11 +82,16 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
-            QRCodeContent<String> qrCodeContent = new QRCodeContent(firstContent.getData().toString());
-
-            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
-            firstContent.setImageSignature(signatureImage);
+            if(firstContent.getTemplateId() == 0 || firstContent.getTemplateId() == null) {
+                String signatureImage = certificateService.getSignatureImageByTemplateId(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(), null);
+                firstContent.setImageSignature(signatureImage);
+            }
+            else{
+                //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
+                QRCodeContent<String> qrCodeContent = new QRCodeContent(firstContent.getData().toString());
+                String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
+                firstContent.setImageSignature(signatureImage);
+            }
         }
 
         try {

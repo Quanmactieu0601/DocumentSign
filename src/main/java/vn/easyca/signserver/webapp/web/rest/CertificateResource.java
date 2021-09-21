@@ -361,7 +361,7 @@ public class CertificateResource extends BaseResource {
     public ResponseEntity<BaseResponseVM> getSignatureTemplateImage(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getImage --- serial: {}", serial);
         try {
-            String base64Image = certificateService.getSignatureImage(serial, pin,null);
+            String base64Image = certificateService.getSignatureImage(serial, pin);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(base64Image));
         } catch (ApplicationException e) {

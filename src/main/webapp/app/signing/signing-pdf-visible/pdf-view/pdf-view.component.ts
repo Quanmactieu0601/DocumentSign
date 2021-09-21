@@ -25,6 +25,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @Input() pdfSrc = '';
+  @Input() templateId = '';
   @Input() imageSrc = '';
   @Input() serial: any;
   @Input() pin: any;
@@ -185,6 +186,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
           },
           extraInfo: { pageNum: Number(this.renderTextMode) },
           imageSignature: null,
+          templateId: this.templateId === '' ? 0 : this.templateId,
         },
       ],
     };

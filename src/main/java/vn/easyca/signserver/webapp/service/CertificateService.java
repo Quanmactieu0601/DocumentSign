@@ -151,6 +151,38 @@ public class CertificateService {
         return mapper.map(entity);
     }
 
+    public String getSignatureImage(String serial, String pin) throws ApplicationException {
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
+        if (!certificateOptional.isPresent())
+            throw new ApplicationException("Certificate is not found");
+        CertificateDTO certificateDTO = mapper.map(certificateOptional.get());
+        CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
+        cryptoTokenProxy.getCryptoToken().checkInitialized();
+        Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserIdAndActivated(userEntity.get().getId(),true);
+        if (!signatureTemplateOptional.isPresent()) {
+            throw new ApplicationException("Signature template is not configured");
+        }
+        SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
+
+        Long signImageId = certificateDTO.getSignatureImageId();
+        String signatureImageData = "";
+        String htmlTemplate = signatureTemplate.getHtmlTemplate();
+        if (signImageId != null) {
+            Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
+            if (signatureImage.isPresent())
+                signatureImageData = signatureImage.get().getImgData();
+        }
+        X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
+        String subjectDN = x509Certificate.getSubjectDN().getName();
+
+        SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+        String htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
+        Integer width = signatureTemplate.getWidth();
+        Integer height = signatureTemplate.getHeight();
+        return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, signatureTemplate.getTransparency(), env);
+    }
+
     public String getSignatureImage(String serial, String pin, QRCodeContent qrCodeContent) throws ApplicationException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
