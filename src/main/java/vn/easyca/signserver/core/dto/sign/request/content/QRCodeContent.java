@@ -11,21 +11,20 @@ import java.security.NoSuchAlgorithmException;
 
 
 public class QRCodeContent {
-    private String data;
+    private byte [] data;
     private static final Logger log = LoggerFactory.getLogger(SigningResource.class);
 
-    public QRCodeContent(String data) {
+    public QRCodeContent(byte [] data) {
         this.data = data;
     }
 
-    public String getData() {
+    public byte[] getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(byte[] data) {
         this.data = data;
     }
-
 
     public String creatHashData() {
         log.info(" --- create Hash Data --- ");
@@ -36,7 +35,7 @@ public class QRCodeContent {
             log.error(e.getMessage(), e);
             log.info(" --- fail to create Hash Data --- ");
         }
-        byte[] hash = digest.digest(data.toString().getBytes(StandardCharsets.UTF_8));
+        byte[] hash = digest.digest(this.data);
         String rs = DatatypeConverter.printHexBinary(hash);
         return rs ;
     }

@@ -89,7 +89,7 @@ public class SigningService {
             }
             else{
                 //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
-                QRCodeContent qrCodeContent = new QRCodeContent(firstContent.getData().toString());
+                QRCodeContent qrCodeContent = new QRCodeContent(firstContent.getData());
                 String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
                 firstContent.setImageSignature(signatureImage);
             }
