@@ -6,7 +6,6 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import org.springframework.stereotype.Service;
-import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -19,7 +18,7 @@ import java.util.Base64;
 @Service
 public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParseService {
     final String qrCodeExam = "QR Code Exam";
-    final String regexCN = "CN=\"([^\"]+)\"";
+    final String regexCN = "CN=\"([^\"]+)\"|CN=\"([^\"]+)|CN=([^,]+)";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage, Object data) throws ApplicationException {
@@ -31,14 +30,20 @@ public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParse
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
-            String address = signerInfor[1];
+            String address = signerInfor.length > 1 ? signerInfor[1] : null;
             String imageQRCode = "<img class=\"qrCode\" src=\"data:image/jpeg;base64,"+ createQrCode(qrCodeContent) +"\"/>";
 
             String htmlContent = signatureTemplate;
+            if(T == null){
+                htmlContent = htmlContent.replaceFirst("<span name=\"position\">","<span name=\"position\" hidden>");
+            }
+            if(address == null){
+                htmlContent = htmlContent.replaceFirst("<div name=\"address\">","<div name=\"address\" hidden >");
+            }
             htmlContent = htmlContent
                 .replaceFirst("_signer_", signerName)
-                .replaceFirst("_position_", T)
-                .replaceFirst("_address_", address)
+                .replaceFirst("_position_", T != null? T : "")
+                .replaceFirst("_address_", address != null? address : "")
                 .replaceFirst("_signatureImage_", signatureImage)
                 .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy))
                 .replaceFirst("<img class=\"qrCode\"[^>]*>", imageQRCode);
