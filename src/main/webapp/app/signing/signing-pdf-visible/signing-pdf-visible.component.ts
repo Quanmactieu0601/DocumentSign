@@ -119,17 +119,6 @@ export class SigningPdfVisibleComponent implements OnInit {
     this.setDisableButton();
   }
 
-  // openModalTemplateList(): void {
-  //   this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
-  // this.modalRef.result.then(templateId => {
-  // templateId == null ? this.editForm.controls['templateId'].setValue(0) : this.editForm.controls['templateId'].setValue(templateId);  //     this.template = template;
-  //     this.viewSignatureImage();
-  //   });
-  //   this.accountService.identity(false).subscribe(res => {
-  //     this.modalRef!.componentInstance.userId = res?.id;
-  //   });
-  // }
-
   openModalTemplateList(): void {
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.modalRef.result.then(template => {
@@ -145,49 +134,10 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   viewSignatureImage(): void {
-    // const data = {
-    //   ...this.editForm.value,
-    // };
-    //
-    // this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-    //   if (res.status === ResponseBody.SUCCESS) {
-    //     this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-    //     this.signatureImage && this.signatureImage.nativeElement
-    //       ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-    //       : null;
-    //   } else {
-    //     this.toastrService.error(res.msg);
-    //     this.imageSrc = '';
-    //     return;
-    //   }
-    // });
-
     this.signatureImage && this.signatureImage.nativeElement
       ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + this.template?.thumbnail)
       : null;
   }
-
-  // checkValidatedImage(): void {
-  //   const data = {
-  //     ...this.editForm.value,
-  //   };
-  //
-  //   this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-  //     if (res.status === ResponseBody.SUCCESS) {
-  //       this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-  //       this.signatureImage && this.signatureImage.nativeElement
-  //         ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-  //         : null;
-  //       this.imageSrc = this.signatureImage?.nativeElement.src;
-  //       this.wizzard.goToNextStep();
-  //       // }
-  //     } else {
-  //       this.toastrService.error(res.msg);
-  //       this.imageSrc = '';
-  //       return;
-  //     }
-  //   });
-  // }
 
   checkValidatedImage(): void {
     if (this.template) {
