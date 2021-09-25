@@ -37,7 +37,15 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
 
     @Override
     public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws ApplicationException {
-        VisibleRequestContent visibleRequestContent = mapper.convertValue(requestValue, VisibleRequestContent.class);
+        VisibleRequestContent visibleRequestContent = null;
+        try {
+            visibleRequestContent = mapper.convertValue(requestValue, VisibleRequestContent.class);
+        } catch (Exception ex) {
+            throw new ApplicationException(ex.getMessage());
+        }
+
+        validate(visibleRequestContent);
+
         List<VisibleRequestContent> lstTemp = new ArrayList<>();
         lstTemp.add(visibleRequestContent);
         SigningRequest signingPdfRequest = new SigningRequest();
@@ -49,5 +57,15 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
 
         SigningResult result = new SigningResult(resource, key, "Ký thành công", RESULT_OK);
         return result;
+    }
+
+    public void validate(VisibleRequestContent visibleRequestContent) throws ApplicationException {
+        if (visibleRequestContent.getLocation() == null) {
+            throw new ApplicationException("Thiếu trường location - vị trí ảnh chữ ký ");
+        }
+
+        if (visibleRequestContent.getData() == null) {
+            throw new ApplicationException("Thiếu trường data - dữ liệu tệp cần ký");
+        }
     }
 }

@@ -1,6 +1,7 @@
 package vn.easyca.signserver.core.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import liquibase.pro.packaged.E;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
@@ -58,10 +59,12 @@ public class ThirdPartyRequestService {
         if (tokenInfo == null) {
             throw new ApplicationException("Thiếu tokenInfo");
         }
-        CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfo.getSerial());
+        CertificateDTO certificateDTO = null;
 
-        if (certificateDTO == null) {
-            throw new ApplicationException("Không tìm thấy chứng thư số");
+        try{
+             certificateDTO = certificateService.getBySerial(tokenInfo.getSerial());
+        } catch (ApplicationException ex) {
+            throw new ApplicationException("Không tìm thấy thông tin chứng thư số, yêu cầu kiểm tra lại");
         }
 
         if (certificateDTO.getPackageId() == null) {
@@ -85,7 +88,7 @@ public class ThirdPartyRequestService {
             Object signingResult = "";
 
             try {
-
+                validateSigningRequest(request);
                 if (signedTurn + signedCurrentCount >= signingTurnOfPackage) {
                     throw new ApplicationException("Đã ký quá số lượt.");
                 }
@@ -115,7 +118,16 @@ public class ThirdPartyRequestService {
                 signedCurrentCount++;
                 listResultSigningResponse.add(signingResult);
             } catch (Exception e) {
-                listResultSigningResponse.add(new SigningResult("", request.getKey(), "Ký tệp lỗi " + e.getMessage(), -1));
+                String message = e.getMessage();
+                if (e.getMessage().contains("Keystore is not initialized")) {
+                    message = "Mã pin không đúng, yêu cầu kiểm tra lại";
+                }
+
+                if (e.getMessage().contains("The certificate is not found")) {
+                    message = "Không tìm thấy thông tin chứng thư số, yêu cầu kiểm tra lại.";
+                }
+
+                listResultSigningResponse.add(new SigningResult("", request.getKey(), message, -1));
             }
             index++;
         }
@@ -126,6 +138,21 @@ public class ThirdPartyRequestService {
         }
         return listResultSigningResponse;
     }
+
+    private void validateSigningRequest(SigningContainerRequest signingRequest) throws ApplicationException {
+        if (signingRequest.getRequest() == null) {
+            throw new ApplicationException("Thiếu trường request.");
+        }
+
+        if (signingRequest.getType() == null) {
+            throw new ApplicationException("Thiếu trường type - loại dữ liệu ký số.");
+        }
+
+        if (signingRequest.getKey() == null) {
+            throw new ApplicationException("Thiếu trường key.");
+        }
+    }
+
 
 
 }
