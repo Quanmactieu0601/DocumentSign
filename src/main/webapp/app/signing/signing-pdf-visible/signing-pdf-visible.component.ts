@@ -120,7 +120,7 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   openModalTemplateList(): void {
-    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
+    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'lg' });
     this.modalRef.result.then(template => {
       template == null ? (this.template = null) : (this.template = template);
       this.template?.id == null
@@ -140,31 +140,24 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   checkValidatedImage(): void {
-    if (this.template) {
-      this.signatureImage && this.signatureImage.nativeElement
-        ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + this.template?.thumbnail)
-        : null;
-      this.imageSrc = this.signatureImage?.nativeElement.src;
-    } else {
-      const data = {
-        ...this.editForm.value,
-      };
+    const data = {
+      ...this.editForm.value,
+    };
 
-      this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-        if (res.status === ResponseBody.SUCCESS) {
-          this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-          this.signatureImage && this.signatureImage.nativeElement
-            ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-            : null;
-          this.imageSrc = this.signatureImage?.nativeElement.src;
-        } else {
-          this.toastrService.error(res.msg);
-          this.imageSrc = '';
-          return;
-        }
-      });
-    }
-    this.wizzard.goToNextStep();
+    this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
+      if (res.status === ResponseBody.SUCCESS) {
+        this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
+        this.signatureImage && this.signatureImage.nativeElement
+          ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
+          : null;
+        this.imageSrc = this.signatureImage?.nativeElement.src;
+        this.wizzard.goToNextStep();
+      } else {
+        this.toastrService.error(res.msg);
+        this.imageSrc = '';
+        return;
+      }
+    });
   }
 
   nextAction(): void {

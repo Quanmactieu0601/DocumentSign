@@ -23,6 +23,7 @@ public class QRCodeSignatureTemplateParserImpl implements SignatureTemplateParse
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage, Object data) throws ApplicationException {
         try {
+            if(data == null) data = this.qrCodeExam;
             String qrCodeContent =  data.toString();
 
             final String regexT = ", T=([^,]+)";
