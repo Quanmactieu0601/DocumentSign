@@ -12,6 +12,7 @@ import { HttpResponse } from '@angular/common/http';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { SignatureListComponent } from 'app/signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { ISignatureTemplate } from 'app/shared/model/signature-template.model';
 
 @Component({
   selector: 'jhi-signing',
@@ -30,6 +31,7 @@ export class SigningPdfVisibleComponent implements OnInit {
   imageSrc: any;
   serial = '';
   pin: any;
+  template: ISignatureTemplate | null | undefined;
 
   showMessageSerialRequired = false;
   modalRef: NgbModalRef | undefined;
@@ -118,9 +120,12 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   openModalTemplateList(): void {
-    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
-    this.modalRef.result.then(templateId => {
-      templateId == null ? this.editForm.controls['templateId'].setValue(0) : this.editForm.controls['templateId'].setValue(templateId);
+    this.modalRef = this.modalService.open(SignatureListComponent, { size: 'lg' });
+    this.modalRef.result.then(template => {
+      template == null ? (this.template = null) : (this.template = template);
+      this.template?.id == null
+        ? this.editForm.controls['templateId'].setValue('')
+        : this.editForm.controls['templateId'].setValue(this.template.id);
       this.viewSignatureImage();
     });
     this.accountService.identity(false).subscribe(res => {
@@ -129,22 +134,9 @@ export class SigningPdfVisibleComponent implements OnInit {
   }
 
   viewSignatureImage(): void {
-    const data = {
-      ...this.editForm.value,
-    };
-
-    this.certificateService.getSignatureImageByTemplateId(data).subscribe((res: ResponseBody) => {
-      if (res.status === ResponseBody.SUCCESS) {
-        this.toastrService.success(this.translateService.instant('sign.messages.validate.validated'));
-        this.signatureImage && this.signatureImage.nativeElement
-          ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + res.data)
-          : null;
-      } else {
-        this.toastrService.error(res.msg);
-        this.imageSrc = '';
-        return;
-      }
-    });
+    this.signatureImage && this.signatureImage.nativeElement
+      ? (this.signatureImage.nativeElement.src = 'data:image/jpeg;base64,' + this.template?.thumbnail)
+      : null;
   }
 
   checkValidatedImage(): void {
@@ -160,7 +152,6 @@ export class SigningPdfVisibleComponent implements OnInit {
           : null;
         this.imageSrc = this.signatureImage?.nativeElement.src;
         this.wizzard.goToNextStep();
-        // }
       } else {
         this.toastrService.error(res.msg);
         this.imageSrc = '';

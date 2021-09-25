@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service;
 
+import com.google.zxing.WriterException;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.service.dto.SignatureExampleDTO;
@@ -41,6 +43,7 @@ public interface SignatureTemplateService {
      */
     Optional<SignatureTemplateDTO> findOne(Long id);
 
+
     /**
      * Delete the "id" signatureTemplate.
      *
@@ -51,4 +54,5 @@ public interface SignatureTemplateService {
     Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException, IOException;
 
     String getSignatureExample(SignatureExampleDTO signatureExampleDTO) throws ApplicationException;
+
 }

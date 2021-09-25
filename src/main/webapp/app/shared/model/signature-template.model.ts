@@ -10,6 +10,7 @@ export interface ISignatureTemplate {
   height?: number;
   transparency?: boolean;
   thumbnail?: string;
+  activated?: boolean;
 }
 
 export class SignatureTemplate implements ISignatureTemplate {
@@ -24,6 +25,9 @@ export class SignatureTemplate implements ISignatureTemplate {
     public width?: number,
     public height?: number,
     public transparency?: boolean,
-    public thumbnail?: string
-  ) {}
+    public thumbnail?: string,
+    public activated?: boolean
+  ) {
+    this.activated = this.activated || false;
+  }
 }

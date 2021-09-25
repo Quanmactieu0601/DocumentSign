@@ -394,7 +394,7 @@ public class CertificateResource extends BaseResource {
             message = e.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
         } finally {
-            asyncTransactionService.newThread("/api/certificate/getImage", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+            asyncTransactionService.newThread("/api/certificate/getImageByTemplateId", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
                 status, message, AccountUtils.getLoggedAccount());
         }
     }

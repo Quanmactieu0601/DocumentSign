@@ -28,6 +28,7 @@
       "fullName": "Tên khách hàng",
       "createdBy": "Người tạo",
       "createdDate": "Ngày tạo",
+      "activated": "Kích hoạt",
       "user": "Tài khoản người dùng",
       "coreParser": "Trình chuyển đổi",
       "chooseParser": "Chọn trình chuyển đổi",

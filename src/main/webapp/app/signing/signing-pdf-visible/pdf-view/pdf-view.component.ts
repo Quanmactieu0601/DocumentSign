@@ -23,6 +23,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
   @Input() pdfSrc = '';
+  @Input() templateId = '';
   @Input() imageSrc = '';
   @Input() serial: any;
   @Input() pin: any;
@@ -182,7 +183,8 @@ export class PdfViewComponent implements OnInit, OnChanges {
             visibleHeight: Math.floor(($('#signature-box')[0].offsetHeight / 96) * 72),
           },
           extraInfo: { pageNum: Number(this.renderTextMode) },
-          imageSignature: this.imageSrc.replace('data:image/jpeg;base64,', ''),
+          imageSignature: null,
+          templateId: this.templateId === '' ? -1 : this.templateId,
         },
       ],
     };

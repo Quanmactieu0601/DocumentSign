@@ -4,6 +4,15 @@ public class VisibleRequestContent extends SigningRequestContent {
     private Location location;
     private ExtraInfo extraInfo;
     private String imageSignature;
+    private Integer templateId;
+
+    public Integer getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Integer templateId) {
+        this.templateId = templateId;
+    }
 
     public Location getLocation() {
         return location;

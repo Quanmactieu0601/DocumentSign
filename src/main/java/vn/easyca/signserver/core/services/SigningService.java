@@ -8,6 +8,7 @@ import vn.easyca.signserver.core.dto.sign.newrequest.Location;
 import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.core.dto.sign.request.SignElement;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.*;
 import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
@@ -25,6 +26,7 @@ import vn.easyca.signserver.pki.sign.utils.UniqueID;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.SignatureTemplateService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 
@@ -39,21 +41,25 @@ import java.util.UUID;
 @Service
 public class SigningService {
     private final static String TEM_DIR = "./TemFile/";
+    private final static Integer TEMPLATE_DEFAULT = -1;
 
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private final CertificateService certificateService;
+    private final SignatureTemplateService signatureTemplateService;
 
-    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureTemplateParserFactory signatureTemplateParserFactory) {
+    public SigningService(CertificateService certificateService, CryptoTokenProxyFactory cryptoTokenProxyFactory, SignatureTemplateParserFactory signatureTemplateParserFactory, SignatureTemplateService signatureTemplateService) {
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.certificateService = certificateService;
         this.signatureTemplateParserFactory = signatureTemplateParserFactory;
+        this.signatureTemplateService = signatureTemplateService;
+
         File file = new File(TEM_DIR);
         if (!file.exists())
             file.mkdir();
     }
 
-    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException {
+    public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException{
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getTokenInfo().getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
@@ -77,8 +83,16 @@ public class SigningService {
         VisibleRequestContent firstContent = visibleRequestContents.get(0);
 
         if (firstContent.getImageSignature() == null || firstContent.getImageSignature().isEmpty()) {
-            String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin());
-            firstContent.setImageSignature(signatureImage);
+            if(firstContent.getTemplateId() != null && firstContent.getTemplateId() == TEMPLATE_DEFAULT) {
+                String signatureImage = certificateService.getSignatureImageByTemplateId(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(), null);
+                firstContent.setImageSignature(signatureImage);
+            }
+            else{
+                //Tạo đối tượng QRCodeContent và truyền dữ liệu cần tạo QR Code
+                QRCodeContent qrCodeContent = new QRCodeContent(firstContent.getData());
+                String signatureImage = certificateService.getSignatureImage(request.getTokenInfo().getSerial(), request.getTokenInfo().getPin(),qrCodeContent);
+                firstContent.setImageSignature(signatureImage);
+            }
         }
 
         try {
@@ -128,6 +142,7 @@ public class SigningService {
             }
         }
     }
+
 
     public SignDataResponse<List<SignResultElement>> signHash(SignRequest<String> request, boolean withDigestInfo) throws ApplicationException {
         TokenInfoDTO tokenInfoDTO = request.getTokenInfoDTO();

@@ -1,8 +1,14 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageImpl;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -26,10 +32,12 @@ import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,6 +83,14 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Override
     public SignatureTemplateDTO save(SignatureTemplateDTO signatureTemplateDTO) throws ApplicationException {
         log.debug("Request to save SignatureTemplate : {}", signatureTemplateDTO);
+        if(signatureTemplateDTO.getActivated()){
+            Optional<SignatureTemplate> signatureTemplateActivated = signatureTemplateRepository.findOneByUserIdAndActivated(signatureTemplateDTO.getUserId(),true);
+            if(signatureTemplateActivated.isPresent()){
+                SignatureTemplate signatureTemplate1 = signatureTemplateActivated.get();
+                signatureTemplate1.setActivated(false);
+                signatureTemplate1 = signatureTemplateRepository.save(signatureTemplate1);
+            }
+        }
         String thumnailImage = createThumbnail(signatureTemplateDTO);
         signatureTemplateDTO.setThumbnail(thumnailImage);
         SignatureTemplate signatureTemplate = signatureTemplateMapper.toEntity(signatureTemplateDTO);
@@ -120,6 +136,8 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
             .map(signatureTemplateMapper::toDto);
     }
 
+
+
     /**
      * Delete the signatureTemplate by id.
      *
@@ -135,14 +153,19 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     @Transactional(readOnly = true)
     public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException {
         log.debug("Request to get SignatureImage with id : {}", userId);
-        Page<SignatureTemplateDTO> signatureTemplateDTOPage = signatureTemplateRepository.findAllSignatureTemplateByUserId(pageable, userId);
+        Optional<SignatureTemplate> signatureTemplate = signatureTemplateRepository.findOneByUserIdAndActivated(userId, true);
+        SignatureTemplateDTO signatureTemplateDTO = new SignatureTemplateDTO(signatureTemplate.get()) ;
         Page<SignatureTemplateDTO> page;
+
 
         SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
         templateDTO.setWidth(355);
         templateDTO.setHeight(150);
         templateDTO.setThumbnail(this.createThumbnail(templateDTO));
-        List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
+        List<SignatureTemplateDTO> listSignatureTempDto =  new ArrayList<>();
+        listSignatureTempDto.add(signatureTemplateDTO);
+        //= new ArrayList<>(signatureTemplateDTOPage.toList());
+        //thêm mẫu mặc định
         listSignatureTempDto.add(templateDTO);
 
         page = new PageImpl<>(listSignatureTempDto);
@@ -175,4 +198,6 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         htmlContent = signatureTemplateParseService.previewSignatureTemplate(htmlTemplate, signingImageB64);
         return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, transparency, env);
     }
+
+
 }

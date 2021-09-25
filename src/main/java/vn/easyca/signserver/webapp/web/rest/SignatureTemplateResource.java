@@ -1,9 +1,17 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
+import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
+import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
+import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
@@ -39,10 +47,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,6 +106,7 @@ public class SignatureTemplateResource extends BaseResource {
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
 
     /**
      * {@code PUT  /signature-templates} : Updates an existing signatureTemplate.

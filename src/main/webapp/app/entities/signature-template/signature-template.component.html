@@ -46,6 +46,9 @@
                     <th scope="col" class="custom-middle-align" jhiTranslate="webappApp.signatureTemplate.createdDate" jhiSortBy="createdDate"><span>Created Date</span>
                         <fa-icon icon="sort"></fa-icon>
                     </th>
+                    <th scope="col" class="custom-middle-align" jhiTranslate="webappApp.signatureTemplate.activated" jhiSortBy="activated"><span>Actived</span>
+                        <fa-icon icon="sort"></fa-icon>
+                    </th>
                     <th scope="col"></th>
                 </thead>
                 <tbody>
@@ -61,6 +64,10 @@
                     <td class="custom-middle-align">{{ signatureTemplate.fullName }}</td>
                     <td class="custom-middle-align">{{signatureTemplate.createdBy}}</td>
                     <td class="custom-middle-align">{{signatureTemplate.createdDate}}</td>
+                    <td class="custom-middle-align">
+                        <fa-icon icon="check-circle" *ngIf="signatureTemplate.activated == true" style="color: green; font-size:20px "></fa-icon>
+                        <fa-icon icon="ban" *ngIf="signatureTemplate.activated == false" style="color: red; font-size:20px "></fa-icon>
+                    </td>
                     <td class="custom-middle-align">
                         <div class="btn-group">
                             <button type="submit"
