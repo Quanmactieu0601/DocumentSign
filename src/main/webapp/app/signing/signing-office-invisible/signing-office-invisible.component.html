@@ -8,12 +8,12 @@
 <div class="card mb-1">
     <div class="card-body">
         <div class="form-group col-md-12 uploadFormGroup">
-            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx"
+            <div class="drop-zone" ngx-dropzone (change)="selectFile($event)" accept=".doc, .docx, .xlsx, .xls"
                  [disableClick]="selectFiles.length!=0">
                 <ngx-dropzone-label style="font-family: Nunito">
                     <i class="fas fa-upload fa-2x"></i>
                     <br>
-                    Kéo thả file doc cần xác thực vào đây hoặc click để chọn
+                    Kéo thả file word, excel cần ký vào đây hoặc click để chọn
                 </ngx-dropzone-label>
                 <ngx-dropzone-preview class="drop-zone-preview" *ngFor="let f of selectFiles" [removable]="true"
                                       (removed)="removeFile($event)">
@@ -30,11 +30,6 @@
             <div class="form-group">
                 <label class="form-control-label" for="field_serial">Serial</label>
                 <div ngbDropdown class="d-block">
-                    <input #part type="text" id="field_serial" class="form-control" name="serial" ngbDropdownToggle
-                           value="{{serial}}"
-                           placeholder="Select serial"
-                           (keyup)="filter(part.value)"
-                    />
                     <div ngbDropdownMenu style="width: 100%; max-height: 200px; overflow: scroll; height: fit-content"
                          (scroll)="getMoreCert($event)">
                         <div *ngIf="listCertificate.length !== 0; else nothing">
@@ -46,19 +41,32 @@
                         </div>
                         <ng-template #nothing ngbDropdownItem>Don't have any certificate matches</ng-template>
                     </div>
+
+                    <input #part type="text" id="field_serial"
+                           class="form-control form-control-sm" name="serial"
+                           formControlName="serial" ngbDropdownToggle
+                           value="{{serial}}"
+                           placeholder="Select serial"
+                           (keyup)="filter(part.value)"
+
+                    />
+                    <div
+                        *ngIf="(editForm.get('serial')!.invalid && (editForm.get('serial')!.dirty || editForm.get('serial')!.touched))">
+                        <small
+                            class="form-text text-danger"
+                            *ngIf="editForm.get('serial')?.errors?.required"
+                            jhiTranslate="sign.messages.validate.serial.required"
+                        >
+                            Your serial is required.
+                        </small>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
                 <label class="form-control-label" for="field_pinCode">Pin Code</label>
-                <input type="text" class="form-control" id="field_pinCode" name="pinCode"
+                <input type="password" class="form-control" id="field_pinCode" name="pinCode"
                        formControlName="pinCode"/>
             </div>
-            <!--            <div class="form-group">-->
-            <!--                <label class="form-control-label" for="field_otpCode"-->
-            <!--                       jhiTranslate="webappApp.signatureVerify.originalData">Otp Code</label>-->
-            <!--                <input type="text" class="form-control" id="field_otpCode" name="otpCode"-->
-            <!--                       formControlName="otpCode"/>-->
-            <!--            </div>-->
         </form>
         <button class="btn btn-success btn-primary text-right" [disabled]="!selectFiles || this.selectFiles.length == 0"
                 (click)="signDoc()" style="alignment: center">
