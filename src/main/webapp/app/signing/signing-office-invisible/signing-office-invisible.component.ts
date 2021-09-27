@@ -23,6 +23,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   authSubscription?: Subscription;
   account: Account | null = null;
   fileName: string | undefined;
+  signType: string | undefined;
   resFile = '';
   serial = '';
   page = 0;
@@ -71,7 +72,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
   }
 
   selectSerial(serial: string): void {
-    this.serial = serial;
+    this.editForm.controls['serial'].setValue(serial);
   }
 
   filter(part: string): void {
@@ -88,6 +89,11 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     if (this.selectFiles.length !== 0) this.removeFile(event);
     this.selectFiles.push(...event.addedFiles);
     this.fileName = this.selectFiles[0].name;
+    if (this.fileName.toString().endsWith('.docx') || this.fileName.toString().endsWith('.doc')) {
+      this.signType = 'word';
+    } else if (this.fileName.toString().endsWith('.xlsx') || this.fileName.toString().endsWith('.xls')) {
+      this.signType = 'excel';
+    }
   }
 
   removeFile(event: any): void {
@@ -109,7 +115,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         tokenInfo: {
           pin: this.editForm.get(['pinCode'])!.value,
           // serial: this.editForm.get(['serial'])!.value,
-          serial: this.serial,
+          serial: this.editForm.get(['serial'])!.value,
         },
         optional: {
           otpCode: '621143',
@@ -119,10 +125,17 @@ export class SigningOfficeInvisibleComponent implements OnInit {
         if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
         this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
         const byteArray = this.base64ToArrayBuffer(this.resFile);
-        saveAs(
-          new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
-          Date.now().toString()
-        );
+        if (this.signType === 'word') {
+          saveAs(
+            new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
+            Date.now().toString()
+          );
+        } else {
+          saveAs(
+            new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }),
+            Date.now().toString()
+          );
+        }
       });
     };
   }
