@@ -5,7 +5,8 @@
   padding: inherit;
   border: 1px dashed #3a3b45;
   border-radius: 12px;
-  width: 100%;
+  margin-left: 50px;
+  margin-right: 200px;
   .dragndrop,
   .icon {
     display: none;
@@ -78,13 +79,23 @@ img {
   border-radius: 5px;
 }
 
-//.verify {
-//  position: absolute;
-//  right: 0px;
-//  top: 10px;
-//  height: inherit;
-//  width: 180px;
-//}
+.verify {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  height: inherit;
+  width: 180px;
+}
+
+.captcha {
+  position: relative;
+}
+
+input {
+  position: absolute;
+  top: 60px;
+  width: 100px;
+}
 
 .captcha:hover .reload {
   opacity: 1;
@@ -102,4 +113,17 @@ img {
 
 .btn-action {
   width: 100%;
+}
+
+.reload {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  background-image: none;
+}
+button {
+  position: absolute;
+  top: 120px;
+  margin: auto;
+  width: 100px;
 }
