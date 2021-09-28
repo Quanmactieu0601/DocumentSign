@@ -5,7 +5,8 @@
   padding: inherit;
   border: 1px dashed #3a3b45;
   border-radius: 12px;
-  width: 100%;
+  margin-left: 50px;
+  margin-right: 200px;
   .dragndrop,
   .icon {
     display: none;
@@ -74,6 +75,15 @@
   background-image: none !important;
 }
 
+img.img_captcha {
+  position: absolute;
+  border-radius: 5px;
+}
+
+.captcha {
+  position: relative;
+}
+
 .captcha:hover .reload {
   opacity: 1;
 }
@@ -90,4 +100,36 @@
 
 .btn-action {
   width: 100%;
+}
+
+.verify {
+  position: absolute;
+  right: 0px;
+  top: 10px;
+  height: inherit;
+  width: 180px;
+}
+
+input.text_captcha {
+  position: absolute;
+  top: 60px;
+  width: 100px;
+}
+
+.reload {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  background-image: none;
+}
+
+button.submit {
+  position: absolute;
+  top: 120px;
+  margin: auto;
+  width: 100px;
+}
+
+.text-unsuccess {
+  color: #b12424 !important;
 }
