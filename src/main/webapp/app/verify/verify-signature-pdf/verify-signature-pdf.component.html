@@ -28,12 +28,12 @@
             <br>
             <div class="verify col">
                 <div class="captcha">
-                    <img alt="captcha" src="{{img}}" width="90"/>
-                    <i class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></i>
+                    <img class="img_captcha" alt="captcha" src="{{img}}" />
+                    <div class="reload fas fa-sync-alt" (click)="reloadCaptcha()"></div>
                 </div>
-                <input type="text" class="form-control" [(ngModel)]="text">
+                <input type="text" class="form-control text_captcha" [(ngModel)]="text">
                 <button
-                    class="btn btn-success"
+                    class="btn btn-success submit"
                     [disabled]="!selectFiles || this.selectFiles.length == 0"
                     (click)="verifyPdf()">
                     <span jhiTranslate="webappApp.signatureVerify.verify">Verify</span>
