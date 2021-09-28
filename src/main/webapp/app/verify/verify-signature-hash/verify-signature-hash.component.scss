@@ -9,3 +9,29 @@
     margin-top: 10px;
   }
 }
+
+img.img_captcha {
+  position: absolute;
+  border-radius: 5px;
+}
+
+.captcha {
+  position: relative;
+}
+
+input.text_captcha {
+  position: absolute;
+  top: 60px;
+  width: 100px;
+}
+
+.captcha:hover .reload {
+  opacity: 1;
+}
+
+.reload {
+  position: absolute;
+  text-align: center;
+  opacity: 0;
+  background-image: none;
+}
