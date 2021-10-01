@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.service.impl.request;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -23,6 +24,7 @@ import java.util.*;
 @Service
 @Transactional
 public class PDFSigningRequest implements SigningWrapRequestHandle {
+    public boolean isSignatureImage = false;
     private final int RESULT_OK = 0;
     private final int RESULT_ERROR = 1;
 
@@ -60,6 +62,9 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
     }
 
     public void validate(VisibleRequestContent visibleRequestContent) throws ApplicationException {
+        if (Strings.isNullOrEmpty(visibleRequestContent.getImageSignature())) {
+            throw new ApplicationException("Yêu cầu ảnh chữ ký.");
+        }
         if (visibleRequestContent.getLocation() == null) {
             throw new ApplicationException("Thiếu trường location - vị trí ảnh chữ ký ");
         }
