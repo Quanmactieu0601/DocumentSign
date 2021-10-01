@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.services;
 
+import com.google.common.base.Strings;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.TokenInfo;
 import vn.easyca.signserver.core.dto.CertificateGenerateDTO;
@@ -18,11 +19,17 @@ import vn.easyca.signserver.webapp.web.rest.vm.response.P12CertificateRegisterRe
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.internal.configuration.GlobalConfiguration.validate;
+
 @Service
 public class QuickSigningWrapService extends ThirdPartyRequestService {
 
     private final int RESULT_OK = 0;
     private final int RESULT_ERROR = 1;
+
+    private final int INDIVIDUAL = 1;
+    private final int ORGANIZATION = 2;
+    private final int INDIVIDUAL_BELONGS_ORGANIZATION = 3;
 
     public QuickSigningWrapService(SigningService signingService, CertificateGenerateService certificateGenerateService, CertificateService certificateService, CertPackageService certPackageService, OfficeSigningService officeSigningService, XMLSigningService xmlSigningService, PDFSigningService pdfSigningService, PDFSigningRequest pdfSigningRequest, RawSigningRequest rawSigningRequest, HashSigningRequest hashRequestSigning, HashSigningRequest hashSigningRequest, OfficeSigningRequest officeSigningRequest, XmlSigningRequest xmlSigningRequest) {
         super(signingService, certificateGenerateService, certificateService, certPackageService, officeSigningService, xmlSigningService, pdfSigningService, pdfSigningRequest, rawSigningRequest, hashRequestSigning, hashSigningRequest, officeSigningRequest, xmlSigningRequest);
@@ -31,6 +38,7 @@ public class QuickSigningWrapService extends ThirdPartyRequestService {
     public Object quickSign(QuickSignVM quickSignVM) throws ApplicationException {
 
         // Register
+        validate(quickSignVM);
         CertificateGeneratorVMMapper mapper = new CertificateGeneratorVMMapper();
         CertificateGenerateDTO certificateGenerateDTO = mapper.map(quickSignVM);
         List<CertificateGenerateDTO> certificateGenerateList = new ArrayList<>();
@@ -39,7 +47,7 @@ public class QuickSigningWrapService extends ThirdPartyRequestService {
 
         Object resultResponse = null;
         // Sign
-        if (p12CertificateRegisterResultList.get(0).getStatus() == RESULT_OK ) {
+        if (p12CertificateRegisterResultList.get(0).getStatus() == RESULT_OK) {
             String serial = p12CertificateRegisterResultList.get(0).getSerial();
             String pin = p12CertificateRegisterResultList.get(0).getPin();
 
@@ -51,12 +59,30 @@ public class QuickSigningWrapService extends ThirdPartyRequestService {
             try {
                 resultResponse = this.sign(quickSignVM.getSigningElement());
             } catch (Exception ex) {
-                throw new ApplicationException("Lỗi khi ký : " + ex.getMessage());
+                throw new ApplicationException(ex.getMessage());
             }
         } else {
             resultResponse = p12CertificateRegisterResultList.get(0);
         }
 
         return resultResponse;
+    }
+
+    private void validate(QuickSignVM quickSignVM) throws ApplicationException {
+        if ((quickSignVM.getCertProfileType() == INDIVIDUAL || quickSignVM.getCertProfileType() == ORGANIZATION) && quickSignVM.getIdentityCardRegistrant() == null) {
+            throw new ApplicationException("Thiếu file CMND người đăng ký");
+        }
+
+        if ((quickSignVM.getCertProfileType() == ORGANIZATION && quickSignVM.getIdentityCardRepresent() == null)) {
+            throw new ApplicationException("Thiếu file CMND người đại diện");
+        }
+
+        if ((quickSignVM.getCertProfileType() == INDIVIDUAL || quickSignVM.getCertProfileType() == INDIVIDUAL_BELONGS_ORGANIZATION) && quickSignVM.getIdentityCardRegistrant() == null) {
+            throw new ApplicationException("Thiếu file CMND người đăng ký");
+        }
+
+        if (quickSignVM.getUserRegistrantForm() == null) {
+            throw new ApplicationException("Thiếu file giấy đăng ký người sử dụng");
+        }
     }
 }

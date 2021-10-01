@@ -60,7 +60,6 @@ public class ThirdPartyRequestService {
             throw new ApplicationException("Thiếu tokenInfo");
         }
         CertificateDTO certificateDTO = null;
-
         try{
              certificateDTO = certificateService.getBySerial(tokenInfo.getSerial());
         } catch (ApplicationException ex) {
@@ -120,11 +119,11 @@ public class ThirdPartyRequestService {
             } catch (Exception e) {
                 String message = e.getMessage();
                 if (e.getMessage().contains("Keystore is not initialized")) {
-                    message = "Mã pin không đúng, yêu cầu kiểm tra lại";
+                    message = "Sai mã pin.";
                 }
 
                 if (e.getMessage().contains("The certificate is not found")) {
-                    message = "Không tìm thấy thông tin chứng thư số, yêu cầu kiểm tra lại.";
+                    message = "Số serial không tồn tại.";
                 }
 
                 listResultSigningResponse.add(new SigningResult("", request.getKey(), message, -1));
@@ -140,6 +139,7 @@ public class ThirdPartyRequestService {
     }
 
     private void validateSigningRequest(SigningContainerRequest signingRequest) throws ApplicationException {
+
         if (signingRequest.getRequest() == null) {
             throw new ApplicationException("Thiếu trường request.");
         }
