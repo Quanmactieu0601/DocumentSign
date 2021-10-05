@@ -32,6 +32,7 @@ public interface SignatureTemplateService {
      */
     Page<SignatureTemplateDTO> findAll(Pageable pageable);
 
+    Optional<SignatureTemplate[]> findAllTemplates() throws ApplicationException;
 
     /**
      * Get the "id" signatureTemplate.
