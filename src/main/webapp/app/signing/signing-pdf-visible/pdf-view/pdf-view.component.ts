@@ -142,7 +142,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
         0
       );
     } else {
-      const pageFirst = this.pdfComponent!.pdfViewer._pages[1];
+      const pageFirst = document.getElementsByClassName('page')[1] as HTMLElement;
       $('#signature-box').animate(
         {
           left: 500,
