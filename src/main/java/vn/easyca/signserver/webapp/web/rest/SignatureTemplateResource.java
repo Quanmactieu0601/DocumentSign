@@ -163,10 +163,10 @@ public class SignatureTemplateResource extends BaseResource {
     }
 
     @GetMapping("/signature-templates/getAllTemplates")
-    public ResponseEntity<BaseResponseVM> getAllSignatureTemplates()  throws IOException, ApplicationException {
+    public ResponseEntity<BaseResponseVM> getAllSignatureTemplatesByUserLoggedIn()  throws IOException, ApplicationException {
         try {
             log.debug("REST request to get all templates");
-            Optional<SignatureTemplate[]> templates = signatureTemplateService.findAllTemplates();
+            Optional<SignatureTemplate[]> templates = signatureTemplateService.findAllTemplatesByUserLoggedIn();
             asyncTransactionService.newThread("/signature-templates/getAllTemplates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(templates));

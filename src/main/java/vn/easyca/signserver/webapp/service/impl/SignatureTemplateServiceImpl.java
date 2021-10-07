@@ -134,7 +134,7 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     }
 
     @Override
-    public Optional<SignatureTemplate[]> findAllTemplates() throws ApplicationException {
+    public Optional<SignatureTemplate[]> findAllTemplatesByUserLoggedIn() throws ApplicationException {
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
         Optional<SignatureTemplate[]> signatureTemplates = signatureTemplateRepository.findAllByUserId(userEntity.get().getId());
         return signatureTemplates;
