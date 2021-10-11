@@ -56,8 +56,8 @@
                 </div>
                 <div class="form-group">
                     <label class="captcha-text-label" for="captcha-text">Captcha</label>
-                    <div class="row">
-                        <div class="col-md-2"><img alt="captcha" src="{{img}}"/>
+                    <div class="row captcha">
+                        <div class="col-md-2"><img alt="captcha" class="img_captcha" src="{{img}}"/>
                             <span class="reload" (click)="reloadCaptcha()"><fa-icon icon="sync"></fa-icon></span>
                         </div>
                         <div class="col-md-3 mt-10"><input id="captcha-text" type="text" class="form-control" formControlName="text"/></div>
