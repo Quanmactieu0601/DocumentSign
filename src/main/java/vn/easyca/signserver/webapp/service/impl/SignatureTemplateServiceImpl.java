@@ -4,6 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.PageImpl;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.SignatureTemplateParserType;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.service.CoreParserService;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParserFactory;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 import java.io.IOException;
@@ -132,6 +134,14 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
     }
 
     @Override
+    public Optional<SignatureTemplate[]> findAllTemplatesByUserLoggedIn() throws ApplicationException {
+        Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
+        Optional<SignatureTemplate[]> signatureTemplates = signatureTemplateRepository.findAllByUserId(userEntity.get().getId());
+        return signatureTemplates;
+    }
+
+
+    @Override
     @Transactional(readOnly = true)
     public Page<SignatureTemplateDTO> findAllWithUserId(Pageable pageable, Long userId) throws ApplicationException {
         log.debug("Request to get SignatureImage with id : {}", userId);
@@ -139,8 +149,8 @@ public class SignatureTemplateServiceImpl implements SignatureTemplateService {
         Page<SignatureTemplateDTO> page;
 
         SignatureTemplateDTO templateDTO = new SignatureTemplateDTO();
-        templateDTO.setWidth(355);
-        templateDTO.setHeight(150);
+        templateDTO.setWidth(180);
+        templateDTO.setHeight(125);
         templateDTO.setThumbnail(this.createThumbnail(templateDTO));
         List<SignatureTemplateDTO> listSignatureTempDto = new ArrayList<>(signatureTemplateDTOPage.toList());
         listSignatureTempDto.add(templateDTO);
