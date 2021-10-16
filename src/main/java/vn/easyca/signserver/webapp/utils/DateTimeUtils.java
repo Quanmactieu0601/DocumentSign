@@ -15,7 +15,7 @@ public class DateTimeUtils {
     public final static String ddMMyyyy_HHmmss = "dd/MM/yyyy HH:mm:ss";
     public final static String ddMMyyyy = "dd/MM/yyyy";
     public final static String HHmmss = "HH:mm:ss";
-    public final static String timeZone = "+7:00";
+    public final static String timeZone = "+07:00";
     public static Date parse(String strDate) throws ParseException {
 
         SimpleDateFormat formatter = new SimpleDateFormat(DEFAULT_FORMAT);
