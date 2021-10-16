@@ -19,7 +19,10 @@ public class DefaultSignatureTemplateParserImpl implements SignatureTemplatePars
                 .replaceFirst("_signer_", CN)
                 .replaceFirst("_signatureImage_", signatureImage)
                 .replaceFirst("_timeSign_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss_ddMMyyyy))
-                .replaceFirst("_shortTime_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.DEFAULT_FORMAT));
+                .replaceFirst("_shortTime_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.DEFAULT_FORMAT))
+                .replaceFirst("_vnDate_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.ddMMyyyy))
+                .replaceFirst("_hour_", DateTimeUtils.getCurrentTimeStampWithFormat(DateTimeUtils.HHmmss))
+                .replaceFirst("_timeZone_",  DateTimeUtils.timeZone);
             return htmlContent;
         } catch (Exception ex) {
             throw new ApplicationException(String.format("Error when build template: subjectDN: %s - ex: %s", subjectDN, ex.getMessage()), ex);
