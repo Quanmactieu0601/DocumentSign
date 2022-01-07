@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import com.google.common.base.Strings;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -203,7 +204,6 @@ public class CertificateService {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
             if (signatureImage.isPresent()) {
                 signatureImageData = signatureImage.get().getImgData();
-                signatureImageData = ParserUtils.convertImageToTransparent(signatureImageData);
             }
         }
 
@@ -233,6 +233,11 @@ public class CertificateService {
         SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
         String htmlTemplate = signatureTemplate.getHtmlTemplate();
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+
+
+        if (signatureTemplate.getTransparency() && !Strings.isNullOrEmpty(signatureImageData)) {
+            signatureImageData = ParserUtils.convertImageToTransparent(signatureImageData);
+        }
 
         htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         width = signatureTemplate.getWidth();
