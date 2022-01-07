@@ -182,7 +182,7 @@ public class CertificateService {
     }
 
 
-    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException {
+    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException, IOException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
@@ -201,8 +201,10 @@ public class CertificateService {
         Long signImageId = certificateDTO.getSignatureImageId();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
-            if (signatureImage.isPresent())
+            if (signatureImage.isPresent()) {
                 signatureImageData = signatureImage.get().getImgData();
+                signatureImageData = ParserUtils.convertImageToTransparent(signatureImageData);
+            }
         }
 
         Long DEFAULT_OPTION = 0L;
