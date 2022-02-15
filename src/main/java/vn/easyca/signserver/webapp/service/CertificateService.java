@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import com.google.common.base.Strings;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -182,7 +183,7 @@ public class CertificateService {
     }
 
 
-    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException {
+    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException, IOException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
@@ -201,8 +202,9 @@ public class CertificateService {
         Long signImageId = certificateDTO.getSignatureImageId();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
-            if (signatureImage.isPresent())
+            if (signatureImage.isPresent()) {
                 signatureImageData = signatureImage.get().getImgData();
+            }
         }
 
         Long DEFAULT_OPTION = 0L;
@@ -231,6 +233,11 @@ public class CertificateService {
         SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
         String htmlTemplate = signatureTemplate.getHtmlTemplate();
         SignatureTemplateParseService signatureTemplateParseService = signatureTemplateParserFactory.resolve(signatureTemplate.getCoreParser());
+
+
+        if (signatureTemplate.getTransparency() && !Strings.isNullOrEmpty(signatureImageData)) {
+            signatureImageData = ParserUtils.convertImageToTransparent(signatureImageData);
+        }
 
         htmlContent = signatureTemplateParseService.buildSignatureTemplate(subjectDN, htmlTemplate, signatureImageData);
         width = signatureTemplate.getWidth();
