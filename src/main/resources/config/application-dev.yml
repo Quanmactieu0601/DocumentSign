@@ -45,14 +45,10 @@ spring:
     #    username: easysign_test
     #    password: easysign999
 
-    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: thanhld
-    #    password: Th@nhSignE@sy#1
+    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: thanhld
+    password: Th@nhSignE@sy#1
 
-    # SDS - Cau hinh Denmo
-    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign_demo
-    password: easysign@demo1#%
     # db configuration for SQL SERVER
     #    url: jdbc:sqlserver://172.16.10.66:1433;database=signserver_bvq11
     #    username: sdshd
@@ -86,7 +82,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: F:/image
+      location: D:/image
 server:
   port: 8080
 #  ssl:
