@@ -7,9 +7,16 @@ import { VerifySignaturePdfComponent } from 'app/verify/verify-signature-pdf/ver
 import { VerifySignatureRawComponent } from 'app/verify/verify-signature-raw/verify-signature-raw.component';
 import { WebappSharedModule } from 'app/shared/shared.module';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { VerifySignatureXmlComponent } from 'app/verify/verify-signature-xml/verify-signature-xml.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(verifyRoute), NgxDropzoneModule],
-  declarations: [VerifySignatureHashComponent, VerifySignatureDocComponent, VerifySignaturePdfComponent, VerifySignatureRawComponent],
+  declarations: [
+    VerifySignatureHashComponent,
+    VerifySignatureDocComponent,
+    VerifySignaturePdfComponent,
+    VerifySignatureRawComponent,
+    VerifySignatureXmlComponent,
+  ],
 })
 export class VerifyModule {}

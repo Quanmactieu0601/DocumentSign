@@ -23,6 +23,18 @@ export class VerifyService {
     return this.http.request(req);
   }
 
+  verifyXml(file: File): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+
+    const req = new HttpRequest('POST', `${this.resourceUrl}/xml`, formData, {
+      reportProgress: true,
+      responseType: 'json',
+    });
+
+    return this.http.request(req);
+  }
+
   verifyPdf(file: File): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file);

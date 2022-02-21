@@ -60,9 +60,9 @@ spring:
     #    password: easysign999
 
     # SDS - Cau hinh Denmo
-    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: easysign_demo
-    #    password: easysign@demo1#%
+    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign_demo
+    password: easysign@demo1#%
 
     # BV Q11 - cau hinh db IP VIP
     #    url: jdbc:mariadb://172.16.99.16:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -95,9 +95,9 @@ spring:
     #    password: HungVuong@2o2!
 
     # BV Hung Vuong - cau hinh DB Prod
-    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign
-    password: bvhungvuong#2o2!
+    #    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: bvhungvuong#2o2!
 
     # BV Benh Nhiet Doi - cau hinh DB Prod
     #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
