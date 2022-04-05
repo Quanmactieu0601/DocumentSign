@@ -17,6 +17,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.*;
 
+import org.xml.sax.InputSource;
 import sun.security.provider.certpath.OCSP;
 import sun.security.x509.X509CertImpl;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -47,9 +48,7 @@ import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.*;
 import java.security.cert.*;
 import java.security.cert.Certificate;
@@ -392,14 +391,13 @@ public class SignatureVerificationService {
             List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
             List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
 
+            Reader reader = new InputStreamReader(stream,"UTF-8");
+            InputSource is = new InputSource(reader);
+            is.setEncoding("UTF-8");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
-            Document doc = dbf.newDocumentBuilder().parse(stream);
+            Document doc = dbf.newDocumentBuilder().parse(is);
             doc.getDocumentElement().normalize();
-
-            Element rootElement = doc.getDocumentElement();
-
-
 
             NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
             if (nl.getLength() == 0) {
@@ -410,18 +408,6 @@ public class SignatureVerificationService {
             while(node.getParentNode() .getParentNode()!= null){
                 node = node.getParentNode();
             }
-//            NodeList content = node.getChildNodes();
-//            int i=0;
-//            while (content.item(i).getLocalName()==null) i++;
-//
-//            Element context = (Element) content.item(i);
-//            if (context.getAttribute("Id") != "") {
-//                context.setIdAttribute("Id", true);
-//            } else if (context.getAttribute("ID") != "") {
-//                context.setIdAttribute("ID", true);
-//            } else if (context.getAttribute("id") != "") {
-//                context.setIdAttribute("id", true);
-//            }
 
             XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
             DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(0));
@@ -453,10 +439,6 @@ public class SignatureVerificationService {
                 }
             }
             result.setSignatureVfDTOs(signatureVfDTOList);
-
-
-
-
             return result;
         }catch (Exception ex){
             throw new ApplicationException("Has error when verify Xml file", ex);
