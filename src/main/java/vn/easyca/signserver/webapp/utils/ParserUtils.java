@@ -180,8 +180,8 @@ public class ParserUtils {
                 prefixCommand = "";
             }
 
-            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
-                prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
+            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s --quality %s -f png  %s %s",
+                prefixCommand, height, width, 80, fileInputPath, fileOutputPath);
             cmdLine = CommandLine.parse(command);
 
 
@@ -194,6 +194,9 @@ public class ParserUtils {
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
             String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
+            if (transparency) {
+                imageContentExport = ParserUtils.convertImageToTransparent(imageContentExport);
+            }
             Files.deleteIfExists(Paths.get(fileOutputPath));
 
             return imageContentExport;
