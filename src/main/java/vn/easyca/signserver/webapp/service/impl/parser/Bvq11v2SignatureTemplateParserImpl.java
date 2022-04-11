@@ -10,7 +10,7 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
 public class Bvq11v2SignatureTemplateParserImpl implements SignatureTemplateParseService {
-    final String regexCN = "CN=\"(.*, [^\"]+)\"|CN=([^,]+)";
+    final String regexCN = "CN=\"([^\"]+)|CN=([^,]+)|CN=([^,]+)";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage) throws ApplicationException {
