@@ -389,7 +389,7 @@ public class SignatureVerificationService {
 
             VerificationResponseDTO result = new VerificationResponseDTO();
             List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
-            List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
+
 
             Reader reader = new InputStreamReader(stream,"UTF-8");
             InputSource is = new InputSource(reader);
@@ -404,40 +404,44 @@ public class SignatureVerificationService {
                 throw new Exception("Cannot find Signature element");
             }
 
-            Node node = nl.item(0);
-            while(node.getParentNode() .getParentNode()!= null){
-                node = node.getParentNode();
-            }
+            for (int i = 0; i < nl.getLength(); i++) {
+                Node node = nl.item(i);
+                while(node.getParentNode() .getParentNode()!= null){
+                    node = node.getParentNode();
+                }
 
-            XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
-            DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(0));
-            setIdAttribute(valContext,node);
-            XMLSignature signature = fac.unmarshalXMLSignature(valContext);
-            boolean coreValidity = signature.validate(valContext);
+                XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+                DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(i));
+                setIdAttribute(valContext,node);
+                XMLSignature signature = fac.unmarshalXMLSignature(valContext);
+                boolean coreValidity = signature.validate(valContext);
 
-            //get signature value
-            KeyInfo keyInfo = signature.getKeyInfo();
-            Iterator ki = keyInfo.getContent().iterator();
-            while(ki.hasNext()){
-                XMLStructure info = (XMLStructure) ki.next();
-                if(info instanceof X509Data){
-                    X509Data x509Data = (X509Data) info;
-                    Iterator xi = x509Data.getContent().iterator();
-                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
-                    signatureVfDTO.setIntegrity(coreValidity);
+                //get signature value
+                KeyInfo keyInfo = signature.getKeyInfo();
+                Iterator ki = keyInfo.getContent().iterator();
+                while(ki.hasNext()){
+                    XMLStructure info = (XMLStructure) ki.next();
+                    List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
+                    if(info instanceof X509Data){
+                        X509Data x509Data = (X509Data) info;
+                        Iterator xi = x509Data.getContent().iterator();
+                        SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                        signatureVfDTO.setIntegrity(coreValidity);
 
-                    while(xi.hasNext()){
-                        Object o = xi.next();
-                        if (o instanceof X509Certificate) {
-                            X509Certificate cert = (X509Certificate) o;
-                            certificateVfDTOList.add(getCertificateInfoXml(cert));
-                            signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                        while(xi.hasNext()){
+                            Object o = xi.next();
+                            if (o instanceof X509Certificate) {
+                                X509Certificate cert = (X509Certificate) o;
+                                certificateVfDTOList.add(getCertificateInfoXml(cert, coreValidity));
+                                signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                            }
                         }
-                    }
-                    signatureVfDTOList.add(signatureVfDTO);
+                        signatureVfDTOList.add(signatureVfDTO);
 
+                    }
                 }
             }
+
             result.setSignatureVfDTOs(signatureVfDTOList);
             return result;
         }catch (Exception ex){
@@ -471,7 +475,7 @@ public class SignatureVerificationService {
 
 
 
-    private CertificateVfDTO getCertificateInfoXml(X509Certificate cert) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, ApplicationException, CertPathValidatorException {
+    private CertificateVfDTO getCertificateInfoXml(X509Certificate cert, boolean integrity) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, ApplicationException, CertPathValidatorException {
         CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
@@ -485,8 +489,12 @@ public class SignatureVerificationService {
 
         // Check if a certificate is still valid now
         try {
-            cert.checkValidity();
-            currentStatus = CertStatus.VALID;
+            if (integrity) {
+                cert.checkValidity();
+                currentStatus = CertStatus.VALID;
+            } else {
+                currentStatus = CertStatus.INVALID;
+            }
         } catch (CertificateExpiredException e) {
             currentStatus = CertStatus.EXPIRED;
         } catch (CertificateNotYetValidException e) {

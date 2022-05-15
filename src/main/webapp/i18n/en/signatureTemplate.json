@@ -44,6 +44,7 @@
       }
     },
     "signatureVerify": {
+      "countingSignTurn": "Total number of signatures",
       "title": "Verify Signature",
       "signature": "Base64 Signature",
       "originalData": "Original Data",
