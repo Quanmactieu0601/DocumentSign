@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { saveAs } from 'file-saver';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
 @Component({
   selector: 'jhi-upload-p12-certificate',
   templateUrl: './upload-p12-certificate.component.html',
@@ -57,7 +58,12 @@ export class UploadP12CertificateComponent implements OnInit {
 
       if (response.status === ResponseBody.SUCCESS) {
         const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
-        saveAs(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), filename);
+        saveAs(
+          new Blob([FileDataUtil.base64ToArrayBuffer(response.data)], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          }),
+          filename
+        );
       }
     });
   }
