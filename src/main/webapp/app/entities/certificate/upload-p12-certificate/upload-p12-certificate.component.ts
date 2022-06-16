@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import { saveAs } from 'file-saver';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ResponseBody } from 'app/shared/model/response-body';
 @Component({
   selector: 'jhi-upload-p12-certificate',
   templateUrl: './upload-p12-certificate.component.html',
@@ -19,6 +20,7 @@ export class UploadP12CertificateComponent implements OnInit {
     private certificateService: CertificateService,
     private toastService: ToastrService,
     private translate: TranslateService,
+    private toastrService: ToastrService,
     public activeModal: NgbActiveModal
   ) {}
 
@@ -37,12 +39,25 @@ export class UploadP12CertificateComponent implements OnInit {
 
     this.currentFile = this.selectedFiles;
 
-    this.certificateService.uploadP12(this.currentFile).subscribe((response: any) => {
-      if (response.type === 0) {
-        this.progress = 100;
-      } else {
-        saveAs(new Blob([response.body], { type: 'application/zip' }), 'SuccessAndError.Zip');
-        this.transformVariable(true);
+    this.certificateService.uploadP12(this.currentFile).subscribe((response: ResponseBody) => {
+      // if (response.type === 0) {
+      //   this.progress = 100;
+      // } else {
+      //   saveAs(new Blob([response.body], { type: 'application/zip' }), 'SuccessAndError.Zip');
+      //   this.transformVariable(true);
+      // }
+
+      // if (response.byteLength === 0) {
+      //   this.toastrService.error(this.translate.instant('userManagement.alert.fail.csrExported'));
+      // } else {
+      //   const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
+      //   saveAs(new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), filename);
+      //   this.toastrService.success(this.translate.instant('userManagement.alert.success.csrExported'));
+      // }
+
+      if (response.status === ResponseBody.SUCCESS) {
+        const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
+        saveAs(new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), filename);
       }
     });
   }
