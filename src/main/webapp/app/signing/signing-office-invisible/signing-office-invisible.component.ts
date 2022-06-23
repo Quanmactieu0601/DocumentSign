@@ -10,6 +10,7 @@ import { saveAs } from 'file-saver';
 import { FormBuilder } from '@angular/forms';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ICertificate } from 'app/shared/model/certificate.model';
+import { FileDataUtil } from 'app/shared/util/file-data.util';
 
 @Component({
   selector: 'jhi-signing-office-invisible',
@@ -124,7 +125,7 @@ export class SigningOfficeInvisibleComponent implements OnInit {
       this.signingService.signDocInvisible(request).subscribe((res: any) => {
         if (JSON.parse(res).status === -1) this.toastrService.error(JSON.parse(res).msg);
         this.resFile = JSON.parse(res).data.responseContentList[0].signedDocument;
-        const byteArray = this.base64ToArrayBuffer(this.resFile);
+        const byteArray = FileDataUtil.base64ToArrayBuffer(this.resFile);
         if (this.signType === 'word') {
           saveAs(
             new Blob([byteArray], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }),
@@ -144,15 +145,5 @@ export class SigningOfficeInvisibleComponent implements OnInit {
     return btoa(new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), ''))
       .toString()
       .replace('data:application/pdf;base64,', '');
-  }
-
-  base64ToArrayBuffer(base64: any): ArrayBuffer {
-    const binaryString = window.atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
-    }
-    return bytes.buffer;
   }
 }

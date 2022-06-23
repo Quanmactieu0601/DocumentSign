@@ -11,7 +11,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +28,7 @@ public class ParserUtils {
             final Matcher matcher = pattern.matcher(contentInformation);
             String CN = null;
             while (matcher.find()) {
-                for (int i = 1; i <= matcher.groupCount(); i++ ) { // get last group result 
+                for (int i = 1; i <= matcher.groupCount(); i++ ) { // get last group result
                     if (matcher.group(i) != null) {
                         CN = matcher.group(i);
                     }
@@ -92,6 +92,58 @@ public class ParserUtils {
         }
     }
 
+    public static String convertImageToTransparent(String base64Image) throws IOException {
+        byte[] imageBytes = javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Image);
+        BufferedImage source = ImageIO.read(new ByteArrayInputStream(imageBytes));
+        final BufferedImage image = alphaProcess(source);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", baos);
+        byte[] bytes = baos.toByteArray();
+        String encoded = Base64.getEncoder().encodeToString(bytes);
+        return encoded;
+    }
+
+    public static BufferedImage alphaProcess(BufferedImage bufferedImage) {
+        //Get the width and height of the source image
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+        System.out.println(width+" "+height);
+        //Instantiate a picture of the same size and set the type to BufferedImage.TYPE_4BYTE_ABGR, which supports rgb images for alpha channels
+        BufferedImage resImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+
+        double grayMean = 0;
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int rgb = bufferedImage.getRGB(i,j);
+                int r = (0xff&rgb);
+                int g = (0xff&(rgb>>8));
+                int b = (0xff&(rgb>>16));
+                //This is the formula for calculating the gray value
+                grayMean += (r*0.299+g*0.587+b*0.114);
+            }
+        }
+        //Calculate average gray level
+        grayMean = grayMean/(width*height);
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                int rgb = bufferedImage.getRGB(i,j);
+                //An int is 32 bits, which is stored in java in the order of abgr, i.e., alpha is the first 8 bits, and r is the last 8 bits, so you can get the rgb value as follows
+                int r = (0xff&rgb);
+                int g = (0xff&(rgb>>8));
+                int b = (0xff&(rgb>>16));
+                double gray = (r*0.299+g*0.587+b*0.114);
+                //If the gray value is greater than the average gray value previously requested, set its alpha to 0, and the following should be r g b = R + (g << 8) + (b << 16) + (0 << 24);
+                if (gray>grayMean){
+                    rgb = r + (g << 8) + (b << 16);
+                }
+                resImage.setRGB(i,j,rgb);
+            }
+        }
+        //ok, the result is a transparent BufferedImage with a light background, which can be written as a file in the way mentioned in Grayscale
+        return resImage;
+    }
+
 
     public static String convertHtmlContentToImageByProversion(String htmlContent, Integer width, Integer height, boolean transparency, Environment env) throws ApplicationException {
         String pathProject = env.getProperty("spring.servlet.multipart.location");
@@ -128,20 +180,23 @@ public class ParserUtils {
                 prefixCommand = "";
             }
 
-            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s  %s --quality %s -f png  %s %s",
-                prefixCommand, height, width, transparency ? " --transparent " : "", 80, fileInputPath, fileOutputPath);
-            Process proc = Runtime.getRuntime().exec(command);
-            proc.waitFor(); // wait for process running command finished.
-            close(proc);
+
+            String command = String.format("%s wkhtmltoimage --crop-h %s --crop-w %s --quality %s -f png  %s %s",
+                prefixCommand, height, width, 80, fileInputPath, fileOutputPath);
+            cmdLine = CommandLine.parse(command);
+
 
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
             byte[] imageContent = Files.readAllBytes(Paths.get(fileOutputPath));
             String imageContentExport = Base64.getEncoder().encodeToString(imageContent);
+            if (transparency) {
+                imageContentExport = ParserUtils.convertImageToTransparent(imageContentExport);
+            }
             Files.deleteIfExists(Paths.get(fileOutputPath));
 
             return imageContentExport;
-        } catch (IOException | InterruptedException ioe) {
+        } catch (IOException ioe) {
             throw new ApplicationException("wkhtmltoimage - Convert html to image error: ", ioe);
         }
     }

@@ -13,6 +13,7 @@ import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.domain.SignatureTemplate;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.service.CertificateService;
@@ -172,6 +173,27 @@ public class SignatureTemplateResource extends BaseResource {
         }
     }
 
+    @GetMapping("/signature-templates/getAllTemplates")
+    public ResponseEntity<BaseResponseVM> getAllSignatureTemplatesByUserLoggedIn()  throws IOException, ApplicationException {
+        try {
+            log.debug("REST request to get all templates");
+            Optional<SignatureTemplate[]> templates = signatureTemplateService.findAllTemplatesByUserLoggedIn();
+            asyncTransactionService.newThread("/signature-templates/getAllTemplates", TransactionType.BUSINESS, Action.GET_INFO, Extension.NONE, Method.GET,
+                TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(templates));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
+        } finally {
+            asyncTransactionService.newThread("/api/signature-templates/getAllTemplates", TransactionType.BUSINESS, Action.GET_INFO, Extension.SIGN_TEMPLATE, Method.GET,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
 
     /**
      * {@code GET  /signature-templates/:id} : get the "id" signatureTemplate.

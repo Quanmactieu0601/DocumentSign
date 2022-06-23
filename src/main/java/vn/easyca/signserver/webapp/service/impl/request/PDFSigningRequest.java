@@ -19,6 +19,7 @@ import vn.easyca.signserver.webapp.service.dto.CertPackageDTO;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.web.rest.vm.response.SigningResult;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -38,7 +39,7 @@ public class PDFSigningRequest implements SigningWrapRequestHandle {
     }
 
     @Override
-    public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws ApplicationException {
+    public SigningResult sign(Object requestValue, TokenInfoDTO tokenInfo, OptionalDTO optional, String key) throws ApplicationException, IOException {
         VisibleRequestContent visibleRequestContent = null;
         try {
             visibleRequestContent = mapper.convertValue(requestValue, VisibleRequestContent.class);

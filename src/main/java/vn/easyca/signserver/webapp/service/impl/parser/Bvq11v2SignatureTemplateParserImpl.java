@@ -1,5 +1,7 @@
 package vn.easyca.signserver.webapp.service.impl.parser;
 
+import com.google.common.base.Strings;
+import org.omg.CORBA.StringSeqHelper;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -8,7 +10,7 @@ import vn.easyca.signserver.webapp.utils.ParserUtils;
 
 @Service
 public class Bvq11v2SignatureTemplateParserImpl implements SignatureTemplateParseService {
-    final String regexCN = "CN=\"([^\"]+)\"";
+    final String regexCN = "CN=\"([^\"]+)|CN=([^,]+)";
 
     @Override
     public String buildSignatureTemplate(String subjectDN, String signatureTemplate, String signatureImage, Object data) throws ApplicationException {
@@ -18,7 +20,7 @@ public class Bvq11v2SignatureTemplateParserImpl implements SignatureTemplatePars
             String T = ParserUtils.getElementContentNameInCertificate(subjectDN, regexT);
             String[] signerInfor = CN.split(",");
             String signerName = signerInfor[0];
-            String address = signerInfor[1];
+            String address =  1 < signerInfor.length? signerInfor[1] : "";
 
             String htmlContent = signatureTemplate;
             htmlContent = htmlContent

@@ -78,10 +78,10 @@ public class WebappApp {
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
-        init();
+        init(env);
     }
 
-    private static void init() {
+    private static void init(Environment env) {
         // init ra-service
         // TODO: Refactor this code
         if (raConfig.isConnectToRA())
@@ -96,7 +96,7 @@ public class WebappApp {
         }
 
         //create temp folder
-        FileIOHelper.createDirectory(Constants.TEMP_FOLDER_DIRECTORY);
+        FileIOHelper.createDirectory(env.getProperty("servlet.multipart.location"));
     }
 
     private static void logApplicationStartup(Environment env) {

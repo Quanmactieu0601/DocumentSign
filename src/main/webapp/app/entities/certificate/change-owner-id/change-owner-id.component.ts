@@ -85,8 +85,10 @@ export class ChangeOwnerIdComponent implements OnInit {
       this.getListOwnerID(part, this.page);
     }, 1000);
   }
+
   changeOwnerID(): void {
-    this.certificateService.changeOwnerId(this.OwnerID, this.certificate?.id).subscribe((res: any) => {
+    const ownerID = this.changeOwnerIDForm.get(['OwnerID'])!.value;
+    this.certificateService.changeOwnerId(ownerID, this.certificate?.id).subscribe((res: any) => {
       if (res.status !== 0) {
         this.toastService.error(res.msg);
       } else {

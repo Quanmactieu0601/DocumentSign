@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
+import com.google.common.base.Strings;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -231,7 +232,7 @@ public class CertificateService {
     }
 
 
-    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException {
+    public String getSignatureImageByTemplateId(String serial, String pin, Long templateId) throws ApplicationException, IOException {
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
         if (!certificateOptional.isPresent())
             throw new ApplicationException("Certificate is not found");
@@ -241,8 +242,8 @@ public class CertificateService {
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
 
         String htmlContent = "";
-        Integer width = 355;
-        Integer height = 170;
+        Integer width = 180;
+        Integer height = 125;
         boolean isTransparency = false;
         String signatureImageData = "";
         X509Certificate x509Certificate = cryptoTokenProxy.getX509Certificate();
@@ -250,8 +251,9 @@ public class CertificateService {
         Long signImageId = certificateDTO.getSignatureImageId();
         if (signImageId != null) {
             Optional<SignatureImage> signatureImage = signatureImageRepository.findById(signImageId);
-            if (signatureImage.isPresent())
+            if (signatureImage.isPresent()) {
                 signatureImageData = signatureImage.get().getImgData();
+            }
         }
 
         Long DEFAULT_OPTION = 0L;
@@ -263,7 +265,7 @@ public class CertificateService {
 
                 // th: ko co anh chu ky, thay doi kich thuoc anh
                 if (signatureImageData.equals("")) {
-                    height = 90;
+                    height = 70;
                     htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden" );
                 }
 
