@@ -185,6 +185,10 @@ public class ParserUtils {
                 prefixCommand, height, width, 80, fileInputPath, fileOutputPath);
             cmdLine = CommandLine.parse(command);
 
+            DefaultExecutor executor = new DefaultExecutor();
+
+            // run command line
+            int exitValue = executor.execute(cmdLine);
 
             Files.deleteIfExists(Paths.get(fileInputPath));
             // get content image
