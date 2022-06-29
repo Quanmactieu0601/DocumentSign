@@ -2,6 +2,11 @@ package vn.easyca.signserver.core.services;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -20,19 +25,20 @@ import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.MappingHelper;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class P12ImportService {
@@ -187,5 +193,51 @@ public class P12ImportService {
             return aliases.get(0);
         throw new CryptoTokenException("Can not found alias in crypto token");
     }
+
+    public byte[] importListP12(InputStream inputStream) throws Exception {
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
+        int rows = sheet.getPhysicalNumberOfRows();
+        List<CertRequestInfoDTO> csrDTOs = new ArrayList<>();
+        CertRequestInfoDTO csrDTO;
+        DataFormatter formatter = new DataFormatter(Locale.US);
+
+        try {
+            for (int i = 2; i < rows; i++) {
+                Row row = sheet.getRow(i);
+                if (row != null) {
+                    String pin = formatter.formatCellValue(row.getCell(17, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+                    String base64Certificate = formatter.formatCellValue(row.getCell(15, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll("\n", "");;
+                    Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
+                    ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
+                    p12ImportVM.setOwnerId(userId.get().getLogin());
+                    p12ImportVM.setPin(pin);
+                    p12ImportVM.setP12Base64(base64Certificate);
+                    ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
+
+                    try {
+                        CertificateDTO certificateDTO = this.insertP12(serviceInput);
+                        row.createCell(18).setCellValue("Imported in EasySign ");
+                    } catch (Exception ex) {
+                        row.createCell(18).setCellValue("Imported error");
+                        row.createCell(19).setCellValue(ex.getMessage());
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new Exception(ex.getMessage());
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            workbook.write(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            bos.close();
+        }
+        return bos.toByteArray();
+    }
+
 
 }

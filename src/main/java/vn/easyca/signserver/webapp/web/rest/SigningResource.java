@@ -66,7 +66,7 @@ public class SigningResource extends BaseResource {
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(new BaseResponseVM(BaseResponseVM.STATUS_OK, resource, "Ký tệp pdf thành công"));
         } catch (ApplicationException applicationException) {
-             log.error(applicationException.getMessage(), applicationException);
+            log.error(applicationException.getMessage(), applicationException);
             message = applicationException.getMessage();
             return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
         } catch (Exception e) {
@@ -101,7 +101,6 @@ public class SigningResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
-
 
 
     @PostMapping(value = "/hash")
