@@ -114,6 +114,7 @@
         "cancel": "Hủy"
       },
       "uploadP12Cert": "Tải chứng thư số P12",
+      "uploadExcelRegisterFile": "Tải lên file P12 excel ",
       "uploadSignatureImage": "Tải ảnh chữ kí",
       "search": "Tìm kiếm"
     }

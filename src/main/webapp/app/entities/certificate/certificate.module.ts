@@ -16,6 +16,7 @@ import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/cer
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 import { ChangeOwnerIdComponent } from './change-owner-id/change-owner-id.component';
+import { UploadExcelRegisterComponent } from './upload-excel-register/upload-excel-register.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -33,6 +34,7 @@ import { ChangeOwnerIdComponent } from './change-owner-id/change-owner-id.compon
     ExportSerialComponent,
     GenerateCsrComponent,
     ChangeOwnerIdComponent,
+    UploadExcelRegisterComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

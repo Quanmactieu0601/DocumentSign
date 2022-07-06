@@ -2,16 +2,17 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { saveAs } from 'file-saver';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResponseBody } from 'app/shared/model/response-body';
+import { saveAs } from 'file-saver';
 import { FileDataUtil } from 'app/shared/util/file-data.util';
+
 @Component({
-  selector: 'jhi-upload-p12-certificate',
-  templateUrl: './upload-p12-certificate.component.html',
-  styleUrls: ['./upload-p12-certificate.component.scss'],
+  selector: 'jhi-upload-excel-register',
+  templateUrl: './upload-excel-register.component.html',
+  styleUrls: ['./upload-excel-register.component.scss'],
 })
-export class UploadP12CertificateComponent implements OnInit {
+export class UploadExcelRegisterComponent implements OnInit {
   @Output() isUploadedSucessfully = new EventEmitter<boolean>();
   selectedFiles: any;
   currentFile: any;
@@ -41,7 +42,7 @@ export class UploadP12CertificateComponent implements OnInit {
 
     this.currentFile = this.selectedFiles;
 
-    this.certificateService.uploadP12(this.currentFile).subscribe((response: ResponseBody) => {
+    this.certificateService.uploadExcelRegisterFile(this.currentFile).subscribe((response: ResponseBody) => {
       if (response.status === ResponseBody.SUCCESS) {
         const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
         saveAs(
