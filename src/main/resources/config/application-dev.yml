@@ -63,6 +63,11 @@ spring:
     #    username: postgres
     #    password: 123456
 
+    # SDS - Cau hinh Denmo
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_demo
+    #    password: easysign@demo1#%
+
     hikari:
       poolName: Hikari
       auto-commit: false
@@ -86,7 +91,7 @@ spring:
   servlet:
     multipart:
       enabled: true
-      location: D:/image
+      location: F:/image
 server:
   port: 8080
 #  ssl:

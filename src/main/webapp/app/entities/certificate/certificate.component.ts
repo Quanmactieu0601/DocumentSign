@@ -4,9 +4,7 @@ import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-
 import { ICertificate } from 'app/shared/model/certificate.model';
-
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CertificateService } from './certificate.service';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
@@ -26,6 +24,7 @@ import { ExportSerialComponent } from 'app/entities/certificate/export-serial/ex
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id/change-owner-id.component';
 import { RefreshPage } from 'app/shared/util/refreshPage';
+import { UploadExcelRegisterComponent } from 'app/entities/certificate/upload-excel-register/upload-excel-register.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -175,6 +174,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
   openModalP12Upload(): void {
     this.modalRef = this.modalService.open(UploadP12CertificateComponent, { size: 'md' });
+  }
+
+  openModalExcelFile(): void {
+    this.modalRef = this.modalService.open(UploadExcelRegisterComponent, { size: 'md' });
   }
 
   openModalUploadSignatureImage(): void {

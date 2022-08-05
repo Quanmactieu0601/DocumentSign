@@ -58,6 +58,60 @@ spring:
     username: easysign_test
     password: easysign999
 
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_test
+    #    password: easysign999
+
+    # SDS - Cau hinh Denmo
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_demo
+    #    password: easysign@demo1#%
+
+    # BV Q11 - cau hinh db IP VIP
+    #    url: jdbc:mariadb://172.16.99.16:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: root
+    #    password: DbQ1!@202o
+
+    # BV Q11 - cau hinh db master
+    #    url: jdbc:mariadb://172.16.99.18:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: root
+    #    password: DbQ1!@202o
+
+    # BV Q11 - cau hinh db slave
+    #    url: jdbc:mariadb://172.16.99.17:3306/signserver_bvq11?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: replicatedb
+    #    password: DbSlave@202o
+
+    # BV An Phuoc - cau hinh DB
+    #    url: jdbc:sqlserver://192.168.3.72:1433;database=signserver
+    #    username: sa
+    #    password: admin@123
+
+    # BV CTCH - cau hinh DB Prod
+    #    url: jdbc:mariadb://10.200.150.10:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: ctch
+    #    password: ctch@654@$!
+
+    # BV Hung Vuong - cau hinh DB Prod SDS
+    #    url: jdbc:mariadb://10.200.150.10:3306/signserver_bvhungvuong?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: hungvuong
+    #    password: HungVuong@2o2!
+
+    # BV Hung Vuong - cau hinh DB Prod
+    #    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: bvhungvuong#2o2!
+
+    # BV Benh Nhiet Doi - cau hinh DB Prod
+    #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: easysign@#2021
+
+    # BV Tam Anh - cau hinh DB Prod
+    #    url: jdbc:mariadb://localhost:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: tamanh@2021##
+
     hikari:
       poolName: Hikari
       auto-commit: false

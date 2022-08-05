@@ -118,6 +118,7 @@
         "cancel": "Cancel"
       },
       "uploadP12Cert": "Upload P12 CERT",
+      "uploadExcelRegisterFile": "Upload excel register file ",
       "uploadSignatureImage": "Upload Signature Image",
       "search": "Search"
     }

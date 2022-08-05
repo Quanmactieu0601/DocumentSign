@@ -11,12 +11,15 @@ import java.util.Base64;
 import java.util.Enumeration;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.PinIncorrectException;
+import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.pki.cryptotoken.CryptoToken;
 import vn.easyca.signserver.pki.cryptotoken.error.*;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
@@ -25,6 +28,7 @@ import vn.easyca.signserver.webapp.config.Constants;
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class P12CryptoToken implements CryptoToken {
+    private final Log log = LogFactory.getLog(P12CryptoToken.class);
     private KeyStore ks = null;
     private String modulePin = null;
 
@@ -53,7 +57,7 @@ public class P12CryptoToken implements CryptoToken {
         try {
             keyStore.load(is, modulePin.toCharArray());
         } catch (Exception e) {
-
+            log.info(e.getMessage());
         } finally {
             try {
                 is.close();

@@ -75,34 +75,40 @@ export class CertificateService {
     });
   }
 
-  // uploadP12(files: File[]): Observable<any> {
-  //   const formData: FormData = new FormData();
-  //
-  //   Array.from(files).forEach(file => {
-  //     formData.append('files', file);
-  //   });
-  //
-  //   const req = new HttpRequest('POST', `api/data/importP12FileSelected`, formData, {
-  //     responseType: 'arraybuffer' as 'arraybuffer',
-  //   });
-  //
-  //   return this.http.request(req);
-  // }
-
   uploadP12(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('files', file);
+    });
+
+    const req = new HttpRequest('POST', `api/data/importP12FileSelected`, formData, {
+      responseType: 'arraybuffer' as 'arraybuffer',
+    });
+
+    return this.http.request(req);
+  }
+
+  uploadExcelRegisterFile(files: File[]): Observable<any> {
     const formData: FormData = new FormData();
 
     Array.from(files).forEach(file => {
       formData.append('file', file);
     });
 
-    // const req = new HttpRequest('POST', `api/data/importP12FileSelectedByExcel`, formData, {
-    //   responseType: 'arraybuffer' as 'arraybuffer',
-    // });
-    //
-    // return this.http.request(req);
+    return this.http.post(`api/data/importManySelectedP12File`, formData, {
+      observe: 'body',
+    });
+  }
 
-    return this.http.post(`api/data/importP12FileSelectedByExcel`, formData, {
+  uploadP12InExcel(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('file', file);
+    });
+
+    return this.http.post(`api/data/importManySelectedP12File`, formData, {
       observe: 'body',
     });
   }

@@ -372,6 +372,31 @@ public class DataBatchImportResource extends BaseResource {
             .body(file);
     }
 
+
+    @PostMapping("/importManySelectedP12File")
+    public ResponseEntity<BaseResponseVM> importManySelectedP12File(@RequestParam("file") MultipartFile file) {
+        try {
+            byte[] importedReport = p12ImportService.importListP12(file.getInputStream());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/import/p12file", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
     @PostMapping("/exportSerial")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<Resource> exportSerial(@RequestParam("successFiles") MultipartFile[] successFiles) throws IOException {
