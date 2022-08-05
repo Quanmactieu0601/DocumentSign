@@ -206,7 +206,7 @@ public class P12ImportService {
             for (int i = 2; i < rows; i++) {
                 Row row = sheet.getRow(i);
                 if (row != null) {
-                    String pin = formatter.formatCellValue(row.getCell(17, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+                    String pin = formatter.formatCellValue(row.getCell(18, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
                     String base64Certificate = formatter.formatCellValue(row.getCell(15, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll("\n", "");;
                     Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
                     ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
@@ -217,10 +217,10 @@ public class P12ImportService {
 
                     try {
                         CertificateDTO certificateDTO = this.insertP12(serviceInput);
-                        row.createCell(18).setCellValue("Imported in EasySign ");
+                        row.createCell(19).setCellValue("Imported successfully ");
                     } catch (Exception ex) {
-                        row.createCell(18).setCellValue("Imported error");
-                        row.createCell(19).setCellValue(ex.getMessage());
+                        row.createCell(19).setCellValue("Imported error");
+                        row.createCell(20).setCellValue(ex.getMessage());
                     }
                 }
             }
