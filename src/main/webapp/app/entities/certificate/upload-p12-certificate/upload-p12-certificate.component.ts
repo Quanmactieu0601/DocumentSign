@@ -41,15 +41,12 @@ export class UploadP12CertificateComponent implements OnInit {
 
     this.currentFile = this.selectedFiles;
 
-    this.certificateService.uploadP12(this.currentFile).subscribe((response: ResponseBody) => {
-      if (response.status === ResponseBody.SUCCESS) {
-        const filename: string = 'EasyCA-CSR-Export-' + new Date() + '.xlsx';
-        saveAs(
-          new Blob([FileDataUtil.base64ToArrayBuffer(response.data)], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          }),
-          filename
-        );
+    this.certificateService.uploadP12(this.currentFile).subscribe((response: any) => {
+      if (response.type === 0) {
+        this.progress = 100;
+      } else {
+        saveAs(new Blob([response.body], { type: 'application/zip' }), 'SuccessAndError.Zip');
+        this.transformVariable(true);
       }
     });
   }
