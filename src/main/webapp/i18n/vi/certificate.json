@@ -115,6 +115,7 @@
       },
       "uploadP12Cert": "Tải chứng thư số P12",
       "uploadExcelRegisterFile": "Tải lên file P12 excel ",
+      "uploadSignatureImageByPersonalId": "Tải lên ảnh chữ ký theo cmnd ",
       "uploadSignatureImage": "Tải ảnh chữ kí",
       "search": "Tìm kiếm"
     }

@@ -1,6 +1,7 @@
 package vn.easyca.signserver.core.services;
 
 import com.google.common.base.Strings;
+import javafx.application.Application;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -32,11 +33,13 @@ import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import vn.easyca.signserver.webapp.utils.MappingHelper;
+import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.rmi.server.ExportException;
 import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
@@ -54,6 +57,7 @@ public class P12ImportService {
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final CertificateGenerateService certificateGenerateService;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
+
     @Autowired
     public P12ImportService(CertificateService certificateService, UserApplicationService userApplicationService,
                             SymmetricEncryptors symmetricService, CertificateRepository certificateRepository, SystemConfigCachingService systemConfigCachingService, AuthenticatorTOTPService authenticatorTOTPService, CertificateGenerateService certificateGenerateService, UserRepository userRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
@@ -178,14 +182,14 @@ public class P12ImportService {
         certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(x509Certificate.getNotAfter()));
         certificateDTO.setActiveStatus(1);
 
+        // Set cmnd cho cts
+        String identificationRegex = "CMND:([^,]+)";
+        String personalId = ParserUtils.getElementContentNameInCertificate(x509Certificate.getSubjectDN().toString(), identificationRegex);
+        if(personalId != null) {
+            certificateDTO.setPersonalId(personalId);
+        }
+        certificateDTO.setPersonalId(personalId);
         CertificateDTO result = certificateService.save(certificateDTO);
-
-//        try {
-//            boolean check = userApplicationService.createUser(input.getOwnerId(), input.getOwnerId(), input.getOwnerId());
-//            if (!check) throw new ApplicationException("Don't have this ownerid");
-//        } catch (Exception ignored) {
-//            log.error("Create user error" + input.getOwnerId(), ignored);
-//        }
         return result;
     }
 
@@ -198,17 +202,16 @@ public class P12ImportService {
         throw new CryptoTokenException("Can not found alias in crypto token");
     }
 
-    public byte[] importListP12(InputStream inputStream) throws Exception {
+    public byte[] importListP12(InputStream inputStream) throws ApplicationException, IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
-        List<CertRequestInfoDTO> csrDTOs = new ArrayList<>();
-        CertRequestInfoDTO csrDTO;
         DataFormatter formatter = new DataFormatter(Locale.US);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        try {
-            for (int i = 2; i < rows; i++) {
-                Row row = sheet.getRow(i);
+        for (int i = 2; i < rows; i++) {
+            Row row = sheet.getRow(i);
+            try {
                 if (row != null) {
                     boolean isP12 = Strings.isNullOrEmpty(row.getCell(14).getStringCellValue());
                     if (isP12) {
@@ -221,27 +224,24 @@ public class P12ImportService {
                         p12ImportVM.setP12Base64(base64Certificate);
                         ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
 
-                        try {
-                            CertificateDTO certificateDTO = this.insertP12(serviceInput);
-                            row.createCell(19).setCellValue("Imported successfully ");
-                        } catch (Exception ex) {
-                            row.createCell(19).setCellValue("Imported error");
-                            row.createCell(20).setCellValue(ex.getMessage());
-                        }
+                        CertificateDTO certificateDTO = this.insertP12(serviceInput);
+                        row.createCell(19).setCellValue("Imported successfully ");
+
                     } else {
                         String certValue = row.getCell(15).getStringCellValue();
                         String alias = row.getCell(13).getStringCellValue();
                         String ownerId = userApplicationService.getUserWithAuthorities().get().getLogin();
                         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
                         certificateGenerateService.saveAndInstallCert(certValue, alias, ownerId, cryptoToken);
+                        row.createCell(19).setCellValue("Imported successfully ");
                     }
                 }
+            } catch (ApplicationException ex) {
+                row.createCell(19).setCellValue("Imported error");
+                row.createCell(20).setCellValue(ex.getMessage());
             }
-        } catch (Exception ex) {
-            throw new Exception(ex.getMessage());
         }
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
             workbook.write(bos);
         } catch (IOException e) {
@@ -251,6 +251,4 @@ public class P12ImportService {
         }
         return bos.toByteArray();
     }
-
-
 }

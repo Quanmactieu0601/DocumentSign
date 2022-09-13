@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.utils;
 
+import javafx.util.Pair;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.dto.CertDTO;
@@ -10,6 +12,9 @@ import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import java.io.*;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -178,4 +183,72 @@ public class ExcelUtils {
         return csrDTOs;
     }
 
+    public static byte[] exportImageImportResult(List<Pair<String, Pair<String, Boolean>>> lstResult) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Result import image");
+        sheet.setColumnWidth(0, 1000);
+        sheet.setColumnWidth(1, 10000);
+        sheet.setColumnWidth(2, 15000);
+        sheet.setColumnWidth(3, 10000);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern((short) 1);
+
+        String headers[] = new String[]{"STT", "CMND", "Trạng thái import", "Lỗi"};
+        int idx = 0;
+        Row header = sheet.createRow(0);
+        for (String h : headers) {
+            Cell headerCell = header.createCell(idx++);
+            headerCell.setCellValue(h);
+            headerCell.setCellStyle(headerStyle);
+        }
+
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 16);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+        int rowIndex = 1;
+        for (Pair<String, Pair<String, Boolean>> result : lstResult) {
+
+            boolean status = result.getValue().getValue();
+            String pid = result.getKey();
+            String message = result.getValue().getKey();
+
+            Row row = sheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(rowIndex);
+            cell.setCellStyle(style);
+
+            Cell cellPesonalId = row.createCell(1);
+            cellPesonalId.setCellValue(pid);
+            cellPesonalId.setCellStyle(style);
+
+            Cell cellStatus = row.createCell(2);
+            cellStatus.setCellValue(status);
+            cellStatus.setCellStyle(style);
+
+
+            if (!status) {
+                Cell cellMessage = row.createCell(3);
+                cellMessage.setCellValue(message);
+                cellMessage.setCellStyle(style);
+            }
+            rowIndex++;
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            workbook.write(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            bos.close();
+        }
+        return bos.toByteArray();
+    }
 }

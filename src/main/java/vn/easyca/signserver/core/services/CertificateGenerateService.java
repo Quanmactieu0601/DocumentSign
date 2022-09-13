@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.services;
 
+import org.checkerframework.checker.regex.qual.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
@@ -125,6 +127,8 @@ public class CertificateGenerateService {
             x509Certificate = CertUtils.decodeBase64X509(certValue);
             if (x509Certificate == null)
                 throw new ApplicationException("Cannot init X509Certificate from cert - alias: " + alias);
+
+
             CertificateDTO certificateDTO = new CertificateDTO();
             certificateDTO.setRawData(certValue);
             certificateDTO.setSerial(x509Certificate.getSerialNumber().toString(16));
@@ -138,6 +142,11 @@ public class CertificateGenerateService {
             certificateDTO.setActiveStatus(1);
             certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
+            String identificationRegex = "CMND:([^,]+)";
+            String personalId = ParserUtils.getElementContentNameInCertificate(x509Certificate.getSubjectDN().toString(), identificationRegex);
+            if(personalId != null) {
+                certificateDTO.setPersonalId(personalId);
+            }
             // Create random password for hsm certificate
             String rawPin = CommonUtils.genRandomHsmCertPin();
             certificateDTO.setRawPin(rawPin);
@@ -349,9 +358,14 @@ public class CertificateGenerateService {
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         for(CertRequestInfoDTO dto : dtos) {
-            CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
-            dto.setSerial(result.getSerial());
-            dto.setPin(result.getRawPin());
+            try {
+                CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
+                dto.setSerial(result.getSerial());
+                dto.setPin(result.getRawPin());
+            } catch (Exception ex) {
+
+            }
+
         }
     }
 }

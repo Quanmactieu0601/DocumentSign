@@ -131,6 +131,18 @@ export class CertificateService {
     return this.http.request(req);
   }
 
+  uploadSignatureImageByPersonalIdComponent(imageFiles: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(imageFiles).forEach(imageFile => {
+      formData.append('imageFiles', imageFile);
+    });
+
+    return this.http.post(`api/data/importPersonalIdImage`, formData, {
+      observe: 'body',
+    });
+  }
+
   exportSerial(files: File[]): Observable<any> {
     const formData: FormData = new FormData();
 
