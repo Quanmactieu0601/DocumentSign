@@ -173,7 +173,7 @@ public class DataBatchImportResource extends BaseResource {
             try {
                 Long idCertificate = p12ImportService.insert(p12ImportVM).getId();
                 importSuccessList.add(new CertImportSuccessDTO(idCertificate.toString(), CMND));
-            } catch (Exception e) {
+            } catch (ApplicationException e) {
                 log.error(e.getMessage(), e);
                 importErrorList.add(new CertImportErrorDTO(fileEntry.getOriginalFilename(), e.getMessage()));
                 continue;
