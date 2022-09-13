@@ -64,6 +64,7 @@ public class CertificateMapper {
         entity.setSecretKey(certificateDTO.getSecretKey());
         entity.setPackageId(certificateDTO.getPackageId());
         entity.setSignedTurnCount(certificateDTO.getSignedTurnCount());
+        entity.setPersonalId(certificateDTO.getPersonalId());
         return entity;
     }
 

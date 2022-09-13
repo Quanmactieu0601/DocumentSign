@@ -45,11 +45,7 @@ public class ThirdPartyRequestService {
         this.officeSigningRequest = officeSigningRequest;
         this.xmlSigningRequest = xmlSigningRequest;
     }
-
-    public List<P12CertificateRegisterResult> registerCertificate(List<CertificateGenerateDTO> certificateGenerateDTO) throws ApplicationException {
-        List<P12CertificateRegisterResult> registerResultDtoList = certificateGenerateService.genCertificates(certificateGenerateDTO);
-        return registerResultDtoList;
-    }
+    
 
     public Object sign(SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
         TokenInfoDTO tokenInfo = signingRequest.getTokenInfo();

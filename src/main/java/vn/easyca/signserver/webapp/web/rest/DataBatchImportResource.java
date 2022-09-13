@@ -1,6 +1,8 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import com.google.gson.Gson;
+import javafx.util.Pair;
+import jdk.jfr.internal.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
@@ -28,6 +30,7 @@ import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
@@ -372,6 +375,32 @@ public class DataBatchImportResource extends BaseResource {
             .body(file);
     }
 
+
+    @PostMapping("/importPersonalIdImage")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importPersonalIdImage(@RequestParam("imageFiles") MultipartFile[] files){
+        try {
+            List<Pair<String, Pair<String, Boolean>>> lstResult = this.signatureImageService.saveSignatureImageByPersonalID(files);
+            byte[] excelResultContent = ExcelUtils.exportImageImportResult(lstResult);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(excelResultContent));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/data/importPersonalIdImage", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
 
     @PostMapping("/importManySelectedP12File")
     public ResponseEntity<BaseResponseVM> importManySelectedP12File(@RequestParam("file") MultipartFile file) {

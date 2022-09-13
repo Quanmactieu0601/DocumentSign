@@ -47,9 +47,17 @@ public class CertificateDTO {
 
     private String secretKey;
 
+
     private Integer signedTurnCount;
 
     public Long packageId;
+
+    private String personalId;
+
+    public String getPersonalId() { return personalId; }
+
+    public void setPersonalId(String personalId) { this.personalId = personalId; }
+
 
     public Long getId() {
         return id;
