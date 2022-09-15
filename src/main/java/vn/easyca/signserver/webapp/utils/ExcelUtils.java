@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.utils;
 
 import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -160,7 +161,7 @@ public class ExcelUtils {
         DataFormatter formatter = new DataFormatter(Locale.US);
         for (int i = 2; i < rows; i++) {
             Row row = sheet.getRow(i);
-            if (row != null) {
+            if (!checkIfRowIsEmpty(row)) {
                 csrDTO = new CertRequestInfoDTO();
                 csrDTO.setTaxCode(formatter.formatCellValue(row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
                 csrDTO.setCompanyName(formatter.formatCellValue(row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
@@ -182,6 +183,24 @@ public class ExcelUtils {
         }
         return csrDTOs;
     }
+
+
+    public static boolean checkIfRowIsEmpty(Row row) {
+        if (row == null) {
+            return true;
+        }
+        if (row.getLastCellNum() <= 0) {
+            return true;
+        }
+        for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+            Cell cell = row.getCell(cellNum);
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() != Cell.CELL_TYPE_FORMULA && StringUtils.isNotBlank(cell.toString()) && StringUtils.isNotEmpty(cell.toString())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static byte[] exportImageImportResult(List<Pair<String, Pair<String, Boolean>>> lstResult) throws IOException {
         Workbook workbook = new XSSFWorkbook();
