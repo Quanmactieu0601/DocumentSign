@@ -358,14 +358,9 @@ public class CertificateGenerateService {
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         for(CertRequestInfoDTO dto : dtos) {
-            try {
                 CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
                 dto.setSerial(result.getSerial());
                 dto.setPin(result.getRawPin());
-            } catch (Exception ex) {
-
-            }
-
         }
     }
 }
