@@ -380,7 +380,7 @@ public class DataBatchImportResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importPersonalIdImage(@RequestParam("imageFiles") MultipartFile[] files){
         try {
-            List<Pair<String, Pair<String, Boolean>>> lstResult = this.signatureImageService.saveSignatureImageByPersonalID(files);
+            List<CertImportSuccessDTO> lstResult = this.signatureImageService.saveSignatureImageByPersonalID(files);
             byte[] excelResultContent = ExcelUtils.exportImageImportResult(lstResult);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(excelResultContent));
