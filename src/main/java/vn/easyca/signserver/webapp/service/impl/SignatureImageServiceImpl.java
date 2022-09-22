@@ -135,7 +135,7 @@ public class SignatureImageServiceImpl implements SignatureImageService {
     public SignatureImageDTO saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException {
         SignatureImage signatureImage = new SignatureImage();
         Optional<UserEntity> userEntity = userApplicationService.getUserEntity();
-        if (userEntity.isPresent()){
+        if (userEntity.isPresent()) {
             Long userId = userEntity.get().getId();
             signatureImage.setUserId(userId);
         } else {
@@ -162,25 +162,28 @@ public class SignatureImageServiceImpl implements SignatureImageService {
     }
 
     @Override
-    public List<Pair<String, Pair<String, Boolean>>> saveSignatureImageByPersonalID(MultipartFile[] imageFiles) throws ApplicationException {
-        List<Pair<String, Pair<String, Boolean>>> lstResult = new ArrayList<>();;
+    public List<CertImportSuccessDTO> saveSignatureImageByPersonalID(MultipartFile[] imageFiles) throws ApplicationException {
+        List<CertImportSuccessDTO> lstResult = new ArrayList<>();
+        ;
         for (MultipartFile fileEntry : imageFiles) {
-            Pair<String, Pair<String, Boolean>> result = null;
+            CertImportSuccessDTO result = null;
             String personalID = fileEntry.getOriginalFilename().substring(0, fileEntry.getOriginalFilename().indexOf(".")).trim();
             String b64Image = "";
+            String serial = "";
             try {
-                Optional<Certificate> certificate = this.certificateRepository.findOneByPersonalIdAndActiveStatus(personalID, Certificate.ACTIVATED);
+                Optional<Certificate> certificate = this.certificateRepository.findFirstByPersonalIdAndActiveStatusOrderByIdDesc(personalID, Certificate.ACTIVATED);
                 if (certificate.isPresent()) {
                     b64Image = Base64.getEncoder().encodeToString(fileEntry.getBytes());
                     this.saveSignatureImageByCert(b64Image, certificate.get().getId());
-                    result = new Pair<>(personalID, new Pair<>("Import thành công", true));
+                    serial = certificate.get().getSerial();
+                    result = new CertImportSuccessDTO(personalID, "Import ảnh thành công", serial);
                 } else {
                     String message = "Không tìm thấy cts theo cmnd";
-                    result = new Pair<>(personalID, new Pair<>(message, false));
+                    result = new CertImportSuccessDTO(personalID, message, serial);
                 }
 
             } catch (IOException ex) {
-                result = new Pair<>(personalID, new Pair<>(ex.getMessage(), false));
+                result = new CertImportSuccessDTO(personalID, ex.getMessage(), serial);
             } catch (ApplicationException exception) {
                 exception.printStackTrace();
             }

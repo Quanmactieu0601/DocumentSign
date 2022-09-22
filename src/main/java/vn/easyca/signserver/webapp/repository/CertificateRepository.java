@@ -16,7 +16,7 @@ public interface CertificateRepository extends JpaRepository<Certificate, Long>,
     List<Certificate> findByOwnerId(String ownerId);
     Optional<Certificate> findOneBySerial(String serial);
     Optional<Certificate> findOneBySerialAndActiveStatus(String serial, Integer activeStatus);
-    Optional<Certificate> findOneByPersonalIdAndActiveStatus(String personalId, Integer activeStatus);
+    Optional<Certificate> findFirstByPersonalIdAndActiveStatusOrderByIdDesc(String personalId, Integer activeStatus);
 
     @Transactional
     @Modifying

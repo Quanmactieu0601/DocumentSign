@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.FileResourceService;
+import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
@@ -202,7 +203,7 @@ public class ExcelUtils {
     }
 
 
-    public static byte[] exportImageImportResult(List<Pair<String, Pair<String, Boolean>>> lstResult) throws IOException {
+    public static byte[] exportImageImportResult(List<CertImportSuccessDTO> certImportSuccessDTOList) throws IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Result import image");
         sheet.setColumnWidth(0, 1000);
@@ -214,7 +215,7 @@ public class ExcelUtils {
         headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
         headerStyle.setFillPattern((short) 1);
 
-        String headers[] = new String[]{"STT", "CMND", "Trạng thái import", "Lỗi"};
+        String headers[] = new String[]{"STT", "CMND", "Serial", "Trạng thái import", "Lỗi"};
         int idx = 0;
         Row header = sheet.createRow(0);
         for (String h : headers) {
@@ -232,11 +233,12 @@ public class ExcelUtils {
         CellStyle style = workbook.createCellStyle();
         style.setWrapText(true);
         int rowIndex = 1;
-        for (Pair<String, Pair<String, Boolean>> result : lstResult) {
+        for (CertImportSuccessDTO result : certImportSuccessDTOList) {
 
-            boolean status = result.getValue().getValue();
-            String pid = result.getKey();
-            String message = result.getValue().getKey();
+            boolean status = result.getStatus();
+            String pid = result.getPersonIdentity();
+            String serial = result.getSerial();
+            String message = result.getMessage();
 
             Row row = sheet.createRow(rowIndex);
             Cell cell = row.createCell(0);
@@ -247,10 +249,13 @@ public class ExcelUtils {
             cellPesonalId.setCellValue(pid);
             cellPesonalId.setCellStyle(style);
 
-            Cell cellStatus = row.createCell(2);
+            Cell cellSerial = row.createCell(2);
+            cellSerial.setCellValue(serial);
+            cellSerial.setCellStyle(style);
+
+            Cell cellStatus = row.createCell(3);
             cellStatus.setCellValue(status);
             cellStatus.setCellStyle(style);
-
 
             if (!status) {
                 Cell cellMessage = row.createCell(3);
