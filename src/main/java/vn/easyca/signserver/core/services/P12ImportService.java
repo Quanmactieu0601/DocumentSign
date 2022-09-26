@@ -202,7 +202,7 @@ public class P12ImportService {
         throw new CryptoTokenException("Can not found alias in crypto token");
     }
 
-    public byte[] importListP12(InputStream inputStream) throws ApplicationException, IOException {
+    public byte[] importListCerts(InputStream inputStream) throws ApplicationException, IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -244,7 +244,8 @@ public class P12ImportService {
 
         try {
             workbook.write(bos);
-        } catch (IOException e) {
+        } catch (Exception e) {
+            log.error(e.getMessage());
             e.printStackTrace();
         } finally {
             bos.close();

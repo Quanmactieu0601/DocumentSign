@@ -185,7 +185,7 @@ public class SignatureImageServiceImpl implements SignatureImageService {
             } catch (IOException ex) {
                 result = new CertImportSuccessDTO(personalID, ex.getMessage(), serial);
             } catch (ApplicationException exception) {
-                exception.printStackTrace();
+                exception.getMessage();
             }
             lstResult.add(result);
         }

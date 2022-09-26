@@ -281,7 +281,6 @@ public class CertificateGenerateService {
             CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                 user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), dto.getKeyLen());
             result.setCsr(createCSR(certificateGenerateDTO));
-//            result.setUser(CertificateGenerateResult.User(user.getLogin(), null, UserCreator.RESULT_EXIST));
         }
         return result;
     }
