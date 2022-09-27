@@ -401,7 +401,7 @@ public class DataBatchImportResource extends BaseResource {
     @PostMapping("/importManySelectedP12File")
     public ResponseEntity<BaseResponseVM> importManySelectedP12File(@RequestParam("file") MultipartFile file) {
         try {
-            byte[] importedReport = p12ImportService.importListP12(file.getInputStream());
+            byte[] importedReport = p12ImportService.importListCerts(file.getInputStream());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
         } catch (ApplicationException | FileNotFoundException e) {
