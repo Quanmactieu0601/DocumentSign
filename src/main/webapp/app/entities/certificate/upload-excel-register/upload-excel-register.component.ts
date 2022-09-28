@@ -29,11 +29,6 @@ export class UploadExcelRegisterComponent implements OnInit {
   ngOnInit(): void {}
   selectFile(event: any): void {
     this.selectedFiles = event.target.files;
-    const sizeFile = event.target.files.item(0).size / 1024000;
-    if (sizeFile > 1) {
-      this.toastService.error('Dung lượng tệp tải lên phải nhỏ hơn 1MB');
-      this.selectedFiles = [];
-    }
     this.fileName = this.selectedFiles[0].name;
   }
 

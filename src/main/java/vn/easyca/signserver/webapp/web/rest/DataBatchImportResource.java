@@ -136,7 +136,6 @@ public class DataBatchImportResource extends BaseResource {
         List<CertImportErrorDTO> importErrorList = new ArrayList<>();
         for (final MultipartFile fileEntry : files) {
             try {
-//                final String regex = "([^._]+)_([^._]+)";
                 final String regex = "([^._]+)(?:_|-)([^._]+)";
                 final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
                 final Matcher matcher = pattern.matcher(fileEntry.getOriginalFilename());
@@ -184,9 +183,6 @@ public class DataBatchImportResource extends BaseResource {
             String jsonSuccerss = gson.toJson(importSuccessList);
             String jsonError = gson.toJson(importErrorList);
 
-//            FileIOHelper.writeFile(jsonSuccerss, "D:/" + "/outSuccess.txt");
-//            FileIOHelper.writeFile(jsonError, "D:/" + "/outError.txt");
-
             byte[] successFileByteContent = jsonSuccerss.getBytes();
             byte[] errorFileByteContent = jsonError.getBytes();
 
@@ -225,7 +221,7 @@ public class DataBatchImportResource extends BaseResource {
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12FileSelected(@RequestParam("file") MultipartFile file) {
         try {
-            byte[] importedReport = p12ImportService.importListP12(file.getInputStream());
+            byte[] importedReport = p12ImportService.importListCerts(file.getInputStream());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
         } catch (ApplicationException | FileNotFoundException e) {
@@ -405,7 +401,7 @@ public class DataBatchImportResource extends BaseResource {
     @PostMapping("/importManySelectedP12File")
     public ResponseEntity<BaseResponseVM> importManySelectedP12File(@RequestParam("file") MultipartFile file) {
         try {
-            byte[] importedReport = p12ImportService.importListP12(file.getInputStream());
+            byte[] importedReport = p12ImportService.importListCerts(file.getInputStream());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
         } catch (ApplicationException | FileNotFoundException e) {
