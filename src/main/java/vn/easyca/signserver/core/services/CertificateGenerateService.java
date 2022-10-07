@@ -10,6 +10,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -128,6 +129,10 @@ public class CertificateGenerateService {
             if (x509Certificate == null)
                 throw new ApplicationException("Cannot init X509Certificate from cert - alias: " + alias);
 
+            String serial = x509Certificate.getSerialNumber().toString(16);
+            Optional<Certificate> certBySerial = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
+            if (certBySerial.isPresent())
+                throw new ApplicationException(-1, "Certificate is already exist");
 
             CertificateDTO certificateDTO = new CertificateDTO();
             certificateDTO.setRawData(certValue);

@@ -236,9 +236,9 @@ public class P12ImportService {
                         row.createCell(19).setCellValue("Imported successfully ");
                     }
                 }
-            } catch (ApplicationException ex) {
+            } catch (Exception ex ) {
                 row.createCell(19).setCellValue("Imported error");
-                row.createCell(20).setCellValue(ex.getMessage());
+                row.createCell(20).setCellValue(ex.getCause().getMessage());
             }
         }
 
