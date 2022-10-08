@@ -223,16 +223,16 @@ public class P12ImportService {
                         p12ImportVM.setPin(pin);
                         p12ImportVM.setP12Base64(base64Certificate);
                         ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
-
                         CertificateDTO certificateDTO = this.insertP12(serviceInput);
                         row.createCell(19).setCellValue("Imported successfully ");
-
                     } else {
                         String certValue = row.getCell(15).getStringCellValue();
                         String alias = row.getCell(13).getStringCellValue();
                         String ownerId = userApplicationService.getUserWithAuthorities().get().getLogin();
                         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
-                        certificateGenerateService.saveAndInstallCert(certValue, alias, ownerId, cryptoToken);
+                        CertificateDTO certificateDTO = certificateGenerateService.saveAndInstallCert(certValue, alias, ownerId, cryptoToken);
+                        row.createCell(16).setCellValue(certificateDTO.getSerial());
+                        row.createCell(18).setCellValue(certificateDTO.getRawPin());
                         row.createCell(19).setCellValue("Imported successfully ");
                     }
                 }
