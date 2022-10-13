@@ -215,7 +215,7 @@ public class P12ImportService {
                 if (row != null) {
                     boolean isP12 = Strings.isNullOrEmpty(row.getCell(14).getStringCellValue());
                     if (isP12) {
-                        String pin = formatter.formatCellValue(row.getCell(18, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
+                        String pin = formatter.formatCellValue(row.getCell(17, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
                         String base64Certificate = formatter.formatCellValue(row.getCell(15, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)).replaceAll("\n", "");
                         Optional<UserEntity> userId = userApplicationService.getUserWithAuthorities();
                         ImportP12FileDTO p12ImportVM = new ImportP12FileDTO();
@@ -224,7 +224,7 @@ public class P12ImportService {
                         p12ImportVM.setP12Base64(base64Certificate);
                         ImportP12FileDTO serviceInput = MappingHelper.map(p12ImportVM, ImportP12FileDTO.class);
                         CertificateDTO certificateDTO = this.insertP12(serviceInput);
-                        row.createCell(19).setCellValue("Imported successfully ");
+                        row.createCell(18).setCellValue("Imported successfully ");
                     } else {
                         String certValue = row.getCell(15).getStringCellValue();
                         String alias = row.getCell(13).getStringCellValue();
@@ -232,13 +232,13 @@ public class P12ImportService {
                         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
                         CertificateDTO certificateDTO = certificateGenerateService.saveAndInstallCert(certValue, alias, ownerId, cryptoToken);
                         row.createCell(16).setCellValue(certificateDTO.getSerial());
-                        row.createCell(18).setCellValue(certificateDTO.getRawPin());
-                        row.createCell(19).setCellValue("Imported successfully ");
+                        row.createCell(17).setCellValue(certificateDTO.getRawPin());
+                        row.createCell(18).setCellValue("Imported successfully ");
                     }
                 }
             } catch (Exception ex ) {
                 row.createCell(19).setCellValue("Imported error");
-                row.createCell(20).setCellValue(ex.getCause().getMessage());
+                row.createCell(20).setCellValue(ex.getMessage());
             }
         }
 
