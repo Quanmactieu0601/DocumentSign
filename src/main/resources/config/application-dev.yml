@@ -41,9 +41,9 @@ spring:
     #    username: root
     #    password: Hddt@202o
 
-    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: easysign_test
-    #    password: easysign999
+    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign_test
+    password: easysign999
 
     #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
     #    username: thanhld
@@ -60,9 +60,9 @@ spring:
     #    password: 123456
 
     # SDS - Cau hinh Denmo
-    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: easysign_demo
-    password: easysign@demo1#%
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_demo
+    #    password: easysign@demo1#%
 
     hikari:
       poolName: Hikari
