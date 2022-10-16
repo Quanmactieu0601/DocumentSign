@@ -33,10 +33,7 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SystemConfigCachingService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
-import vn.easyca.signserver.webapp.utils.DateTimeUtils;
-import vn.easyca.signserver.webapp.utils.MappingHelper;
-import vn.easyca.signserver.webapp.utils.ParserUtils;
-import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
+import vn.easyca.signserver.webapp.utils.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -228,7 +225,7 @@ public class P12ImportService {
         for (int i = 2; i < rows; i++) {
             Row row = sheet.getRow(i);
             try {
-                if (row != null) {
+                if (!ExcelUtils.checkIfRowIsEmpty(row)) {
                     boolean isP12 = Strings.isNullOrEmpty(row.getCell(14).getStringCellValue());
                     if (isP12) {
                         String pin = formatter.formatCellValue(row.getCell(17, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK));
