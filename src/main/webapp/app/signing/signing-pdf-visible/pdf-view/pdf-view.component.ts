@@ -24,6 +24,7 @@ import { HttpResponse } from '@angular/common/http';
 export class PdfViewComponent implements OnInit, OnChanges {
   @ViewChild(PdfViewerComponent) private pdfComponent: PdfViewerComponent | undefined;
   @ViewChild('serialElement') serialElement: ElementRef | undefined;
+
   @Input() pdfSrc = '';
   @Input() imageSrc = '';
   @Input() serial: any;
@@ -50,6 +51,7 @@ export class PdfViewComponent implements OnInit, OnChanges {
   heightPage = 900;
   modalRef: NgbModalRef | undefined;
   showMessageSerialRequired = false;
+  page!: number;
 
   constructor(
     private signingService: SigningService,
@@ -104,8 +106,12 @@ export class PdfViewComponent implements OnInit, OnChanges {
   pageRendered(event: any): void {
     console.warn('pageRendered', event);
     this.setSignatureInPage(this.renderTextMode);
+    this.scrollToPage(this.page);
   }
-
+  scrollPage(num: String): void {
+    this.page = Number(num);
+    this.scrollPage(this.page.toString());
+  }
   setSignatureInPage(numberPage: any): void {
     const pdfPage = document.getElementsByClassName('page')[Number(numberPage) - 1] as HTMLElement;
     const sig = document.getElementById('signature-box');
@@ -226,6 +232,11 @@ export class PdfViewComponent implements OnInit, OnChanges {
     this.modalRef = this.modalService.open(SignatureListComponent, { size: 'md' });
     this.accountService.identity(false).subscribe(res => {
       this.modalRef!.componentInstance.userId = res?.id;
+    });
+  }
+  scrollToPage(page: number): void {
+    this.pdfComponent?.pdfViewer.scrollIntoView({
+      pageNumber: page,
     });
   }
 

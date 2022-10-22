@@ -12,7 +12,8 @@
             <div class="navbar-nav">
                 <form class="form-inline">
                     <span jhiTranslate="sign.pdf.choosePageToSign"></span>
-                    <select class="form-control mx-sm-2 form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode"
+                    <select #optionSelect class="form-control mx-sm-2 form-control-sm" name="renderTextMode" [(ngModel)]="renderTextMode"
+                            (change) = "scrollPage(optionSelect.value)"
                             (change)="setSignatureInPage(renderTextMode)">
                         <option [value]="i+1" *ngFor="let item of [].constructor(totalPages); let i = index"
                                 selected>{{i + 1}}</option>
@@ -59,9 +60,10 @@
                     [show-all]="showAll" [autoresize]="autoresize" [show-borders]="showBorders"
                     (after-load-complete)="callBackFn($event)" (page-rendered)="pageRendered($event)"
                     (text-layer-rendered)="textLayerRendered($event)" (error)="onError($event)"
+                    [stick-to-page]="true"
+                    [(page)]="page"
                     (on-progress)="onProgress($event)">
         </pdf-viewer>
-
     </div>
 </div>
 
