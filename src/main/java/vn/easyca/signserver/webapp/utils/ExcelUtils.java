@@ -95,6 +95,32 @@ public class ExcelUtils {
         }
     }
 
+    public byte[] exportCsrFile(List<CertRequestInfoDTO> dtos, int step, InputStream inputStream) throws IOException, ApplicationException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter formatter = new DataFormatter(Locale.US);
+            CellStyle style = workbook.createCellStyle(); //Create new style
+            style.setWrapText(true); //Set wordwrap
+            int index = 2;
+            for (CertRequestInfoDTO dto : dtos) {
+                Row row = sheet.getRow(index);
+                row.setRowStyle(style);
+                row.createCell(13).setCellValue(dto.getAlias());
+                row.createCell(14).setCellValue(dto.getCsrValue());
+                index++;
+            }
+            workbook.write(bos);
+            return bos.toByteArray();
+        } finally {
+            bos.close();
+        }
+    }
+
+
+
+
     public static List<CertDTO> convertExcelToCertDTO(InputStream inputStream) throws IOException {
         Workbook wb = new XSSFWorkbook(inputStream);
         Sheet sheet = wb.getSheetAt(0);
@@ -120,7 +146,8 @@ public class ExcelUtils {
         return dtos;
     }
 
-    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws ApplicationException, IOException {
+    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws
+        ApplicationException, IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -203,7 +230,8 @@ public class ExcelUtils {
     }
 
 
-    public static byte[] exportImageImportResult(List<CertImportSuccessDTO> certImportSuccessDTOList) throws IOException {
+    public static byte[] exportImageImportResult(List<CertImportSuccessDTO> certImportSuccessDTOList) throws
+        IOException {
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Result import image");
         sheet.setColumnWidth(0, 1000);
