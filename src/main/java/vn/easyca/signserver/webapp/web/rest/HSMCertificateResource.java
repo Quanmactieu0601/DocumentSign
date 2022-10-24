@@ -49,10 +49,9 @@ public class HSMCertificateResource extends BaseResource {
     public ResponseEntity<BaseResponseVM> generateBulkCSR(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- generate-bulk-csr ---");
-//            String resultFileName = String.format("Certificate-Request-Infomation_%s.xlsx", DateTimeUtils.getCurrentTimeStamp());
             List<CertRequestInfoDTO> dtos = ExcelUtils.convertCertRequest(file.getInputStream());
             p11GeneratorService.generateBulkCSR(dtos);
-            byte[] byteData = excelUtils.exportCsrFileFormat2(dtos, CertRequestInfoDTO.STEP_2);
+            byte[] byteData = excelUtils.exportCsrFile(dtos, CertRequestInfoDTO.STEP_2, file.getInputStream());
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(byteData));
         } catch (Exception e) {
