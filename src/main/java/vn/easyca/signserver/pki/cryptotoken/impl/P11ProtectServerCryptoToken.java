@@ -140,8 +140,17 @@ public class P11ProtectServerCryptoToken implements CryptoToken {
         } catch (Exception e) {
             throw new CryptoTokenException("get keypair instance occurs error", e);
         }
-        kpg.initialize(keyLen);
+
+        // fix duplicate public key, gen by HSM
+        SecureRandom random = null;
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+        } catch (Exception e) {
+            throw new CryptoTokenException("Gen random key occurs error", e);
+        }
+        kpg.initialize(keyLen, random);
         KeyPair keyPair = kpg.generateKeyPair();
+
         //Gen self-signed cert, just is a temporary cert when we are waiting the right one from the CA
         X509Certificate cert;
         try {

@@ -8,7 +8,7 @@
     <div class="form-group col-md-12 uploadFormGroup">
         <div class="input-group mb-3">
             <div class="custom-file overflow-hidden" id="custom-file" >
-                <input type="file" accept=".xlsx" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
+                <input type="file" accept=".xlsx, .xlsm" class="custom-file-input" id="form-control inputGroupFile" (change)="selectFile($event)"/>
                 <label class="custom-file-label">{{this.fileName}}</label>
             </div>
         </div>

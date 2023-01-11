@@ -89,6 +89,30 @@ export class CertificateService {
     return this.http.request(req);
   }
 
+  uploadExcelRegisterFile(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('file', file);
+    });
+
+    return this.http.post(`api/data/importManySelectedP12File`, formData, {
+      observe: 'body',
+    });
+  }
+
+  uploadP12InExcel(files: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(files).forEach(file => {
+      formData.append('file', file);
+    });
+
+    return this.http.post(`api/data/importManySelectedP12File`, formData, {
+      observe: 'body',
+    });
+  }
+
   uploadSignatureImage(successFiles: File[], imageFiles: File[]): Observable<any> {
     const formData: FormData = new FormData();
 
@@ -105,6 +129,18 @@ export class CertificateService {
     });
 
     return this.http.request(req);
+  }
+
+  uploadSignatureImageByPersonalIdComponent(imageFiles: File[]): Observable<any> {
+    const formData: FormData = new FormData();
+
+    Array.from(imageFiles).forEach(imageFile => {
+      formData.append('imageFiles', imageFile);
+    });
+
+    return this.http.post(`api/data/importPersonalIdImage`, formData, {
+      observe: 'body',
+    });
   }
 
   exportSerial(files: File[]): Observable<any> {

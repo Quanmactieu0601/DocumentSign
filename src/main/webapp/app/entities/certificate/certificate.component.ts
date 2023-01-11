@@ -25,6 +25,8 @@ import { CertificateDeactiveDialogComponent } from 'app/entities/certificate/cer
 import { ExportSerialComponent } from 'app/entities/certificate/export-serial/export-serial.component';
 import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/generate-csr.component';
 import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id/change-owner-id.component';
+import { UploadExcelRegisterComponent } from 'app/entities/certificate/upload-excel-register/upload-excel-register.component';
+import { ImagePersonalIdComponent } from 'app/entities/certificate/image-personal-id/image-personal-id.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -175,8 +177,16 @@ export class CertificateComponent implements OnInit, OnDestroy {
     this.modalRef = this.modalService.open(UploadP12CertificateComponent, { size: 'md' });
   }
 
+  openModalExcelFile(): void {
+    this.modalRef = this.modalService.open(UploadExcelRegisterComponent, { size: 'md' });
+  }
+
   openModalUploadSignatureImage(): void {
     this.modalRef = this.modalService.open(UploadSignatureImageComponent, { size: 'md' });
+  }
+
+  openModalUploadSignatureImageByPersonalId(): void {
+    this.modalRef = this.modalService.open(ImagePersonalIdComponent, { size: 'md' });
   }
 
   openModalExportSerial(): void {

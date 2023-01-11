@@ -1,5 +1,6 @@
 package vn.easyca.signserver.core.services;
 
+import org.checkerframework.checker.regex.qual.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -24,6 +26,7 @@ import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
+import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.utils.SymmetricEncryptors;
 import vn.easyca.signserver.webapp.web.rest.vm.request.CsrGeneratorVM;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.CsrsGeneratorVM;
@@ -125,6 +128,12 @@ public class CertificateGenerateService {
             x509Certificate = CertUtils.decodeBase64X509(certValue);
             if (x509Certificate == null)
                 throw new ApplicationException("Cannot init X509Certificate from cert - alias: " + alias);
+
+            String serial = x509Certificate.getSerialNumber().toString(16);
+            Optional<Certificate> certBySerial = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED);
+            if (certBySerial.isPresent())
+                throw new ApplicationException(-1, "Certificate is already exist");
+
             CertificateDTO certificateDTO = new CertificateDTO();
             certificateDTO.setRawData(certValue);
             certificateDTO.setSerial(x509Certificate.getSerialNumber().toString(16));
@@ -138,6 +147,11 @@ public class CertificateGenerateService {
             certificateDTO.setActiveStatus(1);
             certificateDTO.setSecretKey(authenticatorTOTPService.generateEncryptedTOTPKey());
 
+            String identificationRegex = "CMND:([^,]+)";
+            String personalId = ParserUtils.getElementContentNameInCertificate(x509Certificate.getSubjectDN().toString(), identificationRegex);
+            if(personalId != null) {
+                certificateDTO.setPersonalId(personalId);
+            }
             // Create random password for hsm certificate
             String rawPin = CommonUtils.genRandomHsmCertPin();
             certificateDTO.setRawPin(rawPin);
@@ -272,7 +286,6 @@ public class CertificateGenerateService {
             CertificateGenerateDTO certificateGenerateDTO = new CertificateGenerateDTO(user.getOrganizationUnit(), null,
                 user.getLocalityName(), user.getOrganizationName(), user.getStateName(), user.getCountry(), user.getCommonName(), user.getLogin(), dto.getKeyLen());
             result.setCsr(createCSR(certificateGenerateDTO));
-//            result.setUser(CertificateGenerateResult.User(user.getLogin(), null, UserCreator.RESULT_EXIST));
         }
         return result;
     }
@@ -349,9 +362,9 @@ public class CertificateGenerateService {
     public void installCertIntoHsm(List<CertRequestInfoDTO> dtos, String currentUser) throws ApplicationException {
         CryptoToken cryptoToken = cryptoTokenProxyFactory.resolveP11Token(null);
         for(CertRequestInfoDTO dto : dtos) {
-            CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
-            dto.setSerial(result.getSerial());
-            dto.setPin(result.getRawPin());
+                CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
+                dto.setSerial(result.getSerial());
+                dto.setPin(result.getRawPin());
         }
     }
 }

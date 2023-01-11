@@ -20,13 +20,17 @@ import vn.easyca.signserver.core.services.P12ImportService;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
+import vn.easyca.signserver.webapp.utils.AccountUtils;
+import vn.easyca.signserver.webapp.utils.ExcelUtils;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
+import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -39,7 +43,7 @@ import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/api/data")
-public class DataBatchImportResource {
+public class DataBatchImportResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(DataBatchImportResource.class);
 
     private final CertificateService certificateService;
@@ -47,15 +51,17 @@ public class DataBatchImportResource {
     private final SignatureImageService signatureImageService;
     private final UserApplicationService userApplicationService;
     private final SignatureImageMapper signatureImageMapper;
+    private final AsyncTransactionService asyncTransactionService;
 
     public DataBatchImportResource(CertificateService certificateService, P12ImportService p12ImportService,
                                    SignatureImageService signatureImageService, UserApplicationService userApplicationService,
-                                   SignatureImageMapper signatureImageMapper) {
+                                   SignatureImageMapper signatureImageMapper, AsyncTransactionService asyncTransactionService) {
         this.certificateService = certificateService;
         this.p12ImportService = p12ImportService;
         this.signatureImageService = signatureImageService;
         this.userApplicationService = userApplicationService;
         this.signatureImageMapper = signatureImageMapper;
+        this.asyncTransactionService = asyncTransactionService;
     }
 
     @PostMapping("/importP12")
@@ -128,7 +134,6 @@ public class DataBatchImportResource {
         List<CertImportErrorDTO> importErrorList = new ArrayList<>();
         for (final MultipartFile fileEntry : files) {
             try {
-//                final String regex = "([^._]+)_([^._]+)";
                 final String regex = "([^._]+)(?:_|-)([^._]+)";
                 final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
                 final Matcher matcher = pattern.matcher(fileEntry.getOriginalFilename());
@@ -176,9 +181,6 @@ public class DataBatchImportResource {
             String jsonSuccerss = gson.toJson(importSuccessList);
             String jsonError = gson.toJson(importErrorList);
 
-//            FileIOHelper.writeFile(jsonSuccerss, "D:/" + "/outSuccess.txt");
-//            FileIOHelper.writeFile(jsonError, "D:/" + "/outError.txt");
-
             byte[] successFileByteContent = jsonSuccerss.getBytes();
             byte[] errorFileByteContent = jsonError.getBytes();
 
@@ -212,6 +214,32 @@ public class DataBatchImportResource {
             return null;
         }
     }
+
+    @PostMapping("/importP12FileSelectedByExcel")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importP12FileSelected(@RequestParam("file") MultipartFile file) {
+        try {
+            byte[] importedReport = p12ImportService.importListCerts(file.getInputStream());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/import/p12file", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
 
     @PostMapping("/importImage")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
@@ -339,6 +367,57 @@ public class DataBatchImportResource {
             .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + filename)
             .contentType(MediaType.parseMediaType("application/zip"))
             .body(file);
+    }
+
+
+    @PostMapping("/importPersonalIdImage")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
+    public ResponseEntity<BaseResponseVM> importPersonalIdImage(@RequestParam("imageFiles") MultipartFile[] files){
+        try {
+            List<CertImportSuccessDTO> lstResult = this.signatureImageService.saveSignatureImageByPersonalID(files);
+            byte[] excelResultContent = ExcelUtils.exportImageImportResult(lstResult);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(excelResultContent));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/data/importPersonalIdImage", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+    @PostMapping("/importManySelectedP12File")
+    public ResponseEntity<BaseResponseVM> importManySelectedP12File(@RequestParam("file") MultipartFile file) {
+        try {
+            byte[] importedReport = p12ImportService.importListCerts(file.getInputStream());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(importedReport));
+        } catch (ApplicationException | FileNotFoundException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse((ApplicationException) e));
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/import/p12file", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
     }
 
     @PostMapping("/exportSerial")

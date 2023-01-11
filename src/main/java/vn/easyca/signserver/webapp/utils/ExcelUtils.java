@@ -1,15 +1,22 @@
 package vn.easyca.signserver.webapp.utils;
 
+import javafx.util.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.dto.CertDTO;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.FileResourceService;
+import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import java.io.*;
+import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -88,6 +95,32 @@ public class ExcelUtils {
         }
     }
 
+    public byte[] exportCsrFile(List<CertRequestInfoDTO> dtos, int step, InputStream inputStream) throws IOException, ApplicationException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            DataFormatter formatter = new DataFormatter(Locale.US);
+            CellStyle style = workbook.createCellStyle(); //Create new style
+            style.setWrapText(true); //Set wordwrap
+            int index = 2;
+            for (CertRequestInfoDTO dto : dtos) {
+                Row row = sheet.getRow(index);
+                row.setRowStyle(style);
+                row.createCell(13).setCellValue(dto.getAlias());
+                row.createCell(14).setCellValue(dto.getCsrValue());
+                index++;
+            }
+            workbook.write(bos);
+            return bos.toByteArray();
+        } finally {
+            bos.close();
+        }
+    }
+
+
+
+
     public static List<CertDTO> convertExcelToCertDTO(InputStream inputStream) throws IOException {
         Workbook wb = new XSSFWorkbook(inputStream);
         Sheet sheet = wb.getSheetAt(0);
@@ -113,7 +146,8 @@ public class ExcelUtils {
         return dtos;
     }
 
-    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws ApplicationException, IOException {
+    public static List<UserDTO> convertExcelToUserDTO(InputStream inputStream) throws
+        ApplicationException, IOException {
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
         int rows = sheet.getPhysicalNumberOfRows();
@@ -155,7 +189,7 @@ public class ExcelUtils {
         DataFormatter formatter = new DataFormatter(Locale.US);
         for (int i = 2; i < rows; i++) {
             Row row = sheet.getRow(i);
-            if (row != null) {
+            if (!checkIfRowIsEmpty(row)) {
                 csrDTO = new CertRequestInfoDTO();
                 csrDTO.setTaxCode(formatter.formatCellValue(row.getCell(1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
                 csrDTO.setCompanyName(formatter.formatCellValue(row.getCell(2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)));
@@ -178,4 +212,95 @@ public class ExcelUtils {
         return csrDTOs;
     }
 
+
+    public static boolean checkIfRowIsEmpty(Row row) {
+        if (row == null) {
+            return true;
+        }
+        if (row.getLastCellNum() <= 0) {
+            return true;
+        }
+        for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
+            Cell cell = row.getCell(cellNum);
+            if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK && cell.getCellType() != Cell.CELL_TYPE_FORMULA && StringUtils.isNotBlank(cell.toString()) && StringUtils.isNotEmpty(cell.toString())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public static byte[] exportImageImportResult(List<CertImportSuccessDTO> certImportSuccessDTOList) throws
+        IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Result import image");
+        sheet.setColumnWidth(0, 1000);
+        sheet.setColumnWidth(1, 10000);
+        sheet.setColumnWidth(2, 15000);
+        sheet.setColumnWidth(3, 10000);
+
+        CellStyle headerStyle = workbook.createCellStyle();
+        headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+        headerStyle.setFillPattern((short) 1);
+
+        String headers[] = new String[]{"STT", "CMND", "Serial", "Trạng thái import", "Lỗi"};
+        int idx = 0;
+        Row header = sheet.createRow(0);
+        for (String h : headers) {
+            Cell headerCell = header.createCell(idx++);
+            headerCell.setCellValue(h);
+            headerCell.setCellStyle(headerStyle);
+        }
+
+        XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+        font.setFontName("Arial");
+        font.setFontHeightInPoints((short) 16);
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        CellStyle style = workbook.createCellStyle();
+        style.setWrapText(true);
+        int rowIndex = 1;
+        for (CertImportSuccessDTO result : certImportSuccessDTOList) {
+
+            boolean status = result.getStatus();
+            String pid = result.getPersonIdentity();
+            String serial = result.getSerial();
+            String message = result.getMessage();
+
+            Row row = sheet.createRow(rowIndex);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(rowIndex);
+            cell.setCellStyle(style);
+
+            Cell cellPesonalId = row.createCell(1);
+            cellPesonalId.setCellValue(pid);
+            cellPesonalId.setCellStyle(style);
+
+            Cell cellSerial = row.createCell(2);
+            cellSerial.setCellValue(serial);
+            cellSerial.setCellStyle(style);
+
+            Cell cellStatus = row.createCell(3);
+            cellStatus.setCellValue(status);
+            cellStatus.setCellStyle(style);
+
+            if (!status) {
+                Cell cellMessage = row.createCell(3);
+                cellMessage.setCellValue(message);
+                cellMessage.setCellStyle(style);
+            }
+            rowIndex++;
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            workbook.write(bos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            bos.close();
+        }
+        return bos.toByteArray();
+    }
 }

@@ -1,11 +1,15 @@
 package vn.easyca.signserver.webapp.service;
 
+import javafx.util.Pair;
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -49,4 +53,5 @@ public interface SignatureImageService {
 
     SignatureImageDTO saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException;
 
+    List<CertImportSuccessDTO> saveSignatureImageByPersonalID(MultipartFile[] imageFiles) throws ApplicationException;
 }
