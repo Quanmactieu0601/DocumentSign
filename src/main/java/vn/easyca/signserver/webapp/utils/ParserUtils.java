@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment;
 import org.w3c.tidy.Tidy;
 import org.xhtmlrenderer.swing.Java2DRenderer;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -39,6 +40,31 @@ public class ParserUtils {
             throw new ApplicationException(String.format("Parse CN has error: [content: %s, regex: %s]", contentInformation, regex), ex);
         }
     }
+
+    public static String getElementContentInCertificate(String contentInformation, String regex) throws ApplicationException {
+        try {
+            if(StringUtils.isNullOrEmpty(contentInformation)){
+                return null;
+            }
+            String info = "";
+            Pattern pattern = Pattern.compile(regex , Pattern.CASE_INSENSITIVE);
+            Matcher matcher = pattern.matcher(contentInformation);
+            while (matcher.find()) {
+                info = matcher.group();
+            }
+            if(!StringUtils.isNullOrEmpty(info)){
+                if(info.contains("=")){
+                    String[] formatInfo = info.split("=");
+                    return formatInfo[1];
+                }
+                return info;
+            }
+            return info;
+        } catch (Exception ex) {
+            throw new ApplicationException(String.format("Parse info has error: [content: %s, regex: %s]", contentInformation, regex), ex);
+        }
+    }
+
 
     public static String convertHtmlContentToBase64(String htmlContent) throws ApplicationException {
         //Read it using Utf-8 - Based on encoding, change the encoding name if you know it
