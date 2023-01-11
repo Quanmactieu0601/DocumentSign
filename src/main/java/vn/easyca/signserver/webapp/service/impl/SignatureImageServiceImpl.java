@@ -1,13 +1,16 @@
 package vn.easyca.signserver.webapp.service.impl;
 
+import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
+import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.SignatureImageService;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
+import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
 import org.slf4j.Logger;
@@ -18,7 +21,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Service Implementation for managing {@link SignatureImage}.
@@ -31,14 +35,18 @@ public class SignatureImageServiceImpl implements SignatureImageService {
 
     private final CertificateService certificateService;
 
+    private final CertificateRepository certificateRepository;
+
     private final UserApplicationService userApplicationService;
 
     private final SignatureImageRepository signatureImageRepository;
 
     private final SignatureImageMapper signatureImageMapper;
 
-    public SignatureImageServiceImpl(CertificateService certificateService, UserApplicationService userApplicationService, SignatureImageRepository signatureImageRepository, SignatureImageMapper signatureImageMapper) {
+
+    public SignatureImageServiceImpl(CertificateService certificateService, CertificateRepository certificateRepository, UserApplicationService userApplicationService, SignatureImageRepository signatureImageRepository, SignatureImageMapper signatureImageMapper) {
         this.certificateService = certificateService;
+        this.certificateRepository = certificateRepository;
         this.userApplicationService = userApplicationService;
         this.signatureImageRepository = signatureImageRepository;
         this.signatureImageMapper = signatureImageMapper;
@@ -113,7 +121,7 @@ public class SignatureImageServiceImpl implements SignatureImageService {
     public SignatureImageDTO saveSignatureImageByCert(String base64Image, Long certId) throws ApplicationException {
         SignatureImage signatureImage = new SignatureImage();
         Optional<UserEntity> userEntity = userApplicationService.getUserEntity();
-        if (userEntity.isPresent()){
+        if (userEntity.isPresent()) {
             Long userId = userEntity.get().getId();
             signatureImage.setUserId(userId);
         } else {
@@ -138,4 +146,36 @@ public class SignatureImageServiceImpl implements SignatureImageService {
         certificateService.updateSignatureImageInCert(signatureImageDTO.getId(), certId);
         return signatureImageDTO;
     }
+
+    @Override
+    public List<CertImportSuccessDTO> saveSignatureImageByPersonalID(MultipartFile[] imageFiles) throws ApplicationException {
+        List<CertImportSuccessDTO> lstResult = new ArrayList<>();
+        ;
+        for (MultipartFile fileEntry : imageFiles) {
+            CertImportSuccessDTO result = null;
+            String personalID = fileEntry.getOriginalFilename().substring(0, fileEntry.getOriginalFilename().indexOf(".")).trim();
+            String b64Image = "";
+            String serial = "";
+            try {
+                Optional<Certificate> certificate = this.certificateRepository.findFirstByPersonalIdAndActiveStatusOrderByIdDesc(personalID, Certificate.ACTIVATED);
+                if (certificate.isPresent()) {
+                    b64Image = Base64.getEncoder().encodeToString(fileEntry.getBytes());
+                    this.saveSignatureImageByCert(b64Image, certificate.get().getId());
+                    serial = certificate.get().getSerial();
+                    result = new CertImportSuccessDTO(personalID, "Import ảnh thành công", serial);
+                } else {
+                    String message = "Không tìm thấy cts theo cmnd";
+                    result = new CertImportSuccessDTO(personalID, message, serial);
+                }
+
+            } catch (IOException ex) {
+                result = new CertImportSuccessDTO(personalID, ex.getMessage(), serial);
+            } catch (ApplicationException exception) {
+                exception.getMessage();
+            }
+            lstResult.add(result);
+        }
+        return lstResult;
+    }
+
 }

@@ -40,9 +40,9 @@ spring:
     #    password: EasySign@202o
 
     # SDS DB production - new ver
-#    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: thanhld
-#    password: Th@nhSignE@sy#1
+    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: thanhld
+    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -95,9 +95,9 @@ spring:
     #    password: HungVuong@2o2!
 
     # BV Hung Vuong - cau hinh DB Prod
-#    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: easysign
-#    password: bvhungvuong#2o2!
+    #    url: jdbc:mariadb://172.16.1.207:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign
+    #    password: bvhungvuong#2o2!
 
     # BV Benh Nhiet Doi - cau hinh DB Prod
     #    url: jdbc:mariadb://192.168.10.202:3306/signserver?useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -110,17 +110,17 @@ spring:
     #    password: tamanh@2021##
 
     # BV Tam Anh - cau hinh DB Prod
-#    url: jdbc:mariadb://192.168.1.11:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: bvrhm
-#    password: 7TE07KWrwNnZ
+    #    url: jdbc:mariadb://192.168.1.11:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: bvrhm
+    #    password: 7TE07KWrwNnZ
 
-#    url: jdbc:mariadb://192.168.100.31:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-#    username: bvctch
-#    password: TPFG3DH4EsrmeVuQ
+    #    url: jdbc:mariadb://192.168.100.31:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: bvctch
+    #    password: TPFG3DH4EsrmeVuQ
 
-    url: jdbc:mysql://192.168.100.198:3306/DB_Sign
-    username: signsds
-    password: Bvtmh@2022
+    #    url: jdbc:mysql://192.168.100.198:3306/DB_Sign
+    #    username: signsds
+    #    password: Bvtmh@2022
 
     hikari:
       poolName: Hikari
@@ -146,6 +146,8 @@ spring:
     multipart:
       enabled: true
       location: /opt/easysign/tmp
+      max-file-size: 20MB
+      max-request-size: 20MB
 #      location: /opt/hungvuong/opt/easysign/tmp #config for bv hung vuong
 
 # ===================================================================
@@ -168,7 +170,7 @@ spring:
 #     ciphers: TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_DHE_RSA_WITH_AES_128_GCM_SHA256 ,TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 ,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_DHE_RSA_WITH_AES_128_CBC_SHA256,TLS_DHE_RSA_WITH_AES_128_CBC_SHA,TLS_DHE_RSA_WITH_AES_256_CBC_SHA256,TLS_DHE_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_RSA_WITH_CAMELLIA_256_CBC_SHA,TLS_DHE_RSA_WITH_CAMELLIA_128_CBC_SHA,TLS_RSA_WITH_CAMELLIA_128_CBC_SHA
 # ===================================================================
 server:
-#  port: 8080
+  #  port: 8080
   port: 8888 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443

@@ -41,13 +41,13 @@ spring:
     #    username: root
     #    password: Hddt@202o
 
-    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: easysign_test
-    #    password: easysign999
+    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign_test
+    password: easysign999
 
-    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: thanhld
-    password: Th@nhSignE@sy#1
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
 
     # db configuration for SQL SERVER
     #    url: jdbc:sqlserver://172.16.10.66:1433;database=signserver_bvq11
@@ -58,6 +58,11 @@ spring:
     #    url: jdbc:postgresql://10.172.18.32:5432/server_bvq11
     #    username: postgres
     #    password: 123456
+
+    # SDS - Cau hinh Denmo
+    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: easysign_demo
+    #    password: easysign@demo1#%
 
     hikari:
       poolName: Hikari
@@ -83,6 +88,8 @@ spring:
     multipart:
       enabled: true
       location: D:/image
+      max-file-size: 50MB
+      max-request-size: 50MB
 server:
   port: 8080
 #  ssl:

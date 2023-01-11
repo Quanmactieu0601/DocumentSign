@@ -21,7 +21,6 @@ public class CertRequestInfoDTO {
     private String locality; // diaChi;
     private String state; // tinh/thanhPho;
     private String country; // quocGia;
-
     // step 2 - import thong tin step 1 va nhan thong tin step 2
     private String alias;
     private String csrValue;

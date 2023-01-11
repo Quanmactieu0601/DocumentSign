@@ -81,6 +81,18 @@
                 </button>
 
                 <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
+                        (click)="openModalExcelFile()" *ngIf="isSuperAdmin() || isAdmin()">
+                    <fa-icon icon="upload"></fa-icon>
+                    <span jhiTranslate="webappApp.certificate.uploadExcelRegisterFile"></span>
+                </button>
+
+                <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
+                        (click)="openModalUploadSignatureImageByPersonalId()" *ngIf="isSuperAdmin() || isAdmin()">
+                    <fa-icon icon="upload"></fa-icon>
+                    <span jhiTranslate="webappApp.certificate.uploadSignatureImageByPersonalId"></span>
+                </button>
+
+                <button type="submit" class="btn btn-primary btn-sm jh-create-entity mr-2"
                         (click)="openModalUploadSignatureImage()" *ngIf="isSuperAdmin() || isAdmin()">
                     <fa-icon icon="upload"></fa-icon>
                     <span jhiTranslate="webappApp.certificate.uploadSignatureImage"></span>

@@ -68,6 +68,13 @@ public class Certificate implements Serializable {
     @Column(name = "secret_key")
     private String secretKey;
 
+    @Column(name = "personal_id")
+    private String personalId;
+
+    public String getPersonalId() { return personalId; }
+
+    public void setPersonalId(String personalId) { this.personalId = personalId; }
+
     public Long getSignatureImageId() {
         return signatureImageId;
     }
