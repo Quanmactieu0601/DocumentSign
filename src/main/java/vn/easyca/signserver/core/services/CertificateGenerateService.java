@@ -372,7 +372,7 @@ public class CertificateGenerateService {
         }
     }
 
-    public boolean changePinCertForUser(ChangePinHsmUserRequest request) throws Exception {
+    public boolean changePinCertForUser(ChangePinUserRequest request) throws Exception {
         log.info("Change pin for hsm user not login, serial: {}", request.getSerial());
         String requestType = request.getRequestType();
         if(requestType.equals("request")){
