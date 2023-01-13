@@ -441,6 +441,28 @@ public class CertificateResource extends BaseResource {
         }
     }
 
+    @PostMapping(value = "/resetHsmCertPin")
+    public ResponseEntity<BaseResponseVM> resetHsmCertificatePin(@RequestParam("serial") String serial){
+        try {
+            log.info(" --- resetCertificatePin --- serial: {}", serial);
+            String newPin = certificateService.resetHsmCertificatePin(serial);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(newPin));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/resetPin", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
+
     @GetMapping("/get")
     public ResponseEntity<BaseResponseVM> getCertificate(String pin, String serial) {
         try {
