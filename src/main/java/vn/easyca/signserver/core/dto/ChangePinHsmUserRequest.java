@@ -1,26 +1,19 @@
 package vn.easyca.signserver.core.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 public class ChangePinHsmUserRequest {
-
     private String masterKey;
-
     private String serial;
-
     private String oldPin;
-
     private String newPin;
-
+    private String requestType;
 
     public ChangePinHsmUserRequest() {
     }
-
-    public ChangePinHsmUserRequest(String masterKey, String serial, String oldPin, String newPin) {
-        this.masterKey = masterKey;
-        this.serial = serial;
-        this.oldPin = oldPin;
-        this.newPin = newPin;
-    }
-
     public String getMasterKey() {
         return masterKey;
     }
@@ -51,5 +44,13 @@ public class ChangePinHsmUserRequest {
 
     public void setSerial(String serial) {
         this.serial = serial;
+    }
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
     }
 }

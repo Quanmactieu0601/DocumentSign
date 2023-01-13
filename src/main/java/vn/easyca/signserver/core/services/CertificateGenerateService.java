@@ -1,6 +1,5 @@
 package vn.easyca.signserver.core.services;
 
-import org.checkerframework.checker.regex.qual.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
@@ -365,6 +365,51 @@ public class CertificateGenerateService {
                 CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
                 dto.setSerial(result.getSerial());
                 dto.setPin(result.getRawPin());
+        }
+    }
+
+    public boolean changePinCertForUser(ChangePinHsmUserRequest request) throws Exception {
+        log.info("Change pin for hsm user not login, serial: {}", request.getSerial());
+        String requestType = request.getRequestType();
+        if(requestType.equals("request")){
+            String masterKey = request.getMasterKey();
+            if(StringUtils.isNullOrEmpty(masterKey)){
+                throw new Exception("Master key must be not null!");
+            }
+            if(!request.getMasterKey().equals(hsmConfig.getMasterKey())){
+                throw new Exception("Master key invalid!");
+            }
+            return true;
+        }
+        else if(requestType.equals("confirm")){
+            if(StringUtils.isNullOrEmpty(request.getSerial())){
+                throw new Exception("Serial must be not null!");
+            }
+            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(request.getSerial());
+            if(!certificateOptional.isPresent()){
+                throw new Exception("Certificate not found!");
+            }
+            Certificate certificate = certificateOptional.get();
+            if(StringUtils.isNullOrEmpty(request.getOldPin()) || StringUtils.isNullOrEmpty(request.getNewPin())){
+                throw new Exception("Old pin or New pin must be not null!");
+            }
+            String exactPin = this.symmetricService.decrypt(certificate.getEncryptedPin());
+            if(!request.getOldPin().equals(exactPin)){
+                throw new Exception("Old pin is wrong!");
+            }
+            try{
+                String newPin = request.getNewPin();
+                String newEncryptedPin = this.symmetricService.encrypt(newPin);
+                certificate.setEncryptedPin(newEncryptedPin);
+                certificateRepository.save(certificate);
+                return true;
+            }catch (Exception ex){
+                String error = ex.getMessage();
+                throw new Exception(error);
+            }
+        }else{
+            log.error("Request type invalid!");
+            throw new Exception("Request type invalid!");
         }
     }
 }
