@@ -21,6 +21,7 @@ import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
@@ -56,12 +57,14 @@ public class CertificateGenerateService {
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SymmetricEncryptors symmetricService;
 
+    private final CertificateService certificateService;
+
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, CertificateService certificateService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -71,6 +74,7 @@ public class CertificateGenerateService {
         this.mapper = mapper;
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
+        this.certificateService = certificateService;
     }
 
 
@@ -382,30 +386,11 @@ public class CertificateGenerateService {
             return true;
         }
         else if(requestType.equals("confirm")){
-            if(StringUtils.isNullOrEmpty(request.getSerial())){
-                throw new Exception("Serial must be not null!");
-            }
-            Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(request.getSerial());
-            if(!certificateOptional.isPresent()){
-                throw new Exception("Certificate not found!");
-            }
-            Certificate certificate = certificateOptional.get();
-            if(StringUtils.isNullOrEmpty(request.getOldPin()) || StringUtils.isNullOrEmpty(request.getNewPin())){
-                throw new Exception("Old pin or New pin must be not null!");
-            }
-            String exactPin = this.symmetricService.decrypt(certificate.getEncryptedPin());
-            if(!request.getOldPin().equals(exactPin)){
-                throw new Exception("Old pin is wrong!");
-            }
             try{
-                String newPin = request.getNewPin();
-                String newEncryptedPin = this.symmetricService.encrypt(newPin);
-                certificate.setEncryptedPin(newEncryptedPin);
-                certificateRepository.save(certificate);
+                certificateService.changePIN(request.getSerial(), request.getOldPin(), request.getNewPin(), null);
                 return true;
             }catch (Exception ex){
-                String error = ex.getMessage();
-                throw new Exception(error);
+                throw new Exception(ex.getMessage());
             }
         }else{
             log.error("Request type invalid!");

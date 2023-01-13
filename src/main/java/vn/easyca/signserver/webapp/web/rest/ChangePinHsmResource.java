@@ -9,6 +9,7 @@ import vn.easyca.signserver.core.dto.ChangePinHsmUserRequest;
 import vn.easyca.signserver.core.services.CertificateGenerateService;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.web.rest.vm.response.BaseResponseVM;
 
 @RestController
