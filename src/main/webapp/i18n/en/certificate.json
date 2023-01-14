@@ -54,15 +54,20 @@
       },
       "changeCertPIN": {
         "changePIN": "PIN",
-        "header": "Change PIN",
-        "currentPIN": "Current PIN",
+        "header": "Change Certificate PIN",
+        "currentPIN": {
+          "currentPIN" : "Current PIN",
+          "required" : "Current Pin is required"
+        },
         "newPIN": {
           "newPIN": "New PIN",
+          "required" : "New Pin is requied",
           "minlength": "Your PIN is required to be at least 4 characters",
           "maxlength": "Your PIN cannot be longer than 50 characters"
         },
         "confirmPIN": {
           "confirmPIN": "Confirm PIN",
+          "required" : "Confirm Pin is required",
           "minlength": "Your confirmation PIN is required to be at least 4 characters",
           "maxlength": "Your confirmation PIN cannot be longer than 50 characters"
         },

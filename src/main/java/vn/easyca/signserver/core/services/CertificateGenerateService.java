@@ -372,15 +372,15 @@ public class CertificateGenerateService {
         }
     }
 
-    public boolean changePinCertForUser(ChangePinUserRequest request) throws Exception {
+    public boolean changePinCertForNoLoginUser(ChangePinUserRequest request) throws Exception {
         log.info("Change pin for hsm user not login, serial: {}", request.getSerial());
         String requestType = request.getRequestType();
         if(requestType.equals("request")){
             String masterKey = request.getMasterKey();
-            if(StringUtils.isNullOrEmpty(masterKey)){
-                throw new Exception("Master key must be not null!");
+            if(StringUtils.isNullOrEmpty(masterKey) || StringUtils.isNullOrEmpty(hsmConfig.getMasterKey())){
+                throw new Exception("Master key request and Master Key system must be not null!");
             }
-            if(!request.getMasterKey().equals(hsmConfig.getMasterKey())){
+            if(!masterKey.equals(hsmConfig.getMasterKey())){
                 throw new Exception("Master key invalid!");
             }
             return true;

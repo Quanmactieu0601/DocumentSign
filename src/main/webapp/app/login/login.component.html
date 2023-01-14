@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-center login-container">
     <div class="content mx-auto">
-        <div class="card shadow-sm mg-top-100 rounded-10">
+        <div class="card shadow-sm mg-top-20 rounded-10">
             <div class="card-body p-0">
                 <div class="row">
                     <div class="col-lg-12">
@@ -41,6 +41,7 @@
                                     <button class="btn btn-block btn-lg" style="background: #566181; color: #fff;" jhiTranslate="login.form.button" [disabled]="f.invalid"></button>
                                 </div>
                             </form>
+                            <button (click)="openModalChangeCertPin()" class="btn btn-block btn-lg" style="background: #566181; color: #fff;" jhiTranslate="webappApp.certificate.changeCertPIN.header">Change Certificate Pin</button>
                             <div class="text-center">
                                 <a class="font-weight-bold small" href="#" style="color: #006fe4; font-size: 85%" jhiTranslate="login.password.forgot"></a>
                             </div>

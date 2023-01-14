@@ -4,8 +4,12 @@ import { Router } from '@angular/router';
 import { AccountService } from 'app/core/auth/account.service';
 import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-password-first-login/confirm-change-password.component';
+import {
+  UploadExcelRegisterComponent
+} from "app/entities/certificate/upload-excel-register/upload-excel-register.component";
+import {ChangeCertPinComponent} from "app/login/change-cert-pin/change-cert-pin.component";
 
 @Component({
   selector: 'jhi-login',
@@ -18,6 +22,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
   form: any = {};
   isLoggedIn = false;
+  modalRef: NgbModalRef | undefined;
 
   constructor(
     private loginService: LoginService,
@@ -62,4 +67,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
       () => this.toastrService.error(this.translateService.instant('login.messages.error.authentication'))
     );
   }
+
+  openModalChangeCertPin = () => {
+    this.modalRef = this.modalService.open(ChangeCertPinComponent, { size: 'lg' });
+  }
+
+
 }

@@ -14,16 +14,19 @@ import { accountState } from './account.route';
 import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-password-first-login/confirm-change-password.component';
 
 @NgModule({
-  imports: [WebappSharedModule, RouterModule.forChild(accountState)],
-  declarations: [
-    ActivateComponent,
-    RegisterComponent,
-    PasswordComponent,
-    PasswordStrengthBarComponent,
-    PasswordResetInitComponent,
-    PasswordResetFinishComponent,
-    SettingsComponent,
-    ConfirmChangePasswordComponent,
-  ],
+    imports: [WebappSharedModule, RouterModule.forChild(accountState)],
+    declarations: [
+        ActivateComponent,
+        RegisterComponent,
+        PasswordComponent,
+        PasswordStrengthBarComponent,
+        PasswordResetInitComponent,
+        PasswordResetFinishComponent,
+        SettingsComponent,
+        ConfirmChangePasswordComponent,
+    ],
+    exports: [
+        PasswordStrengthBarComponent
+    ]
 })
 export class AccountModule {}

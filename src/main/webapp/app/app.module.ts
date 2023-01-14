@@ -23,6 +23,8 @@ import { ArchwizardModule } from 'angular-archwizard';
 import { UploadDocComponent } from './signing/signing-pdf-visible/upload-doc/upload-doc.component';
 import { SignatureListComponent } from './signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
 import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signature-image-view/signature-image-view.component';
+import { ChangeCertPinComponent } from './login/change-cert-pin/change-cert-pin.component';
+import {AccountModule} from "app/account/account.module";
 
 @NgModule({
   imports: [
@@ -40,8 +42,9 @@ import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signa
     ArchwizardModule,
     ToastrModule.forRoot(),
     PdfViewerModule,
+    AccountModule,
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, ChangeCertPinComponent],
   bootstrap: [MainComponent],
 })
 export class WebappAppModule {}
