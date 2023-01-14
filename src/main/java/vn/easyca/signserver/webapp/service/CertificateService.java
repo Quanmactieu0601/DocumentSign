@@ -332,9 +332,13 @@ public class CertificateService {
     }
 
 
-    public String resetHsmCertificatePin(String serial) throws Exception {
-        if(StringUtils.isBlank(serial)){
-            throw new Exception("Serial must be not null!");
+    public String resetHsmCertificatePin(String serial, String masterKey) throws Exception {
+        if(StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)){
+            throw new Exception("Serial and MasterKey must be not null!");
+        }
+        String masterKeySystem = env.getProperty("spring.servlet.master-key");
+        if(!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)){
+            throw new Exception("MasterKey invalid !");
         }
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
         if(!certificateOptional.isPresent()){
