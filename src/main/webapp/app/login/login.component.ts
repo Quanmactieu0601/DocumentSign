@@ -6,9 +6,6 @@ import { ToastrService } from 'ngx-toastr';
 import { TranslateService } from '@ngx-translate/core';
 import {NgbModal, NgbModalRef} from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-password-first-login/confirm-change-password.component';
-import {
-  UploadExcelRegisterComponent
-} from "app/entities/certificate/upload-excel-register/upload-excel-register.component";
 import {ChangeCertPinComponent} from "app/login/change-cert-pin/change-cert-pin.component";
 
 @Component({
