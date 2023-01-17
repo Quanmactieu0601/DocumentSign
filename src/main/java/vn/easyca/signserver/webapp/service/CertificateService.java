@@ -163,7 +163,6 @@ public class CertificateService {
             throw new ApplicationException("Signature template is not configured");
         }
         SignatureTemplate signatureTemplate = signatureTemplateOptional.get();
-
         Long signImageId = certificateDTO.getSignatureImageId();
         String signatureImageData = "";
         String htmlTemplate = signatureTemplate.getHtmlTemplate();
