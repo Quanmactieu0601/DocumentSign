@@ -446,7 +446,7 @@ public class CertificateResource extends BaseResource {
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\", \"" + AuthoritiesConstants.USER + "\")")
     public ResponseEntity<BaseResponseVM> resetHsmCertificatePin(@RequestParam("serial") String serial, @RequestParam("masterKey") String masterKey) {
         try {
-            log.info(" --- resetCertificatePin --- serial: {}, masterKey: {}", serial, masterKey);
+            log.info(" --- resetCertificatePin --- serial: {}", serial);
             String newPin = certificateService.resetHsmCertificatePin(serial, masterKey);
             status = TransactionStatus.SUCCESS;
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(newPin));
