@@ -66,6 +66,7 @@ public class CertificateResource extends BaseResource {
     private final ExcelUtils excelUtils;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
+
     public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
@@ -115,7 +116,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/import/p12")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
         try {
             log.info("--- importP12File ---");
@@ -125,7 +126,7 @@ public class CertificateResource extends BaseResource {
             asyncTransactionService.newThread("/api/certificate/import/p12", TransactionType.BUSINESS, Action.CREATE, Extension.CERT, Method.POST,
                 TransactionStatus.SUCCESS, null, AccountUtils.getLoggedAccount());
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("OK"));
-        } catch (ApplicationException  e) {
+        } catch (ApplicationException e) {
             log.error(e.getMessage(), e);
             message = e.getMessage();
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e));
@@ -136,7 +137,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/import/p12file")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File2(@RequestParam("file") MultipartFile file, @RequestParam String ownerId, @RequestParam String pin) {
         try {
             String base64File = "";
@@ -167,7 +168,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/gen/p11")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> genCertificate(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             log.info("--- genCertificate ---");
@@ -199,7 +200,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/createCSRAndUser")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CertificateGeneratorVM certificateGeneratorVM) {
         try {
             log.info("--- createCSRAndUser ---");
@@ -231,7 +232,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/createCSR")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> createCSR(@RequestBody CsrGeneratorVM csrGeneratorVM) {
         try {
             log.info("--- createCSR ---");
@@ -257,7 +258,7 @@ public class CertificateResource extends BaseResource {
      * @return
      */
     @PostMapping("/exportCsr")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<Resource> createCSRs(@RequestBody CsrsGeneratorVM dto) {
         String filename = "EasyCA-CSR-Export" + DateTimeUtils.getCurrentTimeStamp() + ".xlsx";
         try {
@@ -281,7 +282,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/uploadCert")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
             log.info("--- uploadCert ---");
@@ -323,8 +324,8 @@ public class CertificateResource extends BaseResource {
     }
 
     @PutMapping("/ownerid")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<BaseResponseVM> updateOwnerId( @RequestBody CertificateChangeOwnVN cert) {
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\", \"" + AuthoritiesConstants.USER + "\")")
+    public ResponseEntity<BaseResponseVM> updateOwnerId(@RequestBody CertificateChangeOwnVN cert) {
         try {
 
             certificateService.updateOwnerId(cert.getOwnerId(), cert.getId());
@@ -340,7 +341,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PutMapping("/update-active-status")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> updateActiveStatus(@RequestBody Long id) {
         log.info("updateActiveStatus:  certid {}", id);
         try {
@@ -399,7 +400,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @GetMapping("/getQRCodeOTP")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> getQRCodeOTP(@RequestParam String serial, @RequestParam String pin) {
         log.info(" --- getQRCodeOTP --- serial: {}", serial);
         try {
@@ -420,7 +421,7 @@ public class CertificateResource extends BaseResource {
     }
 
     @PostMapping("/changeCertPIN")
-    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\", \"" + AuthoritiesConstants.USER + "\")")
     public ResponseEntity<BaseResponseVM> changeCertPIN(@RequestBody P12PinVM p12PinVM) {
         try {
             log.info(" --- changeCertPIN --- serial: {}", p12PinVM.serial);
@@ -440,6 +441,29 @@ public class CertificateResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
+
+    @PostMapping(value = "/resetHsmCertPin")
+    @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\", \"" + AuthoritiesConstants.USER + "\")")
+    public ResponseEntity<BaseResponseVM> resetHsmCertificatePin(@RequestParam("serial") String serial, @RequestParam("masterKey") String masterKey) {
+        try {
+            log.info(" --- resetCertificatePin --- serial: {}", serial);
+            String newPin = certificateService.resetHsmCertificatePin(serial, masterKey);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(newPin));
+        } catch (ApplicationException e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(e.getCode(), null, e.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/certificate/resetHsmCertPin", TransactionType.BUSINESS, Action.MODIFY, Extension.CERT, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
+
 
     @GetMapping("/get")
     public ResponseEntity<BaseResponseVM> getCertificate(String pin, String serial) {
