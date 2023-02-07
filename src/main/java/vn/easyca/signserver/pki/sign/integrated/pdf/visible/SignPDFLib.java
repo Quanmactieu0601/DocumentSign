@@ -123,7 +123,7 @@ public class SignPDFLib {
         appearance.setSignatureGraphic(image);
         appearance.setVisibleSignature(rectangle, signDTO.getPageNumber(), signDTO.getSignField());
         appearance.setRenderingMode(PdfSignatureAppearance.RenderingMode.GRAPHIC);
-
+        appearance.setCertificationLevel(PdfSignatureAppearance.CERTIFIED_FORM_FILLING);
         ExternalSignatureContainer external = new ExternalBlankSignatureContainer(PdfName.ADOBE_PPKLITE, PdfName.ADBE_PKCS7_DETACHED);
         MakeSignature.signExternalContainer(appearance, external, 8192);
         try {
