@@ -14,13 +14,16 @@ public class SignatureTemplateParserFactory {
     private final DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser;
     private final QRCodeSignatureTemplateParserImpl qrCodeSignatureTemplateParser;
 
-    public SignatureTemplateParserFactory(Bvq11SignatureTemplateParserImpl bvq11SignatureTemplateParser, Bvq11v2SignatureTemplateParserImpl bvq11v2SignatureTemplateParser ,BvAnPhuocSignatureTemplateParserImpl bvAnPhuocSignatureTemplateParser, BvBenhNhietDoiSignatureTemplateParserImpl bvNhietDoiSignatureTemplateParser, QRCodeSignatureTemplateParserImpl qrCodeSignatureTemplateParser, DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser) {
+    private final FullInfoSignatureTemplateParserImpl fullInfoSignatureTemplateParser;
+
+    public SignatureTemplateParserFactory(Bvq11SignatureTemplateParserImpl bvq11SignatureTemplateParser, Bvq11v2SignatureTemplateParserImpl bvq11v2SignatureTemplateParser, BvAnPhuocSignatureTemplateParserImpl bvAnPhuocSignatureTemplateParser, BvBenhNhietDoiSignatureTemplateParserImpl bvBenhNhietDoiSignatureTemplateParser, DefaultSignatureTemplateParserImpl defaultSignatureTemplateParser, QRCodeSignatureTemplateParserImpl qrCodeSignatureTemplateParser, FullInfoSignatureTemplateParserImpl fullInfoSignatureTemplateParser) {
         this.bvq11SignatureTemplateParser = bvq11SignatureTemplateParser;
         this.bvq11v2SignatureTemplateParser = bvq11v2SignatureTemplateParser;
         this.bvAnPhuocSignatureTemplateParser = bvAnPhuocSignatureTemplateParser;
-        this.bvBenhNhietDoiSignatureTemplateParser = bvNhietDoiSignatureTemplateParser;
+        this.bvBenhNhietDoiSignatureTemplateParser = bvBenhNhietDoiSignatureTemplateParser;
         this.defaultSignatureTemplateParser = defaultSignatureTemplateParser;
         this.qrCodeSignatureTemplateParser = qrCodeSignatureTemplateParser;
+        this.fullInfoSignatureTemplateParser = fullInfoSignatureTemplateParser;
     }
 
     public SignatureTemplateParseService resolve(SignatureTemplateParserType templateParserType) throws ApplicationException {
@@ -30,6 +33,7 @@ public class SignatureTemplateParserFactory {
             case BV_AnPhuoc: return bvAnPhuocSignatureTemplateParser;
             case BV_BenhNhietDoi: return bvBenhNhietDoiSignatureTemplateParser;
             case QR_Code : return qrCodeSignatureTemplateParser;
+            case Full_Info_Version: return fullInfoSignatureTemplateParser;
             default: return defaultSignatureTemplateParser;
         }
     }
