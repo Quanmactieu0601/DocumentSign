@@ -18,6 +18,11 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
 import { AngularDraggableModule } from 'angular2-draggable';
 import { ArchwizardModule } from 'angular-archwizard';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { UploadDocComponent } from './signing/signing-pdf-visible/upload-doc/upload-doc.component';
+import { SignatureListComponent } from './signing/signing-pdf-visible/pdf-view/signature-list/signature-list.component';
+import { SignatureImageViewComponent } from './signing/signing-pdf-visible/signature-image-view/signature-image-view.component';
+import { ChangeCertPinComponent } from './login/change-cert-pin/change-cert-pin.component';
+import { AccountModule } from 'app/account/account.module';
 
 @NgModule({
   imports: [
@@ -34,8 +39,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
     NgxExtendedPdfViewerModule,
     ArchwizardModule,
     ToastrModule.forRoot(),
+    AccountModule,
   ],
-  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent],
+  declarations: [MainComponent, ErrorComponent, LoginComponent, HomeLayoutComponent, ChangeCertPinComponent],
   bootstrap: [MainComponent],
   providers: [NgbActiveModal],
 })

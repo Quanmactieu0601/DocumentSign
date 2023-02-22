@@ -1,16 +1,7 @@
 package vn.easyca.signserver.webapp.service.impl;
 
-import com.google.gson.Gson;
-import io.jsonwebtoken.lang.Strings;
-import javafx.util.Pair;
-import jdk.jfr.internal.Utils;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
@@ -19,7 +10,6 @@ import vn.easyca.signserver.webapp.service.SignatureImageService;
 import vn.easyca.signserver.webapp.domain.SignatureImage;
 import vn.easyca.signserver.webapp.repository.SignatureImageRepository;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
-import vn.easyca.signserver.webapp.service.dto.CertImportErrorDTO;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;
 import vn.easyca.signserver.webapp.service.dto.SignatureImageDTO;
 import vn.easyca.signserver.webapp.service.mapper.SignatureImageMapper;
@@ -30,12 +20,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import vn.easyca.signserver.webapp.utils.ParserUtils;
 
-import javax.rmi.CORBA.Util;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.sql.Struct;
 import java.util.*;
 
 /**

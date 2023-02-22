@@ -1,0 +1,135 @@
+<div *ngIf=!isChangePin>
+    <div class="modal-header header-custom">
+        <h5 class="modal-title">Kiểm tra khóa đơn vị</h5>
+        <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </a>
+    </div>
+    <div class="modal-body">
+        <div class="col-md-12 changeCertPinFormGroup">
+            <div class="input-group mb-3">
+                <input type="password" class="form-control form-control-sm" name="masterKey" #masterKey/>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer footer-custom">
+        <button type="button" class="btn btn-primary btn-sm float-right" (click)="checkMasterKey(masterKey.value)">
+            Kiểm tra
+        </button>
+        <button type="button" class="btn btn-danger btn-sm float-right" (click)="activeModal.dismiss('Cross click')">
+            Hủy
+        </button>
+    </div>
+</div>
+
+<div *ngIf=isChangePin>
+    <div class="modal-header header-custom">
+        <h5 class="modal-title">Thay đổi mã pin chứng thư số</h5>
+        <a class="close" data-dismiss="modal" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+        </a>
+    </div>
+    <div class="modal-body">
+        <form name="form" role="form" [formGroup]="pinForm">
+
+            <div class="form-group">
+                <label class="form-control-label" for="serial">Serial</label>
+                <input type="text" class="form-control" id="serial" name="serial"
+                       formControlName="serial">
+                <div
+                    *ngIf="pinForm.get('serial')!.invalid && (pinForm.get('serial')!.dirty || pinForm.get('serial')!.touched)">
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('serial')?.errors?.required">
+                        Your Serial is required.
+                    </small>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="form-control-label" for="currentPin"
+                       jhiTranslate="webappApp.certificate.changeCertPIN.currentPIN.currentPIN">Current
+                    pin</label>
+                <input type="password" class="form-control" id="currentPin" name="currentPin"
+                       formControlName="currentPin">
+
+                <div
+                    *ngIf="pinForm.get('currentPin')!.invalid && (pinForm.get('currentPin')!.dirty || pinForm.get('currentPin')!.touched)">
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('currentPin')?.errors?.required"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.currentPIN.required">
+                        Your pin is required.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-control-label" for="newPin"
+                       jhiTranslate="webappApp.certificate.changeCertPIN.newPIN.newPIN">New pin</label>
+                <input type="password" class="form-control" id="newPin" name="newPin"
+                       formControlName="newPin">
+
+                <div
+                    *ngIf="pinForm.get('newPin')!.invalid && (pinForm.get('newPin')!.dirty || pinForm.get('newPin')!.touched)">
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('newPin')?.errors?.required"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.newPIN.required">
+                        Your pin is required.
+                    </small>
+
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('newPin')?.errors?.minlength"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.newPIN.minlength">
+                        Your pin is required to be at least 4 characters.
+                    </small>
+
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('newPin')?.errors?.maxlength"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.newPIN.maxlength">
+                        Your pin cannot be longer than 50 characters.
+                    </small>
+                </div>
+
+                <jhi-password-strength-bar [passwordToCheck]="pinForm.get('newPin')!.value"></jhi-password-strength-bar>
+            </div>
+
+            <div class="form-group">
+                <label class="form-control-label" for="confirmPin"
+                       jhiTranslate="webappApp.certificate.changeCertPIN.confirmPIN.confirmPIN">New pin
+                    confirmation</label>
+                <input type="password" class="form-control" id="confirmPin" name="confirmPin"
+                       formControlName="confirmPin">
+
+                <div
+                    *ngIf="pinForm.get('confirmPin')!.invalid && (pinForm.get('confirmPin')!.dirty || pinForm.get('confirmPin')!.touched)">
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('confirmPin')?.errors?.required"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.confirmPIN.required">
+                        Your confirmation pin is required.
+                    </small>
+
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('confirmPin')?.errors?.minlength"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.confirmPIN.minlength">
+                        Your confirmation pin is required to be at least 4 characters.
+                    </small>
+
+                    <small class="form-text text-danger"
+                           *ngIf="pinForm.get('confirmPin')?.errors?.maxlength"
+                           jhiTranslate="webappApp.certificate.changeCertPIN.confirmPIN.maxlength">
+                        Your confirmation pin cannot be longer than 50 characters.
+                    </small>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer footer-custom">
+        <button type="submit" class="btn btn-primary btn-md float-right" (click)="changePin()">
+            Lưu
+        </button>
+        <button type="button" class="btn btn-danger btn-md float-right" (click)="activeModal.dismiss('Cross click')">
+            Hủy
+        </button>
+    </div>
+</div>

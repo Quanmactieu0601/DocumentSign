@@ -1,8 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import com.google.gson.Gson;
-import javafx.util.Pair;
-import jdk.jfr.internal.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;

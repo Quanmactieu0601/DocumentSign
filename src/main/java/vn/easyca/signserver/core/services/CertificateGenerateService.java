@@ -1,6 +1,5 @@
 package vn.easyca.signserver.core.services;
 
-import org.checkerframework.checker.regex.qual.Regex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.pki.cryptotoken.utils.Pkcs12Utils;
 import vn.easyca.signserver.ra.lib.dto.RegisterInputDto;
 import vn.easyca.signserver.ra.lib.dto.RegisterResultDto;
@@ -24,6 +24,7 @@ import vn.easyca.signserver.pki.cryptotoken.utils.CSRGenerator;
 import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
@@ -65,13 +66,14 @@ public class CertificateGenerateService {
     private final AuthenticatorTOTPService authenticatorTOTPService;
     private final SymmetricEncryptors symmetricService;
 
+    private final CertificateService certificateService;
 
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, CertificateService certificateService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -81,6 +83,7 @@ public class CertificateGenerateService {
         this.mapper = mapper;
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
+        this.certificateService = certificateService;
     }
 
 
@@ -353,7 +356,6 @@ public class CertificateGenerateService {
 
     /**
      * Tạo private key ở HSM và CSR thông qua file upload chứa thông tin CTS
-     *
      * @param certRequestInfoDTOs
      * @throws Exception
      */
@@ -382,6 +384,32 @@ public class CertificateGenerateService {
                 CertificateDTO result = saveAndInstallCert(dto.getCertValue(), dto.getAlias(), currentUser, cryptoToken);
                 dto.setSerial(result.getSerial());
                 dto.setPin(result.getRawPin());
+        }
+    }
+
+    public boolean changePinCertForNoLoginUser(ChangePinUserRequest request) throws Exception {
+        log.info("Change pin for hsm user not login, serial: {}", request.getSerial());
+        String requestType = request.getRequestType();
+        if(requestType.equals("request")){
+            String masterKey = request.getMasterKey();
+            if(StringUtils.isNullOrEmpty(masterKey) || StringUtils.isNullOrEmpty(hsmConfig.getMasterKey())){
+                throw new Exception("Master key request and Master Key system must be not null!");
+            }
+            if(!masterKey.equals(hsmConfig.getMasterKey())){
+                throw new Exception("Master key invalid!");
+            }
+            return true;
+        }
+        else if(requestType.equals("confirm")){
+            try{
+                certificateService.changePIN(request.getSerial(), request.getOldPin(), request.getNewPin(), null);
+                return true;
+            }catch (Exception ex){
+                throw new Exception(ex.getMessage());
+            }
+        }else{
+            log.error("Request type invalid!");
+            throw new Exception("Request type invalid!");
         }
     }
 }

@@ -25,5 +25,6 @@ import { ConfirmChangePasswordComponent } from 'app/account/confirm-change-passw
     SettingsComponent,
     ConfirmChangePasswordComponent,
   ],
+  exports: [PasswordStrengthBarComponent],
 })
 export class AccountModule {}

@@ -16,7 +16,6 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import org.springframework.stereotype.Service;
 import org.w3c.dom.*;
-
 import sun.security.provider.certpath.OCSP;
 import sun.security.x509.X509CertImpl;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -33,6 +32,13 @@ import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 import javax.validation.Valid;
 
+import javax.xml.crypto.*;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import javax.net.ssl.*;
 import javax.security.auth.x500.X500Principal;
@@ -608,7 +614,7 @@ public class SignatureVerificationService {
             }
             throw new KeySelectorException("No key found!");
         }
-//
+        //
         static boolean algEquals(String algURI, String algName) {
             if ((algName.equalsIgnoreCase("DSA") &&
                 algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)) ||
@@ -620,6 +626,5 @@ public class SignatureVerificationService {
             }
         }
     }
-
 
 }
