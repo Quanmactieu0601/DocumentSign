@@ -11,10 +11,7 @@ import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import sun.security.provider.certpath.OCSP;
 import sun.security.x509.X509CertImpl;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -30,6 +27,13 @@ import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.service.FileResourceService;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
 
+import javax.xml.crypto.*;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
@@ -362,6 +366,205 @@ public class SignatureVerificationService {
             throw new ApplicationException("Has error when verify Docx file", ex);
         }finally {
             pkg.close();
+        }
+    }
+
+    public VerificationResponseDTO verifyXml(InputStream stream) throws ApplicationException, IOException, InvalidFormatException {
+        try{
+            if (provider == null) {
+                provider = new BouncyCastleProvider();
+                Security.addProvider(provider);
+            }
+
+            VerificationResponseDTO result = new VerificationResponseDTO();
+            List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
+            List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
+
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            Document doc = dbf.newDocumentBuilder().parse(stream);
+            doc.getDocumentElement().normalize();
+
+            Element rootElement = doc.getDocumentElement();
+
+
+
+            NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
+            if (nl.getLength() == 0) {
+                throw new Exception("Cannot find Signature element");
+            }
+
+            Node node = nl.item(0);
+            while(node.getParentNode() .getParentNode()!= null){
+                node = node.getParentNode();
+            }
+//            NodeList content = node.getChildNodes();
+//            int i=0;
+//            while (content.item(i).getLocalName()==null) i++;
+//
+//            Element context = (Element) content.item(i);
+//            if (context.getAttribute("Id") != "") {
+//                context.setIdAttribute("Id", true);
+//            } else if (context.getAttribute("ID") != "") {
+//                context.setIdAttribute("ID", true);
+//            } else if (context.getAttribute("id") != "") {
+//                context.setIdAttribute("id", true);
+//            }
+
+            XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+            DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(0));
+            setIdAttribute(valContext,node);
+            XMLSignature signature = fac.unmarshalXMLSignature(valContext);
+            boolean coreValidity = signature.validate(valContext);
+
+            //get signature value
+            KeyInfo keyInfo = signature.getKeyInfo();
+            Iterator ki = keyInfo.getContent().iterator();
+            while(ki.hasNext()){
+                XMLStructure info = (XMLStructure) ki.next();
+                if(info instanceof X509Data){
+                    X509Data x509Data = (X509Data) info;
+                    Iterator xi = x509Data.getContent().iterator();
+                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                    signatureVfDTO.setIntegrity(coreValidity);
+
+                    while(xi.hasNext()){
+                        Object o = xi.next();
+                        if (o instanceof X509Certificate) {
+                            X509Certificate cert = (X509Certificate) o;
+                            certificateVfDTOList.add(getCertificateInfoXml(cert));
+                            signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                        }
+                    }
+                    signatureVfDTOList.add(signatureVfDTO);
+
+                }
+            }
+            result.setSignatureVfDTOs(signatureVfDTOList);
+
+
+
+
+            return result;
+        }catch (Exception ex){
+            throw new ApplicationException("Has error when verify Xml file", ex);
+        }
+
+
+    }
+
+    public  void setIdAttribute(DOMValidateContext validateContext,Node node){
+        final NamedNodeMap attributes = node.getAttributes();
+        if(attributes != null) {
+            for (int jj = 0; jj < attributes.getLength(); jj++) {
+                final Node item = attributes.item(jj);
+                final String localName = item.getNodeName();
+                if (localName != null) {
+                    final String id = localName.toLowerCase();
+                    if ("id".equals(id)) {
+                        validateContext.setIdAttributeNS((Element) node, null, localName);
+                        break;
+                    }
+                }
+            }
+        }
+        NodeList nl = node.getChildNodes();
+        for(int jj = 0; jj < nl.getLength(); jj++){
+            setIdAttribute(validateContext, nl.item(jj));
+        }
+    }
+
+
+
+
+    private CertificateVfDTO getCertificateInfoXml(X509Certificate cert) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, ApplicationException, CertPathValidatorException {
+        CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("Universal"));
+
+        CertStatus signTimeStatus = null;
+        CertStatus currentStatus = null;
+
+        signTimeStatus = CertStatus.VALID;
+
+
+        // Check if a certificate is still valid now
+        try {
+            cert.checkValidity();
+            currentStatus = CertStatus.VALID;
+        } catch (CertificateExpiredException e) {
+            currentStatus = CertStatus.EXPIRED;
+        } catch (CertificateNotYetValidException e) {
+            currentStatus = CertStatus.INVALID;
+        }
+        RevocationStatus revocationStatus = RevocationStatus.UNCHECKED;
+        CertificateFactory cf = CertificateFactory.getInstance("X.509");
+        InputStream rootCaStream = fileResourceService.getRootCer(FileResourceService.EASY_CA);
+        Certificate issuesCert = cf.generateCertificate(rootCaStream);
+        X509Certificate x509IssuesCert = (X509Certificate) issuesCert;
+
+        if(x509IssuesCert.getSubjectDN().equals(cert.getIssuerDN())) {
+            KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null, null);
+            ks.setCertificateEntry("root", issuesCert);
+            OCSP.RevocationStatus revoStatus = OCSP.check(cert, (X509Certificate) ks.getCertificate("root"), OCSP.getResponderURI(X509CertImpl.toImpl(cert)), null, null);
+            if (revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.REVOKED.toString()))
+                revocationStatus = RevocationStatus.REVOKED;
+            else if (revoStatus.getCertStatus().toString().trim().equals(RevocationStatus.GOOD.toString()))
+                revocationStatus = RevocationStatus.GOOD;
+            else if (revoStatus.getCertStatus().toString().trim().equals("UNKNOWN"))
+                revocationStatus = RevocationStatus.CANT_VERIFY;
+        }
+        certificateVfDTO.setIssuer(cert.getIssuerDN().toString());
+        certificateVfDTO.setSubjectDn(cert.getSubjectDN().toString());
+        certificateVfDTO.setValidFrom(simpleDateFormat.format(cert.getNotBefore()));
+        certificateVfDTO.setValidTo(simpleDateFormat.format(cert.getNotAfter()));
+        certificateVfDTO.setCurrentStatus(currentStatus);
+        certificateVfDTO.setSignTimeStatus(signTimeStatus);
+        certificateVfDTO.setRevocationStatus(revocationStatus);
+        return certificateVfDTO;
+    }
+
+    public static class X509KeySelector extends KeySelector {
+        public KeySelectorResult select(KeyInfo keyInfo,
+                                        KeySelector.Purpose purpose,
+                                        AlgorithmMethod method,
+                                        XMLCryptoContext context)
+            throws KeySelectorException {
+            Iterator ki = keyInfo.getContent().iterator();
+            while (ki.hasNext()) {
+                XMLStructure info = (XMLStructure) ki.next();
+                if (!(info instanceof X509Data))
+                    continue;
+                X509Data x509Data = (X509Data) info;
+                Iterator xi = x509Data.getContent().iterator();
+                while (xi.hasNext()) {
+                    Object o = xi.next();
+                    if (!(o instanceof X509Certificate))
+                        continue;
+                    final PublicKey key = ((X509Certificate)o).getPublicKey();
+                    // Make sure the algorithm is compatible
+                    // with the method.
+                    if (algEquals(method.getAlgorithm(), key.getAlgorithm())) {
+                        return new KeySelectorResult() {
+                            public Key getKey() { return key; }
+                        };
+                    }
+                }
+            }
+            throw new KeySelectorException("No key found!");
+        }
+        //
+        static boolean algEquals(String algURI, String algName) {
+            if ((algName.equalsIgnoreCase("DSA") &&
+                algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)) ||
+                (algName.equalsIgnoreCase("RSA") &&
+                    algURI.equalsIgnoreCase(SignatureMethod.RSA_SHA1))) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

@@ -40,9 +40,9 @@ spring:
     #    password: EasySign@202o
 
     # SDS DB production - new ver
-    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
-    username: thanhld
-    password: Th@nhSignE@sy#1
+    #    url: jdbc:mariadb://10.100.102.160:3306/easysign?useLegacyDatetimeCode=false&serverTimezone=UTC
+    #    username: thanhld
+    #    password: Th@nhSignE@sy#1
 
     # BV Nhi Dong - cau hinh DB master
     #    url: jdbc:postgresql://192.168.200.118:5432/signserver2
@@ -55,9 +55,9 @@ spring:
     #    password: 123@@nd1
 
     # SDS - Cau hinh Test
-    #    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
-    #    username: easysign_test
-    #    password: easysign999
+    url: jdbc:mariadb://10.100.110.7:3306/signserver_test?useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: easysign_test
+    password: easysign999
 
     # SDS - Cau hinh Denmo
     #    url: jdbc:mariadb://10.100.110.7:3306/signserver_demo?useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -171,7 +171,7 @@ spring:
 # ===================================================================
 server:
   #  port: 8080
-  port: 8888 #production port
+  port: 8088 #production port
   #========SSL - EASYSIGN PRODUCTION==========
   #  port: 443
   #  ssl:
