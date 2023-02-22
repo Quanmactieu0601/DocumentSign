@@ -50,7 +50,7 @@
       },
       "changeCertPIN": {
         "changePIN": "Mã PIN",
-        "header": "Thay đổi mã PIN",
+        "header": "Thay đổi mã PIN CTS",
         "currentPIN": "Mã PIN cũ",
         "newPIN": {
           "newPIN": "Mã PIN mới",
