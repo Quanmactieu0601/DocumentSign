@@ -16,6 +16,9 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import org.springframework.stereotype.Service;
 import org.w3c.dom.*;
+import org.w3c.dom.*;
+
+import org.xml.sax.InputSource;
 import sun.security.provider.certpath.OCSP;
 import sun.security.x509.X509CertImpl;
 import vn.easyca.signserver.core.domain.CertificateDTO;
@@ -50,8 +53,22 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
+
+import javax.net.ssl.*;
+import javax.security.auth.x500.X500Principal;
+import javax.xml.crypto.*;
+import javax.xml.crypto.dsig.SignatureMethod;
+import javax.xml.crypto.dsig.XMLSignature;
+import javax.xml.crypto.dsig.XMLSignatureFactory;
+import javax.xml.crypto.dsig.dom.DOMValidateContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfo;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
+import javax.xml.crypto.dsig.keyinfo.X509Data;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import java.io.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -437,73 +454,60 @@ public class SignatureVerificationService {
 
             VerificationResponseDTO result = new VerificationResponseDTO();
             List<SignatureVfDTO> signatureVfDTOList = new ArrayList<>();
-            List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
 
+
+            Reader reader = new InputStreamReader(stream,"UTF-8");
+            InputSource is = new InputSource(reader);
+            is.setEncoding("UTF-8");
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             dbf.setNamespaceAware(true);
-            Document doc = dbf.newDocumentBuilder().parse(stream);
+            Document doc = dbf.newDocumentBuilder().parse(is);
             doc.getDocumentElement().normalize();
-
-            Element rootElement = doc.getDocumentElement();
-
-
 
             NodeList nl = doc.getElementsByTagNameNS(XMLSignature.XMLNS, "Signature");
             if (nl.getLength() == 0) {
                 throw new Exception("Cannot find Signature element");
             }
 
-            Node node = nl.item(0);
-            while(node.getParentNode() .getParentNode()!= null){
-                node = node.getParentNode();
-            }
-//            NodeList content = node.getChildNodes();
-//            int i=0;
-//            while (content.item(i).getLocalName()==null) i++;
-//
-//            Element context = (Element) content.item(i);
-//            if (context.getAttribute("Id") != "") {
-//                context.setIdAttribute("Id", true);
-//            } else if (context.getAttribute("ID") != "") {
-//                context.setIdAttribute("ID", true);
-//            } else if (context.getAttribute("id") != "") {
-//                context.setIdAttribute("id", true);
-//            }
+            for (int i = 0; i < nl.getLength(); i++) {
+                Node node = nl.item(i);
+                while(node.getParentNode() .getParentNode()!= null){
+                    node = node.getParentNode();
+                }
 
-            XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
-            DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(0));
-            setIdAttribute(valContext,node);
-            XMLSignature signature = fac.unmarshalXMLSignature(valContext);
-            boolean coreValidity = signature.validate(valContext);
+                XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+                DOMValidateContext valContext = new DOMValidateContext( new X509KeySelector(), nl.item(i));
+                setIdAttribute(valContext,node);
+                XMLSignature signature = fac.unmarshalXMLSignature(valContext);
+                boolean coreValidity = signature.validate(valContext);
 
-            //get signature value
-            KeyInfo keyInfo = signature.getKeyInfo();
-            Iterator ki = keyInfo.getContent().iterator();
-            while(ki.hasNext()){
-                XMLStructure info = (XMLStructure) ki.next();
-                if(info instanceof X509Data){
-                    X509Data x509Data = (X509Data) info;
-                    Iterator xi = x509Data.getContent().iterator();
-                    SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
-                    signatureVfDTO.setIntegrity(coreValidity);
+                //get signature value
+                KeyInfo keyInfo = signature.getKeyInfo();
+                Iterator ki = keyInfo.getContent().iterator();
+                while(ki.hasNext()){
+                    XMLStructure info = (XMLStructure) ki.next();
+                    List<CertificateVfDTO> certificateVfDTOList = new ArrayList<>();
+                    if(info instanceof X509Data){
+                        X509Data x509Data = (X509Data) info;
+                        Iterator xi = x509Data.getContent().iterator();
+                        SignatureVfDTO signatureVfDTO = new SignatureVfDTO();
+                        signatureVfDTO.setIntegrity(coreValidity);
 
-                    while(xi.hasNext()){
-                        Object o = xi.next();
-                        if (o instanceof X509Certificate) {
-                            X509Certificate cert = (X509Certificate) o;
-                            certificateVfDTOList.add(getCertificateInfoXml(cert));
-                            signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                        while(xi.hasNext()){
+                            Object o = xi.next();
+                            if (o instanceof X509Certificate) {
+                                X509Certificate cert = (X509Certificate) o;
+                                certificateVfDTOList.add(getCertificateInfoXml(cert, coreValidity));
+                                signatureVfDTO.setCertificateVfDTOs(certificateVfDTOList);
+                            }
                         }
-                    }
-                    signatureVfDTOList.add(signatureVfDTO);
+                        signatureVfDTOList.add(signatureVfDTO);
 
+                    }
                 }
             }
+
             result.setSignatureVfDTOs(signatureVfDTOList);
-
-
-
-
             return result;
         }catch (Exception ex){
             throw new ApplicationException("Has error when verify Xml file", ex);
@@ -536,7 +540,7 @@ public class SignatureVerificationService {
 
 
 
-    private CertificateVfDTO getCertificateInfoXml(X509Certificate cert) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, ApplicationException, CertPathValidatorException {
+    private CertificateVfDTO getCertificateInfoXml(X509Certificate cert, boolean integrity) throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException, ApplicationException, CertPathValidatorException {
         CertificateVfDTO certificateVfDTO = new CertificateVfDTO();
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss dd/MM/yyyy");
@@ -550,8 +554,12 @@ public class SignatureVerificationService {
 
         // Check if a certificate is still valid now
         try {
-            cert.checkValidity();
-            currentStatus = CertStatus.VALID;
+            if (integrity) {
+                cert.checkValidity();
+                currentStatus = CertStatus.VALID;
+            } else {
+                currentStatus = CertStatus.INVALID;
+            }
         } catch (CertificateExpiredException e) {
             currentStatus = CertStatus.EXPIRED;
         } catch (CertificateNotYetValidException e) {
@@ -614,7 +622,7 @@ public class SignatureVerificationService {
             }
             throw new KeySelectorException("No key found!");
         }
-        //
+//
         static boolean algEquals(String algURI, String algName) {
             if ((algName.equalsIgnoreCase("DSA") &&
                 algURI.equalsIgnoreCase(SignatureMethod.DSA_SHA1)) ||
@@ -626,5 +634,6 @@ public class SignatureVerificationService {
             }
         }
     }
+
 
 }

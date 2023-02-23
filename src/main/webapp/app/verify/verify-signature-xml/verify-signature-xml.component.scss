@@ -78,7 +78,11 @@
 .captcha {
   position: relative;
 }
-img.img_captcha {
+img {
+  position: absolute;
+  border-radius: 5px;
+}
+input {
   position: absolute;
   border-radius: 5px;
 }
@@ -101,7 +105,7 @@ input.text_captcha {
   opacity: 0;
   background-image: none;
 }
-button.submit {
+button {
   position: absolute;
   top: 120px;
   margin: auto;

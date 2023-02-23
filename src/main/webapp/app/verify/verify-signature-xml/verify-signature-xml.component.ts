@@ -4,12 +4,13 @@ import { Subscription } from 'rxjs';
 import { ISignatureVfDTO } from 'app/shared/model/signatureVfDTO.model';
 import { ICaptchaModel } from 'app/shared/model/captcha.model';
 import { AccountService } from 'app/core/auth/account.service';
-import { VerifyService } from 'app/verify/verify.service';
+
 import { ToastrService } from 'ngx-toastr';
 import { CaptchaService } from 'app/shared/services/captcha.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Md5 } from 'ts-md5';
 import { HttpResponse } from '@angular/common/http';
+import { VerifyService } from 'app/verify/verify.service';
 
 @Component({
   selector: 'jhi-verify-signature-xml',
@@ -78,8 +79,8 @@ export class VerifySignatureXmlComponent implements OnInit {
         if (res instanceof HttpResponse) {
           if (res.body.status === 0) {
             this.signatureVfDTOs = res.body.data.signatureVfDTOs;
-            if (!this.signatureVfDTOs?.length) this.toastrService.error(this.translateService.instant('error.verifySign'));
-            else this.disable = true;
+            // if (!this.signatureVfDTOs?.length) this.toastrService.error(this.translateService.instant('error.verifySign'));
+            // else this.disable = true;
           } else {
             this.toastrService.error(res.body.msg);
           }
