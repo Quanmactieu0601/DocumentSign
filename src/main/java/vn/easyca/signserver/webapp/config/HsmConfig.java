@@ -29,9 +29,6 @@ public class HsmConfig {
     @Value("${pin}")
     private String modulePin;
 
-    @Value("${master-key}")
-    private String masterKey;
-
     private String pkcs11Config;
 
     @PostConstruct
@@ -74,9 +71,5 @@ public class HsmConfig {
 
     public String getType() {
         return type;
-    }
-
-    public String getMasterKey() {
-        return masterKey;
     }
 }

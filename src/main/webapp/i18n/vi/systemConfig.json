@@ -30,7 +30,8 @@
         "SAVE_TOKEN_PASSWORD": "Lưu mật khẩu token",
         "USE_OTP": "Dùng OTP",
         "SYMMETRIC_KEY": "Khóa đối xứng",
-        "OTP_LIFE_TIME_SECOND": "Lifetime của OTP"
+        "OTP_LIFE_TIME_SECOND": "Lifetime của OTP",
+        "MASTER_KEY": "Khóa đơn vị"
       },
       "DATATYPES": {
         "STRING": "Chuỗi ký tự",
