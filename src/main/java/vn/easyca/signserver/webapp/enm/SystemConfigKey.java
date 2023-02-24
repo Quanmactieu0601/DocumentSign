@@ -29,5 +29,7 @@ public enum SystemConfigKey {
      *
      */
 
-    OTP_LIFE_TIME_SECOND
+    OTP_LIFE_TIME_SECOND,
+
+    MASTER_KEY
 }

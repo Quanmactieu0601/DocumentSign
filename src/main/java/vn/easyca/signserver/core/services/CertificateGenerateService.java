@@ -11,6 +11,7 @@ import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
 import vn.easyca.signserver.pki.sign.utils.StringUtils;
 import vn.easyca.signserver.webapp.domain.Certificate;
+import vn.easyca.signserver.webapp.enm.SystemConfigKey;
 import vn.easyca.signserver.webapp.repository.CertificateRepository;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.repository.UserRepository;
@@ -22,8 +23,10 @@ import vn.easyca.signserver.core.domain.*;
 import vn.easyca.signserver.core.dto.*;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.service.CertificateService;
+import vn.easyca.signserver.webapp.service.SystemConfigService;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.CertRequestInfoDTO;
+import vn.easyca.signserver.webapp.service.dto.SystemConfigDTO;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.CommonUtils;
 import vn.easyca.signserver.webapp.utils.DateTimeUtils;
@@ -59,12 +62,14 @@ public class CertificateGenerateService {
 
     private final CertificateService certificateService;
 
+    private final SystemConfigService systemConfigService;
+
     public CertificateGenerateService(CertificateRequester certificateRequester,
                                       UserApplicationService userApplicationService,
                                       CertificateRepository certificateRepository,
                                       UserRepository userRepository,
                                       CryptoTokenProxyFactory cryptoTokenProxyFactory, HsmConfig hsmConfig,
-                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, CertificateService certificateService) {
+                                      CertificateMapper mapper, AuthenticatorTOTPService authenticatorTOTPService, SymmetricEncryptors symmetricService, CertificateService certificateService, SystemConfigService systemConfigService) {
         this.certificateRequester = certificateRequester;
         this.userApplicationService = userApplicationService;
         this.certificateRepository = certificateRepository;
@@ -75,6 +80,7 @@ public class CertificateGenerateService {
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.symmetricService = symmetricService;
         this.certificateService = certificateService;
+        this.systemConfigService = systemConfigService;
     }
 
 
@@ -377,10 +383,19 @@ public class CertificateGenerateService {
         String requestType = request.getRequestType();
         if(requestType.equals("request")){
             String masterKey = request.getMasterKey();
-            if(StringUtils.isNullOrEmpty(masterKey) || StringUtils.isNullOrEmpty(hsmConfig.getMasterKey())){
-                throw new Exception("Master key request and Master Key system must be not null!");
+            if(StringUtils.isNullOrEmpty(masterKey)){
+                throw new Exception("Master key request must be not null!");
             }
-            if(!masterKey.equals(hsmConfig.getMasterKey())){
+            Optional<SystemConfigDTO> masterKeyOptional = systemConfigService.findByComIdAndKey(1L, SystemConfigKey.MASTER_KEY);
+            if(!masterKeyOptional.isPresent()){
+                throw new Exception("Master Key system must be not null");
+            }
+            SystemConfigDTO masterKeySystem = masterKeyOptional.get();
+            String masterKeyFromSystem = masterKeySystem.getValue();
+            if(StringUtils.isNullOrEmpty(masterKeyFromSystem)){
+                throw new Exception("Master key system not existed!");
+            }
+            if( !masterKey.equals(masterKeyFromSystem)){
                 throw new Exception("Master key invalid!");
             }
             return true;
