@@ -4,6 +4,7 @@ import { VerifySignatureDocComponent } from 'app/verify/verify-signature-doc/ver
 import { VerifySignatureRawComponent } from 'app/verify/verify-signature-raw/verify-signature-raw.component';
 import { VerifySignatureHashComponent } from 'app/verify/verify-signature-hash/verify-signature-hash.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
+import { VerifySignatureXmlComponent } from 'app/verify/verify-signature-xml/verify-signature-xml.component';
 
 export const verifyRoute: Routes = [
   {
@@ -25,6 +26,10 @@ export const verifyRoute: Routes = [
       {
         path: 'verify-signature-hash',
         component: VerifySignatureHashComponent,
+      },
+      {
+        path: 'verify-signature-xml',
+        component: VerifySignatureXmlComponent,
       },
     ],
   },

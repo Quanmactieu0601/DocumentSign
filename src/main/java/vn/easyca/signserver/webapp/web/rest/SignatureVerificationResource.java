@@ -120,4 +120,20 @@ public class SignatureVerificationResource extends BaseResource {
                 status, message, AccountUtils.getLoggedAccount());
         }
     }
+
+    @PostMapping(value = "/xml")
+    public ResponseEntity<BaseResponseVM> verifyXml(@RequestParam("file") MultipartFile file) {
+        try {
+            VerificationResponseDTO result = verificationService.verifyXml(file.getInputStream());
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(result));
+        } catch (Exception e) {
+            message = e.getMessage();
+            log.error(message, e);
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, message));
+        } finally {
+            asyncTransactionService.newThread("/api/verification/xml", TransactionType.BUSINESS, Action.VERIFY, Extension.XML, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
 }
