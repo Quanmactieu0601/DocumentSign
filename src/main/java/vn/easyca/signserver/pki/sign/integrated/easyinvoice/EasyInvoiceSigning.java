@@ -86,11 +86,11 @@ public class EasyInvoiceSigning {
         Date validTo = format.parse(credentialInfoResponse.getNotAfter());
         Date now = new Date();
         if (validTo.before(now)) {
-            throw new Exception("The certificate has expired");
+            throw new Exception("-1,The certificate has expired");
         }
         int signRemainingCounter = credentialInfoResponse.getRemainingSigningCounter();
         if (signRemainingCounter <= 0)
-            throw new Exception("The certificate has run out of Remaining Signing Counter");
+            throw new Exception("-1,The certificate has run out of Remaining Signing Counter");
     }
 
     public RASignHashResponse signHash(RsSignHashesRequest request) throws Exception {
