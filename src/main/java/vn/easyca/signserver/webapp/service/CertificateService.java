@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,6 +38,7 @@ import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
+import vn.easyca.signserver.webapp.web.rest.CertificateResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -376,4 +379,33 @@ public class CertificateService {
     public void updateSignatureImageInCert(Long signatureImageId, Long certId) {
         certificateRepository.updateSignatureImageInCert(signatureImageId, certId);
     }
+
+
+    public String resetHsmCertificatePin(String serial, String masterKey) throws Exception {
+        if(StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)){
+            throw new Exception("Serial and MasterKey must be not null!");
+        }
+        String masterKeySystem = env.getProperty("spring.servlet.master-key");
+        if(!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)){
+            throw new Exception("MasterKey invalid !");
+        }
+        Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
+        if(!certificateOptional.isPresent()){
+            throw new Exception("Certificate is not found!");
+        }
+        CertificateDTO certificate = mapper.map(certificateOptional.get());
+        if(!certificate.getTokenType().equals(CertificateDTO.PKCS_11)){
+            throw new Exception("Certificate token type is invalid!");
+        }
+        String newPin = CommonUtils.genRandomHsmCertPin();
+        try{
+            certificate.setEncryptedPin(symmetricService.encrypt(newPin));
+            this.save(certificate);
+            return newPin;
+        }catch (Exception ex){
+            throw new Exception(ex.getMessage());
+        }
+    }
+
+
 }

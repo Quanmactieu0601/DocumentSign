@@ -151,6 +151,8 @@ spring:
       location: /opt/easysign/tmp
       max-file-size: 20MB
       max-request-size: 20MB
+      # master-key for reset certificate pin.
+    master-key: sds
 #      location: /opt/hungvuong/opt/easysign/tmp #config for bv hung vuong
 
 # ===================================================================
