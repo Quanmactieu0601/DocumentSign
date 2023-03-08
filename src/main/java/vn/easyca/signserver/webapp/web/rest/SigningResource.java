@@ -11,7 +11,6 @@ import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
 import vn.easyca.signserver.core.dto.sign.newrequest.VisibleRequestContent;
 import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
 import vn.easyca.signserver.core.exception.ApplicationException;
-import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.OfficeSigningService;
 import vn.easyca.signserver.core.services.PDFSigningService;
 import vn.easyca.signserver.core.services.SigningService;
@@ -19,10 +18,9 @@ import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.PDFSigningDataRes;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.EasyInvoiceSigning;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.SignEasyInvoiceRequest;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.SignThirdPartyRequest;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.ThirdPartySigning;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RASignHashResponse;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RsSignHashResponse;
 import vn.easyca.signserver.webapp.enm.*;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.dto.VaccinationCertDTO;
@@ -49,10 +47,10 @@ public class SigningResource extends BaseResource {
     private final AsyncTransactionService asyncTransactionService;
     private final FileResourceService fileResourceService;
     private final Environment env;
-    private final EasyInvoiceSigning easyInvoiceSigning;
+    private final ThirdPartySigning thirdPartySigning;
 
     public SigningResource(SigningService signService, PDFSigningService pdfSigningService, XMLSigningService xmlSigningService,
-                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, EasyInvoiceSigning easyInvoiceSigning) {
+                           OfficeSigningService officeSigningService, AsyncTransactionService asyncTransactionService, FileResourceService fileResourceService, Environment env, ThirdPartySigning thirdPartySigning) {
         this.signService = signService;
         this.pdfSigningService = pdfSigningService;
         this.xmlSigningService = xmlSigningService;
@@ -60,7 +58,7 @@ public class SigningResource extends BaseResource {
         this.asyncTransactionService = asyncTransactionService;
         this.fileResourceService = fileResourceService;
         this.env = env;
-        this.easyInvoiceSigning = easyInvoiceSigning;
+        this.thirdPartySigning = thirdPartySigning;
     }
 
 
@@ -239,51 +237,43 @@ public class SigningResource extends BaseResource {
         }
     }
 
-    @PostMapping(value = "/easyinvoice")
-    public ResponseEntity<BaseResponseVM> signEasyInvoice(@RequestBody SignEasyInvoiceRequest request) {
-        log.info(" --- signEasyInvoice --- ");
+    @PostMapping(value = "/thirdParty")
+    public ResponseEntity<BaseResponseVM> signthirdParty(@RequestBody SignThirdPartyRequest request) {
+        log.info(" --- signthirdParty --- ");
+        RASignHashResponse response = new RASignHashResponse();
         try {
-            SignRequest<String> signRequest = request.getData().getDTO(String.class);
-            Object signingDataResponse = signService.signHash(signRequest, false);
-            status = TransactionStatus.SUCCESS;
-            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
-        } catch (CertificateNotFoundAppException e) {
-            RASignHashResponse response = new RASignHashResponse();
-            try {
-                response = easyInvoiceSigning.sign(request);
-                return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(response.getData()));
-            } catch (Exception ex) {
-                String[] s = ex.getMessage().split(",");
-                response.setStatus(Integer.parseInt(s[0]));
-                response.setMsg(s[1]);
-                return ResponseEntity.ok(new BaseResponseVM(response.getStatus(), null, response.getMsg()));
-            }
-        } catch (ApplicationException applicationException) {
-            log.error(applicationException.getMessage(), applicationException);
-            message = applicationException.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+            response = thirdPartySigning.sign(request);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(response.getData()));
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
-            message = e.getMessage();
-            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+            String[] s = e.getMessage().split(",");
+            response.setStatus(Integer.parseInt(s[0]));
+            response.setMsg(s[1]);
+            if (response.getStatus() == 3009) {
+                try {
+                    String hashAlgorithmRequest = request.getData().getOptional().getHashAlgorithm();
+                    String hashAlgorithm = hashAlgorithmRequest.replace("_", "");
+                    request.getData().getOptional().setHashAlgorithm(hashAlgorithm);
+                    SignRequest<String> signRequest = request.getData().getDTO(String.class);
+                    SignDataResponse<List<SignResultElement>> signingDataResponse = signService.signHash(signRequest, false);
+                    status = TransactionStatus.SUCCESS;
+                    response = thirdPartySigning.mapEasySigningResponse(signingDataResponse, request);
+                    return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(response.getData()));
+                } catch (ApplicationException applicationException) {
+                    log.error(applicationException.getMessage(), applicationException);
+                    message = applicationException.getMessage();
+                    return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+                } catch (Exception ex) {
+                    log.error(e.getMessage(), ex);
+                    message = e.getMessage();
+                    return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+                }
+            }
+            return ResponseEntity.ok(new BaseResponseVM(response.getStatus(), null, response.getMsg()));
         } finally {
-            asyncTransactionService.newThread("/api/sign/hash", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+            asyncTransactionService.newThread("/api/sign/thirdParty", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
                 status, message, AccountUtils.getLoggedAccount());
         }
 
     }
-
-//    @PostMapping(value = "/getCertInfo")
-//    public ResponseEntity<RACertificateResponse> getCertificateInfo(@RequestBody CertificateInfoRequest request) throws Exception {
-//        RACertificateResponse response = easyInvoiceSigning.getCertificateInfo(request);
-//        return ResponseEntity.ok(response);
-//    }
-//
-//    @PostMapping(value = "/authorize")
-//    public ResponseEntity<String> authorize(@RequestBody RSAuthorizeRequest request) throws Exception {
-//        String response = easyInvoiceSigning.authorizeCode(request);
-//        return ResponseEntity.ok(response);
-//    }
-
 
 }

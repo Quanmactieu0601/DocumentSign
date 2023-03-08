@@ -1,10 +1,20 @@
 package vn.easyca.signserver.pki.sign.integrated.easyinvoice;
 
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.ConfirmDataSignHash;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SigningVM;
 
-public class SignEasyInvoiceRequest {
+public class SignThirdPartyRequest {
     private String username;
     private SigningVM<String> data;
+    private ConfirmDataSignHash confirmData;
+
+    public ConfirmDataSignHash getConfirmData() {
+        return confirmData;
+    }
+
+    public void setConfirmData(ConfirmDataSignHash confirmData) {
+        this.confirmData = confirmData;
+    }
 
     public String getUsername() {
         return username;
@@ -22,6 +32,6 @@ public class SignEasyInvoiceRequest {
         this.data = data;
     }
 
-    public SignEasyInvoiceRequest() {
+    public SignThirdPartyRequest() {
     }
 }

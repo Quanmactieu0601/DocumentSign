@@ -1,4 +1,4 @@
-package vn.easyca.signserver.core.dto.sign.easyinvoice;
+package vn.easyca.signserver.core.dto.sign.thirdParty;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
