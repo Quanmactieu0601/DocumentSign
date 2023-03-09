@@ -5,10 +5,6 @@ public class ConfirmDataSignHash {
     private String notiMsg;
     private String msgCaption;
     private String scaId;
-    private String rpDevice;
-    private String rpOS;
-    private String rpIP;
-    private String rpMAC;
 
     public ConfirmDataSignHash() {
     }
@@ -44,37 +40,5 @@ public class ConfirmDataSignHash {
 
     public void setScaId(String scaId) {
         this.scaId = scaId;
-    }
-
-    public String getRpDevice() {
-        return rpDevice;
-    }
-
-    public void setRpDevice(String rpDevice) {
-        this.rpDevice = rpDevice;
-    }
-
-    public String getRpOS() {
-        return rpOS;
-    }
-
-    public void setRpOS(String rpOS) {
-        this.rpOS = rpOS;
-    }
-
-    public String getRpIP() {
-        return rpIP;
-    }
-
-    public void setRpIP(String rpIP) {
-        this.rpIP = rpIP;
-    }
-
-    public String getRpMAC() {
-        return rpMAC;
-    }
-
-    public void setRpMAC(String rpMAC) {
-        this.rpMAC = rpMAC;
     }
 }

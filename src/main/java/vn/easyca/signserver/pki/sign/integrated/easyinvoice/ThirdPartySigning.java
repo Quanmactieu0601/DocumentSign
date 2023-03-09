@@ -5,9 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
+import vn.easyca.signserver.core.dto.sign.thirdParty.RaUrlConfig;
+import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SignatureHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.CertificateInfoRequest;
@@ -16,7 +19,6 @@ import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.Cre
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RACertificateResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RASignHashResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RsSignHashResponse;
-import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SignElementVM;
 
 import java.text.SimpleDateFormat;
@@ -28,13 +30,13 @@ import java.util.List;
 public class ThirdPartySigning {
     private static final Logger log = LoggerFactory.getLogger(ThirdPartySigning.class);
     private final RestTemplate restTemplate;
-    private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
-    private final CertificateService certificateService;
+    private final SigningService signService;
+    private final RaUrlConfig raUrlConfig;
 
-    public ThirdPartySigning(RestTemplate restTemplate, CryptoTokenProxyFactory cryptoTokenProxyFactory, CertificateService certificateService) {
+    public ThirdPartySigning(RestTemplate restTemplate, SigningService signService, RaUrlConfig raUrlConfig) {
         this.restTemplate = restTemplate;
-        this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
-        this.certificateService = certificateService;
+        this.signService = signService;
+        this.raUrlConfig = raUrlConfig;
     }
 
 
@@ -46,7 +48,6 @@ public class ThirdPartySigning {
         return headers;
     }
 
-
     public RACertificateResponse getCertificateInfo(String serial, String username) throws Exception {
         CertificateInfoRequest request = new CertificateInfoRequest();
         request.setUsername(username);
@@ -57,7 +58,7 @@ public class ThirdPartySigning {
         log.info("Get certificate-info, serial: {}", request.getSerial());
         HttpHeaders headers = buildRequestHeaders();
         HttpEntity<CertificateInfoRequest> httpRequest = new HttpEntity<>(request, headers);
-        String url = "http://172.16.11.84:8787/api/p/rssp/enroll/cert-info";
+        String url = raUrlConfig.getProperty("ra-url") + "p/rssp/enroll/cert-info";
         RACertificateResponse response = restTemplate.postForObject(url, httpRequest, RACertificateResponse.class);
         if (response.getStatus() != 0) {
             log.error("Certificate info failed failed with error {}", response.getMsg());
@@ -79,11 +80,11 @@ public class ThirdPartySigning {
             throw new Exception("-1,The certificate has run out of Remaining Signing Counter");
     }
 
-    public RASignHashResponse signHash(RsSignHashesRequest request) throws Exception {
+    public RASignHashResponse signHashRssp(RsSignHashesRequest request) throws Exception {
         log.info("SignHash, username : {}", request.getUsername());
         HttpHeaders headers = buildRequestHeaders();
         HttpEntity<RsSignHashesRequest> httpRequest = new HttpEntity<>(request, headers);
-        String url = "http://172.16.11.84:8787/api/p/rssp/sign/signHashes";
+        String url = raUrlConfig.getProperty("ra-url") + "p/rssp/sign/signHashes";
         RASignHashResponse response = restTemplate.postForObject(url, httpRequest, RASignHashResponse.class);
         if (response.getStatus() != 0) {
             log.error("Sign Hash failed failed with error {}", response.getMsg());
@@ -93,13 +94,18 @@ public class ThirdPartySigning {
     }
 
     public RASignHashResponse sign(SignThirdPartyRequest request) throws Exception {
-        RsSignHashesRequest signHashesRequest = setSignHashRequest(request);
-        RASignHashResponse response = signHash(signHashesRequest);
+        RsSignHashesRequest signHashesRequest = setSignHashRsspRequest(request);
+        RASignHashResponse response = signHashRssp(signHashesRequest);
         int size = response.getData().getNumSignature();
+        if (!request.getData().getOptional().isReturnInputData()) {
+            for (int i = 0; i < size; i++) {
+                response.getData().getSignatures().get(i).setHashData(null);
+            }
+        }
         return response;
     }
 
-    public RsSignHashesRequest setSignHashRequest(SignThirdPartyRequest request) throws Exception {
+    public RsSignHashesRequest setSignHashRsspRequest(SignThirdPartyRequest request) throws Exception {
         String username = request.getUsername();
         String serial = request.getData().getTokenInfo().getSerial();
         String pin = request.getData().getTokenInfo().getPin();
@@ -131,24 +137,57 @@ public class ThirdPartySigning {
     }
 
     public RASignHashResponse mapEasySigningResponse(SignDataResponse<List<SignResultElement>> signingDataResponse, SignThirdPartyRequest request) {
-        RASignHashResponse response = new RASignHashResponse();
-        RsSignHashResponse rsSignHashResponse = new RsSignHashResponse();
         boolean returnInput = request.getData().getOptional().isReturnInputData();
-        int size = request.getData().getElements().size();
-        rsSignHashResponse.setNumSignature(size);
-        rsSignHashResponse.setRemainingSigningCounter(-1);
+        List<SignResultElement> signResults = signingDataResponse.getSignResult();
+        int numSignatures = signResults.size();
         List<SignatureHashData> signatureHashData = new ArrayList<>();
-        for (int i = 0; i < size; i++) {
-            signatureHashData.add(new SignatureHashData());
-            SignResultElement element = signingDataResponse.getSignResult().get(i);
-            signatureHashData.get(i).setHashId(element.getKey());
-            signatureHashData.get(i).setSignature(element.getBase64Signature());
-            if (returnInput)
-                signatureHashData.get(i).setHashData(element.getInputData());
+        for (SignResultElement element : signResults) {
+            SignatureHashData signatureHash = new SignatureHashData();
+            signatureHash.setHashId(element.getKey());
+            signatureHash.setSignature(element.getBase64Signature());
+            if (returnInput) {
+                signatureHash.setHashData(element.getInputData());
+            }
+            signatureHashData.add(signatureHash);
         }
+        RsSignHashResponse rsSignHashResponse = new RsSignHashResponse();
+        rsSignHashResponse.setNumSignature(numSignatures);
+        rsSignHashResponse.setRemainingSigningCounter(-1);
         rsSignHashResponse.setSignatures(signatureHashData);
+        RASignHashResponse response = new RASignHashResponse();
         response.setStatus(0);
         response.setData(rsSignHashResponse);
+        return response;
+    }
+
+
+    public RASignHashResponse handleException(RASignHashResponse response, SignThirdPartyRequest request, Exception e) {
+        String[] s = e.getMessage().split(",");
+        response.setStatus(Integer.parseInt(s[0]));
+        response.setMsg(s[1]);
+        if (response.getStatus() == 3009) {
+            response = handleSignHashEasySign(response, request);
+        }
+        return response;
+    }
+
+    private RASignHashResponse handleSignHashEasySign(RASignHashResponse response, SignThirdPartyRequest request) {
+        try {
+            String hashAlgorithmRequest = request.getData().getOptional().getHashAlgorithm();
+            String hashAlgorithm = hashAlgorithmRequest.replace("_", "");
+            request.getData().getOptional().setHashAlgorithm(hashAlgorithm);
+            SignRequest<String> signRequest = request.getData().getDTO(String.class);
+            SignDataResponse<List<SignResultElement>> signingDataResponse = signService.signHash(signRequest, false);
+            response = mapEasySigningResponse(signingDataResponse, request);
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            response.setStatus(applicationException.getCode());
+            response.setMsg(applicationException.getMessage());
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
+            response.setStatus(-1);
+            response.setMsg(ex.getMessage());
+        }
         return response;
     }
 }

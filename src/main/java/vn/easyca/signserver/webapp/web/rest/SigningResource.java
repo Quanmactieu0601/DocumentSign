@@ -264,30 +264,14 @@ public class SigningResource extends BaseResource {
             response = thirdPartySigning.sign(request);
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(response.getData()));
         } catch (Exception e) {
-            String[] s = e.getMessage().split(",");
-            response.setStatus(Integer.parseInt(s[0]));
-            response.setMsg(s[1]);
-            if (response.getStatus() == 3009) {
-                try {
-                    String hashAlgorithmRequest = request.getData().getOptional().getHashAlgorithm();
-                    String hashAlgorithm = hashAlgorithmRequest.replace("_", "");
-                    request.getData().getOptional().setHashAlgorithm(hashAlgorithm);
-                    SignRequest<String> signRequest = request.getData().getDTO(String.class);
-                    SignDataResponse<List<SignResultElement>> signingDataResponse = signService.signHash(signRequest, false);
-                    status = TransactionStatus.SUCCESS;
-                    response = thirdPartySigning.mapEasySigningResponse(signingDataResponse, request);
-                    return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(response.getData()));
-                } catch (ApplicationException applicationException) {
-                    log.error(applicationException.getMessage(), applicationException);
-                    message = applicationException.getMessage();
-                    return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
-                } catch (Exception ex) {
-                    log.error(e.getMessage(), ex);
-                    message = e.getMessage();
-                    return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
-                }
-            }
-            return ResponseEntity.ok(new BaseResponseVM(response.getStatus(), null, response.getMsg()));
+            response = thirdPartySigning.handleException(response, request, e);
+            return ResponseEntity.ok(new BaseResponseVM(response.getStatus(), response.getData(), response.getMsg()));
+        } finally {
+            asyncTransactionService.newThread("/api/sign/thirdParty", TransactionType.BUSINESS, Action.SIGN, Extension.HASH, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
         }
+
     }
+
+
 }
