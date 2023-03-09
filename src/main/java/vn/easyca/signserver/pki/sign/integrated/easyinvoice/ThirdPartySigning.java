@@ -5,47 +5,33 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import vn.easyca.signserver.core.domain.CertificateDTO;
-import vn.easyca.signserver.core.dto.sign.TokenInfoDTO;
-import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequest;
-import vn.easyca.signserver.core.dto.sign.newrequest.SigningRequestContent;
-import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponse;
-import vn.easyca.signserver.core.dto.sign.newresponse.SigningResponseContent;
-import vn.easyca.signserver.core.exception.BadServiceInputAppException;
-import vn.easyca.signserver.core.exception.SigningAppException;
-import vn.easyca.signserver.core.factory.CryptoTokenProxy;
+import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
+import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.ConfirmDataSignHash;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SignatureHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.Types;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.CertificateInfoRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.RsSignHashesRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.CredentialInfoResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RACertificateResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RASignHashResponse;
-import vn.easyca.signserver.pki.sign.integrated.xml.SignXMLLib;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RsSignHashResponse;
 import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SignElementVM;
 
-import java.io.ByteArrayInputStream;
-import java.security.PrivateKey;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 @Component
-public class EasyInvoiceSigning {
-    private static final Logger log = LoggerFactory.getLogger(EasyInvoiceSigning.class);
+public class ThirdPartySigning {
+    private static final Logger log = LoggerFactory.getLogger(ThirdPartySigning.class);
     private final RestTemplate restTemplate;
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
     private final CertificateService certificateService;
 
-    public EasyInvoiceSigning(RestTemplate restTemplate, CryptoTokenProxyFactory cryptoTokenProxyFactory, CertificateService certificateService) {
+    public ThirdPartySigning(RestTemplate restTemplate, CryptoTokenProxyFactory cryptoTokenProxyFactory, CertificateService certificateService) {
         this.restTemplate = restTemplate;
         this.cryptoTokenProxyFactory = cryptoTokenProxyFactory;
         this.certificateService = certificateService;
@@ -105,28 +91,30 @@ public class EasyInvoiceSigning {
         }
         return response;
     }
-    public RASignHashResponse sign(SignEasyInvoiceRequest request) throws Exception {
+
+    public RASignHashResponse sign(SignThirdPartyRequest request) throws Exception {
         RsSignHashesRequest signHashesRequest = setSignHashRequest(request);
         RASignHashResponse response = signHash(signHashesRequest);
+        int size = response.getData().getNumSignature();
         return response;
     }
 
-    public RsSignHashesRequest setSignHashRequest(SignEasyInvoiceRequest request) throws Exception {
+    public RsSignHashesRequest setSignHashRequest(SignThirdPartyRequest request) throws Exception {
         String username = request.getUsername();
         String serial = request.getData().getTokenInfo().getSerial();
         String pin = request.getData().getTokenInfo().getPin();
-        List<SignElementVM<String>> listHashes= request.getData().getElements();
+        List<SignElementVM<String>> listHashes = request.getData().getElements();
         CredentialInfoResponse credentialInfoResponse = getCertificateInfo(serial, username).getData();
         checkCertInformation(credentialInfoResponse);
 
         RsSignHashesRequest signHashesRequest = new RsSignHashesRequest();
         signHashesRequest.setSerial(serial);
         signHashesRequest.setUsername(username);
-        signHashesRequest.setHashAlgo("SHA_256");
+        signHashesRequest.setHashAlgo(request.getData().getOptional().getHashAlgorithm());
         SigningHashData[] hashData = new SigningHashData[listHashes.size()];
         for (int i = 0; i < listHashes.size(); i++) {
             hashData[i] = new SignatureHashData();
-            hashData[i].setHashId((i + 1) + "");
+            hashData[i].setHashId(listHashes.get(i).getKey());
             hashData[i].setHashData(listHashes.get(i).getContent());
         }
         signHashesRequest.setHashData(hashData);
@@ -135,14 +123,32 @@ public class EasyInvoiceSigning {
         } else {
             signHashesRequest.setConfirmType(1);
         }
-        ConfirmDataSignHash confirmData = new ConfirmDataSignHash();
-        confirmData.setPin(pin);
-        confirmData.setMsgCaption("Digital Signature");
-        confirmData.setNotiMsg("Do you wish create the signature");
-        confirmData.setScaId(username);
-        signHashesRequest.setConfirmData(confirmData);
+        request.getConfirmData().setPin(pin);
+        signHashesRequest.setConfirmData(request.getConfirmData());
         signHashesRequest.setNumHash(hashData.length);
 
         return signHashesRequest;
+    }
+
+    public RASignHashResponse mapEasySigningResponse(SignDataResponse<List<SignResultElement>> signingDataResponse, SignThirdPartyRequest request) {
+        RASignHashResponse response = new RASignHashResponse();
+        RsSignHashResponse rsSignHashResponse = new RsSignHashResponse();
+        boolean returnInput = request.getData().getOptional().isReturnInputData();
+        int size = request.getData().getElements().size();
+        rsSignHashResponse.setNumSignature(size);
+        rsSignHashResponse.setRemainingSigningCounter(-1);
+        List<SignatureHashData> signatureHashData = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            signatureHashData.add(new SignatureHashData());
+            SignResultElement element = signingDataResponse.getSignResult().get(i);
+            signatureHashData.get(i).setHashId(element.getKey());
+            signatureHashData.get(i).setSignature(element.getBase64Signature());
+            if (returnInput)
+                signatureHashData.get(i).setHashData(element.getInputData());
+        }
+        rsSignHashResponse.setSignatures(signatureHashData);
+        response.setStatus(0);
+        response.setData(rsSignHashResponse);
+        return response;
     }
 }
