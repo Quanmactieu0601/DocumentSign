@@ -1,5 +1,6 @@
 package vn.easyca.signserver.pki.sign.integrated.easyinvoice;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -12,6 +13,7 @@ import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SignatureHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.Types;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.CertificateInfoRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.RsSignHashesRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.CredentialInfoResponse;
@@ -114,7 +116,14 @@ public class ThirdPartySigning {
         RsSignHashesRequest signHashesRequest = new RsSignHashesRequest();
         signHashesRequest.setSerial(serial);
         signHashesRequest.setUsername(username);
-        signHashesRequest.setHashAlgo(request.getData().getOptional().getHashAlgorithm());
+        String hashAlgorithmRequest = request.getData().getOptional().getHashAlgorithm();
+        Types.HashAlgorithmOID hashAlgorithm;
+        if (StringUtils.isEmpty(hashAlgorithmRequest)) {
+            hashAlgorithm = Types.HashAlgorithmOID.SHA_1;
+        } else {
+            hashAlgorithm = Types.HashAlgorithmOID.valueOf(hashAlgorithmRequest);
+        }
+        signHashesRequest.setHashAlgo(hashAlgorithm);
         SigningHashData[] hashData = new SigningHashData[listHashes.size()];
         for (int i = 0; i < listHashes.size(); i++) {
             hashData[i] = new SignatureHashData();
