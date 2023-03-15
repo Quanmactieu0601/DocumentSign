@@ -3,11 +3,12 @@ package vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request;
 
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.ConfirmDataSignHash;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.Types;
 
 public class RsSignHashesRequest {
 
     private String serial;
-    private String hashAlgo;
+    private Types.HashAlgorithmOID hashAlgo;
     private int confirmType;
     private SigningHashData[] hashData;
     private ConfirmDataSignHash confirmData;
@@ -25,11 +26,11 @@ public class RsSignHashesRequest {
         this.serial = serial;
     }
 
-    public String getHashAlgo() {
+    public Types.HashAlgorithmOID getHashAlgo() {
         return hashAlgo;
     }
 
-    public void setHashAlgo(String hashAlgo) {
+    public void setHashAlgo(Types.HashAlgorithmOID hashAlgo) {
         this.hashAlgo = hashAlgo;
     }
 
