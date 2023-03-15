@@ -1,5 +1,6 @@
 package vn.easyca.signserver.pki.sign.integrated.easyinvoice;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -8,11 +9,11 @@ import org.springframework.web.client.RestTemplate;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
-import vn.easyca.signserver.core.dto.sign.thirdParty.RaUrlConfig;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SignatureHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
+import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.Types;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.CertificateInfoRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.RsSignHashesRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.CredentialInfoResponse;
@@ -31,12 +32,11 @@ public class ThirdPartySigning {
     private static final Logger log = LoggerFactory.getLogger(ThirdPartySigning.class);
     private final RestTemplate restTemplate;
     private final SigningService signService;
-    private final RaUrlConfig raUrlConfig;
+    private String raURL = "http://172.16.11.84:8787/api/";
 
-    public ThirdPartySigning(RestTemplate restTemplate, SigningService signService, RaUrlConfig raUrlConfig) {
+    public ThirdPartySigning(RestTemplate restTemplate, SigningService signService) {
         this.restTemplate = restTemplate;
         this.signService = signService;
-        this.raUrlConfig = raUrlConfig;
     }
 
 
@@ -58,7 +58,7 @@ public class ThirdPartySigning {
         log.info("Get certificate-info, serial: {}", request.getSerial());
         HttpHeaders headers = buildRequestHeaders();
         HttpEntity<CertificateInfoRequest> httpRequest = new HttpEntity<>(request, headers);
-        String url = raUrlConfig.getProperty("ra-url") + "p/rssp/enroll/cert-info";
+        String url = raURL + "p/rssp/enroll/cert-info";
         RACertificateResponse response = restTemplate.postForObject(url, httpRequest, RACertificateResponse.class);
         if (response.getStatus() != 0) {
             log.error("Certificate info failed failed with error {}", response.getMsg());
@@ -84,7 +84,7 @@ public class ThirdPartySigning {
         log.info("SignHash, username : {}", request.getUsername());
         HttpHeaders headers = buildRequestHeaders();
         HttpEntity<RsSignHashesRequest> httpRequest = new HttpEntity<>(request, headers);
-        String url = raUrlConfig.getProperty("ra-url") + "p/rssp/sign/signHashes";
+        String url = raURL + "p/rssp/sign/signHashes";
         RASignHashResponse response = restTemplate.postForObject(url, httpRequest, RASignHashResponse.class);
         if (response.getStatus() != 0) {
             log.error("Sign Hash failed failed with error {}", response.getMsg());
@@ -116,7 +116,14 @@ public class ThirdPartySigning {
         RsSignHashesRequest signHashesRequest = new RsSignHashesRequest();
         signHashesRequest.setSerial(serial);
         signHashesRequest.setUsername(username);
-        signHashesRequest.setHashAlgo(request.getData().getOptional().getHashAlgorithm());
+        String hashAlgorithmRequest = request.getData().getOptional().getHashAlgorithm();
+        Types.HashAlgorithmOID hashAlgorithm;
+        if (StringUtils.isEmpty(hashAlgorithmRequest)) {
+            hashAlgorithm = Types.HashAlgorithmOID.SHA_1;
+        } else {
+            hashAlgorithm = Types.HashAlgorithmOID.valueOf(hashAlgorithmRequest);
+        }
+        signHashesRequest.setHashAlgo(hashAlgorithm);
         SigningHashData[] hashData = new SigningHashData[listHashes.size()];
         for (int i = 0; i < listHashes.size(); i++) {
             hashData[i] = new SignatureHashData();
