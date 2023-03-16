@@ -67,11 +67,14 @@ public class CertificateService {
     private final SignatureTemplateParserFactory signatureTemplateParserFactory;
     private final FileResourceService fileResourceService;
 
-    public CertificateService(CertificateRepository certificateRepository, CertificateEncryptionHelper encryptionHelper, CertificateMapper mapper,
-                              SignatureTemplateRepository signatureTemplateRepository, SignatureImageRepository signatureImageRepository,
-                              CryptoTokenProxyFactory cryptoTokenProxyFactory, AuthenticatorTOTPService authenticatorTOTPService,
-                              SignatureTemplateParserFactory signatureTemplateParserFactory, UserRepository userRepository,
-                              SystemConfigCachingService systemConfigCachingService, SymmetricEncryptors symmetricService, Environment env, FileResourceService fileResourceService) {
+    private UserApplicationService userApplicationService;
+
+    public CertificateService(CertificateRepository certificateRepository, CertificateMapper mapper, SignatureTemplateRepository signatureTemplateRepository,
+                              SignatureImageRepository signatureImageRepository, CryptoTokenProxyFactory cryptoTokenProxyFactory,
+                              AuthenticatorTOTPService authenticatorTOTPService, SystemConfigCachingService systemConfigCachingService,
+                              SymmetricEncryptors symmetricService, Environment env, UserRepository userRepository,
+                              SignatureTemplateParserFactory signatureTemplateParserFactory,
+                              FileResourceService fileResourceService, UserApplicationService userApplicationService) {
         this.certificateRepository = certificateRepository;
         this.mapper = mapper;
         this.signatureTemplateRepository = signatureTemplateRepository;
@@ -80,10 +83,11 @@ public class CertificateService {
         this.authenticatorTOTPService = authenticatorTOTPService;
         this.systemConfigCachingService = systemConfigCachingService;
         this.symmetricService = symmetricService;
-        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
-        this.userRepository = userRepository;
         this.env = env;
+        this.userRepository = userRepository;
+        this.signatureTemplateParserFactory = signatureTemplateParserFactory;
         this.fileResourceService = fileResourceService;
+        this.userApplicationService = userApplicationService;
     }
 
     public List<Certificate> getByOwnerId(String ownerId) throws ApplicationException {
@@ -407,5 +411,15 @@ public class CertificateService {
         }
     }
 
+    public List<Certificate> getCertificateListByUserLogin() throws Exception {
+        Optional<UserEntity> currentLoginUser = userApplicationService.getUserWithAuthorities();
+        if(!currentLoginUser.isPresent()){
+            throw new Exception("User could not be found");
+        } else{
+            UserEntity user = currentLoginUser.get();
+            List<Certificate> list = certificateRepository.findByOwnerId(user.getLogin());
+            return list;
+        }
+    }
 
 }

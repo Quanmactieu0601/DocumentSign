@@ -115,6 +115,17 @@ public class CertificateResource extends BaseResource {
         }
     }
 
+    @GetMapping("/currentUserLogin")
+    public ResponseEntity<List<Certificate>> findByCurrentUserLogin(){
+        log.info("----- get cert by current user login -----");
+        try {
+            List<Certificate> certificateList = certificateService.getCertificateListByUserLogin();
+            return new ResponseEntity<>(certificateList, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new BadRequestAlertException(e.getMessage(), "certificate", "findByCurrentUserLogin");
+        }
+    }
+
     @PostMapping("/import/p12")
     @PreAuthorize("hasAnyAuthority(\"" + AuthoritiesConstants.ADMIN + "\", \"" + AuthoritiesConstants.SUPER_ADMIN + "\")")
     public ResponseEntity<BaseResponseVM> importP12File(@RequestBody P12ImportVM p12ImportVM) {
