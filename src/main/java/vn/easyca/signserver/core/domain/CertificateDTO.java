@@ -49,6 +49,12 @@ public class CertificateDTO {
 
     private String personalId;
 
+    private String authMode;
+
+    private int type;
+
+    private String signingCount;
+
     public String getPersonalId() { return personalId; }
 
     public void setPersonalId(String personalId) { this.personalId = personalId; }
@@ -184,5 +190,29 @@ public class CertificateDTO {
 
     public void setRawPin(String rawPin) {
         this.rawPin = rawPin;
+    }
+
+    public String getAuthMode() {
+        return authMode;
+    }
+
+    public void setAuthMode(String authMode) {
+        this.authMode = authMode;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public String getSigningCount() {
+        return signingCount;
+    }
+
+    public void setSigningCount(String signingCount) {
+        this.signingCount = signingCount;
     }
 }
