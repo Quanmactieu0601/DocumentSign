@@ -117,9 +117,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
     @Column(name = "remind_change_password")
     private Boolean remindChangePassword;
 
-    @Column(name = "type")
-    private int type;
-
     //TODO: Chang fetch_type;
     @JsonIgnore
     @ManyToMany
@@ -300,14 +297,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.phone = phone;
     }
 
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
     public UserEntity() {
     }
 
@@ -333,7 +322,6 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
         this.country = country;
         this.phone = phone;
         this.csrStatus = csrStatus;
-        this.type = type;
     }
 
     @Override
