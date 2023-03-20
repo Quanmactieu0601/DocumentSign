@@ -305,7 +305,7 @@ public class UserEntity extends AbstractAuditingEntity implements Serializable {
                       @NotNull boolean activated, @Size(min = 2, max = 10) String langKey, @Size(max = 256) String imageUrl,
                       @Size(max = 200) String commonName, @Size(max = 200) String organizationName, @Size(max = 200) String organizationUnit,
                       @Size(max = 200) String localityName, @Size(max = 200) String stateName, @Size(max = 200) String country,
-                      @Size(max = 50) String phone, int csrStatus) {
+                      @Size(max = 50) String phone, int csrStatus, int type) {
         this.id = id;
         this.login = login;
         this.firstName = firstName;

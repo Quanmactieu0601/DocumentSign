@@ -24,7 +24,7 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
     private EntityManager entityManager;
 
     @Override
-    public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+    public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate, Integer type) {
         Map<String, Object> params = new HashMap<>();
         List<Certificate> certificateList = new ArrayList<>();
         StringBuilder sqlBuilder = new StringBuilder();
@@ -54,7 +54,12 @@ public class CertificateRepositoryImpl implements CertificateRepositoryCustom {
             LocalDateTime localDateTime = LocalDate.parse(expiredDate, DateTimeFormatter.ISO_LOCAL_DATE).atTime(23, 59, 59);
             params.put("expiredDate", localDateTime);
         }
-
+        if (type != null) {
+            sqlBuilder.append("AND a.type =: type");
+            params.put("type", type);
+        }else{
+            sqlBuilder.append("AND a.type = 0");
+        }
         Query countQuery = entityManager.createQuery("SELECT COUNT(1) " + sqlBuilder.toString());
         QueryUtils.setParams(countQuery, params);
         Number total = (Number) countQuery.getSingleResult();

@@ -44,6 +44,7 @@
       }
     },
     "signatureVerify": {
+      "countingSignTurn": "Tổng số lần ký",
       "title": "Xác thực kí số",
       "signature": "Chữ ký base64",
       "originalData": "Nội dung gốc",
