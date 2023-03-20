@@ -4,7 +4,6 @@ import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { FormBuilder } from '@angular/forms';
 import { combineLatest, Subscription } from 'rxjs';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { ICertificate } from 'app/shared/model/certificate.model';
 import { HttpHeaders } from '@angular/common/http';
 import { CertificateService } from 'app/entities/certificate/certificate.service';
 import { JhiEventManager } from 'ng-jhipster';
@@ -95,7 +94,7 @@ export class RsCertificateComponent implements OnInit {
     return result;
   }
 
-  protected onSuccess(data: ICertificate[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
+  protected onSuccess(data: IRsCertificate[] | null, headers: HttpHeaders, page: number, navigate: boolean): void {
     this.totalItems = Number(headers.get('X-Total-Count'));
     this.page = page;
     if (navigate) {
