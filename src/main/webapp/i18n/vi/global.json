@@ -7,7 +7,9 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Thực thể",
-        "certificate": "Chứng thư số",
+        "certificate-management": "Quản lý CTS",
+        "certificate": "EasySign",
+        "Rs-certificate": "Remote Signing",
         "transaction": "Giao dịch hệ thống",
         "systemConfig": "Cấu hình hệ thống",
         "report": "Thống kê báo cáo",

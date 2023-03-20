@@ -1,116 +1,110 @@
-import { TestBed, getTestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { CertificateService } from 'app/entities/certificate/certificate.service';
-import { ICertificate, Certificate } from 'app/shared/model/certificate.model';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { HttpHeaders, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
-describe('Service Tests', () => {
-  describe('Certificate Service', () => {
-    let injector: TestBed;
+import { WebappTestModule } from '../../../test.module';
+import { CertificateComponent } from 'app/entities/certificate/certificate.component';
+import { CertificateService } from 'app/entities/certificate/certificate.service';
+import { Certificate } from 'app/shared/model/certificate.model';
+
+describe('Component Tests', () => {
+  describe('Certificate Management Component', () => {
+    let comp: CertificateComponent;
+    let fixture: ComponentFixture<CertificateComponent>;
     let service: CertificateService;
-    let httpMock: HttpTestingController;
-    let elemDefault: ICertificate;
-    let expectedResult: ICertificate | ICertificate[] | boolean | null;
 
     beforeEach(() => {
       TestBed.configureTestingModule({
-        imports: [HttpClientTestingModule],
-      });
-      expectedResult = null;
-      injector = getTestBed();
-      service = injector.get(CertificateService);
-      httpMock = injector.get(HttpTestingController);
+        imports: [WebappTestModule],
+        declarations: [CertificateComponent],
+        providers: [
+          {
+            provide: ActivatedRoute,
+            useValue: {
+              data: of({
+                defaultSort: 'id,asc',
+              }),
+              queryParamMap: of(
+                convertToParamMap({
+                  page: '1',
+                  size: '1',
+                  sort: 'id,desc',
+                })
+              ),
+            },
+          },
+        ],
+      })
+        .overrideTemplate(CertificateComponent, '')
+        .compileComponents();
 
-      elemDefault = new Certificate(0, 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
+      fixture = TestBed.createComponent(CertificateComponent);
+      comp = fixture.componentInstance;
+      service = fixture.debugElement.injector.get(CertificateService);
     });
 
-    describe('Service methods', () => {
-      it('should find an element', () => {
-        const returnedFromService = Object.assign({}, elemDefault);
+    it('Should call load all on init', () => {
+      // GIVEN
+      const headers = new HttpHeaders().append('link', 'link;link');
+      spyOn(service, 'query').and.returnValue(
+        of(
+          new HttpResponse({
+            body: [new Certificate(123)],
+            headers,
+          })
+        )
+      );
 
-        service.find(123).subscribe(resp => (expectedResult = resp.body));
+      // WHEN
+      comp.ngOnInit();
 
-        const req = httpMock.expectOne({ method: 'GET' });
-        req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject(elemDefault);
-      });
-
-      it('should create a Certificate', () => {
-        const returnedFromService = Object.assign(
-          {
-            id: 0,
-          },
-          elemDefault
-        );
-
-        const expected = Object.assign({}, returnedFromService);
-
-        service.create(new Certificate()).subscribe(resp => (expectedResult = resp.body));
-
-        const req = httpMock.expectOne({ method: 'POST' });
-        req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject(expected);
-      });
-
-      it('should update a Certificate', () => {
-        const returnedFromService = Object.assign(
-          {
-            lastUpdate: 'BBBBBB',
-            tokenType: 'BBBBBB',
-            serial: 'BBBBBB',
-            ownerTaxcode: 'BBBBBB',
-            subjectInfo: 'BBBBBB',
-            alias: 'BBBBBB',
-            tokenInfo: 'BBBBBB',
-            rawData: 'BBBBBB',
-          },
-          elemDefault
-        );
-
-        const expected = Object.assign({}, returnedFromService);
-
-        service.update(expected).subscribe(resp => (expectedResult = resp.body));
-
-        const req = httpMock.expectOne({ method: 'PUT' });
-        req.flush(returnedFromService);
-        expect(expectedResult).toMatchObject(expected);
-      });
-
-      it('should return a list of Certificate', () => {
-        const returnedFromService = Object.assign(
-          {
-            lastUpdate: 'BBBBBB',
-            tokenType: 'BBBBBB',
-            serial: 'BBBBBB',
-            ownerTaxcode: 'BBBBBB',
-            subjectInfo: 'BBBBBB',
-            alias: 'BBBBBB',
-            tokenInfo: 'BBBBBB',
-            rawData: 'BBBBBB',
-          },
-          elemDefault
-        );
-
-        const expected = Object.assign({}, returnedFromService);
-
-        service.query().subscribe(resp => (expectedResult = resp.body));
-
-        const req = httpMock.expectOne({ method: 'GET' });
-        req.flush([returnedFromService]);
-        httpMock.verify();
-        expect(expectedResult).toContainEqual(expected);
-      });
-
-      it('should delete a Certificate', () => {
-        service.delete(123).subscribe(resp => (expectedResult = resp.ok));
-
-        const req = httpMock.expectOne({ method: 'DELETE' });
-        req.flush({ status: 200 });
-        expect(expectedResult);
-      });
+      // THEN
+      expect(service.query).toHaveBeenCalled();
+      expect(comp.certificates && comp.certificates[0]).toEqual(jasmine.objectContaining({ id: 123 }));
     });
 
-    afterEach(() => {
-      httpMock.verify();
+    it('should load a page', () => {
+      // GIVEN
+      const headers = new HttpHeaders().append('link', 'link;link');
+      spyOn(service, 'query').and.returnValue(
+        of(
+          new HttpResponse({
+            body: [new Certificate(123)],
+            headers,
+          })
+        )
+      );
+
+      // WHEN
+      comp.loadPage(1);
+
+      // THEN
+      expect(service.query).toHaveBeenCalled();
+      expect(comp.certificates && comp.certificates[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+    });
+
+    it('should calculate the sort attribute for an id', () => {
+      // WHEN
+      comp.ngOnInit();
+      const result = comp.sort();
+
+      // THEN
+      expect(result).toEqual(['id,desc']);
+    });
+
+    it('should calculate the sort attribute for a non-id attribute', () => {
+      // INIT
+      comp.ngOnInit();
+
+      // GIVEN
+      comp.predicate = 'name';
+
+      // WHEN
+      const result = comp.sort();
+
+      // THEN
+      expect(result).toEqual(['name,desc', 'id']);
     });
   });
 });

@@ -38,12 +38,18 @@
         <div id="collapseBootstrap1" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/developing" routerLinkActive="active" [hidden]="true"><span jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
-                <a class="collapse-item" routerLink="/verify/verify-signature-pdf" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
-                <a class="collapse-item" routerLink="/verify/verify-signature-doc" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
-                <a class="collapse-item" routerLink="/verify/verify-signature-xml" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.xml">Xác thực XML</span></a>
-                <a class="collapse-item" routerLink="/verify/verify-signature-hash" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.hash">Xác thực Hash</span></a>
-                <a class="collapse-item" routerLink="/verify/verify-signature-raw" routerLinkActive="active"><span jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
+                <a class="collapse-item" routerLink="/developing" routerLinkActive="active" [hidden]="true"><span
+                    jhiTranslate="global.menu.admin.certVerification.cert">Xác thực CTS</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-pdf" routerLinkActive="active"><span
+                    jhiTranslate="global.menu.admin.certVerification.pdf">Xác thực PDF</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-doc" routerLinkActive="active"><span
+                    jhiTranslate="global.menu.admin.certVerification.ooxml">Xác thực Office</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-xml" routerLinkActive="active"><span
+                    jhiTranslate="global.menu.admin.certVerification.xml">Xác thực XML</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-hash" routerLinkActive="active"><span
+                    jhiTranslate="global.menu.admin.certVerification.hash">Xác thực Hash</span></a>
+                <a class="collapse-item" routerLink="/verify/verify-signature-raw" routerLinkActive="active"><span
+                    jhiTranslate="global.menu.admin.certVerification.raw">Xác thực dữ liệu raw</span></a>
             </div>
         </div>
     </li>
@@ -56,8 +62,18 @@
         <div id="collapseBootstrap2" class="collapse" aria-labelledby="headingBootstrap"
              data-parent="#accordionSidebar">
             <div class="bg-black py-2 collapse-inner rounded">
-                <a class="collapse-item" routerLink="/home/certificate" routerLinkActive="active"><span
-                    jhiTranslate="global.menu.entities.certificate">Certificate</span></a>
+                <div>
+                    <a class="nav-link collapsed collapse-item" href="#" data-toggle="collapse" data-target="#certificateType"
+                       aria-expanded="true" aria-controls="certificateType">
+                        <span style="font-size: 14.4px !important;" jhiTranslate="global.menu.entities.certificate-management">Certificate management</span>
+                    </a>
+                    <div id="certificateType" class="collapse" aria-labelledby="headingBootstrap" data-parent="#collapseBootstrap2">
+                        <div class="bg-black py-2 collapse-inner rounded">
+                            <a class="collapse-item" routerLink="/home/certificate" routerLinkActive="active"><span jhiTranslate="global.menu.entities.certificate">Certificate</span></a>
+                            <a class="collapse-item" routerLink="/home/rs-certificate" routerLinkActive="active"><span jhiTranslate="global.menu.entities.Rs-certificate">RS Certificate</span></a>
+                        </div>
+                    </div>
+                </div>
                 <a class="collapse-item" routerLink="/home/transaction" routerLinkActive="active"
                    [routerLinkActiveOptions]="{ exact: true }"><span jhiTranslate="global.menu.entities.transaction">Lịch sử giao dịch</span></a>
                 <a class="collapse-item" routerLink="/home/transaction/report" routerLinkActive="active"><span
@@ -65,7 +81,7 @@
                 <a class="collapse-item" routerLink="/admin/user-management" routerLinkActive="active"><span
                     jhiTranslate="global.menu.admin.userManagement">User management</span></a>
                 <a class="collapse-item" routerLink="/home/signature-template" routerLinkActive="active"><span
-                    >Template management</span></a>
+                >Template management</span></a>
                 <a class="collapse-item" routerLink="/home/system-config" routerLinkActive="active"><span
                     jhiTranslate="global.menu.entities.systemConfig">Cấu hình hệ thống</span></a>
                 <a class="collapse-item" routerLink="/admin/health" routerLinkActive="active"><span

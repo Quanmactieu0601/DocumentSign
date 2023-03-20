@@ -36,6 +36,8 @@
       "validDate": "Valid Date",
       "expiredDate": "Expired Date",
       "activeStatus": "Active Status",
+      "signingCount": "Signing Count",
+      "authMode": "Authentication Mode",
       "otp": {
         "title": "Verification code",
         "header": "Create verification code",
