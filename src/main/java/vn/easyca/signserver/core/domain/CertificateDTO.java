@@ -54,10 +54,15 @@ public class CertificateDTO {
 
     private String personalId;
 
+    private String authMode;
+
+    private int type;
+
+    private int signingCount;
+
     public String getPersonalId() { return personalId; }
 
     public void setPersonalId(String personalId) { this.personalId = personalId; }
-
 
     public Long getId() {
         return id;
@@ -200,4 +205,28 @@ public class CertificateDTO {
 
     public void setPackageId(Long packageId) { this.packageId = packageId; }
 
+
+    public String getAuthMode() {
+        return authMode;
+    }
+
+    public void setAuthMode(String authMode) {
+        this.authMode = authMode;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getSigningCount() {
+        return signingCount;
+    }
+
+    public void setSigningCount(int signingCount) {
+        this.signingCount = signingCount;
+    }
 }

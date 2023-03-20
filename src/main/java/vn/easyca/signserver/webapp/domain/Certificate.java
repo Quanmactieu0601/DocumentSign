@@ -86,6 +86,15 @@ public class Certificate implements Serializable {
     @Column(name = "personal_id")
     private String personalId;
 
+    @Column(name = "type")
+    private int type;
+
+    @Column(name = "signing_count", columnDefinition = "-1")
+    private int signingCount = -1;
+
+    @Column(name = "auth_mode")
+    private String authMode;
+
     public String getPersonalId() { return personalId; }
 
     public void setPersonalId(String personalId) { this.personalId = personalId; }
@@ -270,6 +279,30 @@ public class Certificate implements Serializable {
         return 31;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public int getSigningCount() {
+        return signingCount;
+    }
+
+    public void setSigningCount(int signingCount) {
+        this.signingCount = signingCount;
+    }
+
+    public String getAuthMode() {
+        return authMode;
+    }
+
+    public void setAuthMode(String authMode) {
+        this.authMode = authMode;
+    }
+
     @Override
     public String toString() {
         return "Certificate{" +
@@ -286,6 +319,12 @@ public class Certificate implements Serializable {
             ", expiredDate=" + expiredDate +
             ", activeStatus=" + activeStatus +
             ", signatureImageId=" + signatureImageId +
+            ", encryptedPin='" + encryptedPin + '\'' +
+            ", secretKey='" + secretKey + '\'' +
+            ", personalId='" + personalId + '\'' +
+            ", type=" + type +
+            ", signingCount=" + signingCount +
+            ", authMode='" + authMode + '\'' +
             '}';
     }
 }

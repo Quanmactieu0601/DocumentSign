@@ -19,6 +19,7 @@ import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.sign.utils.X509Utils;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.*;
 import vn.easyca.signserver.webapp.domain.Certificate;
@@ -39,6 +40,7 @@ import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
 import vn.easyca.signserver.webapp.web.rest.CertificateResource;
+import vn.easyca.signserver.webapp.web.rest.vm.request.CreateCertRsRequest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -419,6 +421,31 @@ public class CertificateService {
             UserEntity user = currentLoginUser.get();
             List<Certificate> list = certificateRepository.findByOwnerId(user.getLogin());
             return list;
+        }
+    }
+    public CertificateDTO createCertFromRa(CreateCertRsRequest request) throws Exception {
+        try{
+            CertificateDTO certificateDTO = new CertificateDTO();
+            X509Certificate certificate = X509Utils.StringToX509Certificate(request.getRawData());
+            certificateDTO.setSubjectInfo(certificate.getSubjectDN().toString());
+            certificateDTO.setRawData(request.getRawData());
+            certificateDTO.setSerial(request.getSerial());
+            certificateDTO.setValidDate(DateTimeUtils.convertToLocalDateTime(certificate.getNotBefore()));
+            certificateDTO.setExpiredDate(DateTimeUtils.convertToLocalDateTime(certificate.getNotAfter()));
+            certificateDTO.setActiveStatus(1);
+            certificateDTO.setAuthMode(request.getAuthMode());
+            certificateDTO.setType(1);
+            certificateDTO.setSigningCount(request.getSigningCount());
+            String identificationRegex = "CMND:([^,]+)";
+            String personalId = ParserUtils.getElementContentNameInCertificate(certificate.getSubjectDN().toString(), identificationRegex);
+            if(personalId != null) {
+                certificateDTO.setPersonalId(personalId);
+            }
+            certificateDTO.setPersonalId(personalId);
+            CertificateDTO result = this.save(certificateDTO);
+            return result;
+        }catch (Exception ex){
+            throw new Exception(ex.getMessage());
         }
     }
 
