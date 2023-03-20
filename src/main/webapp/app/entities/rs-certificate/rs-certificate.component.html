@@ -1,0 +1,34 @@
+<ol class="breadcrumb in-page">
+    <li class="breadcrumb-item"><a href="./"><span jhiTranslate="global.menu.home">Trang chủ</span></a></li>
+    <li class="breadcrumb-item active" aria-current="page"><span jhiTranslate="webappApp.certificate.home.title">Rs-Certificates</span>
+    </li>
+</ol>
+<div class="card mb-3 searching">
+    <div class="card-body">
+        <form name="userSearch" role="form" novalidate>
+            <div class="row row-cols-5">
+                <div class="col">
+                    <div class="form-group">
+                        <label class="form-control-label"><span
+                            jhiTranslate="webappApp.certificate.alias">Serial</span></label>
+                        <input type="text" class="form-control form-control-sm" name="alias" formControlName="alias">
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-sm">
+                    <fa-icon icon="search"></fa-icon>
+                    <span jhiTranslate="webappApp.certificate.search">Tìm Kiếm</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<jhi-alert-error></jhi-alert-error>
+
+<jhi-alert></jhi-alert>
+
+<div class="alert alert-warning" id="no-result" *ngIf="rsCertificates?.length === 0">
+    <span jhiTranslate="webappApp.certificate.home.notFound">No certificates found</span>
+</div>

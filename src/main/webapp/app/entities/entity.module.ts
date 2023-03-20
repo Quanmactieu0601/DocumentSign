@@ -2,6 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { HomeComponent } from 'app/home/home.component';
 import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.component';
+import { RsCertificateComponent } from './rs-certificate/rs-certificate.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { WebappSharedModule } from 'app/shared/shared.module';
 
 @NgModule({
   imports: [
@@ -19,6 +22,10 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
           {
             path: 'certificate',
             loadChildren: () => import('./certificate/certificate.module').then(m => m.WebappCertificateModule),
+          },
+          {
+            path: 'rs-certificate',
+            loadChildren: () => import('./rs-certificate/rs-certificate.module').then(m => m.RsCertificateModule),
           },
           {
             path: 'transaction',
@@ -49,7 +56,9 @@ import { HomeLayoutComponent } from 'app/layouts/home-layout/home-layout.compone
         ],
       },
     ]),
+    FontAwesomeModule,
+    WebappSharedModule,
   ],
-  declarations: [],
+  declarations: [RsCertificateComponent],
 })
 export class WebappEntityModule {}

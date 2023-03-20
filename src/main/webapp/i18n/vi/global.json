@@ -8,6 +8,7 @@
       "entities": {
         "main": "Thực thể",
         "certificate": "Chứng thư số",
+        "Rs-certificate": "Chứng thư số RS",
         "transaction": "Giao dịch hệ thống",
         "systemConfig": "Cấu hình hệ thống",
         "report": "Thống kê báo cáo",
