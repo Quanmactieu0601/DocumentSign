@@ -72,10 +72,10 @@ public class Certificate implements Serializable {
     private String personalId;
 
     @Column(name = "type")
-    private int type;
+    private Integer type;
 
     @Column(name = "signing_count", columnDefinition = "-1")
-    private int signingCount = -1;
+    private Integer signingCount = -1;
 
     @Column(name = "auth_mode")
     private String authMode;
