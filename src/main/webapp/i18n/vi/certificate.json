@@ -32,6 +32,7 @@
       "validDate": "Ngày hiệu lực",
       "expiredDate": "Ngày hết hạn",
       "activeStatus": "Trạng thái",
+      "authMode": "Kiểu xác thực",
       "otp": {
         "title": "Mã xác thực",
         "header": "Tạo mã xác thực",
