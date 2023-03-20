@@ -7,8 +7,9 @@
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
-        "certificate": "Certificate",
-        "Rs-certificate": "Remote-Signing Certificate",
+        "certificate-management": "Certificate management",
+        "certificate": "EasySign",
+        "Rs-certificate": "Remote Signing",
         "transaction": "Transaction",
         "systemConfig": "System Config",
         "report": "Statistic Report",

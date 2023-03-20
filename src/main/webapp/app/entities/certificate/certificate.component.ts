@@ -53,6 +53,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     validDate: [],
     expiredDate: [],
   });
+
   constructor(
     protected certificateService: CertificateService,
     protected activatedRoute: ActivatedRoute,
@@ -165,10 +166,12 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
     this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
+
   // open modal
   openModal(content: any): void {
     this.modalRef = this.modalService.open(content, { size: 'md' });
   }
+
   openModalUploadCert(): void {
     this.modalRef = this.modalService.open(InstallCertToHsmComponent, { size: 'md' });
   }
@@ -227,6 +230,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
   isSuperAdmin(): boolean {
     return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
   }
+
   isAdmin(): boolean {
     return this.accountService.hasAnyAuthority(Authority.ADMIN);
   }
@@ -236,6 +240,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }
+
   changeownerId(certificate: ICertificate): void {
     const modalRef = this.modalService.open(ChangeOwnerIdComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
