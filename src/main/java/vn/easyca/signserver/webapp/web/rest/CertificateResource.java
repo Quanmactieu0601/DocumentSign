@@ -476,4 +476,14 @@ public class CertificateResource extends BaseResource {
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse("Can not found certificate"));
         }
     }
+
+    @PostMapping("/updateCertToEasySign")
+    public ResponseEntity<BaseResponseVM> updateCertFromRa(@RequestBody CreateCertRsRequest certRsRequest){
+        try {
+            CertificateDTO dto = certificateService.createCertFromRa(certRsRequest);
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse("Complete"));
+        }catch (Exception ex){
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(ex.getMessage()));
+        }
+    }
 }

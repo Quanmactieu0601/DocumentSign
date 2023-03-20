@@ -53,7 +53,7 @@ public class CertificateDTO {
 
     private int type;
 
-    private String signingCount;
+    private int signingCount;
 
     public String getPersonalId() { return personalId; }
 
@@ -208,11 +208,11 @@ public class CertificateDTO {
         this.type = type;
     }
 
-    public String getSigningCount() {
+    public int getSigningCount() {
         return signingCount;
     }
 
-    public void setSigningCount(String signingCount) {
+    public void setSigningCount(int signingCount) {
         this.signingCount = signingCount;
     }
 }
