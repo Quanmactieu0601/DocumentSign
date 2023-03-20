@@ -36,7 +36,7 @@
       "validDate": "Valid Date",
       "expiredDate": "Expired Date",
       "activeStatus": "Active Status",
-      "authMode": "Auth Mode",
+      "authMode": "Authentication Mode",
       "otp": {
         "title": "Verification code",
         "header": "Create verification code",
