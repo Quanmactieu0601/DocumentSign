@@ -70,7 +70,7 @@ public class CertificateMapper {
         entity.setSecretKey(certificateDTO.getSecretKey());
         entity.setPackageId(certificateDTO.getPackageId());
         entity.setPersonalId(certificateDTO.getPersonalId());
-        entity.setSigningProfile(certificateDTO.getSingingProfile());
+        entity.setSigningProfile(certificateDTO.getSingingProfile() == 0 ? -1 : certificateDTO.getSingingProfile());
         entity.setSignedTurnCount(certificateDTO.getSignedTurnCount());
         entity.setAuthMode(certificateDTO.getAuthMode());
         entity.setType(certificateDTO.getType());
