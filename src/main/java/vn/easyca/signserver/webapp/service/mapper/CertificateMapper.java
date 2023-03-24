@@ -37,6 +37,7 @@ public class CertificateMapper {
         certificateDTO.setAuthMode(entity.getAuthMode());
         certificateDTO.setSignedTurnCount(entity.getSignedTurnCount());
         certificateDTO.setSingingProfile(entity.getSigningProfile());
+        certificateDTO.setType(entity.getType());
 
         //TODO: update decrypt
         certificateDTO = encryptionHelper.decryptCert(certificateDTO);
@@ -72,6 +73,7 @@ public class CertificateMapper {
         entity.setSigningProfile(certificateDTO.getSingingProfile());
         entity.setSignedTurnCount(certificateDTO.getSignedTurnCount());
         entity.setAuthMode(certificateDTO.getAuthMode());
+        entity.setType(certificateDTO.getType());
         return entity;
     }
 }

@@ -5,3 +5,6 @@ alter table certificate
 alter table certificate
     add auth_mode varchar(50);
 
+alter table certificate
+    add type smallint default 0;
+
