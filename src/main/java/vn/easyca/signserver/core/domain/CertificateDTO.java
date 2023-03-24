@@ -52,8 +52,9 @@ public class CertificateDTO {
     private String authMode;
 
     private int type;
-
     private int singingProfile;
+
+    private int signedTurnCount;
 
     public String getPersonalId() { return personalId; }
 
@@ -214,5 +215,13 @@ public class CertificateDTO {
 
     public void setSingingProfile(int singingProfile) {
         this.singingProfile = singingProfile;
+    }
+
+    public int getSignedTurnCount() {
+        return signedTurnCount;
+    }
+
+    public void setSignedTurnCount(int signedTurnCount) {
+        this.signedTurnCount = signedTurnCount;
     }
 }

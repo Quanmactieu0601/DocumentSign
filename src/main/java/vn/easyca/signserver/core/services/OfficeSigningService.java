@@ -46,6 +46,9 @@ public class OfficeSigningService {
         CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
+        if(!certificateService.checkEnoughSigningCountRemain(certificate.getSignedTurnCount(), certificate.getSingingProfile(), request.getSigningRequestContents().size())){
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
 
         OptionalDTO optionalDTO = request.getOptional();
         String otp = optionalDTO.getOtpCode();
@@ -60,11 +63,14 @@ public class OfficeSigningService {
             List<SigningRequestContent> dataList = request.getSigningRequestContents();
             SigningResponseContent responseContent = null;
             Signature signatureInstance = cryptoTokenProxy.getCryptoToken().getSignatureInstance(optionalDTO.getHashAlgorithm());
+            int numSignatures = 0;
             for (SigningRequestContent data : dataList) {
                 Pair<byte[], byte[]> pairResult = officeSigner.signOOXMLFile(data.getData(), privateKey, x509Certificates, signatureInstance);
                 responseContent = new SigningResponseContent(data.getDocumentName(), pairResult.getKey(), pairResult.getValue());
                 responseContentList.add(responseContent);
+                numSignatures ++;
             }
+            certificateService.updateSignTurn(certificate.getId(), numSignatures);
             signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
             signingResponse.setResponseContentList(responseContentList);
             return signingResponse;

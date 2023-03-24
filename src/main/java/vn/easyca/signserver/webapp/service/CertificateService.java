@@ -133,6 +133,35 @@ public class CertificateService {
         certificateRepository.save(certificate);
     }
 
+    @Transactional
+    public void updateSignTurn(Long id, Integer signedCurrentCount ) {
+        if(signedCurrentCount > 0){
+            Certificate certificate = certificateRepository.findById(id).get();
+            certificate.setSignedTurnCount(certificate.getSignedTurnCount() + signedCurrentCount);
+            certificateRepository.save(certificate);
+        }
+    }
+
+    @Transactional
+    public void updateSignedTurn(long id) {
+        Certificate certificate = certificateRepository.findById(id).get();
+        certificate.setSignedTurnCount(certificate.getSignedTurnCount() + 1);
+        certificateRepository.save(certificate);
+    }
+
+    public boolean checkEnoughSigningCountRemain(int signingCountRemain, int signingProfile, int numSignature){
+        if(signingProfile == -1){
+            return true;
+        }else{
+            int numSignatureToSign = signingCountRemain + numSignature;
+            if((signingCountRemain < signingProfile) && (numSignatureToSign <= signingProfile)){
+                return true;
+            }
+            return false;
+        }
+    }
+
+
     @Transactional(readOnly = true)
     public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate, Integer type) {
         Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
