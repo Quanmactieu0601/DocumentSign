@@ -136,7 +136,7 @@ public class CertificateService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate) {
+    public Page<Certificate> findByFilter(Pageable pageable, String alias, String ownerId, String serial, String validDate, String expiredDate, Integer type) {
         Optional<UserEntity> userEntityOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
         if (userEntityOptional.isPresent()) {
             Set<Authority> userAuthority = userEntityOptional.get().getAuthorities();
@@ -145,7 +145,7 @@ public class CertificateService {
                 ownerId = userEntityOptional.get().getLogin();
             }
         }
-        return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate);
+        return certificateRepository.findByFilter(pageable, alias, ownerId, serial, validDate, expiredDate, type);
     }
 
     @Transactional
@@ -371,7 +371,7 @@ public class CertificateService {
             certificateDTO.setActiveStatus(1);
             certificateDTO.setAuthMode(request.getAuthMode());
             certificateDTO.setType(1);
-            certificateDTO.setSigningCount(request.getSigningCount());
+            certificateDTO.setSignedTurnCount(request.getSigningCount());
             String identificationRegex = "CMND:([^,]+)";
             String personalId = ParserUtils.getElementContentNameInCertificate(certificate.getSubjectDN().toString(), identificationRegex);
             if(personalId != null) {

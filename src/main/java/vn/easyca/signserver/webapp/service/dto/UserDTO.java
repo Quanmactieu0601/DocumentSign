@@ -75,8 +75,6 @@ public class UserDTO {
 
     private Boolean remindChangePassword;
 
-    private int type;
-
     public Boolean getRemindChangePassword() {
         return remindChangePassword;
     }
@@ -308,14 +306,6 @@ public class UserDTO {
 
     public void setCountry(String country) {
         this.country = country;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
     }
 
     public String getPhone() {
