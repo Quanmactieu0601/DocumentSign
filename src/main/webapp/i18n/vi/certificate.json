@@ -24,6 +24,7 @@
       "action": "Hành động",
       "info": "Thông tin",
       "serial": "Số serial",
+      "signedCount": "Số lượt đã ký",
       "ownerTaxcode": "Mã số thuế",
       "ownerId": "Owner ID",
       "subjectInfo": "Subject Infor",
@@ -32,7 +33,7 @@
       "validDate": "Ngày hiệu lực",
       "expiredDate": "Ngày hết hạn",
       "activeStatus": "Trạng thái",
-      "signingCount": "Số lượt ký",
+      "signingProfile": "Gói số lượt ký",
       "authMode": "Kiểu xác thực",
       "otp": {
         "title": "Mã xác thực",

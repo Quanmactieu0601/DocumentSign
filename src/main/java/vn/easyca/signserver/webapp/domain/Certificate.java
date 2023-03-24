@@ -317,6 +317,7 @@ public class Certificate implements Serializable {
             ", signatureImageId=" + signatureImageId +
             ", encryptedPin='" + encryptedPin + '\'' +
             ", secretKey='" + secretKey + '\'' +
+            ", signedTurnCount=" + signedTurnCount +
             ", personalId='" + personalId + '\'' +
             ", type=" + type +
             ", signingProfile=" + signingProfile +

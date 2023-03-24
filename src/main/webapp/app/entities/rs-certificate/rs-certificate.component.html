@@ -71,7 +71,7 @@
                 <fa-icon icon="sort"></fa-icon>
             </th>
             <th scope="col" jhiSortBy="expired_Date" class="custom-middle-align"><span
-                jhiTranslate="webappApp.certificate.signingCount">Signing Count</span>
+                jhiTranslate="webappApp.certificate.signingProfile">Signing Count</span>
                 <fa-icon icon="sort"></fa-icon>
             </th>
             <th scope="col" jhiSortBy="expired_Date" class="custom-middle-align"><span
@@ -87,6 +87,8 @@
                 </div>
                 <div><label class="info" style="margin-top: 0.5rem"
                             jhiTranslate="webappApp.certificate.serial">Serial: </label>{{ certificate.serial }}</div>
+                <div><label class="info" style="margin-top: 0.5rem"
+                            jhiTranslate="webappApp.certificate.signedCount">Số lượt đã ký: </label>{{ certificate.signedTurnCount }}</div>
             </td>
             <td class="custom-middle-align">
                 <fa-icon icon="check-circle" *ngIf="certificate.activeStatus == 1" class="green"></fa-icon>
@@ -94,7 +96,7 @@
             </td>
             <td class="custom-middle-align">{{ certificate.validDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
             <td class="custom-middle-align">{{ certificate.expiredDate | date:"MM/dd/yyyy hh:mm:ss" }}</td>
-            <td class="custom-middle-align">{{ certificate.signingCount}}</td>
+            <td class="custom-middle-align">{{ certificate.signingProfile === -1 ? "Unlimited" : certificate.signingProfile}}</td>
             <td class="custom-middle-align">{{ certificate.authMode}}</td>
         </tr>
         </tbody>

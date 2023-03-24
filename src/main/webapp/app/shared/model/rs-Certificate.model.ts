@@ -9,8 +9,9 @@ export interface IRsCertificate {
   expiredDate?: Date;
   activeStatus?: number;
   type?: number;
-  signingCount?: number;
+  signedTurnCount?: number;
   authMode?: string;
+  signingProfile?: number;
 }
 
 export class Certificate implements IRsCertificate {
@@ -25,7 +26,8 @@ export class Certificate implements IRsCertificate {
     public expiredDate?: Date,
     public activeStatus?: number,
     public type?: number,
-    public signingCount?: number,
-    public authMode?: string
+    public signedTurnCount?: number,
+    public authMode?: string,
+    public signingProfile?: number
   ) {}
 }
