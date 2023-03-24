@@ -50,6 +50,9 @@ public class PDFSigningService {
         CertificateDTO certificate = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificate == null)
             throw new CertificateNotFoundAppException();
+        if(!certificateService.checkEnoughSigningCountRemain(certificate.getSignedTurnCount(), certificate.getSingingProfile(), request.getSigningRequestContents().size())){
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
         SigningResponse signingResponse = new SigningResponse();
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificate, tokenInfoDTO.getPin(), otp);
         String providerName = cryptoTokenProxy.getProviderName();
@@ -59,11 +62,14 @@ public class PDFSigningService {
         List<SigningRequestContent> dataList = request.getSigningRequestContents();
         SigningResponseContent responseContent = null;
         String signatureAlgorithm = optionalDTO.getSignatureAlgorithm();
+        int numSignatures = 0;
         for (SigningRequestContent data : dataList) {
             byte[] pairResult = invisiblePDFSigning.signPdf(data.getData(), "", "", privateKey, new Certificate[] {x509Certificates}, signatureAlgorithm, providerName);
             responseContent = new SigningResponseContent(data.getDocumentName(), null, pairResult);
             responseContentList.add(responseContent);
+            numSignatures++;
         }
+        certificateService.updateSignTurn(certificate.getSerial(), numSignatures);
         signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
         signingResponse.setResponseContentList(responseContentList);
         return signingResponse;

@@ -45,7 +45,7 @@ public class ThirdPartyRequestService {
         this.officeSigningRequest = officeSigningRequest;
         this.xmlSigningRequest = xmlSigningRequest;
     }
-    
+
 
     public Object sign(SigningRequest<SigningContainerRequest<Object, String>> signingRequest) throws Exception {
         TokenInfoDTO tokenInfo = signingRequest.getTokenInfo();
@@ -129,7 +129,7 @@ public class ThirdPartyRequestService {
 
         // update sign turn
         if (signedCurrentCount > 0) {
-            certificateService.updateSignTurn(certificateDTO.getId(), signedCurrentCount);
+            certificateService.updateSignTurn(certificateDTO.getSerial(), signedCurrentCount);
         }
         return listResultSigningResponse;
     }

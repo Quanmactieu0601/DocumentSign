@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.domain.TokenInfo;
-import vn.easyca.signserver.core.dto.sign.request.content.QRCodeContent;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
@@ -30,7 +29,6 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
-import vn.easyca.signserver.webapp.service.impl.parser.QRCodeSignatureTemplateParserImpl;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -142,17 +140,31 @@ public class CertificateService {
     }
 
     @Transactional
-    public void updateSignTurn(Long id, Integer signedCurrentCount ) {
-        Certificate certificate = certificateRepository.getOne(id);
-        certificate.setSignedTurnCount(certificate.getSignedTurnCount() + signedCurrentCount);
-        certificateRepository.save(certificate);
+    public void updateSignTurn(String serial, Integer signedCurrentCount) {
+        if (signedCurrentCount > 0) {
+            Certificate certificate = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED).get();
+            certificate.setSignedTurnCount(certificate.getSignedTurnCount() + signedCurrentCount);
+            certificateRepository.save(certificate);
+        }
     }
 
     @Transactional
-    public void updateSignedTurn(long id) {
-        Certificate certificate = certificateRepository.getOne(id);
+    public void updateSignedTurn(String serial) {
+        Certificate certificate = certificateRepository.findOneBySerialAndActiveStatus(serial, Certificate.ACTIVATED).get();
         certificate.setSignedTurnCount(certificate.getSignedTurnCount() + 1);
         certificateRepository.save(certificate);
+    }
+
+    public boolean checkEnoughSigningCountRemain(int signingCountRemain, int signingProfile, int numSignature) {
+        if (signingProfile == -1) {
+            return true;
+        } else {
+            int numSignatureToSign = signingCountRemain + numSignature;
+            if ((signingCountRemain < signingProfile) && (numSignatureToSign <= signingProfile)) {
+                return true;
+            }
+            return false;
+        }
     }
 
 
@@ -184,7 +196,7 @@ public class CertificateService {
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
         cryptoTokenProxy.getCryptoToken().checkInitialized();
         Optional<UserEntity> userEntity = userRepository.findOneWithAuthoritiesByLogin(AccountUtils.getLoggedAccount());
-        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findOneByUserIdAndActivated(userEntity.get().getId(),true);
+        Optional<SignatureTemplate> signatureTemplateOptional = signatureTemplateRepository.findFirstByUserIdOrderByCreatedDateDesc(userEntity.get().getId());
         if (!signatureTemplateOptional.isPresent()) {
             throw new ApplicationException("Signature template is not configured");
         }
@@ -274,7 +286,7 @@ public class CertificateService {
                 // th: ko co anh chu ky, thay doi kich thuoc anh
                 if (signatureImageData.equals("")) {
                     height = 70;
-                    htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden" );
+                    htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden");
                 }
 
                 return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
@@ -388,27 +400,27 @@ public class CertificateService {
 
 
     public String resetHsmCertificatePin(String serial, String masterKey) throws Exception {
-        if(StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)){
+        if (StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)) {
             throw new Exception("Serial and MasterKey must be not null!");
         }
         String masterKeySystem = env.getProperty("spring.servlet.master-key");
-        if(!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)){
+        if (!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)) {
             throw new Exception("MasterKey invalid !");
         }
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
-        if(!certificateOptional.isPresent()){
+        if (!certificateOptional.isPresent()) {
             throw new Exception("Certificate is not found!");
         }
         CertificateDTO certificate = mapper.map(certificateOptional.get());
-        if(!certificate.getTokenType().equals(CertificateDTO.PKCS_11)){
+        if (!certificate.getTokenType().equals(CertificateDTO.PKCS_11)) {
             throw new Exception("Certificate token type is invalid!");
         }
         String newPin = CommonUtils.genRandomHsmCertPin();
-        try{
+        try {
             certificate.setEncryptedPin(symmetricService.encrypt(newPin));
             this.save(certificate);
             return newPin;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new Exception(ex.getMessage());
         }
     }

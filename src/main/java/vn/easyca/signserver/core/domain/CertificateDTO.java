@@ -56,7 +56,6 @@ public class CertificateDTO {
     private String authMode;
 
     private int type;
-
     private int singingProfile;
 
     public String getPersonalId() { return personalId; }

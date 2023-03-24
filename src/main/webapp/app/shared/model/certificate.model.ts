@@ -13,7 +13,9 @@ export interface ICertificate {
   expiredDate?: Date;
   activeStatus?: number;
   signatureImageId?: number;
-  authMode?: String;
+  signedTurnCount?: number;
+  authMode?: string;
+  signingProfile?: number;
 }
 
 export class Certificate implements ICertificate {
@@ -32,6 +34,8 @@ export class Certificate implements ICertificate {
     public expiredDate?: Date,
     public activeStatus?: number,
     public signatureImageId?: number,
-    public authMode?: String
+    public signedTurnCount?: number,
+    public authMode?: string,
+    public signingProfile?: number
   ) {}
 }

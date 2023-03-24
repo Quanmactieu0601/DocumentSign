@@ -26,6 +26,7 @@
       "action": "Action",
       "info": "Info",
       "serial": "Serial",
+      "signedCount": "signed count",
       "pin": "Pin",
       "ownerTaxcode": "Owner Taxcode",
       "ownerId": "Owner Id",
@@ -36,7 +37,7 @@
       "validDate": "Valid Date",
       "expiredDate": "Expired Date",
       "activeStatus": "Active Status",
-      "signingCount": "Signing Count",
+      "signingProfile": "Signing Profile",
       "authMode": "Authentication Mode",
       "otp": {
         "title": "Verification code",
