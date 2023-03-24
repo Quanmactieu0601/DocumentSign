@@ -68,20 +68,12 @@ public class Certificate implements Serializable {
     @Column(name = "secret_key")
     private String secretKey;
 
-
     @Column(name = "signed_turn_count")
     private Integer signedTurnCount;
 
+
     @Column(name = "package_id")
     private Long packageId;
-
-    public Long getPackageId() { return packageId; }
-
-    public void setPackageId(Long packageId) { this.packageId = packageId; }
-
-    public Integer getSignedTurnCount() { return signedTurnCount; }
-
-    public void setSignedTurnCount(Integer signedTurnCount) { this.signedTurnCount = signedTurnCount; }
 
     @Column(name = "personal_id")
     private String personalId;
@@ -89,16 +81,20 @@ public class Certificate implements Serializable {
     @Column(name = "type")
     private Integer type;
 
-    @Column(name = "signing_count", columnDefinition = "-1")
-    private Integer signingCount = -1;
+    @Column(name = "signing_profile", columnDefinition = "-1")
+    private Integer signingProfile = -1;
 
     @Column(name = "auth_mode")
     private String authMode;
 
+    public Long getPackageId() { return packageId; }
+
+    public void setPackageId(Long packageId) { this.packageId = packageId; }
+
+
     public String getPersonalId() { return personalId; }
 
     public void setPersonalId(String personalId) { this.personalId = personalId; }
-
 
     public Long getSignatureImageId() {
         return signatureImageId;
@@ -287,13 +283,6 @@ public class Certificate implements Serializable {
         this.type = type;
     }
 
-    public int getSigningCount() {
-        return signingCount;
-    }
-
-    public void setSigningCount(int signingCount) {
-        this.signingCount = signingCount;
-    }
 
     public String getAuthMode() {
         return authMode;
@@ -301,6 +290,22 @@ public class Certificate implements Serializable {
 
     public void setAuthMode(String authMode) {
         this.authMode = authMode;
+    }
+
+    public int getSigningProfile() {
+        return signingProfile;
+    }
+
+    public void setSigningProfile(int signingProfile) {
+        this.signingProfile = signingProfile;
+    }
+
+    public int getSignedTurnCount() {
+        return signedTurnCount;
+    }
+
+    public void setSignedTurnCount(int signedTurnCount) {
+        this.signedTurnCount = signedTurnCount;
     }
 
     @Override
@@ -323,7 +328,7 @@ public class Certificate implements Serializable {
             ", secretKey='" + secretKey + '\'' +
             ", personalId='" + personalId + '\'' +
             ", type=" + type +
-            ", signingCount=" + signingCount +
+            ", signingProfile=" + signingProfile +
             ", authMode='" + authMode + '\'' +
             '}';
     }

@@ -435,7 +435,7 @@ public class CertificateService {
             certificateDTO.setActiveStatus(1);
             certificateDTO.setAuthMode(request.getAuthMode());
             certificateDTO.setType(1);
-            certificateDTO.setSigningCount(request.getSigningCount());
+            certificateDTO.setSignedTurnCount(request.getSigningCount());
             String identificationRegex = "CMND:([^,]+)";
             String personalId = ParserUtils.getElementContentNameInCertificate(certificate.getSubjectDN().toString(), identificationRegex);
             if(personalId != null) {
