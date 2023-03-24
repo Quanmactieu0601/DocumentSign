@@ -68,6 +68,9 @@ public class Certificate implements Serializable {
     @Column(name = "secret_key")
     private String secretKey;
 
+    @Column(name = "signed_turn_count")
+    private Integer signedTurnCount;
+
     @Column(name = "personal_id")
     private String personalId;
 
@@ -286,6 +289,14 @@ public class Certificate implements Serializable {
 
     public void setSigningProfile(int signingProfile) {
         this.signingProfile = signingProfile;
+    }
+
+    public int getSignedTurnCount() {
+        return signedTurnCount;
+    }
+
+    public void setSignedTurnCount(int signedTurnCount) {
+        this.signedTurnCount = signedTurnCount;
     }
 
     @Override

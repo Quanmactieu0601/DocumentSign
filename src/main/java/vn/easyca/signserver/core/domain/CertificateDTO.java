@@ -55,6 +55,8 @@ public class CertificateDTO {
 
     private int singingProfile;
 
+    private int signedTurnCount;
+
     public String getPersonalId() { return personalId; }
 
     public void setPersonalId(String personalId) { this.personalId = personalId; }
@@ -214,5 +216,13 @@ public class CertificateDTO {
 
     public void setSingingProfile(int singingProfile) {
         this.singingProfile = singingProfile;
+    }
+
+    public int getSignedTurnCount() {
+        return signedTurnCount;
+    }
+
+    public void setSignedTurnCount(int signedTurnCount) {
+        this.signedTurnCount = signedTurnCount;
     }
 }
