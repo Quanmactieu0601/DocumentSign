@@ -55,6 +55,9 @@ public class SigningService {
 
     public PDFSigningDataRes signPDFFile(SigningRequest request) throws ApplicationException {
         CertificateDTO certificateDTO = certificateService.getBySerial(request.getTokenInfo().getSerial());
+        if (!certificateService.checkEnoughSigningCountRemain(certificateDTO.getSignedTurnCount(), certificateDTO.getSingingProfile(), request.getSigningRequestContents().size())) {
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfo().getPin(), request.getOptional().getOtpCode());
@@ -101,7 +104,7 @@ public class SigningService {
 
         // create Unique ID SignField element for signing multiple time with one certificate
         UUID uniqueIdSignField = java.util.UUID.randomUUID();
-        signPDFDto.setSignField(signer.replaceAll(".","") + uniqueIdSignField);
+        signPDFDto.setSignField(signer.replaceAll(".", "") + uniqueIdSignField);
         signPDFDto.setSigner(signer);
         signPDFDto.setSignDate(new Date());
         signPDFDto.setVisibleWidth(location.getVisibleWidth());
@@ -115,6 +118,7 @@ public class SigningService {
         try {
             signPDFPlugin.sign(signPDFDto);
             fileInputStream = new FileInputStream(temFilePath);
+            certificateService.updateSignedTurn(certificateDTO.getSerial());
             byte[] res = IOUtils.toByteArray(fileInputStream);
             file.delete();
             return new PDFSigningDataRes(res);
@@ -134,6 +138,9 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
+        if (!certificateService.checkEnoughSigningCountRemain(certificateDTO.getSignedTurnCount(), certificateDTO.getSingingProfile(), request.getSignElements().size())) {
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
         OptionalDTO optionalDTO = request.getOptional();
         String otp = optionalDTO.getOtpCode();
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, request.getTokenInfoDTO().getPin(), otp);
@@ -142,12 +149,14 @@ public class SigningService {
         List<SignElement<String>> signElements = request.getSignElements();
         RawSigner rawSigner = new RawSigner();
         String hashAlgorithm = request.getOptional().getHashAlgorithm();
+        int numSignatures = 0;
         for (SignElement<String> signElement : signElements) {
             byte[] hash = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
 //                signature = rawSigner.signHash(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
                 signature = !withDigestInfo ? rawSigner.signHashWithoutDigestInfo(hash, cryptoTokenProxy.getPrivateKey()) : rawSigner.signHashWithDigestInfo(hash, cryptoTokenProxy.getPrivateKey(), hashAlgorithm);
+                numSignatures++;
             } catch (Exception exception) {
                 throw new SigningAppException("Sign has occurs error", exception);
             }
@@ -155,6 +164,7 @@ public class SigningService {
             SignResultElement signResultElement = SignResultElement.create(signature, signContent, signElement.getKey());
             resultElements.add(signResultElement);
         }
+        certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 
@@ -173,7 +183,9 @@ public class SigningService {
         CertificateDTO certificateDTO = certificateService.getBySerial(tokenInfoDTO.getSerial());
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
-
+        if(!certificateService.checkEnoughSigningCountRemain(certificateDTO.getSignedTurnCount(), certificateDTO.getSingingProfile(), request.getSignElements().size())){
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
         CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, tokenInfoDTO.getPin(), otp);
 
         PrivateKey privateKey = null;
@@ -185,11 +197,13 @@ public class SigningService {
 
         List<SignResultElement> resultElements = new ArrayList<>();
         RawSigner rawSigner = new RawSigner();
+        int numSignatures = 0;
         for (SignElement<String> signElement : signElements) {
             byte[] data = CertUtils.decodeBase64(signElement.getContent());
             byte[] signature = new byte[0];
             try {
                 signature = rawSigner.signData(data, privateKey, cryptoTokenProxy.getCryptoToken().getSignatureInstance(request.getHashAlgorithm()));
+                numSignatures++;
             } catch (Exception exception) {
                 throw new SigningAppException("Sign data occurs error!", exception);
             }
@@ -197,6 +211,7 @@ public class SigningService {
             SignResultElement signResultElement = SignResultElement.create(signature, signContent, signElement.getKey());
             resultElements.add(signResultElement);
         }
+        certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 

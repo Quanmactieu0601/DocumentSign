@@ -77,6 +77,7 @@ public class Certificate implements Serializable {
     @Column(name = "type")
     private Integer type;
 
+
     @Column(name = "signing_profile", columnDefinition = "-1")
     private Integer signingProfile = -1;
 
@@ -261,6 +262,14 @@ public class Certificate implements Serializable {
         this.secretKey = secretKey;
     }
 
+    public int getSignedTurnCount() {
+        return signedTurnCount;
+    }
+
+    public void setSignedTurnCount(int signedTurnCount) {
+        this.signedTurnCount = signedTurnCount;
+    }
+
     @Override
     public int hashCode() {
         return 31;
@@ -291,13 +300,6 @@ public class Certificate implements Serializable {
         this.signingProfile = signingProfile;
     }
 
-    public int getSignedTurnCount() {
-        return signedTurnCount;
-    }
-
-    public void setSignedTurnCount(int signedTurnCount) {
-        this.signedTurnCount = signedTurnCount;
-    }
 
     @Override
     public String toString() {

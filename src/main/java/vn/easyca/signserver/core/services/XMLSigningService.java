@@ -39,6 +39,10 @@ public class XMLSigningService {
         if (certificateDTO == null)
             throw new CertificateNotFoundAppException();
 
+        if(!certificateService.checkEnoughSigningCountRemain(certificateDTO.getSignedTurnCount(), certificateDTO.getSingingProfile(), request.getSigningRequestContents().size())){
+            throw new ApplicationException("Signing count remain is not enough!");
+        }
+
         OptionalDTO optionalDTO = request.getOptional();
         String otp = optionalDTO.getOtpCode();
 
@@ -51,11 +55,14 @@ public class XMLSigningService {
             List<SigningResponseContent> responseContentList = new ArrayList<>();
             List<SigningRequestContent> dataList = request.getSigningRequestContents();
             SigningResponseContent responseContent = null;
+            int numSignatures = 0;
             for (SigningRequestContent data : dataList) {
                 String result = lib.generateXMLDigitalSignature(new String(data.getData()), privateKey, x509Certificate, cryptoTokenProxy.getProviderName());
                 responseContent = new SigningResponseContent(data.getDocumentName(), null, result.getBytes());
                 responseContentList.add(responseContent);
+                numSignatures++;
             }
+            certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
             signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
             signingResponse.setResponseContentList(responseContentList);
             return signingResponse;

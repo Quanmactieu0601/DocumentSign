@@ -52,7 +52,6 @@ public class CertificateDTO {
     private String authMode;
 
     private int type;
-
     private int singingProfile;
 
     private int signedTurnCount;
