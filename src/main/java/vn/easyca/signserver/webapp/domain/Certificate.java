@@ -300,13 +300,6 @@ public class Certificate implements Serializable {
         this.signingProfile = signingProfile;
     }
 
-    public int getSignedTurnCount() {
-        return signedTurnCount;
-    }
-
-    public void setSignedTurnCount(int signedTurnCount) {
-        this.signedTurnCount = signedTurnCount;
-    }
 
     @Override
     public String toString() {

@@ -62,7 +62,7 @@ public class XMLSigningService {
                 responseContentList.add(responseContent);
                 numSignatures++;
             }
-            certificateService.updateSignTurn(certificateDTO.getId(), numSignatures);
+            certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
             signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
             signingResponse.setResponseContentList(responseContentList);
             return signingResponse;

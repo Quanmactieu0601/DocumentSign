@@ -118,7 +118,7 @@ public class SigningService {
         try {
             signPDFPlugin.sign(signPDFDto);
             fileInputStream = new FileInputStream(temFilePath);
-            certificateService.updateSignedTurn(certificateDTO.getId());
+            certificateService.updateSignedTurn(certificateDTO.getSerial());
             byte[] res = IOUtils.toByteArray(fileInputStream);
             file.delete();
             return new PDFSigningDataRes(res);
@@ -164,7 +164,7 @@ public class SigningService {
             SignResultElement signResultElement = SignResultElement.create(signature, signContent, signElement.getKey());
             resultElements.add(signResultElement);
         }
-        certificateService.updateSignTurn(certificateDTO.getId(), numSignatures);
+        certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 
@@ -211,7 +211,7 @@ public class SigningService {
             SignResultElement signResultElement = SignResultElement.create(signature, signContent, signElement.getKey());
             resultElements.add(signResultElement);
         }
-        certificateService.updateSignTurn(certificateDTO.getId(), numSignatures);
+        certificateService.updateSignTurn(certificateDTO.getSerial(), numSignatures);
         return new SignDataResponse<>(resultElements, cryptoTokenProxy.getBase64Certificate());
     }
 

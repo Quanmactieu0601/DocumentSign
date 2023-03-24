@@ -69,7 +69,7 @@ public class PDFSigningService {
             responseContentList.add(responseContent);
             numSignatures++;
         }
-        certificateService.updateSignTurn(certificate.getId(), numSignatures);
+        certificateService.updateSignTurn(certificate.getSerial(), numSignatures);
         signingResponse.setBase64Certificate(cryptoTokenProxy.getBase64Certificate());
         signingResponse.setResponseContentList(responseContentList);
         return signingResponse;
