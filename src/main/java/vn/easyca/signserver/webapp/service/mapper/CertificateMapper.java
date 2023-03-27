@@ -76,4 +76,5 @@ public class CertificateMapper {
         entity.setType(certificateDTO.getType());
         return entity;
     }
+
 }

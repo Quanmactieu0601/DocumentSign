@@ -6,23 +6,24 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.dto.sign.request.SignRequest;
 import vn.easyca.signserver.core.dto.sign.response.SignDataResponse;
 import vn.easyca.signserver.core.dto.sign.response.SignResultElement;
 import vn.easyca.signserver.core.exception.ApplicationException;
+import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.services.SigningService;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SignatureHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.SigningHashData;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.Types;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.CertificateInfoRequest;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.request.RsSignHashesRequest;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.CredentialInfoResponse;
-import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RACertificateResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RASignHashResponse;
 import vn.easyca.signserver.pki.sign.integrated.easyinvoice.rsspDTO.response.RsSignHashResponse;
+import vn.easyca.signserver.pki.sign.utils.X509Utils;
+import vn.easyca.signserver.webapp.service.CertificateService;
 import vn.easyca.signserver.webapp.web.rest.vm.request.sign.SignElementVM;
 
-import java.text.SimpleDateFormat;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,13 @@ public class ThirdPartySigning {
     private static final Logger log = LoggerFactory.getLogger(ThirdPartySigning.class);
     private final RestTemplate restTemplate;
     private final SigningService signService;
+    private final CertificateService certificateService;
     private String raURL = "http://172.16.11.84:8787/api/";
 
-    public ThirdPartySigning(RestTemplate restTemplate, SigningService signService) {
+    public ThirdPartySigning(RestTemplate restTemplate, SigningService signService, CertificateService certificateService) {
         this.restTemplate = restTemplate;
         this.signService = signService;
+        this.certificateService = certificateService;
     }
 
 
@@ -48,36 +51,22 @@ public class ThirdPartySigning {
         return headers;
     }
 
-    public RACertificateResponse getCertificateInfo(String serial, String username) throws Exception {
-        CertificateInfoRequest request = new CertificateInfoRequest();
-        request.setUsername(username);
-        request.setSerial(serial);
-        request.setCertificates("");
-        request.setCertInfoEnabled(true);
-        request.setAuthInfoEnabled(true);
-        log.info("Get certificate-info, serial: {}", request.getSerial());
-        HttpHeaders headers = buildRequestHeaders();
-        HttpEntity<CertificateInfoRequest> httpRequest = new HttpEntity<>(request, headers);
-        String url = raURL + "p/rssp/enroll/cert-info";
-        RACertificateResponse response = restTemplate.postForObject(url, httpRequest, RACertificateResponse.class);
-        if (response.getStatus() != 0) {
-            log.error("Certificate info failed failed with error {}", response.getMsg());
-            throw new Exception(response.getStatus() + "," + response.getMsg());
-        }
-        return response;
+    public CertificateDTO getCertInfo(String serial) throws CertificateNotFoundAppException {
+        CertificateDTO cert = certificateService.getBySerial(serial);
+        return cert;
     }
 
-    public void checkCertInformation(CredentialInfoResponse credentialInfoResponse) throws Exception {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-        Date validTo = format.parse(credentialInfoResponse.getNotAfter());
+    public void checkCertInformation(CertificateDTO cert) throws Exception {
+        X509Certificate certificate = X509Utils.StringToX509Certificate(cert.getRawData());
         Date now = new Date();
-        if (validTo.before(now)) {
+        if (certificate.getNotAfter().before(now)) {
             throw new Exception("-1,The certificate has expired");
         }
-        int signRemainingCounter = credentialInfoResponse.getRemainingSigningCounter();
-        if (signRemainingCounter <= 0)
-            throw new Exception("-1,The certificate has run out of Remaining Signing Counter");
+        if (cert.getSingingProfile() != -1) {
+            int signRemainingCounter = cert.getSingingProfile() - cert.getSignedTurnCount();
+            if (signRemainingCounter <= 0)
+                throw new Exception("-1,The certificate has run out of Remaining Signing Counter");
+        }
     }
 
     public RASignHashResponse signHashRssp(RsSignHashesRequest request) throws Exception {
@@ -94,24 +83,34 @@ public class ThirdPartySigning {
     }
 
     public RASignHashResponse sign(SignThirdPartyRequest request) throws Exception {
-        RsSignHashesRequest signHashesRequest = setSignHashRsspRequest(request);
-        RASignHashResponse response = signHashRssp(signHashesRequest);
+        CertificateDTO cert = getCertInfo(request.getData().getTokenInfo().getSerial());
+        RASignHashResponse response = null;
+        if (cert.getType() == 0) {
+            response = handleSignHashEasySign(response, request);
+        } else {
+            RsSignHashesRequest signHashesRequest = setSignHashRsspRequest(request, cert);
+            response = signHashRssp(signHashesRequest);
+        }
         int size = response.getData().getNumSignature();
         if (!request.getData().getOptional().isReturnInputData()) {
             for (int i = 0; i < size; i++) {
                 response.getData().getSignatures().get(i).setHashData(null);
             }
         }
+        cert.setSignedTurnCount(cert.getSignedTurnCount() + size);
+        if (cert.getSingingProfile() != -1) {
+            cert.setSingingProfile(cert.getSingingProfile() - size);
+        }
+        certificateService.save(cert);
         return response;
     }
 
-    public RsSignHashesRequest setSignHashRsspRequest(SignThirdPartyRequest request) throws Exception {
+    public RsSignHashesRequest setSignHashRsspRequest(SignThirdPartyRequest request, CertificateDTO cert) throws Exception {
         String username = request.getUsername();
         String serial = request.getData().getTokenInfo().getSerial();
         String pin = request.getData().getTokenInfo().getPin();
         List<SignElementVM<String>> listHashes = request.getData().getElements();
-        CredentialInfoResponse credentialInfoResponse = getCertificateInfo(serial, username).getData();
-        checkCertInformation(credentialInfoResponse);
+        checkCertInformation(cert);
 
         RsSignHashesRequest signHashesRequest = new RsSignHashesRequest();
         signHashesRequest.setSerial(serial);
@@ -131,7 +130,7 @@ public class ThirdPartySigning {
             hashData[i].setHashData(listHashes.get(i).getContent());
         }
         signHashesRequest.setHashData(hashData);
-        if (credentialInfoResponse.getAuthMode().getValue().equalsIgnoreCase("EXPLICIT/PIN")) {
+        if (cert.getAuthMode().equalsIgnoreCase("EXPLICIT/PIN")) {
             signHashesRequest.setConfirmType(2);
         } else {
             signHashesRequest.setConfirmType(1);
@@ -169,11 +168,13 @@ public class ThirdPartySigning {
 
 
     public RASignHashResponse handleException(RASignHashResponse response, SignThirdPartyRequest request, Exception e) {
-        String[] s = e.getMessage().split(",");
-        response.setStatus(Integer.parseInt(s[0]));
-        response.setMsg(s[1]);
-        if (response.getStatus() == 3009) {
-            response = handleSignHashEasySign(response, request);
+        if (e.getMessage().contains(",")) {
+            String[] s = e.getMessage().split(",");
+            response.setStatus(Integer.parseInt(s[0]));
+            response.setMsg(s[1]);
+        } else {
+            response.setStatus(-1);
+            response.setMsg(e.getMessage());
         }
         return response;
     }
