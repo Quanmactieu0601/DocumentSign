@@ -93,9 +93,6 @@ public class ThirdPartySigning {
             }
         }
         cert.setSignedTurnCount(cert.getSignedTurnCount() + size);
-        if (cert.getSingingProfile() != -1) {
-            cert.setSingingProfile(cert.getSingingProfile() - size);
-        }
         certificateService.save(cert);
         return response;
     }
