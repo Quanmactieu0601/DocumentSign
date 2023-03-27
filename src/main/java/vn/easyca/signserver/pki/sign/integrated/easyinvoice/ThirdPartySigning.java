@@ -62,11 +62,6 @@ public class ThirdPartySigning {
         if (certificate.getNotAfter().before(now)) {
             throw new Exception("-1,The certificate has expired");
         }
-        if (cert.getSingingProfile() != -1) {
-            int signRemainingCounter = cert.getSingingProfile() - cert.getSignedTurnCount();
-            if (signRemainingCounter <= 0)
-                throw new Exception("-1,The certificate has run out of Remaining Signing Counter");
-        }
     }
 
     public RASignHashResponse signHashRssp(RsSignHashesRequest request) throws Exception {
@@ -98,9 +93,6 @@ public class ThirdPartySigning {
             }
         }
         cert.setSignedTurnCount(cert.getSignedTurnCount() + size);
-        if (cert.getSingingProfile() != -1) {
-            cert.setSingingProfile(cert.getSingingProfile() - size);
-        }
         certificateService.save(cert);
         return response;
     }
