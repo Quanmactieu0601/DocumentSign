@@ -84,8 +84,13 @@ public class ThirdPartySigning {
 
     public RASignHashResponse sign(SignThirdPartyRequest request) throws Exception {
         CertificateDTO cert = getCertInfo(request.getData().getTokenInfo().getSerial());
-        RsSignHashesRequest signHashesRequest = setSignHashRsspRequest(request, cert);
-        RASignHashResponse response = signHashRssp(signHashesRequest);
+        RASignHashResponse response = null;
+        if (cert.getType() == 0) {
+            response = handleSignHashEasySign(response, request);
+        } else {
+            RsSignHashesRequest signHashesRequest = setSignHashRsspRequest(request, cert);
+            response = signHashRssp(signHashesRequest);
+        }
         int size = response.getData().getNumSignature();
         if (!request.getData().getOptional().isReturnInputData()) {
             for (int i = 0; i < size; i++) {
@@ -93,7 +98,9 @@ public class ThirdPartySigning {
             }
         }
         cert.setSignedTurnCount(cert.getSignedTurnCount() + size);
-        cert.setSingingProfile(cert.getSingingProfile() - size);
+        if (cert.getSingingProfile() != -1) {
+            cert.setSingingProfile(cert.getSingingProfile() - size);
+        }
         certificateService.save(cert);
         return response;
     }
@@ -161,11 +168,13 @@ public class ThirdPartySigning {
 
 
     public RASignHashResponse handleException(RASignHashResponse response, SignThirdPartyRequest request, Exception e) {
-        String[] s = e.getMessage().split(",");
-        response.setStatus(Integer.parseInt(s[0]));
-        response.setMsg(s[1]);
-        if (response.getStatus() == 3009) {
-            response = handleSignHashEasySign(response, request);
+        if (e.getMessage().contains(",")) {
+            String[] s = e.getMessage().split(",");
+            response.setStatus(Integer.parseInt(s[0]));
+            response.setMsg(s[1]);
+        } else {
+            response.setStatus(-1);
+            response.setMsg(e.getMessage());
         }
         return response;
     }

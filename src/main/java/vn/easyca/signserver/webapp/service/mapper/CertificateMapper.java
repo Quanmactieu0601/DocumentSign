@@ -35,6 +35,7 @@ public class CertificateMapper {
         certificateDTO.setEncryptedPin(entity.getEncryptedPin());
         certificateDTO.setSecretKey(entity.getSecretKey());
         certificateDTO.setAuthMode(entity.getAuthMode());
+        certificateDTO.setType(entity.getType());
         certificateDTO.setSignedTurnCount(entity.getSignedTurnCount());
         certificateDTO.setSingingProfile(entity.getSigningProfile());
 
@@ -70,6 +71,7 @@ public class CertificateMapper {
         entity.setSigningProfile(certificateDTO.getSingingProfile());
         entity.setSignedTurnCount(certificateDTO.getSignedTurnCount());
         entity.setAuthMode(certificateDTO.getAuthMode());
+        entity.setType(certificateDTO.getType());
         return entity;
     }
 
