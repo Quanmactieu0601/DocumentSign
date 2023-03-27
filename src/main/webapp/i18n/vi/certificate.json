@@ -117,7 +117,17 @@
       "uploadExcelRegisterFile": "Tải lên file P12 excel ",
       "uploadSignatureImageByPersonalId": "Tải lên ảnh chữ ký theo cmnd ",
       "uploadSignatureImage": "Tải ảnh chữ kí",
-      "search": "Tìm kiếm"
+      "search": "Tìm kiếm",
+      "getSigningTurnCountReport": {
+        "alertDownFile": {
+          "success": "Tải file thống kê Số lượt kí thành công",
+          "error": "Tải file thống kê Số lượt kí thất bại"
+        },
+        "title": "Tải file thống kê Số lượt kí",
+        "downloadReport": "Tải thống kê số lượt kí",
+        "file": "File",
+        "cancel": "Hủy"
+      }
     }
   }
 }

@@ -27,6 +27,7 @@ import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/gene
 import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id/change-owner-id.component';
 import { UploadExcelRegisterComponent } from 'app/entities/certificate/upload-excel-register/upload-excel-register.component';
 import { ImagePersonalIdComponent } from 'app/entities/certificate/image-personal-id/image-personal-id.component';
+import {ExportCertReportComponent} from "app/entities/certificate/export-cert-report/export-cert-report.component";
 
 @Component({
   selector: 'jhi-certificate',
@@ -250,5 +251,9 @@ export class CertificateComponent implements OnInit, OnDestroy {
         certificate.signatureImageId = result;
       }
     });
+  }
+
+  openModalDowloadReport(): void {
+    this.modalRef = this.modalService.open(ExportCertReportComponent, { size: 'md' });
   }
 }

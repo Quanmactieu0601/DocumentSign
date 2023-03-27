@@ -189,4 +189,8 @@ export class CertificateService {
     formData.append('file', file[0]);
     return this.http.post(SERVER_API_URL + 'api/hsm-certificate/generate-bulk-csr', formData, { observe: 'body' });
   }
+
+  downloadSigningTurnCountCertReport(): Observable<any> {
+    return this.http.get(SERVER_API_URL + 'api/certificate/download-csr-report', { observe: 'body' });
+  }
 }

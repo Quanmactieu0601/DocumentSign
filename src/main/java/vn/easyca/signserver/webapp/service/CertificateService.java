@@ -1,11 +1,11 @@
 package vn.easyca.signserver.webapp.service;
 
-import com.google.common.base.Strings;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +18,7 @@ import vn.easyca.signserver.core.exception.CertificateNotFoundAppException;
 import vn.easyca.signserver.core.factory.CryptoTokenProxy;
 import vn.easyca.signserver.core.factory.CryptoTokenProxyFactory;
 import vn.easyca.signserver.core.utils.CertUtils;
+import vn.easyca.signserver.pki.sign.utils.X509Utils;
 import vn.easyca.signserver.webapp.config.SystemDbConfiguration;
 import vn.easyca.signserver.webapp.domain.*;
 import vn.easyca.signserver.webapp.domain.Certificate;
@@ -28,6 +29,8 @@ import vn.easyca.signserver.webapp.repository.SignatureTemplateRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthenticatorTOTPService;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.service.dto.InfoSignatureDTO;
+import vn.easyca.signserver.webapp.service.impl.parser.InfoSignatureParser;
 import vn.easyca.signserver.webapp.service.mapper.CertificateMapper;
 import vn.easyca.signserver.webapp.utils.*;
 import vn.easyca.signserver.webapp.service.parser.SignatureTemplateParseService;
@@ -36,7 +39,6 @@ import vn.easyca.signserver.webapp.utils.AccountUtils;
 import vn.easyca.signserver.webapp.utils.CertificateEncryptionHelper;
 import vn.easyca.signserver.webapp.utils.FileIOHelper;
 import vn.easyca.signserver.webapp.utils.ParserUtils;
-import vn.easyca.signserver.webapp.web.rest.CertificateResource;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,6 +48,7 @@ import java.security.*;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -113,6 +116,11 @@ public class CertificateService {
     @Transactional(readOnly = true)
     public Page<Certificate> findAll(Pageable pageable) {
         return certificateRepository.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Certificate> findAll() {
+        return certificateRepository.findAll();
     }
 
     @Transactional
@@ -219,7 +227,7 @@ public class CertificateService {
                 // th: ko co anh chu ky, thay doi kich thuoc anh
                 if (signatureImageData.equals("")) {
                     height = 70;
-                    htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden" );
+                    htmlContent = htmlContent.replaceFirst("class=\"hand-sign\"", "class=\"hand-sign\" hidden");
                 }
 
                 return ParserUtils.convertHtmlContentToImageByProversion(htmlContent, width, height, isTransparency, env);
@@ -332,30 +340,79 @@ public class CertificateService {
 
 
     public String resetHsmCertificatePin(String serial, String masterKey) throws Exception {
-        if(StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)){
+        if (StringUtils.isBlank(serial) || StringUtils.isBlank(masterKey)) {
             throw new Exception("Serial and MasterKey must be not null!");
         }
         String masterKeySystem = env.getProperty("spring.servlet.master-key");
-        if(!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)){
+        if (!StringUtils.isBlank(masterKeySystem) && !masterKeySystem.equals(masterKeySystem)) {
             throw new Exception("MasterKey invalid !");
         }
         Optional<Certificate> certificateOptional = certificateRepository.findOneBySerial(serial);
-        if(!certificateOptional.isPresent()){
+        if (!certificateOptional.isPresent()) {
             throw new Exception("Certificate is not found!");
         }
         CertificateDTO certificate = mapper.map(certificateOptional.get());
-        if(!certificate.getTokenType().equals(CertificateDTO.PKCS_11)){
+        if (!certificate.getTokenType().equals(CertificateDTO.PKCS_11)) {
             throw new Exception("Certificate token type is invalid!");
         }
         String newPin = CommonUtils.genRandomHsmCertPin();
-        try{
+        try {
             certificate.setEncryptedPin(symmetricService.encrypt(newPin));
             this.save(certificate);
             return newPin;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             throw new Exception(ex.getMessage());
         }
     }
 
+    public byte[] getCertReport() throws Exception {
+        InputStream inputStream = null;
+        List<Certificate> certificates = findAll();
+        int size = certificates.size();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        try {
+            inputStream = fileResourceService.getTemplateFile("/templates/excel/SigningTurnCountReport.xlsx");
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+            for (int i = 0; i < size; i++) {
+                Certificate cert = certificates.get(i);
+                X509Certificate certificate = X509Utils.StringToX509Certificate(cert.getRawData());
+                String info = cert.getSubjectInfo();
+                InfoSignatureParser infoSignatureParser = new InfoSignatureParser();
+                InfoSignatureDTO infoSignatureDTO = infoSignatureParser.getInfoSignature(info);
+                sheet.createRow(i + 1);
+                Row row = sheet.getRow(i + 1);
+                row.createCell(0).setCellValue(i + 1);
+                if (infoSignatureDTO != null) {
+                    row.createCell(1).setCellValue(infoSignatureDTO.getMst());
+                    row.createCell(2).setCellValue(infoSignatureDTO.getO());
+                    row.createCell(3).setCellValue(infoSignatureDTO.getOu());
+                    row.createCell(4).setCellValue(infoSignatureDTO.getT());
+                    row.createCell(5).setCellValue(infoSignatureDTO.getCmnd());
+                    row.createCell(6).setCellValue(infoSignatureDTO.getCn());
+                }
+                row.createCell(7).setCellValue(cert.getSerial());
+                if (cert.getType() == 0)
+                    row.createCell(8).setCellValue("EASYSIGN");
+                else
+                    row.createCell(8).setCellValue("REMOTE SIGNING");
+                row.createCell(9).setCellValue(cert.getSignedTurnCount());
+                row.createCell(10).setCellValue(cert.getAuthMode());
+                if (certificate != null) {
+                    row.createCell(12).setCellValue(DateTimeUtils.format(certificate.getNotBefore(), DateTimeUtils.ddMMyyyy_HHmmss));
+                    row.createCell(13).setCellValue(DateTimeUtils.format(certificate.getNotAfter(), DateTimeUtils.ddMMyyyy_HHmmss));
+                }
+            }
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            workbook.write(bos);
+            bos.close();
+            return bos.toByteArray();
+//            FileOutputStream outputStream = new FileOutputStream("src/main/resources/templates/excel/SigningTurnCountReport.xlsx");
+//            workbook.write(outputStream);
+//            workbook.close();
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
 
+    }
 }

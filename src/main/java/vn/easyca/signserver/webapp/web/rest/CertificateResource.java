@@ -1,6 +1,7 @@
 package vn.easyca.signserver.webapp.web.rest;
 
 import io.github.jhipster.web.util.PaginationUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -47,14 +48,13 @@ import java.io.*;
 import java.util.Base64;
 import java.util.List;
 import java.io.ByteArrayInputStream;
-import java.util.Optional;
 
 @Scope("request")
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateResource extends BaseResource {
     private static final Logger log = LoggerFactory.getLogger(CertificateResource.class);
-
+    private final FileResourceService fileResourceService;
     private final CertificateGenerateService p11GeneratorService;
     private final CertificateService certificateService;
     private final AsyncTransactionService asyncTransactionService;
@@ -67,11 +67,12 @@ public class CertificateResource extends BaseResource {
     private final CryptoTokenProxyFactory cryptoTokenProxyFactory;
 
 
-    public CertificateResource(CertificateGenerateService p11GeneratorService, CertificateService certificateService,
+    public CertificateResource(FileResourceService fileResourceService, CertificateGenerateService p11GeneratorService, CertificateService certificateService,
                                AsyncTransactionService asyncTransactionService, P12ImportService p12ImportService,
                                SignatureImageService signatureImageService, UserApplicationService userApplicationService,
                                SignatureTemplateService signatureTemplateService, SignatureImageMapper signatureImageMapper,
                                ExcelUtils excelUtils, CryptoTokenProxyFactory cryptoTokenProxyFactory) {
+        this.fileResourceService = fileResourceService;
         this.p11GeneratorService = p11GeneratorService;
         this.certificateService = certificateService;
         this.asyncTransactionService = asyncTransactionService;
@@ -476,4 +477,18 @@ public class CertificateResource extends BaseResource {
             return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse("Can not found certificate"));
         }
     }
+
+    @GetMapping("/download-csr-report")
+    @PreAuthorize("hasAnyAuthority(\""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.SUPER_ADMIN+"\")")
+    public ResponseEntity<Object> getCertificateReport() {
+        try {
+//            InputStream inputStream = fileResourceService.getTemplateFile("/templates/excel/SigningTurnCountReport.xlsx");
+            log.info("--- download-certificate-report ---");
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(certificateService.getCertReport()));
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(e.getMessage()));
+        }
+    }
+
 }

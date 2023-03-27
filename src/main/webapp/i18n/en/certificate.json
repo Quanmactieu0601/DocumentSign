@@ -121,7 +121,18 @@
       "uploadExcelRegisterFile": "Upload excel register file ",
       "uploadSignatureImage": "Upload Signature Image",
       "uploadSignatureImageByPersonalId": "Upload Signature Image By PersonalId",
-      "search": "Search"
+      "search": "Search",
+      "getSigningTurnCountReport": {
+        "alertDownFile": {
+          "success": "Download the Signing Turn Count Certificate file successfully",
+          "error": "Failed to download the Signing Turn Count Certificate file"
+        },
+        "title": "Download Signing Turn Counter Certificate Report",
+        "downloadReport": "Dowload Signing Turn Count Report",
+        "file": "File",
+        "cancel": "Cancel"
+      }
     }
   }
 }
+
