@@ -1,4 +1,5 @@
 package vn.easyca.signserver.webapp.service.mapper;
+
 import org.springframework.stereotype.Component;
 import vn.easyca.signserver.core.domain.CertificateDTO;
 import vn.easyca.signserver.core.domain.TokenInfo;
@@ -57,7 +58,8 @@ public class CertificateMapper {
         entity.setSerial(certificateDTO.getSerial());
         entity.setSubjectInfo(certificateDTO.getSubjectInfo());
         entity.setTokenType(certificateDTO.getTokenType());
-        entity.setTokenInfo(certificateDTO.getTokenInfo().toString());
+        if (certificateDTO.getTokenInfo() != null)
+            entity.setTokenInfo(certificateDTO.getTokenInfo().toString());
         entity.setValidDate(certificateDTO.getValidDate());
         entity.setExpiredDate(certificateDTO.getExpiredDate());
         entity.setActiveStatus(certificateDTO.getActiveStatus());
