@@ -80,7 +80,7 @@ public class InfoSignatureParser {
                 if (!StringUtils.isNullOrEmpty(info[i])) {
                     if (info[i].contains("=")) {
                         String[] formatInfo = info[i].split("=");
-                        info[i] = formatInfo[1];
+                        info[i] = formatInfo[1].replace("\"", "");
                     }
                 }
                 i++;
