@@ -18,6 +18,7 @@ import { GenerateCsrComponent } from 'app/entities/certificate/generate-csr/gene
 import { ChangeOwnerIdComponent } from './change-owner-id/change-owner-id.component';
 import { UploadExcelRegisterComponent } from './upload-excel-register/upload-excel-register.component';
 import { ImagePersonalIdComponent } from './image-personal-id/image-personal-id.component';
+import { ExportCertReportComponent } from './export-cert-report/export-cert-report.component';
 
 @NgModule({
   imports: [WebappSharedModule, RouterModule.forChild(certificateRoute)],
@@ -37,6 +38,7 @@ import { ImagePersonalIdComponent } from './image-personal-id/image-personal-id.
     ChangeOwnerIdComponent,
     UploadExcelRegisterComponent,
     ImagePersonalIdComponent,
+    ExportCertReportComponent,
   ],
   entryComponents: [CertificateDeleteDialogComponent],
 })

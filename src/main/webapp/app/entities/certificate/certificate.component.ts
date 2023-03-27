@@ -4,7 +4,9 @@ import { ActivatedRoute, ParamMap, Router, Data } from '@angular/router';
 import { Subscription, combineLatest } from 'rxjs';
 import { JhiEventManager } from 'ng-jhipster';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
 import { ICertificate } from 'app/shared/model/certificate.model';
+
 import { ITEMS_PER_PAGE } from 'app/shared/constants/pagination.constants';
 import { CertificateService } from './certificate.service';
 import { CertificateDeleteDialogComponent } from './certificate-delete-dialog.component';
@@ -26,6 +28,7 @@ import { ChangeOwnerIdComponent } from 'app/entities/certificate/change-owner-id
 import { RefreshPage } from 'app/shared/util/refreshPage';
 import { UploadExcelRegisterComponent } from 'app/entities/certificate/upload-excel-register/upload-excel-register.component';
 import { ImagePersonalIdComponent } from 'app/entities/certificate/image-personal-id/image-personal-id.component';
+import { ExportCertReportComponent } from 'app/entities/certificate/export-cert-report/export-cert-report.component';
 
 @Component({
   selector: 'jhi-certificate',
@@ -52,7 +55,6 @@ export class CertificateComponent implements OnInit, OnDestroy {
     validDate: [],
     expiredDate: [],
   });
-
   constructor(
     protected certificateService: CertificateService,
     protected activatedRoute: ActivatedRoute,
@@ -166,12 +168,10 @@ export class CertificateComponent implements OnInit, OnDestroy {
 
     this.certificateService.findCertificate(data).subscribe((res: any) => this.onSuccess(res.body, res.headers, pageToLoad, false));
   }
-
   // open modal
   openModal(content: any): void {
     this.modalRef = this.modalService.open(content, { size: 'md' });
   }
-
   openModalUploadCert(): void {
     this.modalRef = this.modalService.open(InstallCertToHsmComponent, { size: 'md' });
   }
@@ -230,7 +230,6 @@ export class CertificateComponent implements OnInit, OnDestroy {
   isSuperAdmin(): boolean {
     return this.accountService.hasAnyAuthority(Authority.SUPER_ADMIN);
   }
-
   isAdmin(): boolean {
     return this.accountService.hasAnyAuthority(Authority.ADMIN);
   }
@@ -240,7 +239,6 @@ export class CertificateComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.certificate = certificate;
     modalRef.componentInstance.isAuthenOTP = this.isAuthenOTP;
   }
-
   changeownerId(certificate: ICertificate): void {
     const modalRef = this.modalService.open(ChangeOwnerIdComponent, { size: '300px', backdrop: 'static' });
     modalRef.componentInstance.certificate = certificate;
@@ -257,7 +255,7 @@ export class CertificateComponent implements OnInit, OnDestroy {
     });
   }
 
-  refresh(): void {
-    this.refreshPage.refresh();
+  openModalDowloadReport(): void {
+    this.modalRef = this.modalService.open(ExportCertReportComponent, { size: 'md' });
   }
 }
