@@ -482,10 +482,11 @@ public class CertificateResource extends BaseResource {
         try {
             CertificateDTO certificateDTO = certificateService.getBySerial(serial);
             CryptoTokenProxy cryptoTokenProxy = cryptoTokenProxyFactory.resolveCryptoTokenProxy(certificateDTO, pin);
+            cryptoTokenProxy.getCryptoToken().checkInitialized();
             return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(cryptoTokenProxy.getBase64Certificate()));
         } catch (Exception ex) {
             log.error(ex.getMessage());
-            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse("Can not found certificate"));
+            return ResponseEntity.ok(BaseResponseVM.createNewErrorResponse(ex.getMessage()));
         }
     }
 
