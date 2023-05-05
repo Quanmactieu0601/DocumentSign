@@ -6,11 +6,15 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
@@ -26,6 +30,7 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -39,11 +44,11 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column("password_hash")
     private String password;
 
-    @Size(max = 50)
+    @Size(max = 200)
     @Column("first_name")
     private String firstName;
 
-    @Size(max = 50)
+    @Size(max = 200)
     @Column("last_name")
     private String lastName;
 
@@ -75,8 +80,50 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column("reset_date")
     private Instant resetDate = null;
 
+    @Size(max = 200)
+    @Column("common_name")
+    private String commonName;
+
+    @Size(max = 200)
+    @Column("organization_name")
+    private String organizationName;
+
+    @Size(max = 200)
+    @Column("organization_unit")
+    private String organizationUnit;
+
+    @Size(max = 200)
+    @Column("locality_name")
+    private String localityName;
+
+    @Size(max = 200)
+    @Column("state_name")
+    private String stateName;
+
+    @Size(max = 200)
+    @Column("country")
+    private String country;
+
+    @Size(max = 50)
+    @Column("phone")
+    private String phone;
+
+    @Column("csr_status")
+    private int csrStatus;
+
+    @Column("remind_change_password")
+    private Boolean remindChangePassword;
+
     @JsonIgnore
     @Transient
+    @ManyToMany
+    @JoinTable(
+        name = "jhi_user_authority",
+        joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+        inverseJoinColumns = { @JoinColumn(name = "authority_name", referencedColumnName = "name") }
+    )
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
     public Long getId() {
@@ -178,6 +225,78 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
 
     public Set<Authority> getAuthorities() {
         return authorities;
+    }
+
+    public String getCommonName() {
+        return commonName;
+    }
+
+    public void setCommonName(String commonName) {
+        this.commonName = commonName;
+    }
+
+    public String getOrganizationName() {
+        return organizationName;
+    }
+
+    public void setOrganizationName(String organizationName) {
+        this.organizationName = organizationName;
+    }
+
+    public String getOrganizationUnit() {
+        return organizationUnit;
+    }
+
+    public void setOrganizationUnit(String organizationUnit) {
+        this.organizationUnit = organizationUnit;
+    }
+
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
+    public String getStateName() {
+        return stateName;
+    }
+
+    public void setStateName(String stateName) {
+        this.stateName = stateName;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public int getCsrStatus() {
+        return csrStatus;
+    }
+
+    public void setCsrStatus(int csrStatus) {
+        this.csrStatus = csrStatus;
+    }
+
+    public Boolean getRemindChangePassword() {
+        return remindChangePassword;
+    }
+
+    public void setRemindChangePassword(Boolean remindChangePassword) {
+        this.remindChangePassword = remindChangePassword;
     }
 
     public void setAuthorities(Set<Authority> authorities) {
