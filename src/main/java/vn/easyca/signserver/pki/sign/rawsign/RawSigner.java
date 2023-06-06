@@ -1,5 +1,4 @@
 package vn.easyca.signserver.pki.sign.rawsign;
-import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
 import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 import javax.crypto.Cipher;
 import java.security.NoSuchAlgorithmException;

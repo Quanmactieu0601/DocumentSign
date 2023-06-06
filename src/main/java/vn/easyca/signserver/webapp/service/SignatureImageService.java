@@ -1,6 +1,6 @@
 package vn.easyca.signserver.webapp.service;
 
-import javafx.util.Pair;
+//import javafx.util.Pair;
 import org.springframework.web.multipart.MultipartFile;
 import vn.easyca.signserver.core.exception.ApplicationException;
 import vn.easyca.signserver.webapp.service.dto.CertImportSuccessDTO;

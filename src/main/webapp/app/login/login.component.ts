@@ -66,7 +66,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     );
   }
 
-  openModalChangeCertPin = () => {
-    this.modalRef = this.modalService.open(ChangeCertPinComponent, { size: 'lg' });
-  };
+  // openModalChangeCertPin = () => {
+  //   this.modalRef = this.modalService.open(ChangeCertPinComponent, { size: 'lg' });
+  // };
 }

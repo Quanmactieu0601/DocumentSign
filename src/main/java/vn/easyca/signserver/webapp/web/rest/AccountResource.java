@@ -234,4 +234,15 @@ public class AccountResource {
             password.length() <= ManagedUserVM.PASSWORD_MAX_LENGTH;
     }
 
+    @PostMapping(path = "/account/valid-email")
+    public void SendValidEmail() {
+        Boolean isValidEmail = userApplicationService.SendValidEmail();
+    }
+
+    @PostMapping(path = "/account/valid-email")
+    public ResponseEntity ValidEmail(@RequestParam String token) {
+         Boolean isValidEmail = userApplicationService.ValidEmail(token);
+        return new ResponseEntity<>(isValidEmail, HttpStatus.OK);
+    }
+
 }

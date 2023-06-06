@@ -230,6 +230,10 @@
             <!--<version> (managed by Spring Boot)42.2.5 </version> -->
         </dependency>
         <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
         </dependency>
@@ -550,6 +554,10 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>sign</artifactId>
             <version>${itext.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
     </dependencies>
 

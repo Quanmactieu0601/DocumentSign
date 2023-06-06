@@ -32,7 +32,7 @@ public class CertificateMapper {
         certificateDTO.setExpiredDate(entity.getExpiredDate());
         certificateDTO.setActiveStatus(entity.getActiveStatus());
         certificateDTO.setSignatureImageId(entity.getSignatureImageId());
-        certificateDTO.setEncryptedPin(entity.getEncryptedPin());
+//        certificateDTO.setEncryptedPin(entity.getEncryptedPin());
         certificateDTO.setSecretKey(entity.getSecretKey());
         certificateDTO.setAuthMode(entity.getAuthMode());
         certificateDTO.setSignedTurnCount(entity.getSignedTurnCount());
@@ -66,7 +66,7 @@ public class CertificateMapper {
         entity.setExpiredDate(certificateDTO.getExpiredDate());
         entity.setActiveStatus(certificateDTO.getActiveStatus());
         entity.setSignatureImageId(certificateDTO.getSignatureImageId());
-        entity.setEncryptedPin(certificateDTO.getEncryptedPin());
+//        entity.setEncryptedPin(certificateDTO.getEncryptedPin());
         entity.setSecretKey(certificateDTO.getSecretKey());
         entity.setPackageId(certificateDTO.getPackageId());
         entity.setPersonalId(certificateDTO.getPersonalId());

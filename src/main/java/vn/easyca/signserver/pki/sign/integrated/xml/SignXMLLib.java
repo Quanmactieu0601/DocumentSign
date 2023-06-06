@@ -1,6 +1,5 @@
 package vn.easyca.signserver.pki.sign.integrated.xml;
 
-import au.com.safenet.crypto.provider.slot0.SAFENETProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

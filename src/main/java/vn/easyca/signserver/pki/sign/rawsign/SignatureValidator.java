@@ -1,7 +1,5 @@
 package vn.easyca.signserver.pki.sign.rawsign;
 
-import au.com.safenet.crypto.provider.SAFENETProvider;
-import vn.easyca.signserver.pki.sign.commond.DigestCreator;
 import vn.easyca.signserver.webapp.config.Constants;
 
 import java.security.PublicKey;

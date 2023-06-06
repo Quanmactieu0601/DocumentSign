@@ -471,4 +471,12 @@ public class UserApplicationService {
     public Optional<UserEntity> getUserEntity() {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
     }
+
+    public Boolean ValidEmail(String token) {
+        return true;
+    }
+
+    public Boolean SendValidEmail() {
+        return true;
+    }
 }

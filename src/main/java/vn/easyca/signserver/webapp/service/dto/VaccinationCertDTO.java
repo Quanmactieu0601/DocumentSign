@@ -1,7 +1,6 @@
 package vn.easyca.signserver.webapp.service.dto;
 
 import com.itextpdf.text.BadElementException;
-import jdk.nashorn.internal.ir.ReturnNode;
 import org.apache.commons.io.IOUtils;
 import org.postgresql.util.StreamWrapper;
 import org.springframework.core.env.Environment;

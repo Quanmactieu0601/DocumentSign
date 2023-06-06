@@ -62,8 +62,8 @@ public class Certificate implements Serializable {
     @Column(name = "signature_image_id")
     private Long signatureImageId;
 
-    @Column(name = "encrypted_pin")
-    private String encryptedPin;
+//    @Column(name = "encrypted_pin")
+//    private String encryptedPin;
 
     @Column(name = "secret_key")
     private String secretKey;
@@ -255,13 +255,13 @@ public class Certificate implements Serializable {
         this.activeStatus = activeStatus;
     }
 
-    public String getEncryptedPin() {
-        return encryptedPin;
-    }
+//    public String getEncryptedPin() {
+//        return encryptedPin;
+//    }
 
-    public void setEncryptedPin(String encryptedPin) {
-        this.encryptedPin = encryptedPin;
-    }
+//    public void setEncryptedPin(String encryptedPin) {
+//        this.encryptedPin = encryptedPin;
+//    }
 
     public String getSecretKey() {
         return secretKey;
@@ -326,7 +326,7 @@ public class Certificate implements Serializable {
             ", expiredDate=" + expiredDate +
             ", activeStatus=" + activeStatus +
             ", signatureImageId=" + signatureImageId +
-            ", encryptedPin='" + encryptedPin + '\'' +
+//            ", encryptedPin='" + encryptedPin + '\'' +
             ", secretKey='" + secretKey + '\'' +
             ", signedTurnCount=" + signedTurnCount +
             ", personalId='" + personalId + '\'' +
