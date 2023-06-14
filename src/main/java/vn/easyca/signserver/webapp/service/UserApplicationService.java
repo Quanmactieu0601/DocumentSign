@@ -9,6 +9,7 @@ import vn.easyca.signserver.webapp.repository.AuthorityRepository;
 import vn.easyca.signserver.webapp.repository.UserRepository;
 import vn.easyca.signserver.webapp.security.AuthoritiesConstants;
 import vn.easyca.signserver.webapp.security.SecurityUtils;
+import vn.easyca.signserver.webapp.service.dto.ResponeDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 
 import io.github.jhipster.security.RandomUtil;
@@ -472,11 +473,24 @@ public class UserApplicationService {
         return SecurityUtils.getCurrentUserLogin().flatMap(userRepository::findOneByLogin);
     }
 
-    public Boolean ValidEmail(String token) {
-        return true;
+    public ResponeDTO ValidEmail(String token) {
+        ResponeDTO responeDTO = new ResponeDTO();
+
+        return responeDTO;
     }
 
-    public Boolean SendValidEmail() {
-        return true;
+    public ResponeDTO SendValidEmail() {
+        ResponeDTO responeDTO = new ResponeDTO();
+        try {
+            UserEntity currenUser = getUserEntity().get();
+
+
+        }
+        catch (Exception ex){}
+        return responeDTO;
+    }
+
+    private String GetTokenValidMail(){
+        return "";
     }
 }

@@ -273,5 +273,25 @@ public class SigningResource extends BaseResource {
 
     }
 
+    @PostMapping(value = "/signWithOTP")
+    public ResponseEntity<BaseResponseVM> signWithOTP(@RequestBody SigningRequest<SigningRequestContent> signingRequest) {
+        log.info(" --- signWithOTP --- ");
+        try {
+            SigningResponse signingDataResponse = officeSigningService.sign(signingRequest);
+            status = TransactionStatus.SUCCESS;
+            return ResponseEntity.ok(BaseResponseVM.createNewSuccessResponse(signingDataResponse));
+        } catch (ApplicationException applicationException) {
+            log.error(applicationException.getMessage(), applicationException);
+            message = applicationException.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(applicationException.getCode(), null, applicationException.getMessage()));
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            message = e.getMessage();
+            return ResponseEntity.ok(new BaseResponseVM(-1, null, e.getMessage()));
+        } finally {
+            asyncTransactionService.newThread("/api/sign/office", TransactionType.BUSINESS, Action.SIGN, Extension.OOXML, Method.POST,
+                status, message, AccountUtils.getLoggedAccount());
+        }
+    }
 
 }

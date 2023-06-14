@@ -1,5 +1,6 @@
 package vn.easyca.signserver.webapp.web.rest;
 
+import org.h2.engine.User;
 import org.springframework.http.ResponseEntity;
 import vn.easyca.signserver.webapp.domain.UserEntity;
 import vn.easyca.signserver.webapp.enm.*;
@@ -9,6 +10,7 @@ import vn.easyca.signserver.webapp.security.SecurityUtils;
 import vn.easyca.signserver.webapp.service.*;
 import vn.easyca.signserver.webapp.service.UserApplicationService;
 import vn.easyca.signserver.webapp.service.dto.PasswordChangeDTO;
+import vn.easyca.signserver.webapp.service.dto.ResponeDTO;
 import vn.easyca.signserver.webapp.service.dto.UserDTO;
 import vn.easyca.signserver.webapp.service.AsyncTransactionService;
 import vn.easyca.signserver.webapp.utils.AccountUtils;
@@ -235,14 +237,15 @@ public class AccountResource {
     }
 
     @PostMapping(path = "/account/valid-email")
-    public void SendValidEmail() {
-        Boolean isValidEmail = userApplicationService.SendValidEmail();
+    public ResponseEntity<ResponeDTO> SendValidEmail() {
+        ResponeDTO responeDTO = userApplicationService.SendValidEmail();
+        return new ResponseEntity<>(responeDTO, HttpStatus.OK);
     }
 
     @PostMapping(path = "/account/valid-email")
-    public ResponseEntity ValidEmail(@RequestParam String token) {
-         Boolean isValidEmail = userApplicationService.ValidEmail(token);
-        return new ResponseEntity<>(isValidEmail, HttpStatus.OK);
+    public ResponseEntity<Object> ValidEmail(@RequestParam String token) {
+        ResponeDTO responeDTO = userApplicationService.ValidEmail(token);
+        return new ResponseEntity<>(responeDTO, HttpStatus.OK);
     }
 
 }
